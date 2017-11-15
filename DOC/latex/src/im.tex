@@ -1,0 +1,63 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{An Internal MarketPlace}
+\author{several authors}
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Platform Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+
+\section{Introduction}
+
+Let us start with a simple motivation. We have several high quality content
+pieces in WordPress. On each of these, we would like to present ``related
+content''. From our perspective, we hope to increase user engagement, which is
+currently stubbornly low.  The choice of what content to present is dictated
+by the following factors, listed in decreasing order of our ablity to execute
+against them
+
+\be
+\item the content on the page vying for recommendation
+\item the content on the main page 
+\item information that come from the browser, ranging from
+time of day to platform to geo-location
+\item articles viewed in previous sessions, obtained from DWH
+\item articles viewed in the current session
+\ee
+
+It is easy to generalize the notion of ``related'' beyond content as follows.
+Let us consider a few examples
+\be
+\item A product manager would like to draw attention to their product e.g.,
+  Elena wants more sign-ups for DIT
+\item A general manager would like to meet business goals e.g., Kevin notices a
+  potential shortfall on Citi Double Cash and would like to promote it
+\item Strategic decision making e.g., Tim would like to experiment with some
+  CTA's (Call To Action) 
+  \ee
+
+Notice that these are competing interests, that while working for the common
+good, are locally optimizing for their specific needs.  The natural 
+generalization of a solution to this problem is that of an auction house, where
+the budgets for each bidder is set by the executive team. The act of setting
+budgets is to make explicit the relative priorities of the competing interests.
+While we will report on the efficacy of the placements, we leave it to each
+bidder to determine what is good for them. If they choose to squander their
+monthly budget on placing their ``ad'' where it has no chance of being clicked,
+that is for them to worry about, not us. 
+\end{document}
