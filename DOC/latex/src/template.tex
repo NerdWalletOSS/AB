@@ -1,163 +1,20 @@
-%%\startreport{The AB Testing Manifesto}
-%%\reportauthor{Ramesh Subramonian, Abhinava Singh}
-\documentclass[12pt]{report}
-\usepackage{hyperref}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\newcommand{\be}{\begin{enumerate}} %% same as ramesh_abbr
-\newcommand{\ee}{\end{enumerate}} %% same as ramesh_abbr
-\newcommand{\beq}{\begin{equation}} %% new, no conflict
-\newcommand{\eeq}{\end{equation}} %% new, no conflict
-\newcommand{\bdm}{\begin{displaymath}} %% new, no conflict
-\newcommand{\edm}{\end{displaymath}} %% new, no conflict
-\newcommand{\bi}{\begin{itemize}} %% same as ramesh_abbr
-\newcommand{\ei}{\end{itemize}} %% same as ramesh_abbr
-\newcommand{\TBC}{\framebox{\textbf{TO BE COMPLETED}}} %% same as ramesh_abbr
+\startreport{The AB Testing Manifesto}
+\reportauthor{Ramesh Subramonian, Abhinava Singh}
+% \documentclass[12pt]{report}
+% \usepackage{hyperref}
+% \usepackage{amsmath}
+% \usepackage{graphicx}
+% \newcommand{\be}{\begin{enumerate}} %% same as ramesh_abbr
+% \newcommand{\ee}{\end{enumerate}} %% same as ramesh_abbr
+% \newcommand{\beq}{\begin{equation}} %% new, no conflict
+% \newcommand{\eeq}{\end{equation}} %% new, no conflict
+% \newcommand{\bdm}{\begin{displaymath}} %% new, no conflict
+% \newcommand{\edm}{\end{displaymath}} %% new, no conflict
+% \newcommand{\bi}{\begin{itemize}} %% same as ramesh_abbr
+% \newcommand{\ei}{\end{itemize}} %% same as ramesh_abbr
+% \newcommand{\TBC}{\framebox{\textbf{TO BE COMPLETED}}} %% same as ramesh_abbr
 \newcommand{\reals}{{\rm I\! R}} %% new, no conflict
 \newcommand{\comp}[1]{\widetilde{#1}}
 
-%% From https://math.berkeley.edu/~gbergman/misc/hacks/langl_rangl.html
-\newcommand{\langl}{\begin{picture}(4.5,7)
-\put(1.1,2.5){\rotatebox{60}{\line(1,0){5.5}}}
-\put(1.1,2.5){\rotatebox{300}{\line(1,0){5.5}}}
-\end{picture}}
 
-\newcommand{\rangl}{\begin{picture}(4.5,7)
-\put(.9,2.5){\rotatebox{120}{\line(1,0){5.5}}}
-\put(.9,2.5){\rotatebox{240}{\line(1,0){5.5}}}
-\end{picture}}
-
-\newcommand{\mymean}[1]{\ensuremath{\langl{#1}\rangl}} %% new, no conflict
-
-\begin{document}
-
-\title{The AB Testing Manifesto}
-\author{Ramesh Subramonian, Abhinava Singh}
-
-\maketitle
-
-\section{Introduction\label{sec:Intro}}
-
-When we learned about the scientific method in school, we were introduced to a seemingly rigid process that 
-asked us to make observations, pose questions, formulate hypotheses, develop testable predictions, design an 
-experiment, gather data, and then use that data to refine, accept, or reject our hypotheses. This seems pretty 
-straightforward, but we rarely pay attention to the hypothesis formulation or experiment design and run 
-roughshod through our results picking and choosing data that support our world view. This is obviously 
-dangerous because it leads to some problematic assumptions about how to represent our data and thusly discern 
-whether or not it supports our view of the world. For example, let’s say you want to prove the existence of 
-bigfoot and you start going into the jungle and take random pictures. If you tried hard enough, I am sure you 
-would find a picture of some huge footprint that would look like a bigfoot if you stared hard enough. However, 
-without defining the characteristics of bigfoot or knowing what to look for in our pictures (data) we would 
-likely misinterpret them and jump to silly conclusions. Now this was a cute example, but it illustrates an 
-important point. In science we should strive to understand what exactly we are measuring and strictly 
-define an acceptance criteria based on that measure before we look at our data. In other words, we need 
-to understand our evidence and we need to be able to answer “what evidence is enough for me to say that my 
-hypothesis is true or false?”. The goal of this document will be to create a framework for thinking about 
-binary hypothesis tests, setting up the AB testing problem, and use that framework to solve that problem.
-
-
-\subsection{A Primer on Hypothesis Testing}
-
-Before we start formalizing a binary hypothesis test, I want to spend some time building 
-towards a meta understanding of experiment design. When setting up our experiments we have 
-some intuition about what evidence we expect to see if a particular hypothesis were to be 
-true. For example, if a coin is heavily weighted to favor tails then you would expect to see 
-a lot of tails showing up if you kept flipping that weighted coin. 
-However, if we don’t know anything about the coin, how much evidence do we need to support 
-the hypothesis that the coin is not fair (\(H1\)) as supposed to being fair (\(H0\))? 
-One way could be to determine a variable \(S\) which is equal to the sum of \(n\) Bernoulli 
-indicators (1 if Heads, 0 if tails). We know that the expected value of \(S\) when the coin is fair should be \(0.5n\).
-As a result, we could look at the deviation of \(S\) from \(0.5n\): \(|S-0.5n|\) which we will call \(D\). 
-Now it makes sense to say that if \(D\) was large enough then we can say start to see evidence of an unfair coin. 
-In other words, we should pick a threshold $\epsilon$ such that if \(D\) $>$ $\epsilon$ then we have enough evidence to believe
-that we have an unfair coin. But now youu are probably asking, how large does $\epsilon$ need to be for me
-to be confident that I have enough evidence? Let's consider the tradeoffs if we pick $\epsilon$ arbitrarily. 
-If we set $\epsilon$ equal to 2, then we would probably cry "bloody murder" every time and loose a ton of 
-friends. However, if we set $\epsilon$ to 100000 then we would probably be super gullible and
-potentially lose a ton of money. In other words, we want to think about our decision of $\epsilon$ in terms
-of its tradeoff with our false alarm rate or Type 1 Error. This is tricky because in most cases, you will see
-that a tradeoff since being less trigger happy means being more prone to inaction. As a result, we want to pick
-a false alarm rate $\alpha$ and then calculate an $\epsilon$ such that the probability of seeing D$>$$\epsilon$ 
-given that the null hypothesis is true is $\alpha$. Formally, this means we want to pick $\epsilon$ such that 
-P(\(D\)$>$$\epsilon$ $|$ \(H0\)) = $\alpha$. What this means is that when we collect data and get a statistic D, 
-if D is greater than your chosen epsilon then there is an $\alpha$ percent chance that your trial could have been 
-a false alarm. In less theoretical terminology, if your $\alpha$ was 0.05 and you performed 1000 coin flips 100 times
-5 of those experiments would yield results which would cause you to accuse your friend of cheating.
-
-Now we want to concern ourselves with the problem of picking the right $\epsilon$ such that P(\(D\)$>$$\epsilon$ $|$ \(H0\)) = $\alpha$.
-Since we are going to start doing some math, lets get rid of \(D\) and go back to our old notation which was \(|S-0.5n|\).
-\beq
-\label{eq:confidence_intervals}
-P(|S-0.5n|>\epsilon | H0) = \alpha
-\eeq
-when the inequality is expressed in terms of S. 
-\beq
-\label{eq:confidence_intervals2}
-P(\epsilon-0.5n < S <\epsilon+0.5n | H0) = 1-\alpha
-\eeq
-Now this is a bit confusing so we can use the fact that if p=0.5 then a binomial distribution is symetric for all n and k. 
-Since we are evaluating this probability given that the null hypothesis is true, we can express the above as follows:
-\beq
-\label{eq:confidence_intervals3}
-P(S < 0.5n-\epsilon | H0) = \alpha/2
-\eeq
-Finally, you can look at the cumulative distribution function (BCDF) of a binomial distribution and find 
-the value X such that BCDF(X) = $\alpha$/2. As a result, your $\epsilon$ is 0.5n+BCDF(X).
-
-\subsection{Neyman Pearson Hypothesis Testing}
-
-Hopefully the previous section gave you some intuition into the inner workings of a binary 
-hypothesis test. Now I am going to introduce a meta framework for approaching hypothesis 
-tests and then map our example to parts of this framework.\\
-
-Before Data is Collected:
-
-\begin{enumerate}
-\item Define your null hypothesis (H0) and your alternative hypothesis (H1).
-\item Choose a statistic S which summarizes the data to be obtained. This is a function H:$\Re^n$$\rightarrow$$\Re$) such that S = H($X_1$,$X_2$,....,$X_n$).
-\item Determine the shape of the rejection region by specifying the set of S values for which H0 will be rejected as a function of $\epsilon$.
-\item Choose a false alarm rate $\alpha$.
-\item Choose this critical value $\epsilon$ such that the probability S>$\epsilon$ is $\alpha$ given the fact that the null hypothesis is true.
-\end{enumerate}
-
-After Data is Collected
-
-\begin{enumerate}
-\item Calculate S.
-\item Reject H0 if S is in rejection region
-\end{enumerate}
-
-So in our previous example of determining if a coin was fair by performing 1000 trials. Our null hypothesis was “the coin is fair” and the 
-alternative hypothesis is “the coin is not fair”. Our statistic S is the sum of bernoulli indicator variables. The shape of our rejection 
-region is $|S-0.5n|>e$. Our false alarm rate is 0.05. After doing some calculus* we determine that e=31. Let’s say we perform 1000 trials 
-and we see 999 so D=499 which is way greater than 31. This means that we can reject the null hypothesis and rain down hell upon this cheater. 
-This is the Neyman Pearson method of hypothesis testing which requires a lot of prior thought and the choosing of a false rejection rate 
-before performing your experiment. A lot of modern statistics is used to the Fischer method of hypothesis testing which is to observe data 
-and then figure out your false alarm rate and gauge whether it is good enough (IE, is my p-value less than 0.05?). 
-This is subject to a lot of debate, but the main point of criticism of the Neyman Pearson method of hypothesis testing from the Fisher school 
-is that the choice of a false rejection rate is an arbitrary one (IE there is no actionable difference between 0.05 and 0.06) which means you 
-end up rejecting more hypotheses due to being unnecessarily cautious. As a result, the fisher exact tests and other methods have been 
-popularized in modern statistics, especially in biological sciences which tend to have to test hypotheses with small sample sizes (n~=20). 
-However, in the world of software where data literally grows on trees, too often do I see people p-hacking their tests and picking and choosing 
-statistics as a way to justify their world view rather than believing that there is a good chance that their hypothesis is incorrect. 
-In the next section, I am going to setup the AB Testing hypothesis testing problem and then walk you through the Neyman Pearson method 
-of evaluating that test.
-
-
-\section{The AB Testing Problem}
-
-Similar to how pharmaceutical companies perform research to understand the effects of their drugs on their patient's, 
-software companies are constantly trying to design features that solve user problems and move the needle on certain corporate metrics. 
-Keeping with the mantra, "If you can’t measure, can’t succeed", these companies collect a ton of data about their consumers which lead 
-to a data abundance problem. Unlike medicine where the cost of acquiring a single data point is exorbitantly high,
-tech companies have an insane amount of metrics to measure from. While this has tremendous competitive advantages, 
-there is also a low signal to noise ratio in information you want to derive insight from. As a result, if you have a 
-particular feature you want to introduce to your users, what test can you design to conclusively say that 
-“my feature provided a statistically significant increase in a particular business metric”? What many companies 
-do is that they split their traffic between their control and treatment page variants and try to determine if the 
-treatment page performs better.  This is the AB Testing problem and we can use the above procedure to answer this question.
-
-
-
-
-\end{document}
+\input{frequentist}
