@@ -21,16 +21,25 @@ to our control branch A and expose $n_b$ users to our variant branch B and recor
 did what we wanted (bought a product, spent more than 10 min on a page, clicked the "register now" button, etc.)
 we will represent this as $m_a$ and $m_b$ for each branch respectively. The fraction of people who did what we wanted
 for each branch will be the following: 
+
 \beq
 \label{pa}
-p_a = \frac{m_a}{n_a} and  p_b = \frac{m_b}{n_b}
+p_a = \frac{m_a}{n_a}
+\eeq
+
+\beq
+p_b = \frac{m_b}{n_b}
 \eeq
 
 $p_a$ and $p_b$ are essentially our emperical estimates of the true likelihood of our success probabilities $\theta_a$ and $\theta_b$. 
 
 In an AB Test, the implicit hypothesis is "B is better than A". However, this hypothesis is really
-vaugue. What does "better" mean? Are we trying to look at the difference between probabilities? Are we looking at percent increases (lift)? There are an immesearable number of possible metrics and one needs to pick the right metric that uses these emperical estimates that can both be used in a way that not only aligns with business goals but also can be used in a way that makes sense in a hypothesis test. In this document we want to discuss various methodologies regaurding
-hypothesis tests as well as outline three different metrics we have identified to fit the criteria discussed above. Ultimately, we want to use these metrics to compare and contrast these various schools of thought as a way to give you an idea about the different stories you can tell with your data.
+vaugue. What does "better" mean? Are we trying to look at the difference between probabilities? Are we looking at percent increases (lift)? 
+There are an immesearable number of possible metrics and one needs to pick the right metric that uses these emperical estimates that can both 
+be used in a way that not only aligns with business goals but also can be used in a way that makes sense in a hypothesis test. 
+In this document we want to discuss various methodologies regaurding hypothesis tests as well as outline three different metrics we have 
+identified to fit the criteria discussed above. Ultimately, we want to use these metrics to compare and contrast these various schools of 
+thought as a way to give you an idea about the different stories you can tell with your data.
 
 \section{The Frequentist Approach\label{sec:freq}}
 
@@ -240,6 +249,7 @@ P ( \frac{p_B-p_A}{\hat{\sigma_S}} > \epsilon | H_0 ) = 0.05
 \eeq
 
 We can solve this by looking at the CDF of a standard normal distribution similar to what we did above for the coin example.
+I did that for you and we can say that if S is a normal (doesn't) distribution, then our value of $\epsilon$ is 1.96. 
 
 Once we have calculated our $\epsilon$, then we can start to collect evidence and if our sample statistic turns out to be greater
 than our threshold $\epsilon$ then we can reject our null hypothesis and claim that there is sufficient evidence to believe that
@@ -248,11 +258,140 @@ with the difference metric and the Neyman Pearson style of hypothesis testing, w
 for our test. This will bring us into the next section where we stray from our false alarm rate and start thinking about statistical
 power.
 
+\subsection{Discussion: Thinking about hypothesis test results}
+
+Before we start talking about sample sizes and statistical power, I want us to start thinking about the many ways we could interpret 
+the results we discussed above. In the above section, we discussed looking for a statistic S to encapsulate the data we were
+going to observe and then draw a decision boundary $\epsilon$ in order to achieve a certain false alarm rate (0.05). To reiterate, 
+we declared:
+
+\beq
+S = \frac{p_B-p_A}{\hat{\sigma}}
+\eeq 
+
+which we claimed, for n > 100, approached a standard normal distribution with mean 0 and standard deviation 1. 
+When we picked an $\epsilon$ we said that if our sample S exceeded that epsilon then we could say that there was a 5 percent chance 
+that the null hypothesis was true when we accepted the alternative hypothesis. The reason we could say this is because our choice
+of $\epsilon$ (1.96) gives us a threshold where smaller values of S have a 95 percent chance of appearing so if we observe a value of S that's greater 
+than this $\epsilon$ then we observed a value of S that is 1.96 standard deviations from our expected value of 0. Keeping in mind that our distribution 
+of S is conditioned on the null hypothesis being true, observing such an extreme value of S either means that our measurement 
+was a freak accident that has a 5\% chance of occuring, or that the underlying distribution was wrong. Mathematically, all this follows from the following:
+
+\beq 
+P(\frac{p_B-p_A}{\hat{\sigma}} < \epsilon | H0) = \alpha
+\eeq
+
+being rewritten as 
+
+\beq 
+P(p_B-p_A < \epsilon\hat{\sigma} | H0) = \alpha
+\eeq
+
+While the first statement thinks about about your test in terms of a critical threshold value, the second statement is
+now thinking about your decision to reject the null hypothesis in terms of how likely you observe your effect size ($p_B-p_A$) 
+deviate from the mean where the null hypothesis is true (expected value is 0). If your effect size deviates from 0 by $\epsilon$
+standard deviations then it is likely that either our alternative hypothesis was right or that the entire methodology is wrong because S 
+really didn't belong to a standard normal distribution. To confirm that the later is probably not right, you could perform the experiment 
+multiple times. If you find that ~5\% of the time you are getting a false alarm then it's likely true that your alternative hypothesis was 
+right. These types of metaanalyses are important especially in medicine where many peer reviewed publications require experiments be repeated 
+three times with the same conclusion before being published.
+
 \subsection{Statistical Power and Choosing the ideal sample size} 
 
+In the previous section we made some headway around understanding the Neyman Pearson style of hyothesis testing and how it applies
+to AB Testing. However, you may have noticed that I was doing a ton of handwaving around sample sizes. In software, fast decision 
+making is an integral part of beating your competitors. While statistically, collecting more data will likely mean your estimate is
+closer to reality, time is often a constraining factor which means that we actually want to know the minimum amount of samples necessary
+to make a decision. Moreover, we also want our time investment to be worth it. Let's say you perform user studies and they 
+indicate that your variant is a winner meaning you would expect your effect size to be huge. As a result, 
+you shouldn't really need tons of data to proove that effect. Conversely, if you expect S to be tiny, you will probably need a ton
+of data to demonstrate that effect. However, let's say you have no expected idea of how your variant will perform over the control. In that
+case, you are not trying to test the hypothesis that variant B is better than variant A, you are actually trying to see whether or not it is even 
+worth it to run the test. Let's say your manager is one of those "growth haxors" and wants to get huge wins quickly on a certain page that tends to get 10 samples
+per day. If you found that you needed 2000 samples (200 days) to get a effect size of 0.07, that test might not be worth it for you depending on your metric. 
+However, if you are running a test on a high traffic page which gets 1000 samples a day, then that test might be okay for you. Ultimately, we want to make 
+sure that we have enough users to make sure that our test both has a low risk of false alarm and a high risk of detecting an effect if it exists (power).
 
+As a result, we need to think about a second type of error which is the false negative
+or Type II error rate. Recall above that the false alarm rate $\alpha$ describes the probability we accept the alternative hypothesis when the
+null hypothesis was true. While we want to make sure that we minimize this, we also want to make sure that we are aware of the risk of
+failing to reject the null hypothesis when the alternative hypothesis was true. The first statement is called the false negative rate which we
+denote as $\beta$. However, this is confusing so we use statistical power which we denote as $1-\beta$. This is the probability we correctly reject the null 
+hypothesis when the alternative hypothesis was true. Now that all of the lingo is calibrated let's pose the following question: "If we suspect an effect size 
+($\theta_B-\theta_A$) of X, how large does n have to be for us to achieve $\alpha$ level statistical significance with power $1-\beta$." 
+We can define the power as the following: 
 
+\beq
+P(p_B-p_A > \delta\sigma | H1) = 1-\beta
+\eeq
 
+And we can define our false alarm rate as the following: 
 
+\beq
+P(p_B-p_A > \epsilon\sigma | H0) = \alpha
+\eeq
 
+Now the reason why I brought up "suspected effect size" ( $\widetilde{S}$ ) is because we need to bring these two equations together
+by envision two distributions. The first distribution is $p_B-p_A$ in the world where the null hypothesis is true which is a normal 
+distribution with mean 0 and standard deviation $\sigma$. The second distribution is $p_B-p_A$ in the world where the alternative 
+hypothesis is true which is a normal distribution with mean $\widetilde{S}$ and the same standard deviation $\sigma$. Now recall our
+discussion of confidence intervals. Now let's say that we have to provide guarantees of $\alpha$ and $\beta$. 
+If the null hypothesis was true, we need to pick an $\epsilon$ such that the probability of false alarm is $\alpha$ and pick 
+a $\delta$ such that the probability we correctly detect an effect of at least $\widetilde{S}$ is 1-$\beta$. Now if we wanted to prove 
+that the real effect size is $\widetilde{S}$ with our false alarm and power performance gurantees then we would use the cdf of a standard 
+normal distribution and discover that we need to observe a value of $p_B-p_A$ that is $\epsilon$ standard deviations above 0 (in a world where 
+the null hypothesis was true) to meet our false alarm guarantees and we would also need to observe a value that is at least $\delta$ standard 
+deviations below $\widetilde{S}$ to meet our statistical power guarantee. As a result, we have the following threshold: 
 
+\beq
+0 + \epsilon\sigma = \widetilde{S} - \delta\sigma
+\eeq
+
+Now the question is what is this standard deviation. We discussed above that this was impossible to know since we didn't know what the true 
+success probabilities were. As a result, we need to estimate this. To be conservative with our choice of n we need to look at the upper bound 
+of our variance measure. Essentially, the wider the normal distributions are under H0 and H1 the more comfortable we can be with our choice n. 
+If we let n be the total number of users exposed to both variants and we let a,b be ratios that represent the fraction of users exposed to variant
+A and variant B (a+b=1) we get the following:
+
+\beq
+\sigma = \sqrt{\frac{\theta_B (1-\theta_A)}{bn} + \frac{\theta_A(1-\theta_A)}{an}}
+\eeq
+
+\beq
+\sqrt{\frac{\theta_B (1-\theta_A)}{bn} + \frac{\theta_A(1-\theta_A)}{an}} < \sqrt{\frac{1}{4bn} + \frac{1}{4an}}
+\eeq
+
+\beq
+\sqrt{\frac{1}{4bn} + \frac{1}{4an}} < \frac{1}{2\sqrt{n}} \sqrt{\frac{a+b}{ab}}
+\eeq
+
+Where a and b represent the fraction of people in group a and group b respectively.  Plugging this back in to the above equation, we can see 
+the following:
+
+\beq
+\widetilde{S} < \frac{\epsilon+\delta}{2\sqrt{nab}}
+\eeq
+
+solving for n we get:
+
+\beq
+n < \frac{(\epsilon+\delta)^2}{4ab\widetilde{S}^2}
+\eeq
+
+As a result: a*n, b*n are the sample sizes necessary to be reasonably comfortable with your power and false alarm measurements. As a result, 
+if you tell me how you plan on distributing your data (a,b), your minimum needed effect size to even consider the test worth running,
+your $\alpha$ and your $\beta$. Then I will use the standard normal CDF to derive the corresponding $\epsilon$ and $\delta$ and then
+use the above formula to give you the minimum necessary sample size necessary to run your experiment such that you can comfortably
+reach your performance guarantees. 
+
+Now this is probably confusing without numbers so let us add some numbers into this formula so that we can really understand this.
+Let's say you are doing a 50/50 ramp ab test (a=0.5, b=0.5) and your expected effect size is 0.10 ($\widetilde{S}$ = 0.10). A standard rule of thumb
+is $\alpha$=0.05 and $\beta$=0.2 which corresponds to a $\epsilon$ of 1.96 and a $\delta$ of 0.84 if you use the standard normal CDF. As a result, you 
+would get: 
+
+\beq
+n < \frac{2.8^2}{4*0.01*0.25} = 784
+\eeq
+
+This means you will need a total of 784 samples with 392 coming from variant A and 392 coming from variant B to comfortably gurantee 
+that your result will meet your performance standards.
