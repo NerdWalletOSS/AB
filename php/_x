@@ -1,1 +1,0 @@
-    if ( !$rslt4 ) { throw new Exception("statement 4 failed"); }

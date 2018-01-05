@@ -1,7 +1,0 @@
-Add check in aux_check_name for reserved words
-
-Add an edit_test (similar to add_test) for case when test is dormant
-
-Write tests for new_Set_description
-
-Make sure that for ABTests you cannot change description of Control

@@ -5,7 +5,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 function insert_test(
   $test_name, // name of test, mandatory
   $test_type, // ABTest, XYTest
-  $test_dscr, // description, optional
   $creator,   // name of user who is creating test
   $variant_names, // array: names of variants
   $variant_percs, // array: percentages of variants
@@ -17,7 +16,6 @@ function insert_test(
   $t_create =  $t_update = get_time_usec(); 
   $GLOBALS["err"] = "";
   $X1['name']         = $test_name;
-  $X1['description']  = $test_dscr;
   $X1['test_type_id'] = lkp("test_type", $test_type);
   $X1['seed']         = make_seed();
   $X1['external_id']  = $t_create;
