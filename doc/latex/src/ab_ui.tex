@@ -30,29 +30,28 @@ The UI maintains the following global variables.
 \item Admin Name, Displayed at top of all pages
 \item TestType, can be AB or XY (for URL Router), 
   Displayed at top of all pages
-\item Mode, can be Add, Edit, View
-\item State of test if Mode = Edit
-\item IsDeviceSpecific, boolean, default false
 \ee
 
-\section{Page 0}
+\section{Login Page}
 
-Decide TestType
+Set Admin Name and decide TestType
 
 \section{Home Page}
 \label{home_page}
 Contains 
 \be
-\item a {\tt PLUS} button that leads to Section~\ref{add_edit_page} with {\tt mode =
-  add}
-\item A radio button that allows one of the following options for State
+\item a {\tt PLUS} button that leads to Section~\ref{add_edit_page} 
+  with GET param TestID as null
+\item A radio button that allows one of the following options for State. 
+  It restricts tests displayed to those that have the selected state(s)
   \be
 \item Draft
-\item Dormant, Started, Terminated
+\item Dormant, Started, Terminated --- default 
 \item Archived
   \ee
 \item A table of existing tests, Table~\ref{tbl_home}. We display all valid
-  state/action pairs
+  state/action pairs. Note that clicking on an Action causes the corresponding
+  TestID to be sent as a GET parameter to the destination page.
 \ee
 
 \begin{table}[hb]
@@ -61,11 +60,13 @@ Contains
   {\bf ID} & {\bf Name} & {\bf State} & {\bf Action} & {\bf Details} \\ \hline \hline
   5 & Test0 & Draft & {\tt Edit, Delete} & Section~\ref{edit_test},
   ~\ref{del_test} \\ \hline 
-  10 & Test1 & Dormant & {\tt Start, Delete} &  Section~\ref{start_test},
-  ~\ref{del_test} \\ \hline 
-  20 & Test2 & Started & {\tt Terminate, Archive} & Section~\ref{stop_test} \\ \hline 
-  30 & Test3 & Terminated & {\tt Archive} & Section~\ref{archive_test} \\ \hline 
-  40 & Test4 & Archived & --- &  \\ \hline
+  10 & Test1 & Dormant & {\tt Edit, Start, Delete} &  
+  Section~\ref{edit_test}, ~\ref{start_test}, ~\ref{del_test} \\ \hline 
+  20 & Test2 & Started & {\tt Edit, Terminate, Archive} & 
+  Section~\ref{edit_test}, ~\ref{stop_test} ~\ref{archive_test} \\ \hline 
+  30 & Test3 & Terminated & {\tt View, Archive} & 
+  Section~\ref{view_test}, ~\ref{archive_test} \\ \hline 
+  40 & Test4 & Archived & {\tt View}  &  Section~\ref{edit_test} \\ \hline
 \hline
 \end{tabular}
 \caption{Home Page}
@@ -74,37 +75,58 @@ Contains
 
 %--------------------------------------------------------------
 
-\section{Navigations}
-We will navigate between pages as in Table~\ref{tbl_navigations}
-\begin{table}[hb]
-\centering
-\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
-  {\bf Page} & {\bf Next} & {\bf Previous} & {\bf Globals} \\ \hline
-  --- & --- & --- & --- \\ \hline
-\hline
-\end{tabular}
-\caption{Navigations}
-\label{tbl_navigations}
-\end{table}
-
 \section{Actions}
 \subsection{Edit Test}
 \label{edit_test}
-Leads to Section~\ref{add_edit_page} with {\tt mode = edit}
+Leads to Section~\ref{add_edit_page}
+
 \subsection{Start Test}
 \label{start_test}
+Changes state to start and returns to home page Section~\ref{home_page}
+
 \subsection{Stop Test}
 \label{stop_test}
+Leads to Section~\ref{add_edit_page} with GET param {\tt action = terminate}
+
 \subsection{Archive Test}
 \label{archive_test}
 
+Changes state to archived and returns to home page Section~\ref{home_page}
+
+\subsection{View Test}
+\label{view_test}
+Leads to Section~\ref{add_edit_page}
+
+\subsection{Delete Test}
+\label{del_test}
+
+Does a hard delete of the test after a confirmation pop-up
+and returns to home page Section~\ref{home_page}
+
+
 \section{Add/Edit Page}
 \label{add_edit_page}
+This page has the GET params
+\bd
+\item [TestID]
+\be
+\item If the TestID is null, then the mode is deemed to be ``add''
+\item If the TestID is not null, then 
+\be
+\item If state is draft, dormant or started, then mode is ``edit''
+\item If state is terminated or archived,then mode is ``view''
+\ee
+\ee
+\item [Action]
+One value for action is terminate
+\ed
+%---------------------------------------------
+The page has the following UI elements
 \be
 \item Text box for test name 
-\item Variant information consists of a table as in Table~\ref{tbl_page1}
+\item Text box for test description
+\item Variant information consists of a table as in Table~\ref{tbl_page_1}
 \item A {\bf Next} button, leading to Section~\ref{addnl_variant_info}
-\item A {\bf Home} button, leading to Section~\ref{home_page}
   \ee
 \begin{table}[hb]
 \centering
@@ -118,47 +140,62 @@ Leads to Section~\ref{add_edit_page} with {\tt mode = edit}
 \caption{Add/Edit Page}
 \label{tbl_page_1}
 \end{table}
- Depending on mode, this page behaves somewhat differently
+If Mode = View, nothing is editable. 
+Depending on Mode being Add or Edit, this page behaves somewhat differently as shown below.
+ However, in both of following cases, 
+ (i)  Test Description is editable text box
+ and (ii) Percentage is editable text box
  \subsection{Add Mode}
- \label{page1_add_mode}
+ \label{add_edit_page_add_mode}
  \bi
  \item Test Name is editable test box 
  \item ID column is NOT displayed
  \item Name is editable text box
- \item Percentage is editable text box
-   \ei
+\ei
  \subsection{Edit Mode}
- \label{page1_edit_mode}
+ \label{add_edit_page_edit_mode}
  \bi
  \item Test Name is read-only
- \item ID column is displayed
- \item Names is read-only
- \item Percentage is editable text box
+ \item ID column is displayed as read-only
+ \item Name is read-only
    \ei
 
+A few other notes
+\bi
+\item If TestType = AB, then the name of the first variant must be set to
+  Control and is {\bf never} editable.
+\item 
 If IsDeviceSpecific = true, then percentgae column is not displayed.
+\item If Action = terminate, then an additional column called ``Winner'' is
+displayed with radio buttons allowing the user to select any one variant as
+winner. In this case, {\tt Next} button leads to home page, after a confirmation
+pop-up.
+\ei
+%------------------------------------------------
+
 \section{Additional Variant Information}
 \label{addnl_variant_info}
-Looks exactly like Section~\ref{page1}
-with constraints of Section~\ref{page1_edit_mode} with differences as follows
+Looks exactly like Section~\ref{add_edit_page}
+with constraints of Section~\ref{add_edit_page_edit_mode} with differences as follows
 \be
-\item {\tt Next} leads to Section~\ref{XX}
+\item {\tt Next} leads to Section~\ref{filters} if TestType = AB. 
+Leads to Section~\ref{device_specific} if TestType = XY. 
 \item Each row has
 an {\tt Edit} button that creates a pop-up that allows user to view/edit 3 text
 fields
 \be
 \item Custom Data
-\item URL. Should not be editable if mode = edit and state = dormant
+\item URL. Should be editable only if state is draft or dormant.
 \item Description
 \ee
 \ee
 
 \section{Filters}
 \label{filters}
-This page is for use only when TestType = AB and state = draft
+This page is for use only when TestType = AB and state = draft or dormant
 \be
-\item {\bf Previous} leads to Section~\ref{XX}
-\item {\bf Next} leads to Section~\ref{XX}
+\item {\bf Previous} leads to Section~\ref{addnl_variant_info}
+\item {\bf Next} leads to Section~\ref{home_page}
 \item Table as in Section~\ref{tbl_filters}
   \ee
 \begin{table}[hb]
@@ -178,12 +215,12 @@ This page is for use only when TestType = AB and state = draft
 \end{table}
 
 \section{Device Specific Routing}
-\label{filters}
+\label{device_specific}
 This page is for use only when TestType = XY and State is draft, dormant,
 started
 \be
-\item {\bf Previous} leads to Section~\ref{XX}
-\item {\bf Next} leads to Section~\ref{XX}
+\item {\bf Previous} leads to Section~\ref{addnl_variant_info}
+\item {\bf Next} leads to Section~\ref{follow_on}
 \item Table as in Section~\ref{tbl_device_specific}
   \ee
 \begin{table}[hb]
@@ -205,12 +242,14 @@ started
 \end{table}
 
 \section{Follow On}
-This page is for use only when TestType = XY and State is draft.
+\label{follow_on}
+This page is for use only when TestType = XY and State is draft or dormant.
 \be
+\item Display the Channel of the test
 \item {\bf Clear}, which keeps us in same page but clears any radio button
   selection
-\item {\bf Previous} leads to Section~\ref{XX}
-\item {\bf Next} leads to Section~\ref{XX}
+\item {\bf Previous} leads to Section~\ref{device_specific}
+\item {\bf Next} leads to Section~\ref{home_page}
 \item If there are no candidates to follow, then message indicating {\bf No
   Tests to Follow}; else, table as in Table~\ref{tbl_follow_on}
   \ee
@@ -226,12 +265,6 @@ This page is for use only when TestType = XY and State is draft.
 \caption{Selecting a Follow On}
 \label{tbl_follow_on}
 \end{table}
-
-
-\section{Delete Test}
-\label{del_test}
-
-Does a hard delete of the test 
 
 
 \end{document}

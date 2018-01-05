@@ -1,1 +1,1 @@
-    $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
+    if ( !$rslt4 ) { throw new Exception("statement 4 failed"); }

@@ -120,7 +120,7 @@ CREATE TABLE test (
   test_type_id int(8) not null, -- 1 = test, 2 = XYTest
   pred_id int(8), -- can be null
   channel_id int(8),
-  description varchar(256) not null,
+  description varchar(256),
   is_dev_specific  boolean default false not null,
   seed bigint(22) not null default 0,
   external_id bigint not null default 0,
