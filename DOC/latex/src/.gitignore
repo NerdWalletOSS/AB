@@ -1,2 +1,9 @@
+.meta
 TEMP.*
+*.aux
+*.log
+*.out
+*.dvi
+*.ps
 *.pdf
+_*

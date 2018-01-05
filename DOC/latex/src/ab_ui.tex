@@ -1,0 +1,237 @@
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- User Interface}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Decision Sciences Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+
+\section{Introduction}
+
+\section{Global Variables}
+The UI maintains the following global variables. 
+\be
+\item Admin Name, Displayed at top of all pages
+\item TestType, can be AB or XY (for URL Router), 
+  Displayed at top of all pages
+\item Mode, can be Add, Edit, View
+\item State of test if Mode = Edit
+\item IsDeviceSpecific, boolean, default false
+\ee
+
+\section{Page 0}
+
+Decide TestType
+
+\section{Home Page}
+\label{home_page}
+Contains 
+\be
+\item a {\tt PLUS} button that leads to Section~\ref{add_edit_page} with {\tt mode =
+  add}
+\item A radio button that allows one of the following options for State
+  \be
+\item Draft
+\item Dormant, Started, Terminated
+\item Archived
+  \ee
+\item A table of existing tests, Table~\ref{tbl_home}. We display all valid
+  state/action pairs
+\ee
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf ID} & {\bf Name} & {\bf State} & {\bf Action} & {\bf Details} \\ \hline \hline
+  5 & Test0 & Draft & {\tt Edit, Delete} & Section~\ref{edit_test},
+  ~\ref{del_test} \\ \hline 
+  10 & Test1 & Dormant & {\tt Start, Delete} &  Section~\ref{start_test},
+  ~\ref{del_test} \\ \hline 
+  20 & Test2 & Started & {\tt Terminate, Archive} & Section~\ref{stop_test} \\ \hline 
+  30 & Test3 & Terminated & {\tt Archive} & Section~\ref{archive_test} \\ \hline 
+  40 & Test4 & Archived & --- &  \\ \hline
+\hline
+\end{tabular}
+\caption{Home Page}
+\label{tbl_home}
+\end{table}
+
+%--------------------------------------------------------------
+
+\section{Navigations}
+We will navigate between pages as in Table~\ref{tbl_navigations}
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Page} & {\bf Next} & {\bf Previous} & {\bf Globals} \\ \hline
+  --- & --- & --- & --- \\ \hline
+\hline
+\end{tabular}
+\caption{Navigations}
+\label{tbl_navigations}
+\end{table}
+
+\section{Actions}
+\subsection{Edit Test}
+\label{edit_test}
+Leads to Section~\ref{add_edit_page} with {\tt mode = edit}
+\subsection{Start Test}
+\label{start_test}
+\subsection{Stop Test}
+\label{stop_test}
+\subsection{Archive Test}
+\label{archive_test}
+
+\section{Add/Edit Page}
+\label{add_edit_page}
+\be
+\item Text box for test name 
+\item Variant information consists of a table as in Table~\ref{tbl_page1}
+\item A {\bf Next} button, leading to Section~\ref{addnl_variant_info}
+\item A {\bf Home} button, leading to Section~\ref{home_page}
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Number} &   {\bf ID} & {\bf Name} & {\bf Percentage} \\ \hline \hline
+  1 & --- & Control & 40  \\ \hline
+  2 & --- & Variant A & 30  \\ \hline
+  3 & --- & Variant B & 20  \\ \hline
+\hline
+\end{tabular}
+\caption{Add/Edit Page}
+\label{tbl_page_1}
+\end{table}
+ Depending on mode, this page behaves somewhat differently
+ \subsection{Add Mode}
+ \label{page1_add_mode}
+ \bi
+ \item Test Name is editable test box 
+ \item ID column is NOT displayed
+ \item Name is editable text box
+ \item Percentage is editable text box
+   \ei
+ \subsection{Edit Mode}
+ \label{page1_edit_mode}
+ \bi
+ \item Test Name is read-only
+ \item ID column is displayed
+ \item Names is read-only
+ \item Percentage is editable text box
+   \ei
+
+If IsDeviceSpecific = true, then percentgae column is not displayed.
+\section{Additional Variant Information}
+\label{addnl_variant_info}
+Looks exactly like Section~\ref{page1}
+with constraints of Section~\ref{page1_edit_mode} with differences as follows
+\be
+\item {\tt Next} leads to Section~\ref{XX}
+\item Each row has
+an {\tt Edit} button that creates a pop-up that allows user to view/edit 3 text
+fields
+\be
+\item Custom Data
+\item URL. Should not be editable if mode = edit and state = dormant
+\item Description
+\ee
+\ee
+
+\section{Filters}
+\label{filters}
+This page is for use only when TestType = AB and state = draft
+\be
+\item {\bf Previous} leads to Section~\ref{XX}
+\item {\bf Next} leads to Section~\ref{XX}
+\item Table as in Section~\ref{tbl_filters}
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Attribute} &   {\bf Value} & {\bf Checkbox} \\ \hline \hline
+  Platform & Desktop & \\ \hline
+  Platform & Tablet & \\ \hline
+  Platform & Mobile & \\ \hline
+  \hline
+  IsPaid & true & \\ \hline
+  IsPaid & false & \\ \hline
+\hline
+\end{tabular}
+\caption{Setting Filters}
+\label{tbl_filters}
+\end{table}
+
+\section{Device Specific Routing}
+\label{filters}
+This page is for use only when TestType = XY and State is draft, dormant,
+started
+\be
+\item {\bf Previous} leads to Section~\ref{XX}
+\item {\bf Next} leads to Section~\ref{XX}
+\item Table as in Section~\ref{tbl_device_specific}
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Variant Name} & 
+  {\bf Desktop} & 
+  {\bf Mobile iOS}  &
+  {\bf Mobile Android}  & 
+  {\bf Tablet iOS}  & 
+  Tablet {\bf Android}  &
+  Other \\ \hline \hline
+  V1 & 100  & 0   & 20 & 40 & 60 & 80 \\ \hline
+  V2 & 0    & 100 &  80 & 60 & 40 & 20 \\ \hline
+\hline
+\end{tabular}
+\caption{Device Specific Routing}
+\label{tbl_device_specific}
+\end{table}
+
+\section{Follow On}
+This page is for use only when TestType = XY and State is draft.
+\be
+\item {\bf Clear}, which keeps us in same page but clears any radio button
+  selection
+\item {\bf Previous} leads to Section~\ref{XX}
+\item {\bf Next} leads to Section~\ref{XX}
+\item If there are no candidates to follow, then message indicating {\bf No
+  Tests to Follow}; else, table as in Table~\ref{tbl_follow_on}
+  \ee
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Test ID } & {\bf Test Name} & {\bf Radio Button}\\ \hline 
+  10 & Test1 & \\ \hline
+  20 & Test2 & \\ \hline
+\hline
+\end{tabular}
+\caption{Selecting a Follow On}
+\label{tbl_follow_on}
+\end{table}
+
+
+\section{Delete Test}
+\label{del_test}
+
+Does a hard delete of the test 
+
+
+\end{document}
