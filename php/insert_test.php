@@ -1,6 +1,10 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "../test/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
+require_once 'chk_test_basic.php';
+require_once 'is_test_name_unique.php';
+require_once 'insert_row.php';
+require_once 'lkp.php';
+require_once 'make_seed.php';
 
 function insert_test(
   $test_name, // name of test, mandatory
@@ -11,6 +15,7 @@ function insert_test(
   &$test_id 
 )
 {
+  assert(chk_test_basic( $test_name, $test_type, $creator, $variant_names, $variant_percs, )); 
   $abtest_id = -1;
   $d_create =  $d_update = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
