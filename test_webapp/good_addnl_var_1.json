@@ -1,0 +1,8 @@
+{
+  "TestType": "ABTest",
+  "TestName": "T1",
+  "Variant": "Variant_A",
+  "CustomData": { "test" : "abc" },
+  "URL": "www.google.com",
+  "Description": "Description of Variant A"
+}

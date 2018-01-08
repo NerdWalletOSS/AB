@@ -105,7 +105,6 @@ function insert_test(
       throw new Exception("test name [$test_name] not unique");
     }
     $test_id = insert_row("test", $X1);
-    echo("XXXXXXX test_id = $test_id \n");
     $X2['test_id']  = $test_id;
     $X2['t_update'] = $t_update;
     $X2['d_update'] = $d_update;

@@ -7,7 +7,12 @@ function get_json(
   assert(isset($J));
   assert(isset($key));
   assert(isset($J->{$key}));
-  return $J->{$key};
+  if ( is_string($J->{$key}) )  {
+    return trim($J->{$key});
+  }
+  else {
+    return $J->{$key};
+  }
 }
 
 function make_boolean(

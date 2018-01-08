@@ -13,7 +13,7 @@ function db_get_rows(
     $sql .= " where $where_clause ";
   }
   $stmt = $dbh->prepare($sql);
-  print("db_get_rows: sql = $sql \n");
+  // print("db_get_rows: sql = $sql \n");
   $rslt = $stmt->execute(); if ( !$rslt ) { go_BYE(""); }
   $nR = $stmt->rowCount();
   if ( $nR == 0 ) { return null; }

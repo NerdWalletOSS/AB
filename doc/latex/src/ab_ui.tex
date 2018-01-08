@@ -24,13 +24,19 @@
 
 \section{Introduction}
 
-\section{Global Variables}
+\section{UI Guidelines}
+\subsection{Global Variables}
 The UI maintains the following global variables. 
 \be
 \item Admin Name, Displayed at top of all pages
 \item TestType, can be AB or XY (for URL Router), 
   Displayed at top of all pages
 \ee
+
+\subsection{Client side validation}
+Client-side validation is considered a ``nice-to-have'' as long as it does not
+overly complicate the code. All text-boxes will have some defaults for the
+maximum number of characters they will accept.
 
 \section{Login Page}
 
@@ -58,12 +64,12 @@ Contains
 \centering
 \begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
   {\bf ID} & {\bf Name} & {\bf State} & {\bf Action} & {\bf Details} \\ \hline \hline
-  5 & Test0 & Draft & {\tt Edit, Delete} & Section~\ref{edit_test},
+  5 & Test0 & Draft & {\tt Edit, Dormant, Delete} & Section~\ref{edit_test},
   ~\ref{del_test} \\ \hline 
   10 & Test1 & Dormant & {\tt Edit, Start, Delete} &  
   Section~\ref{edit_test}, ~\ref{start_test}, ~\ref{del_test} \\ \hline 
-  20 & Test2 & Started & {\tt Edit, Terminate, Archive} & 
-  Section~\ref{edit_test}, ~\ref{stop_test} ~\ref{archive_test} \\ \hline 
+  20 & Test2 & Started & {\tt Edit, Terminate} & 
+  Section~\ref{edit_test}, ~\ref{archive_test} \\ \hline 
   30 & Test3 & Terminated & {\tt View, Archive} & 
   Section~\ref{view_test}, ~\ref{archive_test} \\ \hline 
   40 & Test4 & Archived & {\tt View}  &  Section~\ref{edit_test} \\ \hline
@@ -80,9 +86,14 @@ Contains
 \label{edit_test}
 Leads to Section~\ref{add_edit_page}
 
+\subsection{Dormant Test}
+\label{start_test}
+Verifies that test is in good shape, changes state to dormant and returns to home page Section~\ref{home_page}
+
 \subsection{Start Test}
 \label{start_test}
-Changes state to start and returns to home page Section~\ref{home_page}
+Changes state to start and returns to home page Section~\ref{home_page} after a
+confirmation pop-up
 
 \subsection{Stop Test}
 \label{stop_test}
@@ -91,7 +102,8 @@ Leads to Section~\ref{add_edit_page} with GET param {\tt action = terminate}
 \subsection{Archive Test}
 \label{archive_test}
 
-Changes state to archived and returns to home page Section~\ref{home_page}
+Changes state to archived and returns to home page Section~\ref{home_page} after
+a confirmation pop-up
 
 \subsection{View Test}
 \label{view_test}
@@ -184,8 +196,10 @@ Leads to Section~\ref{device_specific} if TestType = XY.
 an {\tt Edit} button that creates a pop-up that allows user to view/edit 3 text
 fields
 \be
-\item Custom Data
-\item URL. Should be editable only if state is draft or dormant.
+\item Custom Data.
+  Should be displayed only if TestType = XY
+\item URL. Should be editable only if state is draft or dormant. 
+  Should be displayed only if TestType = XY
 \item Description
 \ee
 \ee
