@@ -1,10 +1,10 @@
 <?php
-function aux_check_name(
+function aux_chk_name(
     $name
 )
 {
   if ( !isset($name) ) { return false; }
-  if ( !is_string($name) { return false; }
+  if ( !is_string($name)) { return false; }
   if ( $name == "" ) { return false; }
   $X = str_split($name);
   for ( $i = 0; $i < count($X); $i++ ) { 
@@ -23,7 +23,7 @@ function chk_url_text(
 )
 {
   if ( !isset($url) ) { return false; }
-  if ( !is_string($url) { return false; }
+  if ( !is_string($url)) { return false; }
   if ( $url == "" ) { return false; }
   $valid_url_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=";
   $X = str_split($url);

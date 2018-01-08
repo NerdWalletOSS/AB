@@ -1,0 +1,18 @@
+{
+  "TestType": "ABTest",
+  "Creator": "joe",
+  "TestName": "T1",
+  "Variants": [{
+    "Name": "Control",
+    "Percentage": "50"
+  },
+  {
+    "Name": "Variant_A",
+    "Percentage": "30"
+  },
+  {
+    "Name": "Variant_B",
+    "Percentage": "20"
+  }
+  ]
+}

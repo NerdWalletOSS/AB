@@ -1,27 +1,78 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-require_once 'chk_test_basic.php';
 require_once 'is_test_name_unique.php';
 require_once 'insert_row.php';
 require_once 'lkp.php';
 require_once 'make_seed.php';
+require_once 'get_time_usec.php';
+require_once 'aux_chk_name.php';
+require_once 'aux.php';
 
 function insert_test(
-  $test_name, // name of test, mandatory
-  $test_type, // ABTest, XYTest
-  $creator,   // name of user who is creating test
-  $variant_names, // array: names of variants
-  $variant_percs, // array: percentages of variants
-  &$test_id 
+  $str_inJ
 )
 {
-  assert(chk_test_basic( $test_name, $test_type, $creator, $variant_names, $variant_percs, )); 
-  $abtest_id = -1;
+  $outJ['status'] = "error";
+  $outJ['stdout'] = "";
+  $outJ['stderr'] = "";
+  // START Check inputs
+  assert(isset($str_inJ));
+  assert(is_string($str_inJ));
+  $inJ = json_decode($str_inJ); assert(!is_null($inJ));
+  $test_name = get_json($inJ, 'TestName'); 
+  $test_type = get_json($inJ, 'TestType'); 
+  $creator   = get_json($inJ, 'Creator');
+  $variants  = get_json($inJ, 'Variants');
+  assert(is_array($variants));
+  $nV = count($variants);
+  assert($nV > 0 );
+
+  /*
+  if ( isset($test_dscr) ) {
+    assert(is_string($test_dscr));
+    assert(strlen($test_dscr) <= $GLOBALS['configs']['max_len_test_dscr'];
+  }
+   */
+  assert(aux_chk_name($test_name), "test name is invalid");
+  assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
+  $test_type_id = lkp("test_type", $test_type);
+  $creator_id   = lkp("admin", $creator);
+  $dormant_id   = lkp("state", "dormant");
+  $dormant_id   = lkp("state", "dormant");
+
+  $variant_names = array($nV);
+  $variant_percs = array($nV);
+  $vidx = 0;
+  foreach ( $variants as $v ) { 
+    $name = $v->{'Name'};
+    assert(isset($name));
+    $perc = $v->{'Percentage'};
+    assert(isset($perc));
+    assert(is_string($perc));
+    $perc = floatval($perc);
+    
+    $variant_names[$vidx] = $name;
+    $variant_percs[$vidx] = $perc;
+    $vidx++;
+  }
+  assert($nV >= lkp('configs', "min_num_variants"));
+  assert($nV <= lkp('configs', "max_num_variants"));
+  foreach ( $variant_names as $v ) {
+    assert(aux_chk_name($v), "variant name is invalid");
+    assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
+  }
+  foreach ( $variant_percs as $p ) {
+    assert(is_float($p), "percentage must be a number");
+    assert($p >=   0, "percentage must not be negative");
+    assert($p <= 100, "percentage cannot exceed 100");
+  }
+  // STOP Check inputs
+  //----------------------------------------------------
+  $test_id = -1;
   $d_create =  $d_update = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
-  $GLOBALS["err"] = "";
   $X1['name']         = $test_name;
-  $X1['test_type_id'] = lkp("test_type", $test_type);
+  $X1['test_type_id'] = $test_type_id;
   $X1['seed']         = make_seed();
   $X1['external_id']  = $t_create;
   $X1['d_create']     = $d_create;
@@ -29,14 +80,32 @@ function insert_test(
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
   $X1['creator_id']   = $creator_id;
-  $X1['state_id']     = lkp("state", "dormant");
+  $X1['state_id']     = $dormant_id;
+  //-----------------------------------------------
+  //-- In subsequent versions, we will allow user to pick $bin_type
+  //-- For now, following is hard coded
+  switch ( $test_type ) {
+  case "ABTest" :
+    $bin_type_id = lkp("bin_type", "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
+    break;
+  case "XYTest" :
+    $bin_type_id = lkp("bin_type", "free_for_all");
+    break;
+  default : 
+    assert(null, "Invalid test type $test_type");
+    break;
+  }
+  assert(isset($bin_type_id));
+  $X1['bin_type_id'] = $bin_type_id;
+  //-----------------------------------------------
+  $dbh = dbconn(); assert(isset($dbh)); 
   try {
     $dbh->beginTransaction();
-    if ( !is_test_name_unique($test_name) ) {
+    if ( !is_test_name_unique($test_name, $test_type) ) {
       throw new Exception("test name [$test_name] not unique");
     }
-    insert_row("test", $X1);
-    $test_id = $dbh->lastInsertId();
+    $test_id = insert_row("test", $X1);
+    echo("XXXXXXX test_id = $test_id \n");
     $X2['test_id']  = $test_id;
     $X2['t_update'] = $t_update;
     $X2['d_update'] = $d_update;
@@ -55,5 +124,7 @@ function insert_test(
     return false;
   }
   //------------------------------------------
-  return true;
+  $outJ["status"] = "ok";
+  $outJ["test_id"] = $test_id;
+  return $outJ;
 }

@@ -84,6 +84,19 @@ insert into state values (NULL, 'started');
 insert into state values (NULL, 'terminated'); 
 insert into state values (NULL, 'archived'); 
 
+DROP TABLE IF EXISTS bin_type; -- load in LoadDBConfigs
+CREATE TABLE bin_type (
+  id int(8) not null auto_increment,
+  name varchar(64) not null,
+  PRIMARY KEY (id),
+  CONSTRAINT uq_name UNIQUE (name)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
+
+insert into bin_type values (NULL, 'free_for_all'); 
+insert into bin_type values (NULL, 'memory_c_to_v_ok'); 
+insert into bin_type values (NULL, 'memory_no_changes'); 
+insert into bin_type values (NULL, 'c_to_v_ok_v_to_c_ok_v_to_v_not_ok'); 
+
 DROP TABLE IF EXISTS test_type; -- load in LoadDBConfigs
 CREATE TABLE test_type (
   id int(8) not null auto_increment,
@@ -92,7 +105,7 @@ CREATE TABLE test_type (
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
-insert into test_type values (NULL, 'test'); 
+insert into test_type values (NULL, 'ABTest'); 
 insert into test_type values (NULL, 'XYTest'); 
 
 DROP TABLE IF EXISTS device; -- load in LoadDBConfigs
@@ -117,7 +130,8 @@ DROP TABLE IF EXISTS test;
 CREATE TABLE test (
   id int(8) not null auto_increment,
   name varchar(128) not null,
-  test_type_id int(8) not null, -- 1 = test, 2 = XYTest
+  test_type_id int(8) not null, 
+  bin_type_id int(8) not null, -- 
   pred_id int(8), -- can be null
   channel_id int(8),
   description varchar(256),
@@ -135,6 +149,7 @@ CREATE TABLE test (
   CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES state(id),
   CONSTRAINT fk_channel_id FOREIGN KEY (channel_id) REFERENCES channel(id),
   CONSTRAINT fk_test_type_id FOREIGN KEY (test_type_id) REFERENCES test_type(id),
+  CONSTRAINT fk_bin_type_id FOREIGN KEY (bin_type_id) REFERENCES bin_type(id),
   CONSTRAINT fk_pred_id FOREIGN KEY (pred_id) REFERENCES test(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
@@ -215,8 +230,8 @@ CREATE TABLE config (
   CONSTRAINT uq_config UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
-insert into config values(NULL, 'default_landing_page', 'www.nerdwallet.com')
-insert into config values(NULL, 'check_url_reachable', 'true')
+insert into config values(NULL, 'default_landing_page', 'www.nerdwallet.com');
+insert into config values(NULL, 'check_url_reachable', 'true');
 insert into config values(NULL, 'num_retries',         '10');
 insert into config values(NULL, 'max_len_admin_name',  '31');
 insert into config values(NULL, 'max_len_channel_name','15');

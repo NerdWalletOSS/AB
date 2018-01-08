@@ -1,4 +1,5 @@
 <?php  
+require_once 'aux.php';
 function load_configs(
   $conf_file = "/opt/abadmin/db.json",
   $reload=false
@@ -78,84 +79,24 @@ function load_configs(
       }
   }
   //----------------------------------------
-  $check_url_reachable = $X->{"check_url_reachable"};
-  if ( $check_url_reachable != "" ) { 
-    if ( ( $check_url_reachable != "true" ) && ( $check_url_reachable != "false" ) ) {
-      debug_print_backtrace(); return null;
-    }
-  }
+  $C['dbhost'] = $dbhost; 
+  $C['dbname'] = $dbname; 
+  $C['dbuser'] = $dbuser; 
+  $C['dbpass'] = $dbpass; 
+  $C['server'] = $server; 
+  $C['port']   = $port; 
   //----------------------------------------
-  $webapp_server = "";
-  $webapp_port   = "";
-  if( isset( $X->{"webapp_server"}) ) { 
-    $webapp_server = $X->{"webapp_server"};
-    if ( $webapp_server != "" ) { 
-      $webapp_port = $X->{"webapp_port"};
-      if ( ( is_null($webapp_port) ) || ( $webapp_port == "" ) || 
-        ( !is_numeric($webapp_port) ) || ( $webapp_port <= 0 ) ) {
-          debug_print_backtrace(); return null;
-        }
-    }
+  unset($X);
+  $X = db_get_rows("config");
+  assert(isset($X));
+  foreach ( $X as $x ) {
+    $C[$x['name']] = $x['value'];
   }
-  //----------------------------------------
-  $log_server = "";
-  $log_port   = "";
-  if ( isset($X->{"ab_log_server"}) ) { 
-    $log_server = trim($X->{"ab_log_server"});
-    if ( $log_server != "" ) { 
-      $log_port = trim($X->{"ab_log_port"});
-      if ( ( is_null($log_port) ) || ( $log_port == "" ) || 
-        ( !is_numeric($log_port) ) || ( $log_port <= 0 ) ) {
-          debug_print_backtrace(); return null;
-        }
-    }
+  foreach ( $C as $c ) {
+    $C['check_url_reachable'] = make_boolean($C['check_url_reachable']);
+    $C['num_retries        '] = make_pos_int($C['num_retries']);
   }
-  //----------------------------------------
-  if ( ( $port > 0 ) && ( $log_port > 0 ) )  {
-    if ( $port == $log_port ) { debug_print_backtrace(); return null; }
-  }
-  if ( ( $port > 0 ) && ( $webapp_port > 0 ) )  {
-    if ( $port == $webapp_port ) { debug_print_backtrace(); return null; }
-  }
-  //----------------------------------------
-  $default_landing_page = $X->{"default_landing_page"};
-  $log_requests = "";
-  if ( isset($X->{"log_requests"}) ) { 
-    $log_requests = $X->{"log_requests"};
-  }
-  //----------------------------------------
-  $GLOBALS['CONFIGS'] = array(
-    'dbhost' => $dbhost, 
-    'dbname' => $dbname, 
-    'dbuser' => $dbuser, 
-    'dbpass' => $dbpass, 
-    'num_retries' => 10,
-    'log_server' => $log_server, 
-    'log_port' => $log_port,
-    'webapp_server' => $webapp_server, 
-    'webapp_port' => $webapp_port,
-    'rts_finder_server' => $rts_finder_server, 
-    'rts_finder_port' => $rts_finder_port,
-    'server' => $server, 
-    'port' => $port,
-    'check_url_reachable' => $check_url_reachable,
-    'log_requests' => $log_requests,
-    'default_landing_page' => $default_landing_page,
-    'max_len_admin_name' => 31,
-    'max_len_channel_name' => 15,
-    'max_len_cat_attr' => 15,
-    'max_len_cat_attr_val' => 15,
-    'max_len_regex' => 1023, // HARD CODED
-    'max_num_devices' => 8, // HARD CODED 
-    'max_num_tests' => 1024, // HARD CODED 
-    'min_num_variants' => 2, // HARD CODED
-    'max_num_variants' => 8, // HARD CODED
-    'max_len_custom_data' => 2047, // HARD CODED
-    'max_len_test_name' => 127, // HARD CODED
-    'max_len_test_dscr' => 255, // HARD CODED. Not used by RTS
-    'max_len_variant_name' => 31, // HARD CODED
-    'max_len_variant_dscr' => 255 // HARD CODED
-  );
+  $GLOBALS['configs'] = $C;
   return true;
 }
 ?>

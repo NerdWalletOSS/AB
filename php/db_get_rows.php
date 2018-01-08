@@ -1,4 +1,5 @@
 <?php
+require_once 'dbconn.php';
 function db_get_rows(
   $tbl,
   $where_clause=""
