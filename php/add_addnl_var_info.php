@@ -1,15 +1,12 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-/*
-require_once 'is_test_name_unique.php';
-require_once 'lkp.php';
-require_once 'make_seed.php';
-require_once 'get_time_usec.php';
- */
 require_once 'aux.php';
 require_once 'db_get_test.php';
-require_once 'mod_row.php';
+require_once 'mod_cell.php';
 require_once 'db_get_variant.php';
+require_once 'lkp.php';
+require_once 'chk_url.php';
+require_once 'aux_chk_name.php';
 
 function add_addnl_var_info(
   $str_inJ
@@ -37,14 +34,19 @@ function add_addnl_var_info(
   assert($v, "No variant [$variant] for test [$test_name] of type [$test_type]");
   $vid = $v['id'];
 
-  mod_row("variant", "description", $description, "id = $vid");
+  mod_cell("variant", "description", $description, "id = $vid");
   switch ( $test_type ) { 
   case "ABTest" :
     $custom_data_str = json_encode($custom_data);
-    mod_row("variant", "custom_data", $custom_data_str, "id = $vid");
+    mod_cell("variant", "custom_data", $custom_data_str, "id = $vid");
     break;
   case "XYTest" :
-    mod_row("variant", "url", $url, "id = $vid");
+    assert(chk_url_text($url), "Bad URL [$url]\n");
+    $is_chk = lkp('configs', "check_url_reachable");
+    if ( $is_chk ) { 
+      assert(chk_url($url), "URL [$url] not reachable\n");
+    }
+    mod_cell("variant", "url", $url, "id = $vid\n");
     break;
   default : 
     assert(null, "Invalid test_type $test_type");

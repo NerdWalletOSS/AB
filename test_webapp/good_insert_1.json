@@ -1,5 +1,6 @@
 {
   "TestType": "ABTest",
+  "TestDescription": "some bogus description",
   "Creator": "joe",
   "TestName": "T1",
   "Variants": [{

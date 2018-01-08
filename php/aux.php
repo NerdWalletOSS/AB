@@ -40,4 +40,35 @@ function make_pos_int(
   assert($outval > 0 );
   return $outval;
 }
+function is_unique(
+  $X
+)
+{
+  assert(isset($X));
+  assert(is_array($X));
+  assert(count($X) > 0 );
+  for ( $i = 0; $i < count($X); $i++ ) { 
+    for ( $j = $i+1; $j < count($X); $j++ ) { 
+      assert($X[$i] != $X[$j]);
+    }
+  }
+  return true;
+}
+function is_good_percs(
+  $X
+)
+{
+  assert(isset($X));
+  assert(is_array($X));
+  assert(count($X) > 0 );
+  $sum = 0;
+  for ( $i = 0; $i < count($X); $i++ ) { 
+    assert(is_float($X[$i]));
+    assert($X[$i] >= 0 );
+    assert($X[$i] <= 100 );
+    $sum += $X[$i];
+  }
+  assert($sum = 100);
+  return true;
+}
 ?>

@@ -143,9 +143,11 @@ CREATE TABLE test (
   d_update datetime not null,-- redundant but thats OK
   t_update bigint not null default 0,
   creator_id int(8) not null, 
+  updater_id int(8) not null, 
   state_id int(8) not null, -- initial value is "draft"
   PRIMARY KEY (id),
-  CONSTRAINT fk_admin_id FOREIGN KEY (creator_id) REFERENCES admin(id),
+  CONSTRAINT fk_crtr_id FOREIGN KEY (creator_id) REFERENCES admin(id),
+  CONSTRAINT fk_updtr_id FOREIGN KEY (updater_id) REFERENCES admin(id),
   CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES state(id),
   CONSTRAINT fk_channel_id FOREIGN KEY (channel_id) REFERENCES channel(id),
   CONSTRAINT fk_test_type_id FOREIGN KEY (test_type_id) REFERENCES test_type(id),
