@@ -5,14 +5,17 @@
   "TestName": "T1",
   "TestID": "",
   "Variants": [{
+    "ID": "100",
     "Name": "Control",
     "Percentage": "50"
   },
   {
+    "ID": "200",
     "Name": "Variant_A",
     "Percentage": "30"
   },
   {
+    "ID": "300",
     "Name": "Variant_B",
     "Percentage": "20"
   }

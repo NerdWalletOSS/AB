@@ -84,6 +84,7 @@ function update_test_basic(
   $t = db_get_test($test_id);
   assert($t, "No test [$test_name] of type [$test_type]");
   $state = lkp("state", $t['state_id'], true); //reverse lkp
+  assert(( $state != "terminated" ) && ( $state != "archived" ) );
 
   $d_update = get_date(); 
   $t_update = get_time_usec(); 
@@ -106,8 +107,8 @@ function update_test_basic(
     //-------------------------------------------------------
     for ( $i = 0; $i < $nV; $i++ ) { 
       $X2['percentage']  = $variant_percs[$i];
-      // Can change some stuff only when dormant 
-      if ( $state == "dormant" ) { 
+      // Can change some stuff only when draft 
+      if ( $state == "draft" ) { 
         $X2['name']        = $variant_names[$i];
       }
       mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
