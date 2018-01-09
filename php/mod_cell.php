@@ -1,4 +1,6 @@
 <?php
+require_once "dbconn.php";
+
 function mod_cell(
   $tbl,
   $field,
@@ -12,9 +14,13 @@ function mod_cell(
   $sql  = "update $tbl set $field = :$field ";
   $sql .= " where $where_clause ";
   $X[$field] = $val;
+  var_dump($sql);
+  var_dump($X);
   $stmt = $dbh->prepare($sql);
   $rslt = $stmt->execute($X); assert($rslt );
-  $pk = $dbh->lastInsertId();
-  return $pk;
+  return true;
 }
+/*
+mod_cell("variant", "description", "ABC", " description is NULL ");
+ */
 ?>

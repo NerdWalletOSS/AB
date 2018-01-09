@@ -14,6 +14,16 @@ CREATE TABLE admin (
 insert into admin values (NULL, 'joe'); 
 insert into admin values (NULL, 'blow'); 
 
+DROP TABLE IF EXISTS cat_attr; -- load in LoadDBConfigs
+CREATE TABLE cat_attr (
+  id int(8) not null auto_increment,
+  name varchar(16) not null,
+  description varchar(128),
+  is_del int(2) not null default 0, -- for soft deletes
+  PRIMARY KEY (id),
+  CONSTRAINT uq_name UNIQUE (name)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
+
 
 DROP TABLE IF EXISTS cat_attr; -- load in LoadDBConfigs
 CREATE TABLE cat_attr (

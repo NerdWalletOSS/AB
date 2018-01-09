@@ -66,7 +66,7 @@ function insert_test(
     assert($p <= 100, "percentage cannot exceed 100");
   }
   assert(is_unique($variant_names));
-  assert(is_good_percs($percentages));
+  assert(is_good_percs($variant_percs));
   // STOP Check inputs
   //----------------------------------------------------
   $test_id = -1;
@@ -82,6 +82,7 @@ function insert_test(
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
   $X1['creator_id']   = $creator_id;
+  $X1['updater_id']   = $creator_id;
   $X1['state_id']     = $dormant_id;
   //-----------------------------------------------
   //-- In subsequent versions, we will allow user to pick $bin_type

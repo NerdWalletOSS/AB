@@ -13,7 +13,7 @@ function make_lkp($tbl)
     $reverse_X[$id] = $name;
   }
   $GLOBALS[$tbl] = $X;
-  $GLOBALS["reverse_" .. $tbl] = $reverse_X;
+  $GLOBALS["reverse_" . $tbl] = $reverse_X;
 }
 //------------------------------------------
 function load_globals()

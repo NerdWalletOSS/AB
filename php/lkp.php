@@ -11,7 +11,7 @@ lkp(
 )
 {
   if ( $reverse ) { 
-    $tbl = "reverse_" .. $tbl; 
+    $tbl = "reverse_" . $tbl; 
   }
   if ( !isset($tbl) ) { 
     assert(null, "Table $tbl not specified"); 
