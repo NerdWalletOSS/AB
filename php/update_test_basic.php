@@ -91,24 +91,10 @@ function update_test_basic(
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
   $X1['updater_id']   = $updater_id;
-  $X1['name']         = $test_name;
 
-  // Can change some stuff only when dormant 
-  if ( $state == "dormant" ) { 
+  // Can change some stuff only when draft
+  if ( $state == "draft" ) { 
     $X1['name']         = $test_name;
-    switch ( $test_type ) {
-    case "ABTest" :
-      $bin_type_id = lkp("bin_type", "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
-      break;
-    case "XYTest" :
-      $bin_type_id = lkp("bin_type", "free_for_all");
-      break;
-    default : 
-      assert(null, "Invalid test type $test_type");
-      break;
-      assert(isset($bin_type_id));
-      $X1['bin_type_id'] = $bin_type_id;
-    }
   }
   //-----------------------------------------------
   $dbh = dbconn(); assert(isset($dbh)); 

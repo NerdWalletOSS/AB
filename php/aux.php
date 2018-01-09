@@ -61,6 +61,11 @@ function is_good_percs(
   assert(isset($X));
   assert(is_array($X));
   assert(count($X) > 0 );
+  foreach ( $X as $p ) {
+    assert(is_float($p), "percentage must be a number");
+    assert($p >=   0, "percentage must not be negative");
+    assert($p <= 100, "percentage cannot exceed 100");
+  }
   $sum = 0;
   for ( $i = 0; $i < count($X); $i++ ) { 
     assert(is_float($X[$i]));

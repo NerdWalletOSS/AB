@@ -3,6 +3,7 @@
   "TestDescription": "some bogus description",
   "Creator": "joe",
   "TestName": "T1",
+  "TestID": "",
   "Variants": [{
     "Name": "Control",
     "Percentage": "50"

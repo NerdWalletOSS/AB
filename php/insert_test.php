@@ -34,6 +34,9 @@ function insert_test(
   }
   assert(aux_chk_name($test_name), "test name is invalid");
   assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
+  assert(is_test_name_unique($test_name, $test_type), 
+    "test name [$test_name] not unique");
+
   $test_type_id = lkp("test_type", $test_type);
   $creator_id   = lkp("admin", $creator);
   $dormant_id   = lkp("state", "dormant");
@@ -59,11 +62,6 @@ function insert_test(
   foreach ( $variant_names as $v ) {
     assert(aux_chk_name($v), "variant name is invalid");
     assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
-  }
-  foreach ( $variant_percs as $p ) {
-    assert(is_float($p), "percentage must be a number");
-    assert($p >=   0, "percentage must not be negative");
-    assert($p <= 100, "percentage cannot exceed 100");
   }
   assert(is_unique($variant_names));
   assert(is_good_percs($variant_percs));
@@ -104,9 +102,6 @@ function insert_test(
   $dbh = dbconn(); assert(isset($dbh)); 
   try {
     $dbh->beginTransaction();
-    if ( !is_test_name_unique($test_name, $test_type) ) {
-      throw new Exception("test name [$test_name] not unique");
-    }
     $test_id = insert_row("test", $X1);
     $X2['test_id']  = $test_id;
     $X2['t_update'] = $t_update;
@@ -127,6 +122,7 @@ function insert_test(
   }
   //------------------------------------------
   $outJ["status"] = "ok";
+  $outJ["stdout"] = "Created test $test_name";
   $outJ["test_id"] = $test_id;
   return $outJ;
 }
