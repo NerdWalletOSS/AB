@@ -6,7 +6,8 @@ function rs_assert(
 )
 {
   if ( empty($val) ) {
-    debug_print_backtrace();
+    $x = json_encode(debug_backtrace());
+    header("Error-BackTrace: " . nl2br($x));
     header("Error-Message: " . nl2br($err));
     header("Error-Code: " . $code);
     ob_flush();
