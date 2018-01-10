@@ -21,7 +21,7 @@ function update_test_basic(
   $test_name = get_json($inJ, 'TestName'); 
   $test_type = get_json($inJ, 'TestType'); 
   $test_dscr = get_json($inJ, 'TestDescription'); 
-  $updater   = get_json($inJ, 'updater');
+  $updater   = get_json($inJ, 'Updater');
   $variants  = get_json($inJ, 'Variants');
   assert(is_array($variants));
   $nV = count($variants);
@@ -37,7 +37,6 @@ function update_test_basic(
   assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
   $test_type_id = lkp("test_type", $test_type);
   $updater_id   = lkp("admin", $updater);
-  $dormant_id   = lkp("state", "dormant");
 
   $variant_ids   = array($nV);
   $variant_names = array($nV);
@@ -64,21 +63,9 @@ function update_test_basic(
     $variant_percs[$vidx] = $perc;
     $vidx++;
   }
-  assert(is_unique($variant_names));
-  
-  foreach ( $variant_names as $v ) {
-    assert(aux_chk_name($v), "variant name is invalid");
-    assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
-  }
-  foreach ( $variant_percs as $p ) {
-    assert(is_float($p), "percentage must be a number");
-    assert($p >=   0, "percentage must not be negative");
-    assert($p <= 100, "percentage cannot exceed 100");
-  }
-  assert(is_good_percs($percentages));
-
-  assert(is_test_name_unique($test_name, $test_type), 
-    "test name [$test_name] not unique");
+  assert(is_good_variants($variant_names));
+  assert(is_good_percs($variant_percs));
+  assert(is_good_test_name($test_name, $test_type, $test_id));
   // STOP Check inputs
   //----------------------------------------------------
   $t = db_get_test($test_id);
@@ -92,11 +79,7 @@ function update_test_basic(
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
   $X1['updater_id']   = $updater_id;
-
-  // Can change some stuff only when draft
-  if ( $state == "draft" ) { 
-    $X1['name']         = $test_name;
-  }
+  $X1['name']         = $test_name;
   //-----------------------------------------------
   $dbh = dbconn(); assert(isset($dbh)); 
   try {

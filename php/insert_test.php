@@ -16,9 +16,14 @@ function insert_test(
   $outJ['stdout'] = "";
   $outJ['stderr'] = "";
   // START Check inputs
-  assert(isset($str_inJ));
-  assert(is_string($str_inJ));
-  $inJ = json_decode($str_inJ); assert(!is_null($inJ));
+  if ( empty($str_inJ) ) { 
+    $_SESSION['stderr'] = "No input provided";
+    $_SESSION['loc'] = __FILE__ . ":" . __LINE__;
+    goto ERR;
+  }
+  rs_assert($str_inJ, "no input provided", 403);
+  rs_assert(is_string($str_inJ), "input not string", 403);
+  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $test_name = get_json($inJ, 'TestName'); 
   $test_type = get_json($inJ, 'TestType'); 
   $test_dscr = get_json($inJ, 'TestDescription'); 
@@ -32,15 +37,11 @@ function insert_test(
     assert(is_string($test_dscr));
     assert(strlen($test_dscr) <= lkp("configs", "max_len_test_dscr"));
   }
-  assert(aux_chk_name($test_name), "test name is invalid");
-  assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
-  assert(is_test_name_unique($test_name, $test_type), 
-    "test name [$test_name] not unique");
+  rs_assert(is_good_test_name($test_name, $test_type))
 
   $test_type_id = lkp("test_type", $test_type);
   $creator_id   = lkp("admin", $creator);
-  $dormant_id   = lkp("state", "dormant");
-  $dormant_id   = lkp("state", "dormant");
+  $draft_id     = lkp("state", "draft");
 
   $variant_names = array($nV);
   $variant_percs = array($nV);
@@ -57,13 +58,7 @@ function insert_test(
     $variant_percs[$vidx] = $perc;
     $vidx++;
   }
-  assert($nV >= lkp('configs', "min_num_variants"));
-  assert($nV <= lkp('configs', "max_num_variants"));
-  foreach ( $variant_names as $v ) {
-    assert(aux_chk_name($v), "variant name is invalid");
-    assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
-  }
-  assert(is_unique($variant_names));
+  assert(is_good_variants($variant_names));
   assert(is_good_percs($variant_percs));
   // STOP Check inputs
   //----------------------------------------------------
@@ -81,7 +76,7 @@ function insert_test(
   $X1['t_update']     = $t_update;
   $X1['creator_id']   = $creator_id;
   $X1['updater_id']   = $creator_id;
-  $X1['state_id']     = $dormant_id;
+  $X1['state_id']     = $draft_id;
   //-----------------------------------------------
   //-- In subsequent versions, we will allow user to pick $bin_type
   //-- For now, following is hard coded
@@ -99,6 +94,7 @@ function insert_test(
   assert(isset($bin_type_id));
   $X1['bin_type_id'] = $bin_type_id;
   //-----------------------------------------------
+  $dbh = new_assert(dbconn(), 403, "unable to talk to DB");
   $dbh = dbconn(); assert(isset($dbh)); 
   try {
     $dbh->beginTransaction();
@@ -125,4 +121,6 @@ function insert_test(
   $outJ["stdout"] = "Created test $test_name";
   $outJ["test_id"] = $test_id;
   return $outJ;
+  ERR:
+    return null;
 }

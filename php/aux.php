@@ -61,6 +61,9 @@ function is_good_percs(
   assert(isset($X));
   assert(is_array($X));
   assert(count($X) > 0 );
+  $nX = count($X);
+  assert($nX >= lkp('configs', "min_num_variants"));
+  assert($nX <= lkp('configs', "max_num_variants"));
   foreach ( $X as $p ) {
     assert(is_float($p), "percentage must be a number");
     assert($p >=   0, "percentage must not be negative");
@@ -75,5 +78,51 @@ function is_good_percs(
   }
   assert($sum = 100);
   return true;
+}
+function is_good_variants(
+  $V
+)
+{
+  assert(isset($V));
+  assert(is_array($V));
+  assert(count($V) > 0 );
+  $nV = count($V);
+  assert($nV >= lkp('configs', "min_num_variants"));
+  assert($nV <= lkp('configs', "max_num_variants"));
+  assert(is_unique($V));
+  foreach ( $V as $v ) {
+    assert(aux_chk_name($v), "variant name is invalid");
+    assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
+  }
+}
+function is_good_test_name(
+  $test_name, 
+  $test_type,
+  $test_id = -1
+)
+{
+  assert(aux_chk_name($test_name), "test name is invalid");
+  assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
+  assert(is_test_name_unique($test_name, $test_type, $test_id), 
+  "test name [$test_name] not unique");
+  return true;
+}
+function is_test_name_unique(
+  $test_name,
+  $test_type
+)
+{
+  $test_type_id = lkp("test_type", $test_type);
+  $archived_id  = lkp("state", "archived");
+  $where_clause  = " name = '$test_name' and ";
+  $where_clause .= " state_id != $archived_id and ";
+  $where_clause .= " test_type_id = $test_type_id ";
+  $R = db_get_rows("test", $where_clause);
+  if ( is_null($R)) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 ?>
