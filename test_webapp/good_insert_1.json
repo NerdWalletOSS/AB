@@ -7,17 +7,20 @@
   "Variants": [{
     "ID": "100",
     "Name": "Control",
-    "Percentage": "50"
+    "Percentage": "50",
+    "URL": "www.google.com"
   },
   {
     "ID": "200",
     "Name": "Variant_A",
-    "Percentage": "30"
+    "Percentage": "30",
+    "URL": "www.yahoo.com"
   },
   {
     "ID": "300",
     "Name": "Variant_B",
-    "Percentage": "20"
+    "Percentage": "20",
+    "URL": "www.cnn.com"
   }
   ]
 }

@@ -41,6 +41,7 @@ function update_test_basic(
   $variant_ids   = array($nV);
   $variant_names = array($nV);
   $variant_percs = array($nV);
+  $variant_urls  = array($nV);
   $vidx = 0;
   foreach ( $variants as $v ) { 
     $vname = $v->{'Name'};
@@ -58,12 +59,19 @@ function update_test_basic(
     assert(is_string($perc));
     $perc = floatval($perc);
     
+    $url = $v->{'URL'};
+    assert(isset($url));
+    assert(is_string($url));
+
     $variant_names[$vidx] = $vname;
     $variant_ids[$vidx]   = $vid;
     $variant_percs[$vidx] = $perc;
+    $variant_urls[$vidx]  = $url;
+
     $vidx++;
   }
   assert(is_good_variants($variant_names));
+  assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
   assert(is_good_test_name($test_name, $test_type, $test_id));
   // STOP Check inputs
@@ -91,8 +99,11 @@ function update_test_basic(
     for ( $i = 0; $i < $nV; $i++ ) { 
       $X2['percentage']  = $variant_percs[$i];
       // Can change some stuff only when draft 
-      if ( $state == "draft" ) { 
+      if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
         $X2['name']        = $variant_names[$i];
+        if ( $test_type == "XYTest" ) {
+          $X2['url']        = $variant_urls[$i];
+        }
       }
       mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
     }

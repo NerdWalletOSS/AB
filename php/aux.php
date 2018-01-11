@@ -1,4 +1,8 @@
 <?php
+require 'chk_url.php';
+require 'aux_chk_name.php';
+require 'rs_assert.php';
+
 function get_json(
   $J,
   $key
@@ -94,6 +98,7 @@ function is_good_variants(
     assert(aux_chk_name($v), "variant name is invalid");
     assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
   }
+  return true;
 }
 function is_good_test_name(
   $test_name, 
@@ -101,9 +106,9 @@ function is_good_test_name(
   $test_id = -1
 )
 {
-  assert(aux_chk_name($test_name), "test name is invalid");
-  assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
-  assert(is_test_name_unique($test_name, $test_type, $test_id), 
+  rs_assert(aux_chk_name($test_name), "test name is invalid");
+  rs_assert(strlen($test_name) <= lkp("configs", "max_len_test_name"));
+  rs_assert(is_test_name_unique($test_name, $test_type, $test_id), 
   "test name [$test_name] not unique");
   return true;
 }
@@ -124,5 +129,29 @@ function is_test_name_unique(
   else {
     return false;
   }
+}
+
+function is_good_urls(
+  $U
+)
+{
+  assert(isset($U));
+  assert(is_array($U));
+  assert(count($U) > 0 );
+
+  $nU = count($U);
+  var_dump($U);
+  assert($nU >= lkp('configs', "min_num_variants"));
+  assert($nU <= lkp('configs', "max_num_variants"));
+  assert(is_unique($U));
+  foreach ( $U as $u ) {
+    assert(strlen($u) <= lkp("configs", "max_len_url"));
+    assert(chk_url_text($u), "Bad URL [$u]\n");
+    $is_chk = lkp('configs', "check_url_reachable");
+    if ( $is_chk ) { 
+      assert(chk_url($url), "URL [$u] not reachable\n");
+    }
+  }
+  return true;
 }
 ?>

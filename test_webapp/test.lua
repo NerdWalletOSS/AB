@@ -26,8 +26,10 @@ c = cURL.easy{
   post       = true,
 
   postfields = JSON:encode(T),
+  -- postfields = '{"phello": "pworld"}';
+  -- postfields = 'abc=123&def=456';
   httpheader = {
-    "Content-Type: application/text";
+    "Content-Type: application/json";
   };
   writefunction  = snarf_body,
   headerfunction = snarf_headers,

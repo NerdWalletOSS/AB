@@ -1,6 +1,5 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-require_once 'is_test_name_unique.php';
 require_once 'insert_row.php';
 require_once 'lkp.php';
 require_once 'make_seed.php';
@@ -16,14 +15,9 @@ function insert_test(
   $outJ['stdout'] = "";
   $outJ['stderr'] = "";
   // START Check inputs
-  if ( empty($str_inJ) ) { 
-    $_SESSION['stderr'] = "No input provided";
-    $_SESSION['loc'] = __FILE__ . ":" . __LINE__;
-    goto ERR;
-  }
-  rs_assert($str_inJ, "no input provided", 403);
-  rs_assert(is_string($str_inJ), "input not string", 403);
-  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
+  assert(!empty($str_inJ));
+  assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
   $test_name = get_json($inJ, 'TestName'); 
   $test_type = get_json($inJ, 'TestType'); 
   $test_dscr = get_json($inJ, 'TestDescription'); 
@@ -37,7 +31,7 @@ function insert_test(
     assert(is_string($test_dscr));
     assert(strlen($test_dscr) <= lkp("configs", "max_len_test_dscr"));
   }
-  rs_assert(is_good_test_name($test_name, $test_type))
+  assert(is_good_test_name($test_name, $test_type));
 
   $test_type_id = lkp("test_type", $test_type);
   $creator_id   = lkp("admin", $creator);
@@ -45,20 +39,30 @@ function insert_test(
 
   $variant_names = array($nV);
   $variant_percs = array($nV);
+  $variant_urls  = array($nV);
   $vidx = 0;
   foreach ( $variants as $v ) { 
     $name = $v->{'Name'};
     assert(isset($name));
+    assert(is_string($name));
+
     $perc = $v->{'Percentage'};
     assert(isset($perc));
     assert(is_string($perc));
     $perc = floatval($perc);
     
+    $url = $v->{'URL'};
+    assert(isset($url));
+    assert(is_string($url));
+
     $variant_names[$vidx] = $name;
     $variant_percs[$vidx] = $perc;
+    $variant_urls[$vidx]   = $url;
+
     $vidx++;
   }
   assert(is_good_variants($variant_names));
+  assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
   // STOP Check inputs
   //----------------------------------------------------
@@ -94,8 +98,7 @@ function insert_test(
   assert(isset($bin_type_id));
   $X1['bin_type_id'] = $bin_type_id;
   //-----------------------------------------------
-  $dbh = new_assert(dbconn(), 403, "unable to talk to DB");
-  $dbh = dbconn(); assert(isset($dbh)); 
+  $dbh = dbconn(); assert(!empty($dbh)); 
   try {
     $dbh->beginTransaction();
     $test_id = insert_row("test", $X1);
@@ -121,6 +124,4 @@ function insert_test(
   $outJ["stdout"] = "Created test $test_name";
   $outJ["test_id"] = $test_id;
   return $outJ;
-  ERR:
-    return null;
 }

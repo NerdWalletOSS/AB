@@ -46,7 +46,7 @@ Set Admin Name and decide TestType
 \label{home_page}
 Contains 
 \be
-\item a {\tt PLUS} button that leads to Section~\ref{add_edit_page} 
+\item a {\tt PLUS} button that leads to Section~\ref{add_edit_basic_page} 
   with GET param TestID as null
 \item A radio button that allows one of the following options for State. 
   It restricts tests displayed to those that have the selected state(s)
@@ -84,7 +84,7 @@ Contains
 \section{Actions}
 \subsection{Edit Test}
 \label{edit_test}
-Leads to Section~\ref{add_edit_page}
+Leads to Section~\ref{add_edit_basic_page}
 
 \subsection{Dormant Test}
 \label{start_test}
@@ -97,7 +97,7 @@ confirmation pop-up
 
 \subsection{Stop Test}
 \label{stop_test}
-Leads to Section~\ref{add_edit_page} with GET param {\tt action = terminate}
+Leads to Section~\ref{add_edit_basic_page} with GET param {\tt action = terminate}
 
 \subsection{Archive Test}
 \label{archive_test}
@@ -107,7 +107,7 @@ a confirmation pop-up
 
 \subsection{View Test}
 \label{view_test}
-Leads to Section~\ref{add_edit_page}
+Leads to Section~\ref{add_edit_basic_page}
 
 \subsection{Delete Test}
 \label{del_test}
@@ -116,22 +116,24 @@ Does a hard delete of the test after a confirmation pop-up
 and returns to home page Section~\ref{home_page}
 
 
-\section{Add/Edit Page}
-\label{add_edit_page}
-This page has the GET params
-\bd
-\item [TestID]
-\be
-\item If the TestID is null, then the mode is deemed to be ``add''
-\item If the TestID is not null, then 
-\be
-\item If state is draft, dormant or started, then mode is ``edit''
-\item If state is terminated or archived,then mode is ``view''
-\ee
-\ee
-\item [Action]
-One value for action is terminate
-\ed
+\section{Add/Edit Basic Page}
+\label{add_edit_basic_page}
+This page has the GET params TestID and Action. We derive ``mode'' using the
+table Table~\ref{tbl_mode}
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+{\bf TestID} & {\bf State} & {\bf Mode} \\ \hline
+Undefined     & --- & Add \\ \hline
+Defined & Dormant, Draft & Edit \\ \hline
+Defined & Started & View (except Percentage can be edited)\\ \hline
+Defined & Terminated, Archived & View \\ \hline
+\hline
+\end{tabular}
+\caption{Mode for Add/Edit Basic Page}
+\label{tbl_mode}
+\end{table}
+
 %---------------------------------------------
 The page has the following UI elements
 \be
@@ -143,10 +145,11 @@ The page has the following UI elements
 \begin{table}[hb]
 \centering
 \begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
-  {\bf Number} &   {\bf ID} & {\bf Name} & {\bf Percentage} \\ \hline \hline
-  1 & --- & Control & 40  \\ \hline
-  2 & --- & Variant A & 30  \\ \hline
-  3 & --- & Variant B & 20  \\ \hline
+  {\bf Number} &   {\bf ID} & {\bf Name} & {\bf Percentage} 
+  & {\bf URL} & {\bf Winner} \\ \hline \hline
+  1 & --- & Control & 40   & \url{www.google.com} & N \\ \hline
+  2 & --- & Variant A & 30  & \url{www.yahoo.com} & Y \\ \hline
+  3 & --- & Variant B & 20  & \url{www.cnn.com} & N \\ \hline
 \hline
 \end{tabular}
 \caption{Add/Edit Page}
@@ -158,18 +161,22 @@ Depending on Mode being Add or Edit, this page behaves somewhat differently as s
  (i)  Test Description is editable text box
  and (ii) Percentage is editable text box
  \subsection{Add Mode}
- \label{add_edit_page_add_mode}
+ \label{add_edit_basic_page_add_mode}
  \bi
  \item Test Name is editable test box 
- \item ID column is NOT displayed
+ \item ID is not viewable
  \item Name is editable text box
+ \item URL is editable text box
+ \item Winner is not viewable
 \ei
  \subsection{Edit Mode}
- \label{add_edit_page_edit_mode}
+ \label{add_edit_basic_page_edit_mode}
  \bi
  \item Test Name is read-only
- \item ID column is displayed as read-only
+ \item ID is displayed as read-only
  \item Name is read-only
+ \item URL is displayed as read-only 
+ \item Winner is a radio button so only one row can be selected
    \ei
 
 A few other notes
@@ -182,13 +189,14 @@ If IsDeviceSpecific = true, then percentgae column is not displayed.
 displayed with radio buttons allowing the user to select any one variant as
 winner. In this case, {\tt Next} button leads to home page, after a confirmation
 pop-up.
+\item URL.  Should be displayed only if TestType = XY
 \ei
 %------------------------------------------------
 
 \section{Additional Variant Information}
 \label{addnl_variant_info}
-Looks exactly like Section~\ref{add_edit_page}
-with constraints of Section~\ref{add_edit_page_edit_mode} with differences as follows
+Looks exactly like Section~\ref{add_edit_basic_page}
+with constraints of Section~\ref{add_edit_basic_page_edit_mode} with differences as follows
 \be
 \item {\tt Next} leads to Section~\ref{filters} if TestType = AB. 
 Leads to Section~\ref{device_specific} if TestType = XY. 
@@ -197,8 +205,6 @@ an {\tt Edit} button that creates a pop-up that allows user to view/edit 3 text
 fields
 \be
 \item Custom Data.
-  Should be displayed only if TestType = XY
-\item URL. Should be editable only if state is draft or dormant. 
   Should be displayed only if TestType = XY
 \item Description
 \ee

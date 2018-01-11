@@ -89,6 +89,7 @@ CREATE TABLE state (
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
+insert into state values (NULL, 'draft'); 
 insert into state values (NULL, 'dormant'); 
 insert into state values (NULL, 'started'); 
 insert into state values (NULL, 'terminated'); 
@@ -259,6 +260,7 @@ insert into config values(NULL, 'max_len_test_name',   '127');
 insert into config values(NULL, 'max_len_test_dscr',   '255');
 insert into config values(NULL, 'max_len_variant_name','31');
 insert into config values(NULL, 'max_len_variant_dscr','255');
+insert into config values(NULL, 'max_len_url',         '255');
 
 DROP TABLE IF EXISTS device_x_variant;
 CREATE TABLE device_x_variant (
