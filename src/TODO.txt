@@ -1,0 +1,57 @@
+Make sure that g_n_device <= AB_MAX_NUM_DEVICES
+
+Reload for dev_spec_perc
+
+Reduce AB_NUM_BINS 
+
+Let AddTest require a seed. Update PHP code for this. Also reload
+
+
+Add filters to daft 
+
+php/ set_follow_on.php-> better query for tests that can be followed
+
+Write tests for all set_config cases
+Put more things into set_config
+
+What is set_log doing? Do we need it? If so, test it
+
+See if you can get rid of alt_set_percentage
+or at least merge them back into one function
+
+
+Add grep from php code into documentation
+Add json interface for webapp into documentation
+
+PX: Allow all changes (but no recording) when state is dormant 
+PX: Allow hard delete when dormant 
+
+P2: Write documentation for URL Router
+
+P3: Documentation review of UI 
+
+P4: Investigate where else OpenMP can be used
+P4: Performance Tuning using VTune
+
+DONE Update scn on reload . Document how you are using it 
+DONE Add CheckSessionService like CheckPipe 
+
+DONE url characters must be in 
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=
+
+DONE Consider adding state_id to ramp_history to prevent guessing later on
+WONTFIX Add start (http://) and stop ("/") checks for URL for XY Test
+DONE: Check all configs between PHP and SRC
+
+ERR: RTS says
+SetCatAttrValTest->TestName=marketing_front_page_app&Attribute=device&Value=pc:
+ERROR: Already seen Attribute/Value (device, pc) for Test
+marketing_front_page_app
+1488496556:east1-prod-ab-1:8000 Line 76 of File set_cat_attr_val_test.c 
+1488496556:east1-prod-ab-1:8000 Line 220 of File ab_process_req.c 
+1488496556:east1-prod-ab-1:8000 Line 81 of File libe_ab_httpd.c 
+
+
+ERR: FILE: /srv/nerdwallet/ab/php/set_state.php :LINE: 162
+FILE: /srv/nerdwallet/ab/test/json_set_state.php :LINE: 78
+

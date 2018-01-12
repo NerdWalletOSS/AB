@@ -1,0 +1,23 @@
+If you know the user agent that is not behaving as expected
+
+1) Check in DWH table if user agent exists at all
+2) If it does, does it have the right mapping
+3) In AB/src/MK_UA_TO_DEV/MAP/, Add user agent to sample_user_agent.csv and run ut.sh and see if device_id is consistent with DWH
+4) Deploy new bin file to AB server. 
+
+Use something like https://www.urlencoder.org/ to encode the user agent. For example, 
+Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1
+becomes
+Mozilla%2F5.0%20%28Linux%3B%20U%3B%20Android%202.3.4%3B%20en-us%3B%20Kindle%20Fire%20Build%2FGINGERBREAD%29%20AppleWebKit%2F533.1%20%28KHTML%2C%20like%20Gecko%29%20Version%2F4.0%20Mobile%20Safari%2F533.1
+
+
+ curl --url "localhost:8000/UAToDevice?UserAgent=Mozilla%2F5.0%20%28Linux%3B%20U%3B%20Android%202.3.4%3B%20en-us%3B%20Kindle%20Fire%20Build%2FGINGERBREAD%29%20AppleWebKit%2F533.1%20%28KHTML%2C%20like%20Gecko%29%20Version%2F4.0%20Mobile%20Safari%2F533.1"
+
+
+This should return something like { "Device": "Tablet_Android", "DeviceID" : "5" }
+
+Last check: Click on the actual URL Example : https://www.nerdwallet.com/ur/?nw_campaign_id=151327949360796300
+
+In the URL, it should end with DeviceID=N, where N should be between 1 and 6. Anything else is a problem.
+
+

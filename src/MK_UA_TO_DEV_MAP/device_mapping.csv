@@ -1,0 +1,129 @@
+justin_class,device,device_type,os_type,browser_type,count
+Other,Mobile,Other,Other,Safari,7
+Other,Mobile,PC,Linux,Safari,1
+Tablet_iOS,Tablet,iPad,Mac,Safari,3
+Tablet_iOS,Tablet,iPad,Windows,Safari,1
+Tablet_Android,Tablet,Android Tablet,Android,Android,19062
+Tablet_iOS,Tablet,iPad,Other,Other,42
+Desktop,Desktop,Other,Linux,Chrome,52
+Desktop,Desktop,Other,Linux,IE,1
+Desktop,Desktop,PC,Windows,Safari,1357
+Desktop,Desktop,Other,Linux,Other,1358
+Mobile_iOS,Mobile,iPhone,Linux,Other,204
+Other,Tablet,Tablet,Windows,IE,215
+Desktop,Desktop,PC,Mac,IE,5
+Mobile_Android,Mobile,iPhone,Android,Other,3
+Desktop,Desktop,PC,Windows,Firefox,28018
+Desktop,Desktop,Other,Windows,Other,1081
+Desktop,Desktop,iPhone,iOS,Safari,45
+Desktop,Desktop,iPad,Other,Other,80
+Tablet_Android,Tablet,Android Tablet,Android,IE,22
+Desktop,Desktop,Other,iOS,IE,1
+Desktop,Desktop,Other,Other,Firefox,720
+Mobile_Android,Mobile,Android Tablet,Android,Chrome,281
+Mobile_Android,Mobile,iPad,Android,Chrome,63
+Desktop,Desktop,Other,Windows,IE,756
+Desktop,Desktop,Other,Windows,Chrome,15
+Mobile_iOS,Mobile,iPhone,Other,Safari,841
+Tablet_iOS,Tablet,iPad,Other,Chrome,5
+Mobile_iOS,Mobile,iPhone,iOS,Safari,92388
+Tablet_Android,Tablet,Android Tablet,Android,Firefox,104
+Mobile_Android,Mobile,Android Tablet,Android,Android,37
+Desktop,Desktop,PC,Other,Safari,4
+Mobile_Android,Mobile,iPad,Android,Android,7
+Desktop,Desktop,PC,Mac,Safari,5352
+Tablet_Android,Tablet,Android Tablet,Android,Other,22817
+Desktop,Desktop,Other,iOS,Other,383
+Other,Mobile,PC,Windows,Chrome,46
+Mobile_Android,Mobile,Android Tablet,Android,Firefox,17
+Tablet_iOS,Tablet,iPad,Windows,Chrome,6
+Desktop,Desktop,PC,Windows,Chrome,66114
+Desktop,Desktop,Other,Other,Other,17197
+Tablet_iOS,Tablet,iPad,iOS,Firefox,456
+Desktop,Desktop,PC,Other,Firefox,630
+Desktop,Desktop,iPhone,iOS,Other,237
+Other,Mobile,PC,Mac,Other,8
+Other,Mobile,Windows Phone,Windows,Other,1223
+Desktop,Desktop,PC,Linux,Other,3682
+Desktop,Desktop,iPad,iOS,Other,14322
+Other,Mobile,PC,Linux,Firefox,1
+Other,Mobile,Tablet,Windows,IE,1
+Mobile_Android,Mobile,Android Tablet,Android,Other,13656
+Desktop,Desktop,PC,Other,Chrome,512
+Desktop,Desktop,Other,Other,Safari,189
+Tablet_iOS,Tablet,iPad,Other,Safari,131
+Desktop,Desktop,PC,Linux,Safari,286
+Mobile_Android,Mobile,iPad,Android,Other,12
+Tablet_Android,Tablet,iPad,Android,Android,8
+Desktop,Desktop,PC,Other,Other,349
+Desktop,Desktop,Other,Other,IE,85
+Desktop,Desktop,Other,Mac,Other,8
+Mobile_Android,Mobile,Android,Android,Other,137856
+Tablet_iOS,Tablet,iPad,iOS,Chrome,5067
+Mobile_Android,Mobile,Android,Android,Safari,120
+Desktop,Desktop,Other,Linux,Firefox,30
+Mobile_Android,Mobile,Android Tablet,Android,Safari,2
+Desktop,Desktop,Other,Other,Chrome,2628
+Desktop,Desktop,PC,Mac,Firefox,4473
+Tablet_iOS,Tablet,iPad,iOS,Other,785
+Mobile_iOS,Mobile,iPhone,Other,Chrome,11
+Other,Mobile,Windows Phone,Windows,Chrome,119
+Desktop,Desktop,Other,iOS,Safari,63
+Other,Tablet,Tablet,Windows,Firefox,1
+Mobile_Android,Mobile,Android,Android,Chrome,399317
+Tablet_iOS,Tablet,iPad,iOS,Safari,29983
+Desktop,Desktop,PC,Linux,Chrome,5891
+Other,Mobile,Other,iOS,Other,553
+Desktop,Desktop,iPad,iOS,Safari,41
+Mobile_iOS,Mobile,iPhone,Windows,Other,23
+Other,Mobile,PC,Windows,Firefox,15
+Other,Tablet,Tablet,Other,Other,22
+Mobile_iOS,Mobile,iPhone,iOS,IE,3
+Desktop,Desktop,PC,Windows,IE,445053
+Tablet_iOS,Tablet,iPad,Linux,Other,431
+Desktop,Desktop,Other,Windows,Firefox,80
+Other,Mobile,Other,Other,Firefox,31
+Mobile_iOS,Mobile,iPhone,Mac,Chrome,2
+Desktop,Desktop,PC,Mac,Other,6400
+Mobile_iOS,Mobile,iPhone,Windows,Safari,39
+Tablet_iOS,Tablet,iPad,iOS,IE,4
+Mobile_Android,Mobile,iPhone,Android,Chrome,9
+Desktop,Desktop,Other,Windows,Safari,9
+Other,Tablet,Tablet,Windows,Other,1
+Desktop,Desktop,PC,Other,IE,1
+Desktop,Desktop,PC,Mac,Chrome,26863
+Desktop,Desktop,Other,Mac,IE,27
+Desktop,Desktop,iPhone,Other,Other,1
+Desktop,Desktop,PC,Linux,Firefox,3725
+Mobile_Android,Mobile,Android,Android,Firefox,1284
+Mobile_iOS,Mobile,iPhone,Windows,Chrome,3
+Other,Mobile,Other,iOS,Safari,8
+Other,Mobile,PC,Windows,IE,1742
+Desktop,Desktop,Other,Linux,Safari,65
+Other,Tablet,Tablet,Linux,Other,44
+Tablet_Android,Tablet,iPhone,Android,Chrome,2
+Mobile_iOS,Mobile,iPhone,Linux,Safari,3
+Mobile_iOS,Mobile,iPhone,iOS,Other,52660
+Tablet_Android,Tablet,Android Tablet,Android,Safari,9
+Mobile_iOS,Mobile,iPhone,Other,Other,446
+Other,Mobile,PC,Mac,Chrome,2
+Tablet_Android,Tablet,iPad,Android,Other,4
+Other,Mobile,PC,Windows,Safari,1
+Mobile_Android,Mobile,Android,Android,Android,55224
+Desktop,Desktop,PC,Windows,Other,39276
+Other,Mobile,Other,Linux,Other,722
+Other,Mobile,Windows Phone,Windows,IE,823
+Mobile_Android,Mobile,Android,Android,IE,103
+Mobile_Android,Mobile,iPhone,Android,Android,31
+Other,Mobile,Other,Other,Other,38102
+Tablet_Android,Tablet,Android Tablet,Android,Chrome,82562
+Mobile_iOS,Mobile,iPhone,iOS,Chrome,7433
+Mobile_iOS,Mobile,iPad,iOS,Other,712
+Other,Mobile,PC,Linux,Other,408
+Tablet_Android,Tablet,iPad,Android,Chrome,48
+Mobile_iOS,Mobile,iPhone,Mac,Other,1
+Mobile_iOS,Mobile,iPhone,iOS,Firefox,802
+Other,Mobile,PC,Windows,Other,485
+Mobile_iOS,Mobile,iPad,iOS,Safari,201
+Other,Tablet,Tablet,Linux,Chrome,18
+Mobile_iOS,Mobile,iPhone,Mac,Safari,4

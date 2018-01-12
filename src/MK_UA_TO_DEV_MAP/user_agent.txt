@@ -1,0 +1,7 @@
+select 
+  case when is_mobile_in = 'True' then 'Mobile' when is_tablet_in = 'True' then 'Tablet' else 'Desktop' end device, 
+  conf_device_fmly_nm, 
+  browser_fmly_nm, 
+  os_fmly_nm, 
+  user_agent_long_tx from user_agent_d limit 100
+
