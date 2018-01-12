@@ -1,2 +1,0 @@
-x_tst_id == external test ID from MySQL DB > 0
-x_var_id == external variant ID from MySQL DB > 0
