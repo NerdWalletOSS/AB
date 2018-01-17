@@ -5,7 +5,6 @@
 #include "add_test.h"
 #include "alt_get_variant.h"
 #include "get_variant.h"
-#include "zero.h"
 #include "dump_log.h"
 
 //<hdr>
@@ -95,10 +94,7 @@ find_test(
     cBYE(status);
   }
   // Verify test exists and is of type XYTest
-  if ( test_idx < 0 ) { 
-    log_missing_test(test_name, AB_TEST_TYPE_XY, external_id);
-    go_BYE(-1); 
-  }
+  if ( test_idx < 0 ) { g_log_missing_test_xy++; go_BYE(-1); }
   if ( g_tests[test_idx].test_type != AB_TEST_TYPE_XY ) { go_BYE(-1); }
   *ptr_test_idx = test_idx;
 BYE:
@@ -128,7 +124,7 @@ int alt_get_variant(
 
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
-  g_num_get_variant_calls++; // increment only if test is legit 
+  g_log_num_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
   set_tracer(out_tracer); 
 

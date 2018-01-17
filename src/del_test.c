@@ -1,7 +1,6 @@
 #include "ab_incs.h"
 #include "ab_globals.h"
 #include "del_test.h"
-#include "zero.h"
 
 //----------------------------------------------------------
 //<hdr>

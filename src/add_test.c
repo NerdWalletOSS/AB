@@ -2,7 +2,6 @@
 #include "auxil.h"
 #include "set_variant_per_bin.h"
 #include "add_test.h"
-#include "zero.h"
 #include "ab_globals.h"
 
 int 

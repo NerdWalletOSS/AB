@@ -72,8 +72,6 @@ chk_exclude(
   }
 
 BYE:
-  log_ss_calls(uuid, t_stop - t_start, http_code, 
-      is_null_data, is_bad_data, g_ss_response);
   memset(g_ss_response, '\0', g_sz_ss_response);
   return status;
 }

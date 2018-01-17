@@ -29,11 +29,8 @@
 #include "stop_test.h"
 #include "init.h"
 #include "chk_logger_conn.h"
-#include "perf_metrics.h"
 #include "ping_server.h"
-#include "zero.h"
 #include "zero_globals.h"
-#include "zero_conf.h"
 #include "post_from_log_q.h"
 #include "router.h"
 #include "ua_to_device.h"
@@ -151,10 +148,6 @@ ab_process_req(
     case StopTest :  /* done by Lua */
       status = stop_test(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case PerfMetrics : // done by C */
-      status = perf_metrics(g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case Router : /* done by C */
@@ -306,9 +299,6 @@ get_req_type(
   }
   else if (strcasecmp(api, "Restart") == 0) {
     return Restart;
-  }
-  else if (strcasecmp(api, "PerfMetrics") == 0) {
-    return PerfMetrics;
   }
   else if (strcasecmp(api, "Router") == 0) {
     return Router;

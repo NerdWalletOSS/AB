@@ -19,17 +19,13 @@
 #include "auxil.h"
 #define __AB_MAIN_PROGRAM
 #include "ab_globals.h"
-#include "zero_conf.h"
 #include "zero_globals.h"
-#include "zero.h"
-// TODO #include "read_conf_file.h"
 #include "post_from_log_q.h"
 #include "init.h"
 #include "ab_process_req.h"
 #include "get_ua_to_device_id.h"
 #include "extract_api_args.h"
 #include "dump_log.h"
-// TODO #include "reload.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/queue.h>
@@ -61,8 +57,6 @@ generic_handler(
   opbuf = evbuffer_new();
   if ( opbuf == NULL) { go_BYE(-1); }
   const char *uri = evhttp_request_uri(req);
-  g_log_time = get_time_usec();
-  uint64_t t_start = g_log_time;
 
   //--------------------------------------
   status = extract_api_args(uri, api, AB_MAX_LEN_API_NAME, 
@@ -101,11 +95,6 @@ BYE:
     }
   }
   evbuffer_free(opbuf);
-  uint64_t t_stop = get_time_usec(); 
-  int time_in_mu_s = t_stop-t_start;
-  if ( time_in_mu_s >= AB_NUM_SS_RESP_TIME_IN_MS ) { 
-    time_in_mu_s = AB_NUM_SS_RESP_TIME_IN_MS - 1;
-  }
 }
 
 int 
@@ -118,12 +107,9 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_log_start_time = get_time_usec();
-  // MERGE zero_conf and zero_globals
-  status = zero_conf(); cBYE(status); /* Done only on startup */
-  status = zero_globals(); cBYE(status); /* Done on startup and Restart */
+  status = zero_globals(); cBYE(status); /* Done only on startup */
   if ( argc != 2 )  { go_BYE(-1); }
-  // TODO status = read_conf_file(argv[1]); cBYE(status);
+  status = hard_code_config(); // only for testing 
   status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_sz_log_q > 0 ) { 
@@ -148,8 +134,6 @@ main(
   event_base_dispatch(base);    
   evhttp_free(httpd);
   event_base_free(base);
-  // For Internal Log TODO P2 Move to better place
-  free_if_non_null(g_log); g_log_idx = 0;
 BYE:
   free_globals();
   return status;

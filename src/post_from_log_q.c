@@ -1,15 +1,10 @@
-#include <stdlib.h>
-#include <curl/curl.h>
-#include "ab_constants.h"
-#include "macros.h"
-#include "ab_types.h"
+#include "ab_incs.h"
+#include "ab_globals.h"
 #include "auxil.h"
 #include "get_variant.h"
 #include "post_from_log_q.h"
-#include "zero.h"
 #include "make_curl_payload.h"
 
-#include "ab_globals.h"
 
 void *
 post_from_log_q(

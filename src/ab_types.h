@@ -21,7 +21,6 @@ typedef enum _req_type {
   HealthCheck, // RO: RTS
   Ignore, // RO: RTS
   ListTests, // RO: pass to Lua
-  PerfMetrics, // RO: RTS 
   PingLogServer, // RO: RTS
   PingSessionServer, // RO: RTS
   Reload, // RO: RTS 

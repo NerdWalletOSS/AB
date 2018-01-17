@@ -1,6 +1,3 @@
 ab_httpd
-ab_httpd_1
-ab_httpd_2
-ab_logger
-ab_utils
-parse_log
+*.o
+_*

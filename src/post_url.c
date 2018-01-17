@@ -27,7 +27,6 @@ post_url(
   /* Now specify the POST data */ 
   g_log_posts++;
   curl_easy_setopt(ch, CURLOPT_POSTFIELDS, str_payload);
-  g_num_posts++;
   if ( ptr_time_taken != NULL ) { t_start = get_time_usec(); }
   int num_tries = 0;
   bool good_post;

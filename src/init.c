@@ -1,26 +1,8 @@
-#ifdef XXX
-#include <ctype.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-#include <sys/socket.h>
-#include <curl/curl.h>
-#include <netinet/in.h>
-#endif
-// #include <sys/uio.h> // if using sendmsg to send the datagram:
 #include "ab_incs.h"
 #include "ab_globals.h"
 #include "auxil.h"
 #include "spooky_hash.h"
-#include "zero.h"
+#include "zero_globals.h"
 #include "init.h"
 #include "ping_server.h"
 
@@ -73,46 +55,16 @@ BYE:
   return status;
 }
 
-//<hdr>
 int
-init(
-    void
-    )
-//</hdr>
+init()
 {
   int status = 0;
-
-  if ( AB_NUM_BINS > 32767 ) { go_BYE(-1); }
-
-  g_halt = false;
-  //-----------------------------------------------
-
-  for ( uint32_t i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
-    zero_test(i);
-  }
-
-  // DO NOT CHANGE THE FOLLOWING VALUES for g_seed1 and g_seed2
-  g_seed1 = 961748941; // large prime number
-  g_seed2 = 982451653; // some other large primenumber
-  spooky_init(&g_spooky_state, g_seed1, g_seed2);
-  srand48(g_seed1);
-
-  g_sz_ss_response = 2048;
-  g_ss_response = malloc(g_sz_ss_response); // some initial start
-  return_if_malloc_failed(g_ss_response);
-  memset(g_ss_response, '\0', g_sz_ss_response);
-  //-----------------------------------------------
   if ( g_sz_log_q > 0 ) { 
     g_log_q = malloc(g_sz_log_q * sizeof(PAYLOAD_TYPE)); 
     return_if_malloc_failed(g_log_q);
     memset(g_log_q, '\0', (g_sz_log_q * sizeof(PAYLOAD_TYPE)));
     g_n_log_q = 0;
   }
-
-  if ( g_uuid_len < 1 ) { go_BYE(-1); }
-  g_uuid = malloc((g_uuid_len+1));
-  return_if_malloc_failed(g_uuid);
-  memset(g_uuid, '\0',  g_uuid_len+1);
 
   //---------------------------------------------------
   CURLcode res;
@@ -158,12 +110,10 @@ init(
         g_ss_url, g_ss_health_url, 50, &g_ss_ch, &g_ss_curl_hdrs);
     cBYE(status);
   }
-  // User sets proportions as percentages
-  if ( AB_NUM_BINS < 100 ) { go_BYE(-1); }
   // For Lua
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
-  if ( ( luaL_loadfile(g_L, "rc.lua") ) || 
+  if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
       ( lua_pcall(g_L, 0, 0, 0)) )   {
     go_BYE(-1);
   }
@@ -273,78 +223,3 @@ BYE:
   return status;
 }
 #endif
-
-#ifdef XXX
-// Has been deprecated. Delete later on
-int
-make_guid(
-    uint64_t start, /* input */
-    uint8_t X[AB_GUID_LENGTH] /* output */
-    )
-{
-  int status = 0; bool first_call;
-  int letters[62] = { 
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'z' };
-  if ( start == 0 ) { first_call = false; } else { first_call = true; }
-  if ( first_call ) {
-    uint8_t Y[AB_GUID_LENGTH];
-    for ( int i = 0; i < AB_GUID_LENGTH; i++ ) { 
-      uint8_t x = start & 0x3F;
-      if ( x >= 64 ) { go_BYE(-1); }
-      if ( x >= 62 ) { x = 61; }
-      uint8_t letter = letters[x];
-      Y[i] = letter;
-      start = start >> 6;
-    }
-    for ( int i = 0; i < AB_GUID_LENGTH; i++ ) { 
-      X[i] = Y[AB_GUID_LENGTH-1-i];
-    }
-    goto BYE;
-  }
-  int carry = 0;
-  for ( int i = AB_GUID_LENGTH-1; i >= 0; i-- ) { 
-    uint8_t c = X[i];
-    c += carry;
-    int r =  alpha_range(c); 
-    // If incrementing is safe, do so
-    if ( r > 0 ) { X[i] = c+1;  break;  }
-    // Incrementing will cause non-alphanumeric character.
-    // So, we need to deal with it appropriately.
-    carry = 0;
-    switch ( r ) { 
-      case -1 : X[i] = 48; break; 
-      case -2 : X[i] = 65; break; 
-      case -3 : X[i] = 97; break; 
-      case -4 : X[i] = 48; carry = 1; break; 
-      default : go_BYE(-1); break;
-    }
-  }
-BYE:
-  return status;
-}
-
-
-int 
-alpha_range(
-    uint8_t x
-    )
-{
-  /*
-48 to 57 0..9
-65 to 90 A..Z
-97 to 122 a..z
-*/
-  if ( x < 48-1 ) { return -1; }
-  if ( ( x >= 48-1 ) && ( x <= 57-1 ) )  { return 1; }
-  if ( x < 65-1 ) { return -2; }
-  if ( ( x >= 65-1 ) && ( x <= 90-1 ) )  { return 2; }
-  if ( x < 97-1 ) { return -3; }
-  if ( ( x >= 97-1 ) && ( x <= 122-1 ) )  { return 3; }
-  return -4;
-}
-#endif
-

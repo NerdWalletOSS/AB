@@ -41,7 +41,7 @@ get_variant(
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   // TODO: log missing test
   T = &(g_tests[test_idx]);
-  g_num_get_variant_calls++; 
+  g_log_num_get_variant_calls++; 
   uint64_t t_start = get_time_usec();
   // Extract UUID
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_uuid_len);

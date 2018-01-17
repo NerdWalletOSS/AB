@@ -43,9 +43,7 @@ get_ua_to_device_id(
     if ( status < 0 ) { free_if_non_null(decoded_ua); go_BYE(-1); }
     status = get_device_id(decoded_ua, &device_id, 
         g_ua_to_dev_map, g_n_ua_to_dev_map);
-    if ( device_id == 0 ) {
-      log_bad_user_agent(user_agent);  // TODO Log error
-    }
+    if ( device_id == 0 ) { g_log_bad_user_agent++; }
     free_if_non_null(decoded_ua); 
     // Don't have this be a catastrophic failure
     if ( status < 0 ) { 

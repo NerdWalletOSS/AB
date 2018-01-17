@@ -1,19 +1,8 @@
-#include <stdio.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include <strings.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "ab_constants.h"
-#include "macros.h"
-#include "ab_types.h"
+#include "ab_incs.h"
 #include "ab_globals.h"
 #include "auxil.h"
 #include "post_url.h"
 #include "chk_logger_conn.h"
-#include "zero.h"
 #include "make_curl_payload.h"
 
 int chk_logger_connectivity(
