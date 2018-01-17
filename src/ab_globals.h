@@ -95,6 +95,7 @@ EXTERN size_t g_n_ua_to_dev_map;
 EXTERN uint32_t g_num_ua_to_dev_map;
 
 EXTERN char g_valid_chars_in_url[256];
+EXTERN char g_valid_chars_in_ua[256];
 //------------------------ For Lua
 EXTERN lua_State *g_L;
 

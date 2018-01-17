@@ -55,6 +55,7 @@ dump_log(
   fprintf(fp, "NoTestName,%" PRIu64 "\n",      g_log_no_test_name);
   fprintf(fp, "NoTestNames,%" PRIu64 "\n",     g_log_no_test_names);
 
+  fprintf(fp, "NumDroppedPosts,%" PRIu64 "\n", g_log_dropped_posts);
   fprintf(fp, "NumPosts,%" PRIu64 "\n",        g_log_posts);
   fprintf(fp, "BadPosts,%" PRIu64 "\n",        g_log_bad_posts);
   fprintf(fp, "FailedPosts,%" PRIu64 "\n",     g_log_failed_posts);
@@ -63,11 +64,11 @@ dump_log(
   fprintf(fp, "BadTestType,%" PRIu64 "\n",     g_log_bad_test_type);
   fprintf(fp, "BadTestName%" PRIu64 "\n",      g_log_bad_test_name);
 
-  fprintf(fp, "NumGetAltVariantCalls,%" PRIu64 "\n", g_log_num_get_alt_variant_calls);
-  fprintf(fp, "NumGetVariantCalls,%" PRIu64 "\n", g_log_num_get_variant_calls);
-  fprintf(fp, "NumGetVariantsCalls,%" PRIu64 "\n", g_log_num_get_variant_calls);
-  fprintf(fp, "NumRouterCalls,%" PRIu64 "\n",      g_log_num_router_calls);
-  fprintf(fp, "NumBadRouterCalls,%" PRIu64 "\n",  g_log_num_bad_router_calls);
+  fprintf(fp, "NumGetAltVariantCalls,%" PRIu64 "\n", g_log_get_alt_variant_calls);
+  fprintf(fp, "NumGetVariantCalls,%" PRIu64 "\n", g_log_get_variant_calls);
+  fprintf(fp, "NumGetVariantsCalls,%" PRIu64 "\n", g_log_get_variant_calls);
+  fprintf(fp, "NumRouterCalls,%" PRIu64 "\n",      g_log_router_calls);
+  fprintf(fp, "NumBadRouterCalls,%" PRIu64 "\n",  g_log_bad_router_calls);
 
 BYE:
   free_if_non_null(file_name);

@@ -124,9 +124,9 @@ int alt_get_variant(
 
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
-  g_log_num_get_alt_variant_calls++; // increment only if test is legit 
+  g_log_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
-  set_tracer(out_tracer); 
+  set_tracer(out_tracer, AB_MAX_LEN_TRACER); 
 
   make_guid(g_tests[test_idx].seed, curr_time, temp_guid, &pseudo_rand_num); 
   bin = pseudo_rand_num % AB_NUM_BINS;

@@ -20,6 +20,7 @@
 #define __AB_MAIN_PROGRAM
 #include "ab_globals.h"
 #include "zero_globals.h"
+#include "hard_code_config.h"
 #include "post_from_log_q.h"
 #include "init.h"
 #include "ab_process_req.h"
@@ -109,7 +110,7 @@ main(
   //--------------------------------------------
   status = zero_globals(); cBYE(status); /* Done only on startup */
   if ( argc != 2 )  { go_BYE(-1); }
-  status = hard_code_config(); // only for testing 
+  hard_code_config(); // only for testing 
   status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_sz_log_q > 0 ) { 

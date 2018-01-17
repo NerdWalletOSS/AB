@@ -637,14 +637,16 @@ BYE:
 }
 
 int 
-  validate_url_chars(
-    char *esc_args
+  validate_chars(
+    char *X,
+    char *valid_chars
     )
 {
   int status = 0;
-  for ( char *cptr = esc_args; *cptr != '\0'; cptr++ ) { 
-    if ( !g_valid_chars_in_url[(uint8_t)(*cptr)] ) { 
-      go_BYE(-1); }
+  for ( char *cptr = X; *cptr != '\0'; cptr++ ) { 
+    if ( !valid_chars[(uint8_t)(*cptr)] ) { 
+      go_BYE(-1); 
+    }
   }
 BYE:
   return status;
@@ -747,10 +749,11 @@ get_tracer(
 
 void
 set_tracer(
-    char *tracer
+    char *tracer,
+    size_t n
     )
 {
-  memset(tracer, '\0', AB_MAX_LEN_TRACER+1);
+  memset(tracer, '\0', n+1);
   WHEREAMI;
   exit(1);
 }

@@ -22,3 +22,8 @@ I think it should capture the two major pieces of info we're
 interested in. DataDog will take care of capturing medians, p95, p99
 etc numbers for us.
 
+From Jason Scheirer 
+http://statsd-metrics.readthedocs.io/en/latest/metrics.html <- Core concepts of
+statsd
+https://github.com/romanbsd/statsd-c-client/blob/master/test-client.c <-
+Simplest possible usage of statsd in C

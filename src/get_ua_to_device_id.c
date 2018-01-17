@@ -1,16 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "ab_constants.h"
-#include "macros.h"
-#include "ab_types.h"
+#include "ab_incs.h"
+#include "auxil.h"
 #include "ab_globals.h"
 #include "url.h"
-
-#include "get_ua_to_device_id.h"
 #include "ua_to_device.h"
-#include "dump_log.h"
+#include "get_ua_to_device_id.h"
 
 int 
 get_ua_to_device_id(

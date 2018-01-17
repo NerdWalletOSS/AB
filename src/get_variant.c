@@ -1,24 +1,12 @@
-#include <stdio.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include <strings.h>
-#include <string.h>
-#include <stdlib.h>
-#include <curl/curl.h>
-#include <unistd.h>
-#include "ab_constants.h"
-#include "macros.h"
-#include "ab_types.h"
+#include "ab_incs.h"
+#include "ab_globals.h"
 #include "auxil.h"
 #include "get_test_idx.h"
 #include "add_test.h"
+#include "log_decision.h"
 #include "get_variant.h"
-#include "post_url.h"
-#include "statsd-client.h"
-#include "dump_log.h"
 
-#include "ab_globals.h"
+
 
 int 
 get_variant(
@@ -41,7 +29,7 @@ get_variant(
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   // TODO: log missing test
   T = &(g_tests[test_idx]);
-  g_log_num_get_variant_calls++; 
+  g_log_get_variant_calls++; 
   uint64_t t_start = get_time_usec();
   // Extract UUID
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_uuid_len);
@@ -51,7 +39,7 @@ get_variant(
   status = chk_uuid(g_uuid, g_uuid_len, g_test_uuid_len); cBYE(status);
   // TODO: Log bad UUID
   get_tracer(args, in_tracer);
-  set_tracer(out_tracer);
+  set_tracer(out_tracer, AB_MAX_LEN_TRACER);
   //--------------------------------------------------------
   // Deal with exclusions for categorical attributes
   bool is_exclude = false; int nw;
@@ -116,44 +104,3 @@ BYE:
   return status;
 }
 
-int
-log_decision(
-    PAYLOAD_TYPE lcl_payload
-    )
-{
-  int status = 0;
-  bool is_wait = false;
-  if ( g_sz_log_q > 0  ) {
-    pthread_mutex_lock(&g_mutex);	/* protect buffer */
-    if ( g_n_log_q == g_sz_log_q ) { // TODO P3 Remove
-      fprintf(stderr, "Waiting for space \n");
-      is_wait = true;
-    }
-    while ( g_n_log_q == g_sz_log_q ) {
-      /* If there is no space in the buffer, then wait */
-      // fprintf(stderr, "producer waiting\n");
-      pthread_cond_wait(&g_condp, &g_mutex);
-    }
-    if ( is_wait ) { fprintf(stderr, "Got space \n"); }
-
-    int eff_wr_idx = g_q_wr_idx % g_sz_log_q;
-    g_log_q[eff_wr_idx] = lcl_payload;
-    g_q_wr_idx++; 
-    g_n_log_q++;
-    pthread_cond_signal(&g_condc);	/* wake up consumer */
-    pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-  }
-  else {
-    memset(g_curl_payload,            '\0', AB_MAX_LEN_PAYLOAD+1);
-    status = make_curl_payload(lcl_payload, g_curl_payload);
-    status = post_url(g_ch, g_curl_payload, NULL);
-    switch ( status ) {
-      case 0  : /* all is well */ break;
-      case -1 : go_BYE(-1); break;
-      case -2 : /* Not mission critical failure */ status = 0; break; 
-      default : go_BYE(-1); break;
-    }
-  }
-BYE:
-  return status;
-}

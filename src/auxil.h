@@ -131,8 +131,9 @@ read_to_chars(
     int bufsz
     );
 extern int 
-  validate_url_chars(
-    char *esc_args
+  validate_chars(
+    char *X,
+    char *valid_chars
     );
 extern bool
 chk_tracer(
@@ -160,5 +161,6 @@ extern void
       );
 extern void
   set_tracer(
-      char *tracer
+      char *tracer,
+      size_t n
       );

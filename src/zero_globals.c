@@ -79,13 +79,13 @@ zero_globals(
 
   g_statsd_link  = NULL;
 
-  g_sz_log_q    = 0;
-  g_n_log_q       = 0;
-  g_log_q         = NULL;
-  g_q_rd_idx      = 0;
-  g_q_wr_idx      = 0;
+  g_sz_log_q    = AB_DEFAULT_N_LOG_Q;
+  g_n_log_q     = 0;
+  g_log_q       = NULL;
+  g_q_rd_idx    = 0;
+  g_q_wr_idx    = 0;
 
-  g_uuid          = NULL;
+  g_uuid        = NULL;
 
   memset(g_my_name, '\0', AB_MAX_LEN_HOSTNAME+1);
   status = gethostname(g_my_name, AB_MAX_LEN_HOSTNAME);
@@ -127,10 +127,18 @@ zero_globals(
   g_n_ua_to_dev_map = 0;
   g_num_ua_to_dev_map = 0;
 
-  const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
+  // TODO Check with Braad that this is good
+  const char *url_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
   memset(g_valid_chars_in_url, '\0', 256);
-  for ( char *cptr = (char *)str; *cptr != '\0'; cptr++ ) {
+  for ( char *cptr = (char *)url_str; *cptr != '\0'; cptr++ ) {
     g_valid_chars_in_url[(uint8_t)(*cptr)] = true;
+  }
+
+  // TODO Check with Braad that this is good
+  const char *ua_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
+  memset(g_valid_chars_in_ua, '\0', 256);
+  for ( char *cptr = (char *)ua_str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_ua[(uint8_t)(*cptr)] = true;
   }
 
   g_L = NULL;
@@ -168,17 +176,18 @@ zero_log()
   g_log_no_test_name  = 0; // GetVariant
   g_log_no_test_names = 0; // GetVariants
 
-  g_log_posts              = 0;
-  g_log_bad_posts          = 0;
-  g_log_failed_posts       = 0;
+  g_log_dropped_posts     = 0;
+  g_log_posts             = 0;
+  g_log_bad_posts         = 0;
+  g_log_failed_posts      = 0;
 
   g_log_bad_uuid      = 0; 
   g_log_bad_test_type = 0; 
   g_log_bad_test_name = 0; 
 
-  g_log_num_get_alt_variant_calls = 0;
-  g_log_num_get_variant_calls     = 0;
-  g_log_num_get_variants_calls    = 0;
-  g_log_num_router_calls          = 0;
-  g_log_num_bad_router_calls      = 0;
+  g_log_get_alt_variant_calls = 0;
+  g_log_get_variant_calls     = 0;
+  g_log_get_variants_calls    = 0;
+  g_log_router_calls          = 0;
+  g_log_bad_router_calls      = 0;
 }

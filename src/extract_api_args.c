@@ -1,4 +1,5 @@
 #include "ab_incs.h"
+#include "auxil.h"
 #include "ab_globals.h"
 
 #include "extract_api_args.h"

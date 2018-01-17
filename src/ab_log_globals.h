@@ -23,6 +23,7 @@ EXTERN uint64_t g_log_missing_test_xy;
 EXTERN uint64_t g_log_no_test_name; // GetVariant
 EXTERN uint64_t g_log_no_test_names; // GetVariants
 
+EXTERN uint64_t g_log_dropped_posts; // when occupancy becomes high
 EXTERN uint64_t g_log_posts; // num posts attempted (retries not counted)
 EXTERN uint64_t g_log_bad_posts; // to Logger => total failure
 EXTERN uint64_t g_log_failed_posts; // to Logger => might success on retry
@@ -37,8 +38,10 @@ EXTERN uint64_t g_log_bad_uuid;
 EXTERN uint64_t g_log_bad_test_type;
 EXTERN uint64_t g_log_bad_test_name;
 
-EXTERN uint64_t g_log_num_get_alt_variant_calls; 
-EXTERN uint64_t g_log_num_get_variant_calls; 
-EXTERN uint64_t g_log_num_get_variants_calls; 
-EXTERN uint64_t g_log_num_router_calls;
-EXTERN uint64_t g_log_num_bad_router_calls;
+EXTERN uint64_t g_log_get_alt_variant_calls; 
+EXTERN uint64_t g_log_get_variant_calls; 
+EXTERN uint64_t g_log_get_variants_calls; 
+EXTERN uint64_t g_log_router_calls;
+EXTERN uint64_t g_log_bad_router_calls;
+
+

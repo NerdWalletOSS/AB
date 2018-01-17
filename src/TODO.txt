@@ -3,3 +3,9 @@ do not print to stderr on error. Add to g_err and then
 
 
 Use const char * const appropriately wherever needed
+
+How do we prevent output from reaching client for non-external endpoints
+
+statsd metrics 
+
+set tracer

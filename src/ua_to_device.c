@@ -31,7 +31,7 @@ ua_to_device(
       in_user_agent, AB_MAX_LEN_USER_AGENT);
   if ( in_user_agent[0] == '\0' ) { go_BYE(-1); }
   status = url_decode(in_user_agent, &user_agent); cBYE(status);
-  status = validate_url_chars(user_agent); cBYE(status);
+  status = validate_chars(user_agent, g_valid_chars_in_ua); cBYE(status);
   status = get_device_id(user_agent, &device_id, g_ua_to_dev_map, 
       g_num_ua_to_dev_map);
   if ( ( X != NULL ) && ( nX != 0 ) ) {

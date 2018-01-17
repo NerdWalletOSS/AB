@@ -77,4 +77,6 @@
 #define AB_MAX_LEN_CUSTOM_DATA 2047
 
 #define AB_MAX_LEN_TRACER 63
+
+#define AB_DEFAULT_N_LOG_Q 128
 #endif

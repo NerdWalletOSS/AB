@@ -16,14 +16,14 @@ router(
 {
   int status = 0;
 
-  g_log_num_router_calls++;
+  g_log_router_calls++;
   memset(g_redirect_url, '\0', AB_MAX_LEN_REDIRECT_URL+1);
   status = alt_get_variant(args);
   // Notice that you cannot afford to return a status of -1
   // This has to succeed *always* . Hence, the need for a default URL
   if ( ( status < 0 ) || ( *g_redirect_url == '\0' ) ) {
     status = 0;
-    g_log_num_bad_router_calls++;
+    g_log_bad_router_calls++;
     strcpy(g_redirect_url, g_default_url);
     // following helps to detect error 
     // TODO P3: Make sure that g_redirect_url does 
