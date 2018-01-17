@@ -2,7 +2,7 @@ extern int
 zero_test(
     uint32_t test_idx
     );
-extern int 
+extern void
 free_globals(
     void
     );

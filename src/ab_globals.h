@@ -91,7 +91,8 @@ EXTERN uint32_t g_other_idx; // Set by Lua used for user-agents that do not matc
 
 EXTERN char g_ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1];
 EXTERN uint64_t *g_ua_to_dev_map;
-EXTERN uint32_t g_n_ua_to_dev_map;
+EXTERN size_t g_n_ua_to_dev_map;
+EXTERN uint32_t g_num_ua_to_dev_map;
 
 EXTERN char g_valid_chars_in_url[256];
 //------------------------ For Lua

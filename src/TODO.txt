@@ -1,0 +1,5 @@
+In order to get logs in JSON, 
+do not print to stderr on error. Add to g_err and then 
+
+
+Use const char * const appropriately wherever needed

@@ -33,7 +33,7 @@ ua_to_device(
   status = url_decode(in_user_agent, &user_agent); cBYE(status);
   status = validate_url_chars(user_agent); cBYE(status);
   status = get_device_id(user_agent, &device_id, g_ua_to_dev_map, 
-      g_n_ua_to_dev_map);
+      g_num_ua_to_dev_map);
   if ( ( X != NULL ) && ( nX != 0 ) ) {
     if ( device_id == 0 ) { 
       nw = snprintf(X, nX, "{ \"Device\": \"Unknown\", \"DeviceID\" : \"0\" }");

@@ -14,22 +14,18 @@
 
 int
 chk_exclude(
-    int test_idx,
-    const char *args,
-    const char *uuid,
-    bool *ptr_is_exclude
+    uint32_t test_idx,
+    const char * const uuid,
+    int *ptr_is_exclude
     )
 {
   int status = 0;
-  bool is_null_data = false;
-  bool is_bad_data = false;
   char url[AB_MAX_LEN_URL+1];
   CURLcode curl_res;  long http_code = 0;
   uint64_t t_start = 0, t_stop = 0;
-  *ptr_is_exclude = false;  // Default: do not exclude this UUID 
+  *ptr_is_exclude = 0;  // Default: do not exclude this UUID 
   if ( !g_tests[test_idx].has_filters ) { goto BYE; }
   //----------------------------------------------
-  uint32_t x_tst_id = g_tests[test_idx].x_tst_id;
   // start assembling URL for session server
   memset(url, '\0', AB_MAX_LEN_URL+1);
   /* Sample 
@@ -49,27 +45,33 @@ chk_exclude(
   curl_res = curl_easy_perform(g_ss_ch);
   t_stop = RDTSC();
 
-  if ( curl_res != CURLE_OK ) { go_BYE(-2); }
+  // check response and exit early if needed
+  if ( curl_res != CURLE_OK ) { g_log_ss_bad_code++; go_BYE(-2); }
   curl_easy_getinfo(g_ss_ch, CURLINFO_RESPONSE_CODE, &http_code);
   if ( http_code != 200 )  {  
     fprintf(stderr, "url = %s, uuid = %s \n", url, uuid);
-    g_log_ss_bad_code++;
     go_BYE(-2); 
   }
+  // check ascii and lower case as you go 
+  int idx = 0;
   for ( char *cptr = g_ss_response; *cptr != '\0'; cptr++ ) { 
     if ( !isascii(*cptr) ) { g_log_ss_non_ascii++; go_BYE(-1); }
+    else {
+      g_ss_response[idx++] = *cptr;
+    }
   }
-  strtolower(g_ss_response);
+
   curl_easy_getinfo(g_ss_ch, CURLINFO_TOTAL_TIME, &ss_resp_time);
-  // log response time 
-  // TODO Call Indrajeet
-  bool match = false;
-  if ( match ) { 
-    *ptr_is_exclude = true; 
-  } 
-  else { 
-    *ptr_is_exclude = false; 
-  }
+  int is_no_session;
+  int is_bad_json;
+  int is_null_data;
+  // log response time TODO
+  /* status = lua_is_exclude(g_ss_response, g_sz_ss_response, 
+   ptr_is_exclude, &is_no_session, &is_bad_json);
+  */
+  if ( is_null_data ) { g_log_ss_null_data++; go_BYE(-2); }
+  if ( is_bad_json )   { g_log_ss_bad_json++; go_BYE(-2); }
+  if ( is_no_session ) { g_log_ss_no_session++; go_BYE(-2); }
 
 BYE:
   memset(g_ss_response, '\0', g_sz_ss_response);

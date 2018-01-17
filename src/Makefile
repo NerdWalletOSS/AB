@@ -17,43 +17,22 @@ OPTFLAGS= -O4
 OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
-# Uncomment below to capture server error 
-# CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
-CFLAGS= $(LFLAGS) 
-
+CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
 
 CC= clang
 CC= gcc
 
 CSRCS := $(wildcard *.c)
-
-fil3   := ab_httpd.c sel_ab_httpd.c ab_utils.c 
-CSRCS3 := $(filter-out $(fil3), $(CSRCS))
-COBJS3 = $(CSRCS3:.c=.o)
-
-filU   := ab_httpd.c sel_ab_httpd.c libe_ab_httpd.c 
-USRCS := $(filter-out $(filU), $(CSRCS))
-UOBJS = $(USRCS:.c=.o)
-
-UINCS = ab_constants.h  macros.h 
-
-# PARSE_LOG_OBJS = parse_log.o  auxil.o mmap.o
-# PARSE_LOG_INCS = ab_constants.h  macros.h 
+COBJS = $(CSRCS:.c=.o)
 
 all : ab_httpd 
 
-# parse_log : $(PARSE_LOG_OBJS) $(PARSE_LOG_INCS) 
-# 	$(CC) $(LFLAGS) $(PARSE_LOG_OBJS) -o parse_log 
-	
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
-ab_types.h : ../curl-7.51.0/include/curl/curlbuild.h
+ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 
-auxil.o : ab_types.h
-	$(CC) auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)
-
-.c.o : ../curl-7.51.0/lib/.libs/libcurl.so 
+.c.o : ../curl-7.51.0/lib/.libs/libcurl.so  
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
 ../lua-5.1.3/src/liblua.a :
@@ -70,12 +49,12 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
 
-ab_httpd : $(COBJS3) \
+ab_httpd : $(COBJS) \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
 	../lua-5.1.3/src/liblua.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
-	$(CC) $(CFLAGS) $(COBJS3) -o ab_httpd  \
+	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
 	../lua-5.1.3/src/liblua.a \
@@ -84,7 +63,7 @@ ab_httpd : $(COBJS3) \
 
 
 clean:
-	rm -r -f ab_httpd $(COBJS1) $(COBJS2) $(COBJS3) 
+	rm -r -f ab_httpd $(COBJS) 
 	make -i -C ../lua-5.1.3/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
@@ -92,4 +71,4 @@ clean:
 	echo "ALL CLEAN"
 
 qclean :
-	rm -r -f ab_httpd $(COBJS1) $(COBJS2) $(COBJS3) 
+	rm -r -f ab_httpd $(COBJS) *.o _*

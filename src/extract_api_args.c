@@ -1,8 +1,5 @@
-#include "ab_constants.h"
-#include "ab_types.h"
-#include "macros.h"
-
-extern char g_valid_chars_in_url[256];
+#include "ab_incs.h"
+#include "ab_globals.h"
 
 #include "extract_api_args.h"
 int 

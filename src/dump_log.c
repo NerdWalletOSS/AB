@@ -43,10 +43,11 @@ dump_log(
 
 
   fprintf(fp, "SessionServiceCalls,%" PRIu64 "\n", g_log_ss_calls);
-  fprintf(fp, "SessionServiceNonAscii,%" PRIu64 "\n", g_log_ss_non_ascii);
   fprintf(fp, "SessionServiceBadCode,%" PRIu64 "\n", g_log_ss_bad_code);
-  fprintf(fp, "SessionServiceNoSession,%" PRIu64 "\n", g_log_ss_no_session);
+  fprintf(fp, "SessionServiceNonAscii,%" PRIu64 "\n", g_log_ss_non_ascii);
+  fprintf(fp, "SessionServiceNoSession,%" PRIu64 "\n", g_log_ss_null_data);
   fprintf(fp, "SessionServiceBadJSON,%" PRIu64 "\n", g_log_ss_bad_json);
+  fprintf(fp, "SessionServiceNoSession,%" PRIu64 "\n", g_log_ss_no_session);
 
   fprintf(fp, "MissingTestAB,%" PRIu64 "\n",   g_log_missing_test_ab);
   fprintf(fp, "MissingTestXY,%" PRIu64 "\n",   g_log_missing_test_xy);

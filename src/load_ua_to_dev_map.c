@@ -15,7 +15,8 @@ int
 load_ua_to_dev_map(
     char *filename,
     uint64_t **ptr_dev_to_ua_map,
-    uint32_t *ptr_n_dev_to_ua_map
+    size_t *ptr_n_dev_to_ua_map,
+    uint32_t *ptr_num_dev_to_ua_map
     )
 {
   int status = 0;
@@ -25,7 +26,8 @@ load_ua_to_dev_map(
   int n_ua = nX / sizeof(uint64_t);
   if ( ( n_ua * sizeof(uint64_t) ) != nX ) { go_BYE(-1); }
   *ptr_dev_to_ua_map = (uint64_t *)X;
-  *ptr_n_dev_to_ua_map = n_ua;
+  *ptr_n_dev_to_ua_map = nX;
+  *ptr_num_dev_to_ua_map = n_ua;
 BYE:
   return status;
 }

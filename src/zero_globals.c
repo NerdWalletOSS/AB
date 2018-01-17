@@ -5,29 +5,32 @@
 #include "auxil.h"
 
 //<hdr>
-int 
+void
 free_globals(
     void
     )
 //</hdr>
 {
-  int status  = 0;
-  // TODO P2 Uncomment; free_if_non_null(g_devices);  g_n_devices = 0;
-
   free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
 
-  free_if_non_null(g_uuid);
-  free_if_non_null(g_log_q);
-  //------------------------------------------------
-  shutdown_curl();
   if ( g_statsd_link != NULL ) { 
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
-  // For Lua
+
+  free_if_non_null(g_log_q);
+
+  free_if_non_null(g_uuid);
+ 
+  shutdown_curl(); // for g_ch and g_ss_ch
+
+  free_if_non_null(g_devices);  g_n_devices = 0;
+
+  if ( ( g_ua_to_dev_map != NULL ) && ( g_n_ua_to_dev_map != 0 ) ) {
+    munmap(g_ua_to_dev_map, g_n_ua_to_dev_map);
+  }
+  
   if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
-BYE:
-  return status;
 }
 
 int 
@@ -120,7 +123,9 @@ zero_globals(
 
   memset(g_ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   g_devices = NULL;  g_n_devices = 0;
-  g_ua_to_dev_map = NULL;  g_n_ua_to_dev_map = 0;
+  g_ua_to_dev_map = NULL;  
+  g_n_ua_to_dev_map = 0;
+  g_num_ua_to_dev_map = 0;
 
   const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
   memset(g_valid_chars_in_url, '\0', 256);
@@ -151,10 +156,11 @@ zero_log()
   g_log_bad_user_agent = 0;
 
   g_log_ss_calls      = 0;
-  g_log_ss_non_ascii  = 0;
   g_log_ss_bad_code   = 0;
-  g_log_ss_no_session = 0;
+  g_log_ss_non_ascii  = 0;
+  g_log_ss_null_data  = 0;
   g_log_ss_bad_json   = 0;
+  g_log_ss_no_session = 0;
 
   g_log_missing_test_ab = 0;
   g_log_missing_test_xy = 0;

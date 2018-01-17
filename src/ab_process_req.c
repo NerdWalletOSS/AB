@@ -61,7 +61,6 @@ ab_process_req(
     return status;
   }
 
-  strcpy(g_err, "ERROR: ");
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( g_verbose ) { fprintf(stderr, "%s-> %s \n", api, args); }
   //-----------------------------------------

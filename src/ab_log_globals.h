@@ -11,10 +11,11 @@ EXTERN uint64_t g_log_no_user_agent;
 EXTERN uint64_t g_log_bad_user_agent;
 
 EXTERN uint64_t g_log_ss_calls;
-EXTERN uint64_t g_log_ss_non_ascii;
 EXTERN uint64_t g_log_ss_bad_code;
-EXTERN uint64_t g_log_ss_no_session;
+EXTERN uint64_t g_log_ss_non_ascii;
+EXTERN uint64_t g_log_ss_null_data;
 EXTERN uint64_t g_log_ss_bad_json;
+EXTERN uint64_t g_log_ss_no_session;
 
 EXTERN uint64_t g_log_missing_test_ab;
 EXTERN uint64_t g_log_missing_test_xy;
