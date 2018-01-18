@@ -12,7 +12,6 @@ write_log(
     char *buf,
     int *ptr_buf_idx,
     int buf_sz,
-    FILE *fp,
     const char *const label,
     uint64_t n
     )
@@ -24,7 +23,6 @@ write_log(
     *ptr_buf_idx += len;
     strcat(buf, temp); 
   }
-  fprintf(fp, "%s", buf);
 }
 
 int
@@ -33,73 +31,48 @@ dump_log(
     )
 {
   int status = 0;
-  char log_dir[255+1];
-  FILE *fp = NULL;
-  char *file_name = NULL;
-  bool is_stdout = false;
   int ridx = 0;
 
   strcpy(g_rslt, "{ ");
   ridx = strlen(g_rslt);
 
-  memset(log_dir, '\0', 255+1);
-  status = extract_name_value(args, "LogDirectory=", '&', log_dir, 255);
-  cBYE(status);
-  if ( ( status < 0 ) || ( *log_dir == '\0' ) ) { 
-    is_stdout = true;
-    fp = stdout;
-  }
-  else {
-    int len = strlen(log_dir) + 64;
-    file_name = malloc(len); return_if_malloc_failed(file_name);
-
-    memset(file_name, '\0', len);
-    strcpy(file_name, log_dir);
-    strcat(file_name, "/_scalars.csv");
-    fp = fopen(file_name, "w");
-    return_if_fopen_failed(fp, file_name, "w");
-  }
   //---- Scalars
   int n = AB_MAX_LEN_RESULT;
-  // write_log(g_rslt, &ridx, n, fp, "StartTime", g_log_start_time);
+  write_log(g_rslt, &ridx, n, "StartTime", g_log_start_time);
 
-  fprintf(fp, "NoUserAgent,%" PRIu64 "\n",     g_log_no_user_agent);
-  fprintf(fp, "BadUserAgent,%" PRIu64 "\n",    g_log_bad_user_agent);
+  write_log(g_rslt, &ridx, n, "NoUserAgent", g_log_no_user_agent);
+  write_log(g_rslt, &ridx, n, "BadUserAgent", g_log_bad_user_agent);
 
 
-  fprintf(fp, "SessionServiceCalls,%" PRIu64 "\n", g_log_ss_calls);
-  fprintf(fp, "SessionServiceBadCode,%" PRIu64 "\n", g_log_ss_bad_code);
-  fprintf(fp, "SessionServiceNonAscii,%" PRIu64 "\n", g_log_ss_non_ascii);
-  fprintf(fp, "SessionServiceNoSession,%" PRIu64 "\n", g_log_ss_null_data);
-  fprintf(fp, "SessionServiceBadJSON,%" PRIu64 "\n", g_log_ss_bad_json);
-  fprintf(fp, "SessionServiceNoSession,%" PRIu64 "\n", g_log_ss_no_session);
+  write_log(g_rslt, &ridx, n, "SessionServiceCalls", g_log_ss_calls);
+  write_log(g_rslt, &ridx, n, "SessionServiceBadCode", g_log_ss_bad_code);
+  write_log(g_rslt, &ridx, n, "SessionServiceNonAscii", g_log_ss_non_ascii);
+  write_log(g_rslt, &ridx, n, "SessionServiceBadJSON", g_log_ss_bad_json);
+  write_log(g_rslt, &ridx, n, "SessionServiceNoSession", g_log_ss_no_session);
 
-  fprintf(fp, "MissingTestAB,%" PRIu64 "\n",   g_log_missing_test_ab);
-  fprintf(fp, "MissingTestXY,%" PRIu64 "\n",   g_log_missing_test_xy);
+  write_log(g_rslt, &ridx, n, "MissingTestAB",   g_log_missing_test_ab);
+  write_log(g_rslt, &ridx, n, "MissingTestXY",   g_log_missing_test_xy);
 
-  fprintf(fp, "NoTestName,%" PRIu64 "\n",      g_log_no_test_name);
-  fprintf(fp, "NoTestNames,%" PRIu64 "\n",     g_log_no_test_names);
+  write_log(g_rslt, &ridx, n, "NoTestName",      g_log_no_test_name);
+  write_log(g_rslt, &ridx, n, "NoTestNames",     g_log_no_test_names);
 
-  fprintf(fp, "NumDroppedPosts,%" PRIu64 "\n", g_log_dropped_posts);
-  fprintf(fp, "NumPosts,%" PRIu64 "\n",        g_log_posts);
-  fprintf(fp, "BadPosts,%" PRIu64 "\n",        g_log_bad_posts);
-  fprintf(fp, "FailedPosts,%" PRIu64 "\n",     g_log_failed_posts);
+  write_log(g_rslt, &ridx, n, "NumDroppedPosts", g_log_dropped_posts);
+  write_log(g_rslt, &ridx, n, "NumPosts",        g_log_posts);
+  write_log(g_rslt, &ridx, n, "BadPosts",        g_log_bad_posts);
+  write_log(g_rslt, &ridx, n, "FailedPosts",     g_log_failed_posts);
 
-  fprintf(fp, "BadUUID,%" PRIu64 "\n",         g_log_bad_uuid);
-  fprintf(fp, "BadTestType,%" PRIu64 "\n",     g_log_bad_test_type);
-  fprintf(fp, "BadTestName%" PRIu64 "\n",      g_log_bad_test_name);
+  write_log(g_rslt, &ridx, n, "BadUUID",         g_log_bad_uuid);
+  write_log(g_rslt, &ridx, n, "BadTestType",     g_log_bad_test_type);
+  write_log(g_rslt, &ridx, n, "BadTestName", g_log_bad_test_name);
 
-  fprintf(fp, "NumGetAltVariantCalls,%" PRIu64 "\n", g_log_get_alt_variant_calls);
-  fprintf(fp, "NumGetVariantCalls,%" PRIu64 "\n", g_log_get_variant_calls);
-  fprintf(fp, "NumGetVariantsCalls,%" PRIu64 "\n", g_log_get_variant_calls);
-  fprintf(fp, "NumRouterCalls,%" PRIu64 "\n",      g_log_router_calls);
-  fprintf(fp, "NumBadRouterCalls,%" PRIu64 "\n",  g_log_bad_router_calls);
-
-  strcpy(g_rslt, " \"LastKey\" : 0 } ");
-  ridx = strlen(g_rslt);
+  write_log(g_rslt, &ridx, n, "NumGetAltVariantCalls", g_log_get_alt_variant_calls);
+  write_log(g_rslt, &ridx, n, "NumGetVariantCalls", g_log_get_variant_calls);
+  write_log(g_rslt, &ridx, n, "NumGetVariantsCalls", g_log_get_variant_calls);
+  write_log(g_rslt, &ridx, n, "NumRouterCalls",      g_log_router_calls);
+  write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
+  // TODO P4 Guard this in terms of ridx
+  strcat(g_rslt, "\"LastKey\" : 0 } \n");
 BYE:
-  free_if_non_null(file_name);
-  if ( !is_stdout ) { fclose_if_non_null(fp); }
   return status;
 }
 

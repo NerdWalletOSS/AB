@@ -14,40 +14,43 @@ CREATE TABLE admin (
 insert into admin values (NULL, 'joe'); 
 insert into admin values (NULL, 'blow'); 
 
-DROP TABLE IF EXISTS cat_attr; -- load in LoadDBConfigs
-CREATE TABLE cat_attr (
+DROP TABLE IF EXISTS attr_type; -- load in LoadDBConfigs
+CREATE TABLE attr_type (
   id int(8) not null auto_increment,
-  name varchar(16) not null,
-  description varchar(128),
-  is_del int(2) not null default 0, -- for soft deletes
+  name varchar(32) not null,
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
+insert into attr_type values (NULL, 'categorical'); 
+insert into attr_type values (NULL, 'boolean'); 
+insert into attr_type values (NULL, 'numeric'); 
 
-DROP TABLE IF EXISTS cat_attr; -- load in LoadDBConfigs
-CREATE TABLE cat_attr (
+DROP TABLE IF EXISTS attr; -- load in LoadDBConfigs
+CREATE TABLE attr (
   id int(8) not null auto_increment,
   name varchar(16) not null,
   description varchar(128),
+  attr_type_id int(8) not null, 
   is_del int(2) not null default 0, -- for soft deletes
   PRIMARY KEY (id),
-  CONSTRAINT uq_name UNIQUE (name)
+  CONSTRAINT uq_name UNIQUE (name),
+  CONSTRAINT fk_attr_type_id FOREIGN KEY (attr_type_id) REFERENCES attr_type(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
-insert into cat_attr values (NULL, 'device', 'device', 0);
-insert into cat_attr values (NULL, 'is_paid', 'is_paid', 0);
+insert into attr values (NULL, 'device', 'device', 1, 0);
+insert into attr values (NULL, 'is_paid', 'is_paid', 1, 0);
 
 DROP TABLE IF EXISTS cat_attr_val; -- load in LoadDBConfigs
 CREATE TABLE cat_attr_val (
   id int(8) not null auto_increment,
   name varchar(16) not null,
-  cat_attr_id int(8) not null,
+  attr_id int(8) not null,
   description varchar(128),
   is_del int(2) not null default 0, -- for soft deletes
   PRIMARY KEY (id),
-  CONSTRAINT fk_cat_attr_id FOREIGN KEY (cat_attr_id) REFERENCES cat_attr(id),
-  CONSTRAINT uq_name_cat_attr_id UNIQUE (name, cat_attr_id)
+  CONSTRAINT fk_attr_id FOREIGN KEY (attr_id) REFERENCES attr(id),
+  CONSTRAINT uq_name_cat_attr_id UNIQUE (name, attr_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 insert into cat_attr_val values (NULL, 'pc', 1, 'Device PC', 0);
