@@ -1,7 +1,6 @@
 tests
 packages
 lib
-config*
 docs
 libtool
 src
@@ -10,3 +9,6 @@ libcurl.pc
 scripts
 curl-config
 Makefile
+config.guess
+config.sub
+configure.ac

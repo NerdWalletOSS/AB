@@ -78,9 +78,17 @@ BYE:
   evhttp_add_header(evhttp_request_get_output_headers(req), 
           "Content-Type", "application/json; charset=UTF-8");
   if ( status < 0 ) { 
-    status = mk_json_output(api, args, g_err, g_rslt);
-    if ( status < 0 ) { WHEREAMI; }
-    evbuffer_add_printf(opbuf, "%s", g_rslt);
+    if ( ( strcmp(api, "GetVariant") == 0 ) ||
+        ( strcmp(api, "GetVariants") == 0 ) ) { 
+      // These are the only 2 external APIs and hence should not 
+      // get any details of our internal code structure
+      evbuffer_add_printf(opbuf, "%s", "{ \"ERROR\" : \"%s\"", api);
+    }
+    else {
+      status = mk_json_output(api, args, g_err, g_rslt);
+      if ( status < 0 ) { WHEREAMI; }
+      evbuffer_add_printf(opbuf, "%s", g_rslt);
+    }
     evhttp_send_reply(req, HTTP_BADREQUEST, "ERROR", opbuf);
   }
   else  {

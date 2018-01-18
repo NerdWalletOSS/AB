@@ -515,8 +515,7 @@ BYE:
 int
 chk_uuid(
     char *X,
-    int desired_len,
-    bool test_uuid_len
+    int desired_len
     )
 {
   int status = 0;
@@ -529,11 +528,6 @@ chk_uuid(
     if ( c == '\0' ) { break; }
     if ( c == '-' ) { continue; } // hyphen is allowed 
     if ( !isalnum(c ) ) { 
-      g_log_bad_uuid++; go_BYE(-1); 
-    }
-  }
-  if ( ( test_uuid_len ) && ( desired_len > 0 ) ) {
-    if ( strlen(X) != (uint32_t)desired_len ) { 
       g_log_bad_uuid++; go_BYE(-1); 
     }
   }

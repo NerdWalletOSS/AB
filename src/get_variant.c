@@ -36,7 +36,7 @@ get_variant(
   cBYE(status);
   if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { go_BYE(-1); }
   // TODO: Log missing UUID
-  status = chk_uuid(g_uuid, g_uuid_len, g_test_uuid_len); cBYE(status);
+  status = chk_uuid(g_uuid, g_uuid_len); cBYE(status);
   // TODO: Log bad UUID
   get_tracer(args, in_tracer);
   set_tracer(out_tracer, AB_MAX_LEN_TRACER);

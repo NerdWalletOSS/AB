@@ -33,7 +33,7 @@ get_variants(
   memset(g_uuid, '\0', g_uuid_len+1);
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_uuid_len); 
   cBYE(status); // ADDED DEC 2016
-  status = chk_uuid(g_uuid, g_uuid_len, g_test_uuid_len); cBYE(status);
+  status = chk_uuid(g_uuid, g_uuid_len); cBYE(status);
   //-------------------------------------------------------------
   memset(test_names, '\0', N1);
   status = extract_name_value(args, "TestName=", '&', test_names, N1);

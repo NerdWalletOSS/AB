@@ -87,7 +87,7 @@ Contains
 Leads to Section~\ref{add_edit_basic_page}
 
 \subsection{Dormant Test}
-\label{start_test}
+\label{dormant_test}
 Verifies that test is in good shape, changes state to dormant and returns to home page Section~\ref{home_page}
 
 \subsection{Start Test}
@@ -286,5 +286,21 @@ This page is for use only when TestType = XY and State is draft or dormant.
 \label{tbl_follow_on}
 \end{table}
 
+\section{Config}
+We will have a ``hidden'' page for editing config variables as in
+Table~\ref{tbl_config}
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Name } & {\bf Value} \\ \hline \hline
+  \verb+default_landing_page+ & \url{www.nerdwallet.com} \\ \hline
+\verb+check_url_reachable+ & true \\ \hline
+  \verb+num_retries+ & 10 \\ \hline 
+\hline
+\end{tabular}
+\caption{View/Edit Config Variables}
+\label{tbl_config}
+\end{table}
 
 \end{document}

@@ -3,7 +3,7 @@
 #else
 #define EXTERN 
 #endif
-//--- For Internal log 
+//--- For Internal log. All set by C
 
 EXTERN uint64_t g_log_start_time;
 

@@ -101,8 +101,7 @@ RDTSC(
 extern int
     chk_uuid(
         char *X,
-        int desired_len,
-        bool test_uuid_len
+        int desired_len
         );
 extern bool
 is_valid_url_char(

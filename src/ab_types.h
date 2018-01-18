@@ -7,30 +7,30 @@
 #include <curl/curl.h>
 #include "ab_constants.h"
 
-typedef enum _req_type {
-  Undefined,
-  AddTest, // RW: pass to Lua
-  CheckLoggerConnectivity, // RO: RTS 
-  CheckDBConnectivity, // Config: pass to Lua
-  DeleteTest, // RW: pass to Lua
-  Diagnostics, // RO: RTS  AND Lua 
-  DumpLog, // RO: RTS
-  GetVariant, // RO: RTS
-  GetVariants, // RO: RTS
-  Halt, // RO: RTS
-  HealthCheck, // RO: RTS
-  Ignore, // RO: RTS
-  ListTests, // RO: pass to Lua
-  PingLogServer, // RO: RTS
-  PingSessionServer, // RO: RTS
-  Reload, // RO: RTS 
-  Restart, // RO: RTS 
-  Router, // RO: RTS
-  SetPercentages, // RW: pass to Lua
-  SetDevSpecPerc, // RW: pass to Lua
-  StopTest, // RW: pass to Lua
-  TestInfo, // RO: pass to Lua
-  UAToDevice // RO: RTS
+typedef enum _ab_req_type {
+  Undefined, // --- & --- 
+  AddTest, // Write &  Lua
+  CheckLoggerConnectivity, // Read &  C 
+  CheckDBConnectivity, // Config &  Lua
+  DeleteTest, // Write &  Lua
+  Diagnostics, // Read &  C  AND Lua 
+  DumpLog, // Read &  C
+  GetVariant, // Read &  C
+  GetVariants, // Read &  C
+  Halt, // Read &  C
+  HealthCheck, // Read &  C
+  Ignore, // Read &  C
+  ListTests, // Read &  Lua
+  PingLogServer, // Read &  C
+  PingSessionServer, // Read &  C
+  Reload, // Write &  Lua 
+  Restart, // Read &  C 
+  Router, // Read &  C
+  SetPercentages, // Write &  Lua
+  SetDevSpecPerc, // Write &  Lua
+  StopTest, // Write &  Lua
+  TestInfo, // Read &  Lua
+  UAToDevice // Read &  C
 } AB_REQ_TYPE;
 
 typedef struct _dev_spec_perc_type {

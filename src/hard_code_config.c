@@ -28,7 +28,6 @@ hard_code_config(void)
   g_sz_log_q = 65536;
   
   strcpy(g_default_url, "localhost:8000/index.html");
-  g_test_uuid_len = false;
   g_reload_on_startup = false;
   g_xy_guid = 1;
   g_uuid_len = 8;

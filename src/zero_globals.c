@@ -63,13 +63,12 @@ zero_globals(
   g_num_post_retries = 0;
   g_reload_on_startup = true;
   memset(g_default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
-  g_xy_guid = 0;
-  g_test_uuid_len = false;
 
   g_uuid_len = AB_MAX_LEN_UUID; // default 
   g_uuid = malloc((AB_MAX_LEN_UUID+1));
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
+  g_xy_guid = 0;
 
   g_ss_response = NULL;
   g_sz_ss_response = AB_MAX_LEN_SS_RESPONSE+1;;
