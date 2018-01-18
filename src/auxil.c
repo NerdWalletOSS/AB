@@ -526,6 +526,7 @@ chk_uuid(
   for ( int i = 0; ; i++ ) { 
     char c = X[i];
     if ( c == '\0' ) { break; }
+    if ( i+1 > desired_len ) { go_BYE(-1);}
     if ( c == '-' ) { continue; } // hyphen is allowed 
     if ( !isalnum(c ) ) { 
       g_log_bad_uuid++; go_BYE(-1); 

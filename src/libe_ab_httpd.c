@@ -82,7 +82,7 @@ BYE:
         ( strcmp(api, "GetVariants") == 0 ) ) { 
       // These are the only 2 external APIs and hence should not 
       // get any details of our internal code structure
-      evbuffer_add_printf(opbuf, "%s", "{ \"ERROR\" : \"%s\"", api);
+      evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"GetVariant(s)\"");
     }
     else {
       status = mk_json_output(api, args, g_err, g_rslt);
@@ -118,7 +118,12 @@ main(
   //--------------------------------------------
   status = zero_globals(); cBYE(status); /* Done only on startup */
   if ( argc != 2 )  { go_BYE(-1); }
+#define HARD_CODE
+#ifdef HARD_CODE
   hard_code_config(); // only for testing 
+#else
+  status = l_load_config(argv[1]); cBYE(status);
+#endif
   status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_sz_log_q > 0 ) { 

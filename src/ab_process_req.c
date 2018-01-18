@@ -1,43 +1,27 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-
-#include <unistd.h>
-#include <string.h>
-
-#include "ab_constants.h"
-#include "ab_types.h"
-#include "macros.h"
-#include "ab_globals.h"
+#include "ab_incs.h"
 #include "auxil.h"
+#include "ab_globals.h"
 #include "url.h"
 #include "ab_process_req.h"
-#include "add_test.h"
-#include "del_test.h"
-#include "diagnostics.h"
-#include "route_get_variant.h"
-#include "stop_test.h"
 #include "init.h"
+#include "post_from_log_q.h"
+
+#include "add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-#include "list_tests.h"
-#include "test_info.h"
-#include "ping_server.h"
-#include "zero_globals.h"
-#include "post_from_log_q.h"
-#include "router.h"
-#include "ua_to_device.h"
+#include "del_test.h"
+#include "diagnostics.h"
 #include "dump_log.h"
+#include "route_get_variant.h"
+#include "list_tests.h"
+#include "ping_server.h"
+#include "router.h"
+#include "set_percentages.h"
+#include "set_dev_spec_perc.h"
+#include "stop_test.h"
+#include "test_info.h"
+#include "zero_globals.h"
+#include "ua_to_device.h"
 
 // START FUNC DECL
 int 
@@ -72,7 +56,7 @@ ab_process_req(
       go_BYE(-1);
       break;
       //--------------------------------------------------------
-    case AddTest : /* done by Lua */
+   case AddTest : /* done by Lua */
       status = l_add_test(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;

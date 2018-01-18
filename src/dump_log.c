@@ -7,6 +7,23 @@
 #include "auxil.h"
 #include "dump_log.h"
 
+void
+write_log(
+    char *buf,
+    int buf_idx,
+    int buf_sz,
+    FILE *fp,
+    const char *const label,
+    uint64_t n
+    )
+{
+  char temp[1024];
+  sprintf(temp, " \"%s\" : " PRIu64 ",", label, n);
+  int len = strlen(temp);
+  if ( ( buf_idx + len ) <= buf_sz ) { strcat(buf, temp); }
+  fprintf(fp, "%s", buf);
+}
+
 int
 dump_log(
     const char * const args
@@ -17,6 +34,10 @@ dump_log(
   FILE *fp = NULL;
   char *file_name = NULL;
   bool is_stdout = false;
+  int rslt_idx = 0;
+
+  strcpy(g_rslt, "{ ");
+  rslt_idx = strlen(g_rslt);
 
   memset(log_dir, '\0', 255+1);
   status = extract_name_value(args, "LogDirectory=", '&', log_dir, 255);
@@ -70,6 +91,8 @@ dump_log(
   fprintf(fp, "NumRouterCalls,%" PRIu64 "\n",      g_log_router_calls);
   fprintf(fp, "NumBadRouterCalls,%" PRIu64 "\n",  g_log_bad_router_calls);
 
+  strcpy(g_rslt, " \"LastKey\" : 0 } ");
+  rslt_idx = strlen(g_rslt);
 BYE:
   free_if_non_null(file_name);
   if ( !is_stdout ) { fclose_if_non_null(fp); }
