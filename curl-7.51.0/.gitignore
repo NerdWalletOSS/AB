@@ -2,7 +2,6 @@ tests
 packages
 libtool
 libcurl.pc
-scripts
 curl-config
 Makefile
 configure.ac
