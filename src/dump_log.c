@@ -18,7 +18,7 @@ write_log(
     )
 {
   char temp[1024];
-  sprintf(temp, " \"%s\" : " PRIu64 ",", label, n);
+  sprintf(temp, " \"%s\" : %" PRIu64 ",", label, n);
   int len = strlen(temp);
   if ( ( buf_idx + len ) <= buf_sz ) { strcat(buf, temp); }
   fprintf(fp, "%s", buf);
