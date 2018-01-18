@@ -1,7 +1,6 @@
 tests
 packages
 libtool
-src
 libcurl.pc
 scripts
 curl-config
