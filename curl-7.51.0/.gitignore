@@ -1,3 +1,15 @@
+.libs
+*.pm
+stamp-h1
+.deps
+*.vers
+*.list
+*.dirstamp
+*.spec
+curl
+*.la
+*.lo
+*.o
 libtool
 libcurl.pc
 curl-config

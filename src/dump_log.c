@@ -37,10 +37,10 @@ dump_log(
   FILE *fp = NULL;
   char *file_name = NULL;
   bool is_stdout = false;
-  int rslt_idx = 0;
+  int ridx = 0;
 
   strcpy(g_rslt, "{ ");
-  rslt_idx = strlen(g_rslt);
+  ridx = strlen(g_rslt);
 
   memset(log_dir, '\0', 255+1);
   status = extract_name_value(args, "LogDirectory=", '&', log_dir, 255);
@@ -60,7 +60,8 @@ dump_log(
     return_if_fopen_failed(fp, file_name, "w");
   }
   //---- Scalars
-  write_log(g_rslt, &rslt_idx, n, fp, "StartTime", g_log_start_time);
+  int n = AB_MAX_LEN_RESULT;
+  // write_log(g_rslt, &ridx, n, fp, "StartTime", g_log_start_time);
 
   fprintf(fp, "NoUserAgent,%" PRIu64 "\n",     g_log_no_user_agent);
   fprintf(fp, "BadUserAgent,%" PRIu64 "\n",    g_log_bad_user_agent);
@@ -95,7 +96,7 @@ dump_log(
   fprintf(fp, "NumBadRouterCalls,%" PRIu64 "\n",  g_log_bad_router_calls);
 
   strcpy(g_rslt, " \"LastKey\" : 0 } ");
-  rslt_idx = strlen(g_rslt);
+  ridx = strlen(g_rslt);
 BYE:
   free_if_non_null(file_name);
   if ( !is_stdout ) { fclose_if_non_null(fp); }
