@@ -59,8 +59,7 @@ ab_httpd : $(COBJS) \
 	../curl-7.51.0/lib/.libs/libcurl.so \
 	../lua-5.1.3/src/liblua.a \
 	../libevent-2.0.22-stable/.libs/libevent.so \
-	-lmysqlclient -lm  -lpthread -ldl
-
+	-lm  -lpthread -ldl 
 
 clean:
 	rm -r -f ab_httpd $(COBJS) 
