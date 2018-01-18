@@ -1,3 +1,4 @@
-extern int l_add_test(
+extern int 
+l_test_info(
     const char *args
     );

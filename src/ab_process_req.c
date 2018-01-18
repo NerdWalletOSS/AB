@@ -29,6 +29,9 @@
 #include "stop_test.h"
 #include "init.h"
 #include "chk_logger_conn.h"
+#include "chk_db_conn.h"
+#include "list_tests.h"
+#include "test_info.h"
 #include "ping_server.h"
 #include "zero_globals.h"
 #include "post_from_log_q.h"
@@ -69,33 +72,61 @@ ab_process_req(
       go_BYE(-1);
       break;
       //--------------------------------------------------------
-    case UAToDevice : /* done by C */
-      status = ua_to_device(args, g_rslt,  AB_MAX_LEN_RESULT); cBYE(status);
+    case AddTest : /* done by Lua */
+      status = l_add_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case CheckLoggerConnectivity :  /* done by C */
+      status = chk_logger_connectivity(g_rslt, AB_MAX_LEN_RESULT); 
+      cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case CheckDBConnectivity : /* done by Lua */
+      status = l_chk_db_conn(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case DeleteTest :  /* done by Lua */
+      status = l_del_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case Diagnostics : /* done by C and Lua */
+      status = diagnostics(); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
       status = dump_log(args); cBYE(status);
       break;
       //--------------------------------------------------------
-    case Ignore :  /* done by C */
+    case GetVariant :  /* done by C */
+    case GetVariants :  /* done by C */
+      status = route_get_variant(req_type, args);  cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case Halt : /* done by C */
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      g_halt = true;
+      if ( g_sz_log_q > 0 ) { 
+        // Tell consumer ead nothing more is coming 
+        pthread_cond_signal(&g_condc);	/* wake up consumer */
+        fprintf(stderr, "Waiting for consumer to finish \n");
+        pthread_join(g_con, NULL);
+        fprintf(stderr, "Consumer finished \n");
+        pthread_mutex_destroy(&g_mutex);
+        pthread_cond_destroy(&g_condc);
+        pthread_cond_destroy(&g_condp);
+      }
+      break;
+      //--------------------------------------------------------
     case HealthCheck :  /* done by C */
+    case Ignore :  /* done by C */
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
-    case PingSessionServer : /* done by C */
-      ping_status = ping_server(g_ss_server, g_ss_port, 
-          g_ss_health_url, &ping_time); 
-      if ( ping_status < 0 ) { 
-        sprintf(g_rslt, "{ \"%s\" : \"ERROR\" }", api);
-      }
-      else {
-        if ( ping_time == 0 ) { 
-          sprintf(g_rslt, "{ \"%s\" : \"SESSION SERVER NOT SET\" }", api);
-        }
-        else {
-          sprintf(g_rslt, "{ \"%s\" : \"%lf\" }", api, ping_time);
-        }
-      }
+    case ListTests : /* done by Lua */
+      status = l_list_tests(args); cBYE(status);
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
@@ -114,74 +145,20 @@ ab_process_req(
       }
       break;
       //--------------------------------------------------------
-    case CheckLoggerConnectivity :  /* done by C */
-      status = chk_logger_connectivity(g_rslt, AB_MAX_LEN_RESULT); 
-      cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case CheckDBConnectivity : /* done by Lua */
-      // TODO status = l_chk_connectivity(g_rslt, AB_MAX_LEN_RESULT); 
-      cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case ListTests : /* done by Lua */
-      // TODO 
-      break;
-      //--------------------------------------------------------
-    case TestInfo : /* done by Lua */
-      // TODO 
-      break;
-      //--------------------------------------------------------
-    case Diagnostics : /* done by C and Lua */
-      status = diagnostics(); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
-      // status = lua_diagnostics(); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
-      break;
-      //--------------------------------------------------------
-    case DeleteTest :  /* done by Lua */
-      status = del_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case StopTest :  /* done by Lua */
-      status = stop_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case Router : /* done by C */
-      status = router(args); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case Halt : /* done by C */
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      g_halt = true;
-      if ( g_sz_log_q > 0 ) { 
-        // Tell consumer ead nothing more is coming 
-        pthread_cond_signal(&g_condc);	/* wake up consumer */
-        fprintf(stderr, "Waiting for consumer to finish \n");
-        pthread_join(g_con, NULL);
-        fprintf(stderr, "Consumer finished \n");
-        pthread_mutex_destroy(&g_mutex);
-        pthread_cond_destroy(&g_condc);
-        pthread_cond_destroy(&g_condp);
+    case PingSessionServer : /* done by C */
+      ping_status = ping_server(g_ss_server, g_ss_port, 
+          g_ss_health_url, &ping_time); 
+      if ( ping_status < 0 ) { 
+        sprintf(g_rslt, "{ \"%s\" : \"ERROR\" }", api);
       }
-      break;
-      //--------------------------------------------------------
-    case AddTest : /* done by Lua */
-      status = add_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case SetPercentages :  // done by Lua 
-      // status = l_set_percentages(args);  
-      cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case GetVariant :  /* done by C */
-    case GetVariants :  /* done by C */
-      status = route_get_variant(req_type, args);  cBYE(status);
+      else {
+        if ( ping_time == 0 ) { 
+          sprintf(g_rslt, "{ \"%s\" : \"SESSION SERVER NOT SET\" }", api);
+        }
+        else {
+          sprintf(g_rslt, "{ \"%s\" : \"%lf\" }", api, ping_time);
+        }
+      }
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
@@ -218,6 +195,29 @@ ab_process_req(
       }
       cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case Router : /* done by C */
+      status = router(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case SetPercentages :  // done by Lua 
+      status = l_set_percentages(args);  
+      cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case StopTest :  /* done by Lua */
+      status = l_stop_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case TestInfo : /* done by Lua */
+      status = l_test_info(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case UAToDevice : /* done by C */
+      status = ua_to_device(args, g_rslt,  AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     default : 

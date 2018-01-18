@@ -1,4 +1,4 @@
 extern int 
-l_del_test(
+l_set_percentages(
     const char *args
     );

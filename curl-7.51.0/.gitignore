@@ -12,3 +12,5 @@ Makefile
 config.guess
 config.sub
 configure.ac
+config.log
+config.status

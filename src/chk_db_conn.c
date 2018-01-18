@@ -1,10 +1,10 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "add_test.h"
+#include "chk_db_conn.h"
 
 int 
-l_add_test(
+l_chk_db_conn(
     const char *args
     )
 {

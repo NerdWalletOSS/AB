@@ -1,10 +1,10 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "add_test.h"
+#include "test_info.h"
 
 int 
-l_add_test(
+l_test_info(
     const char *args
     )
 {

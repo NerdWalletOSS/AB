@@ -454,6 +454,7 @@ diagnostics(
   }
   //C \end{invariant}
   //-----------------------------------------------
+  status = l_diagnostics(); // ask Lua to check as well
 #endif
 BYE:
   if ( ( diff_found ) && ( status == 0 ) ) {

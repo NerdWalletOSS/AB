@@ -49,13 +49,22 @@ When used as a marketing traffic router, the AB RTS is blocking.
 
 \section{The use of Lua and C}
 
+\subsection{Naming conventions}
+
+All Lua functions exposed to C will be prefixe with \verb+l_+, e.g.,
+\verb+l_add_test()+
 \section{Multi-threading}
 
 For all practical purposes, the AB RTS is a single-threaded system.
-
-\section{Lua}
-
-\section{The use of Lua}
+However, in order to keep the main thread free to respond to client requests, we
+have 2 additional threads for the following purposes
+\be
+\item {\bf Logging:} The RTS is required to send an HTTP POST request to a
+  logging server, informing about it bucketing decisions that it makes. 
+\item {\bf Updates:} Changes made in the AB Admin Interface need to be
+  propagated to the RTS. These cause updates to the data structures that the RTS
+  uses to respond quickly.
+  \ee
 
 \section{Global Variables}
 

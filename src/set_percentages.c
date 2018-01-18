@@ -1,10 +1,10 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "add_test.h"
+#include "set_percentages.h"
 
 int 
-l_add_test(
+l_set_percentages(
     const char *args
     )
 {

@@ -23,20 +23,17 @@ int chk_logger_connectivity(
   memset(curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
   memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
   // START: Make a bogus UUID that is alphanumeric 
-  strcpy(lcl_payload.uuid,   "CHCKPIPE");
-  strcpy(lcl_payload.in_tracer, "CHCKPIPE");
-  strcpy(lcl_payload.out_tracer, "CHCKPIPE");
+  strncpy(lcl_payload.uuid, "UUID_CHCKPIPE", AB_MAX_LEN_UUID);
+  strncpy(lcl_payload.in_tracer, "IN_CHCKPIPE", AB_MAX_LEN_TRACER);
+  strncpy(lcl_payload.out_tracer, "OUT_CHCKPIPE", AB_MAX_LEN_TRACER);
   //----------------------------------------------
-  if ( lcl_payload.uuid == 0 ) { go_BYE(-1); }
   status = make_curl_payload(lcl_payload, curl_payload); cBYE(status);
   status = post_url(g_ch, curl_payload, &time_taken);
-  if ( strlen(curl_payload) >= nX ) { go_BYE(-1); }
   if ( status < 0 ) { 
     nw = snprintf(X, nX,
         "{ \"ChkPipe\" : \"ERROR:%s\" } ", curl_payload);
     if ( nw >= nX ) { go_BYE(-1); }
-    fprintf(stderr, "%u:%s:%u Line %3d of File %s, Payload = %s \n",
-        get_time_sec(), g_my_name, g_port, __LINE__, __FILE__, curl_payload);
+    status = 0;
   }
   else {
     nw = snprintf(X, nX, 

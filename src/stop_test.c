@@ -3,13 +3,12 @@
 
 //<hdr>
 int
-stop_test(
+l_stop_test(
     const char *args
     )
 //</hdr>
 {
   int status = 0;
-  // call Lua 
 BYE:
   return status;
 }

@@ -4,17 +4,15 @@
 #include "del_test.h"
 #include "aux_zero.h"
 
-//----------------------------------------------------------
 //<hdr>
-// Called from Lua
 int 
-del_test(
+l_del_test(
     const char *args
     )
 //</hdr>
 {
   int status = 0;
-  int32_t test_idx = 0;
+  int32_t test_idx = -1;
   // test_idx = call_lua(args)
   if ( test_idx < 0 ) { go_BYE(-1); }
   zero_test(test_idx);
