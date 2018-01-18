@@ -7,7 +7,6 @@ libcurl.pc
 scripts
 curl-config
 Makefile
-config.guess
 configure.ac
 config.log
 config.status
