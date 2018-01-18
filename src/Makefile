@@ -27,6 +27,9 @@ COBJS = $(CSRCS:.c=.o)
 
 all : ab_httpd 
 
+../luajit-2.0.5/src/libluajit.a :
+	make -C ../luajit-2.0.5
+
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
