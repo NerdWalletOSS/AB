@@ -10,7 +10,7 @@
 void
 write_log(
     char *buf,
-    int buf_idx,
+    int *ptr_buf_idx,
     int buf_sz,
     FILE *fp,
     const char *const label,
@@ -20,7 +20,10 @@ write_log(
   char temp[1024];
   sprintf(temp, " \"%s\" : %" PRIu64 ",", label, n);
   int len = strlen(temp);
-  if ( ( buf_idx + len ) <= buf_sz ) { strcat(buf, temp); }
+  if ( ( *ptr_buf_idx + len ) <= buf_sz ) { 
+    *ptr_buf_idx += len;
+    strcat(buf, temp); 
+  }
   fprintf(fp, "%s", buf);
 }
 
@@ -57,7 +60,7 @@ dump_log(
     return_if_fopen_failed(fp, file_name, "w");
   }
   //---- Scalars
-  fprintf(fp, "StartTime,%" PRIu64 "\n",     g_log_start_time);
+  write_log(g_rslt, &rslt_idx, n, fp, "StartTime", g_log_start_time);
 
   fprintf(fp, "NoUserAgent,%" PRIu64 "\n",     g_log_no_user_agent);
   fprintf(fp, "BadUserAgent,%" PRIu64 "\n",    g_log_bad_user_agent);
