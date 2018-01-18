@@ -3,7 +3,6 @@ packages
 docs
 libtool
 src
-include
 libcurl.pc
 scripts
 curl-config
@@ -13,3 +12,4 @@ config.sub
 configure.ac
 config.log
 config.status
+projects/Windows/VC*
