@@ -5,7 +5,7 @@ INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
 	-I../statsd-c-client-master/ \
-	-I../lua-5.1.3/src/ \
+	-I../luajit-2.0.5/src/ \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ 
 
@@ -55,18 +55,18 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 ab_httpd : $(COBJS) \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
-	../lua-5.1.3/src/liblua.a \
+	../luajit-2.0.5/src/libluajit.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
-	../lua-5.1.3/src/liblua.a \
+	../luajit-2.0.5/src/libluajit.a \
 	../libevent-2.0.22-stable/.libs/libevent.so \
 	-lm  -lpthread -ldl 
 
 clean:
 	rm -r -f ab_httpd $(COBJS) 
-	make -i -C ../lua-5.1.3/src/ clean 
+	make -i -C ../luajit-2.0.5/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
