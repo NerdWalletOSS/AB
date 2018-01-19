@@ -24,7 +24,10 @@ return {
   statsd_inc = "nw.metrics.ab.requests", -- Determined by DataDog
   statsd_timing = "nw.metrics.ab.request_time", -- Determined by DataDog
   
-  sz_log_q = 65536, --[[Size of queue of messages to Log Server.  Provides buffering so that POSTing to Log Server can be done by separate thread and does not slow down
+  sz_log_q = 65536, --[[
+  Size of queue of messages to Log Server.  Provides buffering so that 
+  POSTing to Log Server can be done by separate thread and does not 
+  slow down main thread
   --]]
   sz_uuid_ht = 4194304, -- Number of unique UUIDs that can be supported. 
   
@@ -33,8 +36,7 @@ return {
   test_uuid_len = false, -- If true, then UUID len must match exactly
   reload_on_startup = false, -- If true then Reload occurs when server comes up
   xy_guid = 1, -- Used for testing.Set to 0 or omit this line in production
-  uuid_len = 8, -- Maximum Length of UUID. If test_uuid_len=true, then this is exact length of UUID
+  uuid_len = 8, -- Maximum Length of UUID. 
   dev_file = "opt/ab/device.csv",
   ua_to_dev_map_file = "opt/ab/ua_to_dev.bin",
-  num_log_entries = 65536, 
 }

@@ -30,7 +30,8 @@ typedef enum _ab_req_type {
   SetDevSpecPerc, // Write &  Lua
   StopTest, // Write &  Lua
   TestInfo, // Read &  Lua
-  UAToDevice // Read &  C
+  UAToDevice, // Read &  C
+  ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
 typedef struct _dev_spec_perc_type {

@@ -1,13 +1,6 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <curl/curl.h>
-#include "ab_constants.h"
-#include "ab_types.h"
-#include "ab_globals.h"
-#include "macros.h"
+#include "ab_incs.h"
 #include "auxil.h"
+#include "ab_globals.h"
 #include "ping_server.h"
 //<hdr>
 int 
@@ -15,7 +8,7 @@ ping_server(
     const char *server,
     int port,
     const char *url,
-    double *ptr_time
+    char *rslt
     )
 //</hdr>
 {
@@ -24,7 +17,7 @@ ping_server(
   char *buffer = NULL; int buflen = 0;
   long http_code;
 
-  *ptr_time = 0;
+  double time = 0;
   bool is_server = true;
   if ( ( server == NULL ) || ( *server == '\0' ) )  {
     is_server = false;
@@ -58,8 +51,21 @@ ping_server(
     fprintf(stderr, "Failure at [%s] \n", buffer);
     go_BYE(-1); 
   }
-  curl_easy_getinfo(ch, CURLINFO_TOTAL_TIME, ptr_time);
+  curl_easy_getinfo(ch, CURLINFO_TOTAL_TIME, &time);
 BYE:
+  if ( rslt != NULL ) { 
+    if ( status < 0 ) { 
+      sprintf(rslt, "{ \"Ping\" : \"ERROR\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\" }", server, port, url);
+    }
+    else {
+      if ( time == 0 ) { 
+        sprintf(rslt, "{ \"Ping\" : \"LOG SERVER NOT SET\" }");
+      }
+      else {
+        sprintf(rslt, "{ \"Ping\" : \"ERROR\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\", \"Time\" : \"%lf\" }", server, port, url, time);
+      }
+    }
+  }
   free_if_non_null(buffer);
   curl_easy_cleanup(ch); 
   return status;

@@ -67,6 +67,9 @@ int get_test_idx(
       }
     }
   }
+  if ( *ptr_test_idx < 0 ) { 
+    g_log_missing_test++;
+  }
 BYE:
   return status;
 }
@@ -135,13 +138,9 @@ get_test_name(
       test_name, AB_MAX_LEN_TEST_NAME);
   if ( status < 0 ) { g_log_no_test_name++; }
   cBYE(status); // ADDED DEC 2016
-  if ( test_name[0] == '\0' ) {  // WTF am I doing here????
-    g_log_no_test_name++;
-    status = extract_name_value(args, "TestName=", '&', 
-        test_name, AB_MAX_LEN_TEST_NAME);
-    go_BYE(-1); 
-  }
-  status = chk_test_name(test_name); cBYE(status);
+  status = chk_test_name(test_name); 
+  if ( status < 0 ) { g_log_bad_test_name++; }
+  cBYE(status);
 BYE:
   return status;
 }

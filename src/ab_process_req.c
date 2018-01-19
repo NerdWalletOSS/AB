@@ -34,16 +34,10 @@ ab_process_req(
 // STOP FUNC DECL
 {
   int status = 0;
-  double ping_time;
-  int ping_status; 
-  uint64_t t_start, t_stop;
-
   //-----------------------------------------
-  t_start = timestamp();
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
   memset(g_buf,  '\0', AB_ERR_MSG_LEN+1);
-
   //-----------------------------------------
   switch ( req_type ) {
     case Undefined : 
@@ -108,35 +102,11 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
-      ping_status = ping_server(g_log_server, g_log_port, 
-          g_log_health_url, &ping_time); 
-      if ( ping_status < 0 ) { 
-        sprintf(g_rslt, "{ \"%s\" : \"ERROR\" }", api);
-      }
-      else {
-        if ( ping_time == 0 ) { 
-          sprintf(g_rslt, "{ \"%s\" : \"LOG SERVER NOT SET\" }", api);
-        }
-        else {
-          sprintf(g_rslt, "{ \"%s\" : \"%lf\" }", api, ping_time);
-        }
-      }
+      ping_server(g_log_server, g_log_port, g_log_health_url, g_rslt);
       break;
       //--------------------------------------------------------
     case PingSessionServer : /* done by C */
-      ping_status = ping_server(g_ss_server, g_ss_port, 
-          g_ss_health_url, &ping_time); 
-      if ( ping_status < 0 ) { 
-        sprintf(g_rslt, "{ \"%s\" : \"ERROR\" }", api);
-      }
-      else {
-        if ( ping_time == 0 ) { 
-          sprintf(g_rslt, "{ \"%s\" : \"SESSION SERVER NOT SET\" }", api);
-        }
-        else {
-          sprintf(g_rslt, "{ \"%s\" : \"%lf\" }", api, ping_time);
-        }
-      }
+      ping_server(g_log_server, g_log_port, g_log_health_url, g_rslt);
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
@@ -198,23 +168,15 @@ ab_process_req(
       status = ua_to_device(args, g_rslt,  AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
+    case ZeroCounters : /* done by C */
+      zero_log();
+      break;
+      //--------------------------------------------------------
     default : 
       go_BYE(-1);
       break;
   }
 BYE:
-  // TODO: Improve the statsd story 
-  if ( ( ( req_type == GetVariant )  || ( req_type == GetVariants ) ) && 
-      ( status == 0 ) ) {
-    t_stop = timestamp();
-    if ( t_stop > t_start ) { 
-      uint64_t t_delta = t_stop - t_start;
-      if ( g_statsd_link != NULL ) { 
-        statsd_timing(g_statsd_link, g_statsd_timing, t_delta);
-        statsd_inc(g_statsd_link, g_statsd_inc, 1.0); 
-      }
-    }
-  }
   return status ;
 }
 
