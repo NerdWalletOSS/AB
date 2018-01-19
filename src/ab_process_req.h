@@ -1,9 +1,7 @@
 extern int 
 ab_process_req(
-    const char *api,
-    const char *args
-    );
-extern AB_REQ_TYPE
-get_req_type(
-    const char *api
+    AB_REQ_TYPE req_type,
+    const char * const api,
+    const char *args,
+    const char *body
     );

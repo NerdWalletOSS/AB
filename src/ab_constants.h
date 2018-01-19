@@ -7,9 +7,8 @@
 #define AB_MAX_LEN_API_NAME 31
 #define AB_MAX_LEN_ARGS     4095
 #define AB_MAX_LEN_URL      4095 // used for URLs fired by RTS
-#define AB_MAX_LEN_POST     8191
 #define AB_MAX_HEADERS_SIZE 8191
-#define AB_MAX_BODY_SIZE    AB_MAX_LEN_POST
+#define AB_MAX_LEN_BODY    8191
 #define AB_MAX_LEN_PAYLOAD  1024-1 // for POST to logger
 #define AB_MAX_LEN_RESULT   1048576-1
 

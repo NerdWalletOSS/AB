@@ -5,7 +5,6 @@
 
 int 
 l_chk_db_conn(
-    const char *args
     )
 {
   int status = 0;

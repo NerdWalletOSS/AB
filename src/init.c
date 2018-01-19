@@ -151,6 +151,14 @@ setup_curl(
   ch = curl_easy_init();
   if ( ch == NULL ) { go_BYE(-1); }
   curl_hdrs = curl_slist_append(curl_hdrs, "Content-Type: application/json");
+  curl_hdrs = curl_slist_append(curl_hdrs, "X-Caller-Client-ID: ab-runtime-service");
+  /*
+   * Robby Bryant 
+   * fwiw - when you hit logger APIs, can send a custom header called
+   * `X-Caller-Client-ID` with a a value of `ab-runtime-service` (or 
+   * any other string of your choosing)?  that way we can slice out 
+   * your traffic in our logs and metrics
+   * */
   int len = strlen(server) + strlen(url) + 32;
   full_url = malloc(len); return_if_malloc_failed(full_url);
   int nw;

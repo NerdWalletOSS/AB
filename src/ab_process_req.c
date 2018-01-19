@@ -26,8 +26,10 @@
 // START FUNC DECL
 int 
 ab_process_req(
-    const char *api,
-    const char *args
+    AB_REQ_TYPE req_type,
+    const char *const api,
+    const char *args,
+    const char *body
     )
 // STOP FUNC DECL
 {
@@ -42,14 +44,6 @@ ab_process_req(
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
   memset(g_buf,  '\0', AB_ERR_MSG_LEN+1);
 
-  // NW Specific
-  if ( strcmp(api, "api/v1/health_check") == 0 ) { 
-    strcpy(g_rslt, "{ \"HealthCheck\" : \"OK\" }");
-    return status;
-  }
-
-  AB_REQ_TYPE req_type = get_req_type(api); 
-  if ( g_verbose ) { fprintf(stderr, "%s-> %s \n", api, args); }
   //-----------------------------------------
   switch ( req_type ) {
     case Undefined : 
@@ -57,7 +51,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
    case AddTest : /* done by Lua */
-      status = l_add_test(args); cBYE(status);
+      status = l_add_test(body); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -67,11 +61,11 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckDBConnectivity : /* done by Lua */
-      status = l_chk_db_conn(args); cBYE(status);
+      status = l_chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
     case DeleteTest :  /* done by Lua */
-      status = l_del_test(args); cBYE(status);
+      status = l_del_test(body); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -110,7 +104,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
-      status = l_list_tests(args); cBYE(status);
+      status = l_list_tests(body); cBYE(status);
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
@@ -186,7 +180,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case SetPercentages :  // done by Lua 
-      status = l_set_percentages(args);  
+      status = l_set_percentages(body);  
       cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
@@ -224,78 +218,3 @@ BYE:
   return status ;
 }
 
-AB_REQ_TYPE
-get_req_type(
-    const char *api
-    )
-{
-  if (strcasecmp(api, "Ignore") == 0) {
-    return Ignore;
-  }
-  else if (strcasecmp(api, "PingLogServer") == 0) {
-    return PingLogServer;
-  }
-  else if (strcasecmp(api, "PingSessionServer") == 0) {
-    return PingSessionServer;
-  }
-  else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
-    return CheckDBConnectivity;
-  }
-  else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
-    return CheckDBConnectivity;
-  }
-  else if (strcasecmp(api, "HealthCheck") == 0) {
-    return HealthCheck;
-  }
-  else if (strcasecmp(api, "ListTests") == 0) {
-    return ListTests;
-  }
-  else if (strcasecmp(api, "TestInfo") == 0) {
-    return TestInfo;
-  }
-  else if (strcasecmp(api, "Diagnostics") == 0) {
-    return Diagnostics;
-  }
-  else if (strcasecmp(api, "AddTest") == 0) {
-    return AddTest;
-  }
-  else if (strcasecmp(api, "DeleteTest") == 0) {
-    return DeleteTest;
-  }
-  else if (strcasecmp(api, "DumpLog") == 0) {
-    return DumpLog;
-  }
-  else if (strcasecmp(api, "SetPercentages") == 0) {
-    return SetPercentages;
-  }
-  else if (strcasecmp(api, "StopTest") == 0) {
-    return StopTest;
-  }
-  else if (strcasecmp(api, "GetVariant") == 0) {
-    return GetVariant;
-  }
-  else if (strcasecmp(api, "GetVariants") == 0) {
-    return GetVariants;
-  }
-  else if (strcasecmp(api, "Halt") == 0) {
-    return Halt;
-  }
-  else if (strcasecmp(api, "Restart") == 0) {
-    return Restart;
-  }
-  else if (strcasecmp(api, "Router") == 0) {
-    return Router;
-  }
-  else if (strcasecmp(api, "UAToDevice") == 0) {
-    return UAToDevice;
-  }
-  else if ( strcasecmp(api, "favicon.ico") == 0 ) { 
-    return Ignore;
-  }
-  else {
-    fprintf(stderr,  "Unknown API = %s \n", api);
-
-    return Undefined;
-  }
-  return Undefined;
-}

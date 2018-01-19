@@ -25,6 +25,8 @@
 #include "init.h"
 #include "ab_process_req.h"
 #include "get_ua_to_device_id.h"
+#include "get_req_type.h"
+#include "get_body.h"
 #include "extract_api_args.h"
 #include "dump_log.h"
 #include <sys/types.h>
@@ -54,6 +56,7 @@ generic_handler(
   struct event_base *base = (struct event_base *)arg;
   char api[AB_MAX_LEN_API_NAME+1]; 
   char args[AB_MAX_LEN_ARGS+1];
+  char body[AB_MAX_LEN_BODY+1];
   struct evbuffer *opbuf = NULL;
   opbuf = evbuffer_new();
   if ( opbuf == NULL) { go_BYE(-1); }
@@ -62,8 +65,16 @@ generic_handler(
   //--------------------------------------
   status = extract_api_args(uri, api, AB_MAX_LEN_API_NAME, 
       args, AB_MAX_LEN_ARGS);
+  // START: NW Specific
+  if ( strcmp(api, "api/v1/health_check") == 0 ) { 
+    strcpy(g_rslt, "{ \"HealthCheck\" : \"OK\" }"); goto BYE;
+  }
+  // STOP:  NW Specific 
+  AB_REQ_TYPE req_type = get_req_type(api); 
+  if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
-  status = ab_process_req(api, args); cBYE(status);
+  status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
+  status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
 
   if ( strcmp(api, "Halt") == 0 ) {
@@ -139,7 +150,7 @@ main(
   base = event_base_new();
   httpd = evhttp_new(base);
   evhttp_set_max_headers_size(httpd, AB_MAX_HEADERS_SIZE);
-  evhttp_set_max_body_size(httpd, AB_MAX_LEN_POST);
+  evhttp_set_max_body_size(httpd, AB_MAX_LEN_BODY);
   status = evhttp_bind_socket(httpd, "0.0.0.0", g_port); 
   if ( status < 0 ) { 
     fprintf(stderr, "Port %d busy \n", g_port); go_BYE(-1);
