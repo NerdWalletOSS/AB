@@ -120,7 +120,7 @@ BYE:
   // TODO Improve statsd logging
   if ( ( req_type == GetVariant )  || ( req_type == GetVariants ) ) {
     uint64_t t_stop = RDTSC();
-    if ( t_stop > t_start ) { 
+    if ( t_stop > g_t_start ) { 
       uint64_t t_delta = t_stop - g_t_start;
       if ( g_statsd_link != NULL ) { 
         statsd_timing(g_statsd_link, g_statsd_timing, t_delta);
