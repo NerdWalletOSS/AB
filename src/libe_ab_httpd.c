@@ -53,6 +53,7 @@ generic_handler(
     )
 {
   int status = 0;
+  g_t_start = RDTSC();
   struct event_base *base = (struct event_base *)arg;
   char api[AB_MAX_LEN_API_NAME+1]; 
   char args[AB_MAX_LEN_ARGS+1];
@@ -87,7 +88,7 @@ generic_handler(
   }
 BYE:
   evhttp_add_header(evhttp_request_get_output_headers(req), 
-          "Content-Type", "application/json; charset=UTF-8");
+      "Content-Type", "application/json; charset=UTF-8");
   if ( status < 0 ) { 
     if ( ( strcmp(api, "GetVariant") == 0 ) ||
         ( strcmp(api, "GetVariants") == 0 ) ) { 
@@ -115,6 +116,19 @@ BYE:
     }
   }
   evbuffer_free(opbuf);
+  //--- Log time seen by clients
+  // TODO Improve statsd logging
+  if ( ( req_type == GetVariant )  || ( req_type == GetVariants ) ) {
+    uint64_t t_stop = RDTSC();
+    if ( t_stop > g_t_start ) { 
+      uint64_t t_delta = t_stop - g_t_start;
+      if ( g_statsd_link != NULL ) { 
+        statsd_timing(g_statsd_link, g_statsd_timing, t_delta);
+        statsd_inc(g_statsd_link, g_statsd_inc, 1.0); 
+      }
+    }
+  }
+  //--------------------
 }
 
 int 

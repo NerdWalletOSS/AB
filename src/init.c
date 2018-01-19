@@ -94,7 +94,7 @@ init()
   }
   else {
     status = setup_curl("POST", NULL, g_log_server, g_log_port, 
-        g_log_url, g_log_health_url, 1000, &g_ch, &g_curl_hdrs);
+        g_log_url, g_log_health_url, AB_LOGGER_TIMEOUT_MS, &g_ch, &g_curl_hdrs);
     cBYE(status);
   }
   // Following for curl  for Session Service
@@ -107,7 +107,7 @@ init()
      * a 95th percentile of 30ms. The plain get endpoint would be 
      * expected to be faster -- Andrew Hollenbach */
     status = setup_curl("GET", g_ss_response, g_ss_server, g_ss_port, 
-        g_ss_url, g_ss_health_url, 50, &g_ss_ch, &g_ss_curl_hdrs);
+        g_ss_url, g_ss_health_url, AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
     cBYE(status);
   }
   // For Lua
@@ -191,16 +191,14 @@ setup_curl(
   //-------
   // Check that log server is listening
   if ( ( health_url != NULL ) && ( *health_url != '\0' ) ) {
-    double ping_time = 0;
-    int ping_status = ping_server(server, port, health_url, &ping_time);
+    int ping_status = ping_server(server, port, health_url, NULL);
     if ( ping_status < 0 ) { 
       fprintf(stderr, "WARNING! Server %s:%d, url %s  not running\n", 
           server, port, health_url);
       shutdown_curl();
     }
     else {
-      fprintf(stderr, "[INFO] Server %s:%d running. Time = %lf\n", 
-          server, port, ping_time);
+      fprintf(stderr, "[INFO] Server %s:%d running.\n", server, port);
     }
   }
   *ptr_ch = ch;

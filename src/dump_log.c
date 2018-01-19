@@ -49,21 +49,25 @@ dump_log(
   write_log(g_rslt, &ridx, n, "SessionServiceNonAscii", g_log_ss_non_ascii);
   write_log(g_rslt, &ridx, n, "SessionServiceBadJSON", g_log_ss_bad_json);
   write_log(g_rslt, &ridx, n, "SessionServiceNoSession", g_log_ss_no_session);
+  write_log(g_rslt, &ridx, n, "SessionServiceBadCall", g_log_ss_bad_calls);
 
-  write_log(g_rslt, &ridx, n, "MissingTestAB",   g_log_missing_test_ab);
-  write_log(g_rslt, &ridx, n, "MissingTestXY",   g_log_missing_test_xy);
+  write_log(g_rslt, &ridx, n, "MissingTest",   g_log_missing_test);
 
-  write_log(g_rslt, &ridx, n, "NoTestName",      g_log_no_test_name);
-  write_log(g_rslt, &ridx, n, "NoTestNames",     g_log_no_test_names);
+  write_log(g_rslt, &ridx, n, "NoTestName",    g_log_no_test_name);
+  write_log(g_rslt, &ridx, n, "NoTestNames",   g_log_no_test_names);
+  write_log(g_rslt, &ridx, n, "NoUUID",        g_log_no_uuid);
+  write_log(g_rslt, &ridx, n, "NoTestType",    g_log_no_test_type);
+  write_log(g_rslt, &ridx, n, "NoTracer",      g_log_no_tracer);
 
   write_log(g_rslt, &ridx, n, "NumDroppedPosts", g_log_dropped_posts);
   write_log(g_rslt, &ridx, n, "NumPosts",        g_log_posts);
   write_log(g_rslt, &ridx, n, "BadPosts",        g_log_bad_posts);
   write_log(g_rslt, &ridx, n, "FailedPosts",     g_log_failed_posts);
 
-  write_log(g_rslt, &ridx, n, "BadUUID",         g_log_bad_uuid);
-  write_log(g_rslt, &ridx, n, "BadTestType",     g_log_bad_test_type);
+  write_log(g_rslt, &ridx, n, "BadUUID",     g_log_bad_uuid);
+  write_log(g_rslt, &ridx, n, "BadTestType", g_log_bad_test_type);
   write_log(g_rslt, &ridx, n, "BadTestName", g_log_bad_test_name);
+  write_log(g_rslt, &ridx, n, "BadTracer",   g_log_bad_tracer);
 
   write_log(g_rslt, &ridx, n, "NumGetAltVariantCalls", g_log_get_alt_variant_calls);
   write_log(g_rslt, &ridx, n, "NumGetVariantCalls", g_log_get_variant_calls);

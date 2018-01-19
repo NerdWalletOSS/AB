@@ -733,11 +733,11 @@ get_tracer(
   status = extract_name_value(args, "Tracer=", '&', tracer, 
       AB_MAX_LEN_TRACER); 
   if ( ( status < 0 ) || ( *tracer ==  '\0' ) ) { 
-    // Log missing tracer
+    g_log_no_tracer++;
   }
   else {
     if ( !chk_tracer(tracer) ) { 
-      // log bad tracer
+      g_log_bad_tracer++;
     }
   }
 }

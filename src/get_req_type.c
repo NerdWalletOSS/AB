@@ -67,6 +67,9 @@ get_req_type(
   else if (strcasecmp(api, "UAToDevice") == 0) {
     return UAToDevice;
   }
+  else if (strcasecmp(api, "ZeroCounters") == 0) {
+    return ZeroCounters;
+  }
   else if ( strcasecmp(api, "favicon.ico") == 0 ) { 
     return Ignore;
   }

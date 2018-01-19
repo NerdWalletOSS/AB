@@ -22,7 +22,7 @@
 #define AB_MAX_LEN_VARIANT_URL 255
 #define AB_MAX_NUM_TESTS_IN_ONE_CALL 16
 
-#define AB_NUM_BINS             32749 // TODO THINK ABOUT THIS
+#define AB_NUM_BINS             1000 
 
 #define TEST_STATE_DRAFT        1 
 #define TEST_STATE_DORMANT      2 
@@ -58,4 +58,10 @@
 
 #define AB_MAX_LEN_DEVICE 15
 #define AB_MAX_LEN_TEST_TYPE 15
+
+#define AB_LOGGER_TIMEOUT_MS 1000
+#define AB_SS_TIMEOUT_MS 50
+    /* The get_or_create endpoint averages around 25ms response, with 
+     * a 95th percentile of 30ms. The plain get endpoint would be 
+     * expected to be faster -- Andrew Hollenbach */
 #endif

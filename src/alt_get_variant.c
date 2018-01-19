@@ -94,7 +94,6 @@ find_test(
     cBYE(status);
   }
   // Verify test exists and is of type XYTest
-  if ( test_idx < 0 ) { g_log_missing_test_xy++; go_BYE(-1); }
   if ( g_tests[test_idx].test_type != AB_TEST_TYPE_XY ) { go_BYE(-1); }
   *ptr_test_idx = test_idx;
 BYE:

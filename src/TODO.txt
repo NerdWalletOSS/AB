@@ -9,3 +9,5 @@ How do we prevent output from reaching client for non-external endpoints
 statsd metrics 
 
 set tracer
+
+All config variables should be read by Lua and then Lua calls C to set them

@@ -4,6 +4,7 @@
 #include "get_test_idx.h"
 #include "add_test.h"
 #include "log_decision.h"
+#include "chk_exclude.h"
 #include "get_variant.h"
 
 
@@ -25,28 +26,28 @@ get_variant(
   memset(g_uuid, '\0', g_uuid_len+1);
   //-------------------------------------------------------------
   status = get_test_name(args,  test_name);  cBYE(status);
-  // TODO: log missing test_name 
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
-  // TODO: log missing test
   T = &(g_tests[test_idx]);
   g_log_get_variant_calls++; 
-  uint64_t t_start = get_time_usec();
   // Extract UUID
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_uuid_len);
+  if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { 
+    status = -1;
+    g_log_no_uuid++;
+  }
   cBYE(status);
-  if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { go_BYE(-1); }
-  // TODO: Log missing UUID
   status = chk_uuid(g_uuid, g_uuid_len); cBYE(status);
-  // TODO: Log bad UUID
+  if ( status < 0 ) {
+    g_log_bad_uuid++;
+  }
   get_tracer(args, in_tracer);
   set_tracer(out_tracer, AB_MAX_LEN_TRACER);
   //--------------------------------------------------------
   // Deal with exclusions for categorical attributes
-  bool is_exclude = false; int nw;
+  int is_exclude = FALSE; int nw;
   if ( T->has_filters ) {  // ask Session Service
-    // TODO status = lua_chk_exclude(test_name); 
-    if ( status < 0 ) { /* log bad filter call */  }
-    if ( is_exclude ) { 
+    status = chk_exclude(test_name, g_uuid, &is_exclude);
+    if ( is_exclude == TRUE ) { 
       nw = snprintf(g_rslt, AB_MAX_LEN_RESULT,
           "{ \"Variant\" : \"Ineligible\", \"VariantID\" :  0, \"Test\" : \"%s\", \"TestID\" : %d }",
           test_name, 
@@ -74,7 +75,7 @@ get_variant(
   uint64_t uuid_hash = 
     spooky_hash64(g_uuid, g_uuid_len, g_tests[test_idx].seed);
   //-----------------------------------------------------------
-  uint16_t bin = uuid_hash % AB_NUM_BINS;
+  uint32_t bin = uuid_hash % AB_NUM_BINS;
   uint32_t variant_idx = g_tests[test_idx].variant_per_bin[bin];
   if ( variant_idx >= g_tests[test_idx].num_variants ) { go_BYE(-1); }
   uint32_t variant_id  = g_tests[test_idx].variants[variant_idx].id;
@@ -96,7 +97,7 @@ get_variant(
   strcpy(lcl_payload.out_tracer, out_tracer);
   lcl_payload.test_id    = g_tests[test_idx].x_tst_id;
   lcl_payload.variant_id = variant_id;
-  lcl_payload.time       = t_start;
+  lcl_payload.time       = g_t_start;
   status = log_decision(lcl_payload);
   cBYE(status);
   //--------------------------------------------------------

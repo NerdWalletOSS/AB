@@ -14,7 +14,7 @@
 
 int
 chk_exclude(
-    uint32_t test_idx,
+    const char * const test_name, // for Lua
     const char * const uuid,
     int *ptr_is_exclude
     )
@@ -24,7 +24,6 @@ chk_exclude(
   CURLcode curl_res;  long http_code = 0;
   uint64_t t_start = 0, t_stop = 0;
   *ptr_is_exclude = 0;  // Default: do not exclude this UUID 
-  if ( !g_tests[test_idx].has_filters ) { goto BYE; }
   //----------------------------------------------
   // start assembling URL for session server
   memset(url, '\0', AB_MAX_LEN_URL+1);
@@ -74,6 +73,9 @@ chk_exclude(
   if ( is_no_session ) { g_log_ss_no_session++; go_BYE(-2); }
 
 BYE:
+  if ( status < 0 ) { 
+    g_log_ss_bad_calls++;
+  }
   memset(g_ss_response, '\0', g_sz_ss_response);
   return status;
 }

@@ -56,7 +56,8 @@ EXTERN uint64_t g_xy_guid; // For C. Set to positive integer for debugging.
 
 EXTERN char g_my_name[AB_MAX_LEN_HOSTNAME+1]; // For C
 
-EXTERN bool g_halt; // For C
+EXTERN uint64_t g_t_start; // For C
+EXTERN bool g_halt; // For C TODO IS THIS NEEDED?
 //-----------------------------------------------------------------
 EXTERN TEST_META_TYPE g_tests[AB_MAX_NUM_TESTS];  // Set by Lua 
 //--------------------------------------------------------

@@ -40,7 +40,6 @@ zero_globals(
 {
   int status = 0;
 
-  if ( AB_NUM_BINS > 32767 ) { go_BYE(-1); }
   //------------------------------
   g_port        = 0; 
   g_verbose     = false;
@@ -168,12 +167,15 @@ zero_log()
   g_log_ss_null_data  = 0;
   g_log_ss_bad_json   = 0;
   g_log_ss_no_session = 0;
+  g_log_ss_bad_calls  = 0;
 
-  g_log_missing_test_ab = 0;
-  g_log_missing_test_xy = 0;
+  g_log_missing_test  = 0;
 
   g_log_no_test_name  = 0; // GetVariant
   g_log_no_test_names = 0; // GetVariants
+  g_log_no_uuid       = 0; 
+  g_log_no_test_type  = 0; 
+  g_log_no_tracer     = 0; 
 
   g_log_dropped_posts     = 0;
   g_log_posts             = 0;
@@ -183,6 +185,7 @@ zero_log()
   g_log_bad_uuid      = 0; 
   g_log_bad_test_type = 0; 
   g_log_bad_test_name = 0; 
+  g_log_bad_tracer    = 0; 
 
   g_log_get_alt_variant_calls = 0;
   g_log_get_variant_calls     = 0;

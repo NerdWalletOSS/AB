@@ -1,7 +1,7 @@
 extern int 
 ping_server(
-    const char *log_server,
-    int log_port,
-    const char *log_url,
-    double *ptr_time
+    const char *server,
+    int port,
+    const char *url,
+    char *rslt
     );
