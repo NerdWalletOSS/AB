@@ -1,33 +1,21 @@
-#include <stdio.h>
-#include <limits.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <sys/mman.h>
-#include <sys/queue.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 #undef CAPTURE_SERVER_ERROR
-#include "ab_constants.h"
-#include "macros.h"
+#include "ab_incs.h"
 #include "auxil.h"
-#include <stdlib.h>
+#include "mmap.h"
 #include <err.h>
 #include <event2/keyvalq_struct.h>
 #include <event.h>
 #include <evhttp.h>
 #include <event2/http.h>
 #include <event2/buffer.h>
+#include <jansson.h>
 
+extern int
+check_payload(
+    const char * const cbuf
+    );
 
+// START GLOBALS
 bool g_verbose;
 bool g_err;
 uint64_t g_num_posts;
@@ -37,6 +25,7 @@ uint64_t g_min_time;
 uint64_t g_prev_time; // last time seen in POST from RTS 
 char g_logfile[AB_MAX_LEN_FILE_NAME+1];
 FILE *g_fp;
+// STOP GLOBALS
 
 extern void 
 generic_handler(
@@ -92,35 +81,42 @@ generic_handler(
   // fprintf(stderr, "args = %s \n", args);
   if ( strcmp(api, "Log") == 0 ) {
     // Check that input headers contains "Content-Type: application/json"
-    bool found_header = false;
+    bool found_header_1 = false;
+    bool found_header_2 = false;
     struct evkeyvalq *headers = NULL;
     struct evkeyval  *header = NULL;
     headers = evhttp_request_get_input_headers (req);
     header = headers->tqh_first;
     for (header = headers->tqh_first; header; 
         header = header->next.tqe_next) {
-      if ( strcmp(header->key, "Content-Type") == 0 ) { 
-        found_header = true;
-        if ( strcmp(header->value, "application/json") != 0 ) { 
+      if ( strcasecmp(header->key, "Content-Type") == 0 ) { 
+        found_header_1 = true;
+        if ( strcasecmp(header->value, "application/json") != 0 ) { 
           go_BYE(-1);
         }
       }
+      if ( strcasecmp(header->key, "X-Caller-Client-ID") == 0 ) { 
+        found_header_2 = true;
+        if ( strcasecmp(header->value, "ab-runtime-service") != 0 ) { 
+          go_BYE(-1);
+        }
+      }
+      fprintf(stderr, "%s\n", header->key);
     }
-    if ( !found_header ) { go_BYE(-1); }
+    if ( !found_header_1 ) { go_BYE(-1); }
+    if ( !found_header_2 ) { go_BYE(-1); }
     //-----------------------------------------------------
     g_num_posts++;
     t_start = timestamp();
     inbuf = evhttp_request_get_input_buffer(req);
     while (evbuffer_get_length(inbuf)) {
       int n;
-      char cbuf[AB_MAX_LEN_POST+1];
-      memset(cbuf, '\0', AB_MAX_LEN_POST+1);
+      char cbuf[AB_MAX_LEN_BODY+1];
+      memset(cbuf, '\0', AB_MAX_LEN_BODY+1);
       n = evbuffer_remove(inbuf, cbuf, sizeof(cbuf));
-      if ( n > 0) {
-        // verify that it is good JSON
-      }
-      else {
-        go_BYE(-1);
+      if ( n == 0 ) { go_BYE(-1); }
+      if ( n > 0) { // verify that it is good JSON
+        status = check_payload(cbuf); cBYE(status);
       }
     }
     t_stop = timestamp();
@@ -261,12 +257,74 @@ main(
   base = event_base_new();
   httpd = evhttp_new(base);
   evhttp_set_max_headers_size(httpd, AB_MAX_HEADERS_SIZE);
-  evhttp_set_max_body_size(httpd, AB_MAX_BODY_SIZE);
+  evhttp_set_max_body_size(httpd, AB_MAX_LEN_BODY);
   status = evhttp_bind_socket(httpd, "0.0.0.0", g_port); cBYE(status);
   evhttp_set_gencb(httpd, generic_handler, base);
   event_base_dispatch(base);    
   evhttp_free(httpd);
   event_base_free(base);
 BYE:
+  return status;
+}
+
+int
+check_payload(
+    const char * const cbuf
+    )
+{
+  int status = 0;
+
+  json_t *root = NULL;
+  json_t *val  = NULL;
+  json_error_t error;
+  root = json_loads(cbuf, 0, &error);
+  if ( root == NULL ) { g_err = true; go_BYE(-1); }
+
+  val = json_object_get(root, "uuid");
+  if ( val == NULL ) { go_BYE(-1); }
+  const char *uuid = json_string_value(val);
+  if ( uuid == NULL )  { g_err = true; go_BYE(-1); }
+  if ( strlen(uuid) > AB_MAX_LEN_UUID ) { g_err = true; go_BYE(-1); }
+
+  val = json_object_get(root, "test_id");
+  const char *test_id = json_string_value(val);
+  if ( test_id == NULL )  { g_err = true; go_BYE(-1); }
+
+  val = json_object_get(root, "variant_id");
+  const char *variant_id = json_string_value(val);
+  if ( variant_id == NULL )  { g_err = true; go_BYE(-1); }
+
+  val = json_object_get(root, "time");
+  const char *time = json_string_value(val);
+  if ( time == NULL )  { g_err = true; go_BYE(-1); }
+
+  val = json_object_get(root, "in_tracer_id");
+  const char *in_tracer_id = json_string_value(val);
+  if ( in_tracer_id != NULL )  { 
+    if ( !chk_tracer(in_tracer_id) ) { go_BYE(-1); }
+  }
+
+  val = json_object_get(root, "out_tracer_id");
+  const char *out_tracer_id = json_string_value(val);
+  if ( out_tracer_id != NULL )  { 
+    if ( !chk_tracer(out_tracer_id) ) { go_BYE(-1); }
+  }
+
+  int32_t tempI4; int64_t tempI8; 
+  status = stoI4(test_id, &tempI4); cBYE(status);
+  if ( tempI4 < 1 ) { g_err = true; go_BYE(-1); }
+  status = stoI4(variant_id, &tempI4); cBYE(status);
+  if ( tempI4 < 1 ) { g_err = true; go_BYE(-1); }
+  status = stoI8(time, &tempI8);  cBYE(status); 
+  if ( tempI8 < 1 ) { g_err = true; go_BYE(-1); }
+  FILE *fp = NULL;
+  if ( g_verbose ) { 
+    if ( g_fp == NULL ) { fp = stdout; } else { fp = g_fp; }
+    fprintf(fp, "%s,%s,%s,%s\n",
+        uuid, test_id, variant_id ,time);
+  }
+  json_decref(root);
+BYE:
+  if ( status < 0 ) { fprintf(stderr, "%s\n", cbuf); }
   return status;
 }

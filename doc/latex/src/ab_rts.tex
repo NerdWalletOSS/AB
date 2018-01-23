@@ -7,6 +7,7 @@
 \pagestyle{fancy}
 \usepackage{pmc}
 \usepackage{graphicx}
+\usepackage{verbatim}
 \setlength\textwidth{6.5in}
 \setlength\textheight{8.5in}
 \input{../styles/ramesh_abbreviations}
@@ -93,4 +94,11 @@ The endpoints listed in Table~\ref{tbl_endpoints} are supported.
 \label{tbl_endpoints}
 \end{table}
 
+\section{Logging bucketing decisions}
+
+The AB RTS logs bucketing decisions by making a POST request to the logger
+service with the fields listed below
+\verbatiminput{_logger_fields}
+
+\TBC
 \end{document}

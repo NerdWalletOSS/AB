@@ -3,6 +3,7 @@ touch .meta
 eval ` ../tools/setenv `
 # make -f ../tools/docdir.mk template.pdf
 make -f ../tools/docdir.mk ab_ui.pdf
+lua get_logger_fields.lua > _logger_fields.tex
 lua get_endpoints.lua | \
   grep '\/\/' | \
   sed s'/\/\// \& /'g | \

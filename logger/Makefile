@@ -2,8 +2,10 @@
 #
 WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
 INCS= -I. \
+	-I../src/ \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
+	-I../jansson-2.10/src/ \
 	-I../statsd-c-client-master/ \
 	-I../lua-5.1.3/src/ \
 	-I../curl-7.51.0/include/ \
@@ -35,31 +37,33 @@ filU   := ab_httpd.c sel_ab_httpd.c libe_ab_httpd.c logger.c
 USRCS := $(filter-out $(filU), $(CSRCS))
 UOBJS = $(USRCS:.c=.o)
 
-UINCS = ab_constants.h  macros.h 
-
-# PARSE_LOG_OBJS = parse_log.o  auxil.o mmap.o
-# PARSE_LOG_INCS = ab_constants.h  macros.h 
-
 LOGGER_OBJS = logger.o  auxil.o mmap.o
-LOGGER_INCS = ab_constants.h  macros.h 
+LOGGER_INCS = ../src/ab_incs.h
 
-all : ab_logger ab_httpd 
+all : ab_logger 
 
-# parse_log : $(PARSE_LOG_OBJS) $(PARSE_LOG_INCS) 
-# 	$(CC) $(LFLAGS) $(PARSE_LOG_OBJS) -o parse_log 
-	
 ab_logger : $(LOGGER_OBJS) $(LOGGER_INCS) \
+	../jansson-2.10/src/.libs/libjansson.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
 	$(CC) $(LFLAGS) $(LOGGER_OBJS) -o ab_logger \
+	../jansson-2.10/src/.libs/libjansson.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
-	
+
+../jansson-2.10/src/.libs/libjansson.a :
+	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
+
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
 ab_types.h : ../curl-7.51.0/include/curl/curlbuild.h
 
-auxil.o : ab_types.h
-	$(CC) auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)
+ab_incs.h : ../src/ab_types.h ../src/macros.h ../src/ab_constants.h
+
+auxil.o : ab_incs.h
+	$(CC) ../src/auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)
+
+mmap.o : ab_incs.h
+	$(CC) ../src/mmap.c -c -o mmap.o $(CFLAGS)  $(INCS)
 
 .c.o : ../curl-7.51.0/lib/.libs/libcurl.so 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
@@ -77,31 +81,14 @@ $(LOGGER_OBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 
 $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 
-../statsd-c-client-master/libstatsdclient.so :
-	make -C ../statsd-c-client-master/
-
-ab_httpd : $(COBJS3) \
-	../statsd-c-client-master/libstatsdclient.so \
-	../curl-7.51.0/lib/.libs/libcurl.so \
-	../lua-5.1.3/src/liblua.a \
-	../libevent-2.0.22-stable/.libs/libevent.so 
-	$(CC) $(CFLAGS) $(COBJS3) -o ab_httpd  \
-	../statsd-c-client-master/libstatsdclient.so \
-	../curl-7.51.0/lib/.libs/libcurl.so \
-	../lua-5.1.3/src/liblua.a \
-	../libevent-2.0.22-stable/.libs/libevent.so \
-	-lmysqlclient -lm  -lpthread -ldl
-
-
 clean:
-	rm -r -f ab_httpd ab_logger \
+	rm -r -f ab_logger \
 	$(COBJS1) $(COBJS2) $(COBJS3) $(LOGGER_OBJS) 
-	make -i -C ../lua-5.1.3/src/ clean 
-	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
+	make -i -C ../jansson-2.10/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
 	echo "ALL CLEAN"
 
 qclean :
-	rm -r -f ab_httpd ab_logger \
+	rm -r -f ab_logger \
 	$(COBJS1) $(COBJS2) $(COBJS3) $(LOGGER_OBJS) 

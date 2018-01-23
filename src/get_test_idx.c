@@ -85,7 +85,7 @@ int get_state_enum(
   if ( strcasecmp(state, "started") == 0 ) {
     *ptr_state_enum = TEST_STATE_STARTED;
   }
-  else if ( strcasecmp(state, "terminated") == 0 ) {
+  else if ( strcasecmp(state, "terminat ed") == 0 ) {
     *ptr_state_enum = TEST_STATE_TERMINATED;
   }
   else {

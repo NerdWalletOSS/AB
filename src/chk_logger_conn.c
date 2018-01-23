@@ -17,7 +17,7 @@ int chk_logger_connectivity(
 
   if ( nX < AB_MAX_LEN_PAYLOAD+1+32 ) { go_BYE(-1); }
   if ( g_ch == NULL ) { 
-    strcpy(X, "{ \"ChkPipe\" : \"Logging Disabled\" } ");
+    strcpy(X, "{ \"CheckLoggerConnectivity\" : \"Logging Disabled\" } ");
     goto BYE;
   }
   memset(curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
@@ -31,13 +31,13 @@ int chk_logger_connectivity(
   status = post_url(g_ch, curl_payload, &time_taken);
   if ( status < 0 ) { 
     nw = snprintf(X, nX,
-        "{ \"ChkPipe\" : \"ERROR:%s\" } ", curl_payload);
+        "{ \"CheckLoggerConnectivity\" : \"ERROR:%s\" } ", curl_payload);
     if ( nw >= nX ) { go_BYE(-1); }
     status = 0;
   }
   else {
     nw = snprintf(X, nX, 
-        "{ \"ChkPipe\" : \"%" PRIu64 "\", \"GUID\" : \"%s\" }", 
+        "{ \"CheckLoggerConnectivity\" : \"%" PRIu64 "\", \"GUID\" : \"%s\" }", 
         time_taken, lcl_payload.uuid);
     if ( nw >= nX ) { go_BYE(-1); }
   }

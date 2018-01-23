@@ -39,3 +39,19 @@ make_curl_payload(
 BYE:
   return status;
 }
+/*START_COMMENT
+message ABLog {
+    required string uuid = 1;
+    required uint32 test_id = 2;
+    required uint32 variant_id = 3;
+    required uint64 time = 4;
+    required uint32 ramp = 5;
+    optional string ip = 6;
+    optional string in_tracer_id = 7;  
+// An id that can be passed around server-side to connect events 
+// that are not directly related (i.e. with offline models and AB testing)
+    optional string out_tracer_id = 8;  
+// An id that can be passed around server-side to connect events 
+// that are not directly related (i.e. with offline models and AB testing)
+}
+STOP_COMMENT*/

@@ -136,7 +136,7 @@ extern int
     );
 extern bool
 chk_tracer(
-    char * tracer
+    const char * tracer
     );
 extern int
 add_to_buf(

@@ -648,7 +648,7 @@ BYE:
 }
 bool 
 chk_tracer(
-    char * tracer
+    const char * tracer
     )
 {
   if ( *tracer == '\0' ) { return false; }

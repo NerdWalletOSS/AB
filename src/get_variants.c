@@ -42,6 +42,15 @@ get_variants(
   //-------------------------------------------------------------
   memset(g_mrslt, '\0', AB_MAX_LEN_RESULT+1);
   int oplen = 2; // length of output string 
+  /* TODO 
+Abhi: make sure that GetVariants returns a valid json. Right now it 
+returns an array which is not a valid json string. Just make it 
+
+{'Result':[....]}
+
+instead of 
+[....]
+*/
   strcpy(g_mrslt, "[");
   char *cptr = test_names; 
   for ( int tidx = 0; ; tidx++ ) {

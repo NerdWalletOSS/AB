@@ -39,7 +39,8 @@ CREATE TABLE attr (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 insert into attr values (NULL, 'device', 'device', 1, 0);
-insert into attr values (NULL, 'is_paid', 'is_paid', 1, 0);
+insert into attr values (NULL, 'is_paid', 'is_paid', 2, 0);
+insert into attr values (NULL, 'fscore', 'F Score', 3, 0);
 
 DROP TABLE IF EXISTS cat_attr_val; -- load in LoadDBConfigs
 CREATE TABLE cat_attr_val (
@@ -56,8 +57,6 @@ CREATE TABLE cat_attr_val (
 insert into cat_attr_val values (NULL, 'pc', 1, 'Device PC', 0);
 insert into cat_attr_val values (NULL, 'tablet', 1, 'Device tablet', 0);
 insert into cat_attr_val values (NULL, 'mobile', 1, 'Device mobile', 0);
-insert into cat_attr_val values (NULL, 'true', 2, 'paid ', 0);
-insert into cat_attr_val values (NULL, 'false', 2, 'not paid ', 0);
 
 DROP TABLE IF EXISTS channel; -- load in LoadDBConfigs
 CREATE TABLE channel (

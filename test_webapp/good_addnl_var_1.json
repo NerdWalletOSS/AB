@@ -5,6 +5,5 @@
   "VariantName": "Variant_A",
   "VariantID": "200",
   "CustomData": { "test" : "abc" },
-  "URL": "www.google.com",
   "Description": "Description of Variant A"
 }

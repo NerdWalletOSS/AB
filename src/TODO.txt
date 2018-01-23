@@ -1,13 +1,12 @@
-In order to get logs in JSON, 
-do not print to stderr on error. Add to g_err and then 
-
 
 Use const char * const appropriately wherever needed
-
-How do we prevent output from reaching client for non-external endpoints
 
 statsd metrics 
 
 set tracer
 
 All config variables should be read by Lua and then Lua calls C to set them
+
+database migration 
+
+journaling triggers

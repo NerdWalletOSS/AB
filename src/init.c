@@ -195,7 +195,6 @@ setup_curl(
     if ( ping_status < 0 ) { 
       fprintf(stderr, "WARNING! Server %s:%d, url %s  not running\n", 
           server, port, health_url);
-      shutdown_curl();
     }
     else {
       fprintf(stderr, "[INFO] Server %s:%d running.\n", server, port);

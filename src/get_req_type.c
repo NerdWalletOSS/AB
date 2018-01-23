@@ -17,7 +17,7 @@ get_req_type(
     return PingSessionServer;
   }
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
-    return CheckDBConnectivity;
+    return CheckLoggerConnectivity;
   }
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
     return CheckDBConnectivity;

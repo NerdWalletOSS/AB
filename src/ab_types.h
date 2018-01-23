@@ -53,20 +53,20 @@ typedef struct _test_meta_type {
   char name[AB_MAX_LEN_TEST_NAME+1];
   int test_type; // whether AB_TEST_TYPE or XY_TEST_TYPE or ..
   uint32_t x_tst_id; // external test id
-  uint64_t name_hash;
+  uint64_t name_hash; // set by Lua, read by C 
   uint64_t external_id; // exposed to external entities
   bool has_filters; // has filters using categorical/boolean attributes
   bool is_dev_specific; // whether device specific
   int state;   // one of TEST_STATE_....
   uint64_t seed; // seed for spooky hash 
 
-  uint32_t num_variants; 
+  uint32_t num_variants;  // set by Lua, read by C 
   VARIANT_REC_TYPE *variants;
 
   uint32_t final_variant_id; 
   uint32_t final_variant_idx; 
 
-  uint8_t variant_per_bin[AB_NUM_BINS];
+  uint8_t variant_per_bin[AB_NUM_BINS]; // set by Lua, read by C 
 
   DEV_SPEC_PERC_TYPE *dev_spec_perc; // [g_num_devices]
   uint32_t n_dev_spec_perc; // redundant since =  g_num_devices
