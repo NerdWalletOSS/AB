@@ -1,12 +1,15 @@
 
-Use const char * const appropriately wherever needed
+[RAMESH] Use const char * const appropriately wherever needed
 
-statsd metrics 
+[RAMESH]  statsd metrics 
 
-set tracer
+[RAMESH] set tracer
 
-All config variables should be read by Lua and then Lua calls C to set them
+[INDRAJEET] All config variables should be read by Lua and then Lua calls C to set them
 
-database migration 
+[RAMESH] database migration 
 
-journaling triggers
+[INDRAJEET] journaling triggers
+
+[INDRAJEET] ALL deployment stuff
+

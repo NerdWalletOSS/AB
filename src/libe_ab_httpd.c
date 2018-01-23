@@ -123,8 +123,9 @@ BYE:
     if ( t_stop > g_t_start ) { 
       uint64_t t_delta = t_stop - g_t_start;
       if ( g_statsd_link != NULL ) { 
-        statsd_timing(g_statsd_link, g_statsd_timing, t_delta);
-        statsd_inc(g_statsd_link, g_statsd_inc, 1.0); 
+        statsd_timing(g_statsd_link, "nw.metrics.ab.request_time", 
+            t_delta);
+        statsd_inc(g_statsd_link, "nw.metrics.ab.get_variant_ctr", 1); 
       }
     }
   }

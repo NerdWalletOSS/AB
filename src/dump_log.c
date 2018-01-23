@@ -46,6 +46,7 @@ dump_log(
 
   write_log(g_rslt, &ridx, n, "SessionServiceCalls", g_log_ss_calls);
   write_log(g_rslt, &ridx, n, "SessionServiceBadCode", g_log_ss_bad_code);
+  write_log(g_rslt, &ridx, n, "SessionServiceTimeout", g_log_ss_timeout);
   write_log(g_rslt, &ridx, n, "SessionServiceNonAscii", g_log_ss_non_ascii);
   write_log(g_rslt, &ridx, n, "SessionServiceBadJSON", g_log_ss_bad_json);
   write_log(g_rslt, &ridx, n, "SessionServiceNoSession", g_log_ss_no_session);

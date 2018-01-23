@@ -163,6 +163,7 @@ zero_log()
 
   g_log_ss_calls      = 0;
   g_log_ss_bad_code   = 0;
+  g_log_ss_timeout    = 0;
   g_log_ss_non_ascii  = 0;
   g_log_ss_null_data  = 0;
   g_log_ss_bad_json   = 0;

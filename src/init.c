@@ -117,6 +117,19 @@ init()
       ( lua_pcall(g_L, 0, 0, 0)) )   {
     go_BYE(-1);
   }
+#ifdef TEST_STATSD
+  statsd_count(g_statsd_link, "count1", 123, 1.0);
+  statsd_count(g_statsd_link, "count2", 125, 1.0);
+  statsd_gauge(g_statsd_link, "speed", 10);
+  statsd_timing(g_statsd_link, "request", 2400);
+  sleep(1);
+  statsd_inc(g_statsd_link, "count1", 1.0);
+  statsd_dec(g_statsd_link, "count2", 1.0);
+  int i;
+  for (i=0; i<10; i++) {
+      statsd_count(g_statsd_link, "count3", i, 0.8);
+  }
+#endif
 
 BYE:
   if ( status < 0 ) { 
