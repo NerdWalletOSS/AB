@@ -1,5 +1,4 @@
 <?php
-require_once 'bye.php';
 function extract_sql_params(
       $conf_file = "/opt/abadmin/db.json",
       &$dbuser, 
@@ -33,33 +32,4 @@ function extract_sql_params(
   }
   return true;
 }
-
-function dbconn(
-  $conf_file = "/opt/abadmin/db.json"
-)
-{
-  if ( !is_file($conf_file) ) { 
-    return null; 
-  }
-  if ( isset($_GLOBALS['DBH']) ) {
-    $dbh = $GLOBALS['DBH'];
-  }
-  else {
-    if ( !(extract_sql_params($conf_file, $dbuser, $dbpass, 
-      $dbhost, $dbname, $dbport)) ) {
-      return null;
-    }
-    $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname;port=$dbport;charset=utf8", 
-      $dbuser, $dbpass);
-    if ( !$dbh ) { go_BYE(""); }
-    $GLOBALS['DBH'] = $dbh;
-  }
-  return $dbh;  
-}
-/*
-  require_once "bye.php";
-  // $X = dbconn("reco_db.json");
-  $X = dbconn();
-  var_dump($X);
- */
 ?>

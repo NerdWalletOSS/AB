@@ -5,6 +5,7 @@ require_once 'make_seed.php';
 require_once 'get_time_usec.php';
 require_once 'aux_chk_name.php';
 require_once 'aux.php';
+require_once 'get_json_element.php';
 
 function update_test_basic(
   $str_inJ
@@ -17,12 +18,12 @@ function update_test_basic(
   assert(isset($str_inJ));
   assert(is_string($str_inJ));
   $inJ = json_decode($str_inJ); assert(!is_null($inJ));
-  $test_id   = get_json($inJ, 'TestID'); 
-  $test_name = get_json($inJ, 'TestName'); 
-  $test_type = get_json($inJ, 'TestType'); 
-  $test_dscr = get_json($inJ, 'TestDescription'); 
-  $updater   = get_json($inJ, 'Updater');
-  $variants  = get_json($inJ, 'Variants');
+  $test_id   = get_json_element($inJ, 'TestID'); 
+  $test_name = get_json_element($inJ, 'TestName'); 
+  $test_type = get_json_element($inJ, 'TestType'); 
+  $test_dscr = get_json_element($inJ, 'TestDescription'); 
+  $updater   = get_json_element($inJ, 'Updater');
+  $variants  = get_json_element($inJ, 'Variants');
   assert(is_array($variants));
   $nV = count($variants);
   assert($nV > 0 );

@@ -1,5 +1,4 @@
 <?php
-require_once 'bye.php';
 require_once 'db_get_rows.php';
 function make_lkp($tbl)
 {
@@ -23,5 +22,6 @@ function load_globals()
   make_lkp("bin_type");
   make_lkp("admin");
   make_lkp("txn_type");
+  make_lkp("api");
 }
 ?>

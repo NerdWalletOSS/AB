@@ -1,3 +1,4 @@
+%%_START_DELETE_FOR_BOOK
 \documentclass[letterpaper]{article}
 \usepackage{times}
 \usepackage{helvet}
@@ -18,24 +19,29 @@
 \lhead{}
 \chead{}
 \rhead{}
-\lfoot{{\small Decision Sciences Team}}
+\lfoot{{\small Data Science Team}}
 \cfoot{}
 \rfoot{{\small \thepage}}
-
+%%_STOP_DELETE_FOR_BOOK
+%%_START_ADD_FOR_BOOK
+%%C \chapter{Database Design and Usage}
+%%_STOP_ADD_FOR_BOOK
 \section{Introduction}
 
-The AB Admin Webapp stores information needed by the AB system in a relational database.
+The AB Admin Webapp stores information needed by the AB system in a relational
+database. In this document, we describe how the design and usage of this
+database. 
 The naming convention used is in \verb+place_doc_here+.
 
 There are four kinds of tables 
 \be
-\item configuration tables. These do not directly contain information about AB test.
+\item Configuration tables. These do not directly contain information about AB test.
 Instead, they contain auxiliary information e.g., list of authorized users,
 kinds of tests supported, names od devices recognized, \ldots
-\item test info tables. These contain the details of tests created by users
-\item debugging tables. These are used to create audit reports and to
-  analyze usage of the system.
-\item log tables. These contain changes made to the test info tables as
+\item Test info tables. These contain the details of tests created by users
+\item Debugging tables. These are used to create audit reports and to
+  analyze usage of the system. See Section~\ref{logging_tables}
+\item Journaling tables. These contain changes made to the test info tables as
 described in Section~\ref{journaling_tables}
 \ee
 
@@ -51,6 +57,14 @@ described in Section~\ref{journaling_tables}
 \label{tbl_config}
 \end{table}
 
+\section{Logging Tables}
+\label{logging_tables}
+
+Every request to the webapp causes a row to be inserted into
+\verb+request_webapp+. The primary key of this row is then used in the
+journaling tables. After the processing of the request is completed, the row in
+question is updated with an (optional) error message, (optional) output message and status code.
+
 \section{Journaling Tables}
 \label{journaling_tables}
 
@@ -64,8 +78,11 @@ tables that are identical to the original table with the following exceptions
 \item every field in the original table exists in the journaling table
 \item there are two additional fields
   \be
-\item \verb+txn_name+ a string that has the same value for all rows affected by
-  a particular transaction
+\item \verb+request_webapp_id+ (Section~\ref{logging_tables}) used to 
+  \be
+\item tie together multiple rows affected by a particular transaction
+\item corrrelate changes to the database with requests made to the Webapp
+  \ee
 \item \verb+txn_id+ which identifies the operation made by the middle-tier i.e.,
   it identifies the logical purpose for performing the transaction. This is a
   foreign key to the table \verb+txn_type+

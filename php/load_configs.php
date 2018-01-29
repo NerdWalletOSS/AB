@@ -1,5 +1,8 @@
 <?php  
-require_once 'aux.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
+require_once 'make_pos_int.php';
+require_once 'make_boolean.php';
 function load_configs(
   $conf_file = "/opt/abadmin/db.json",
   $reload=false

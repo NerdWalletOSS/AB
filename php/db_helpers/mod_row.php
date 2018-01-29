@@ -30,8 +30,10 @@ function mod_row(
   $rslt = $stmt->execute($X); if ( !$rslt ) { go_BYE(""); }
   return true;
 }
+/*
 $tbl = "variant";
 $X['custom_data'] = "some custom data";
 $X['description'] = "some description data";
 mod_row($tbl, $X, "where id = 1");
+ */
 ?>

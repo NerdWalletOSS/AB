@@ -35,7 +35,12 @@ function insert_row(
   }
   $sql  .= " ) ";
   $stmt = $dbh->prepare($sql);
-  $rslt = $stmt->execute($X); assert($rslt);
+  $rslt = $stmt->execute($X); 
+  if ( !$rslt ) { 
+    var_dump($sql);
+    var_dump($X);
+  }
+  rs_assert($rslt);
   $pk = $dbh->lastInsertId();
   return $pk;
   /*

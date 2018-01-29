@@ -1,6 +1,6 @@
 <?php
-require 'is_unique.php';
-require 'rs_assert.php';
+require_once 'is_unique.php';
+require_once 'rs_assert.php';
 
 function is_good_variants(
   $V
@@ -19,4 +19,4 @@ function is_good_variants(
   }
   return true;
 }
-
+?>

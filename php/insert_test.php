@@ -1,28 +1,42 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-require_once 'insert_row.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
+require_once 'dbconn.php';
+require_once 'insert_row.php'; // NO PROBLEM
+require_once 'make_seed.php'; // NO PROBLEM
+require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
-require_once 'make_seed.php';
-require_once 'get_time_usec.php';
+require_once 'get_json_element.php';
+require_once 'is_good_test_name.php';
 require_once 'aux_chk_name.php';
-require_once 'aux.php';
+require_once 'is_good_variants.php';
+require_once 'is_good_urls.php';
+require_once 'is_good_percs.php';
 
 function insert_test(
   $str_inJ
 )
 {
-  $outJ['status'] = "error";
-  $outJ['stdout'] = "";
-  $outJ['stderr'] = "";
+  $d_create =  $d_update = get_date(); 
+  $t_create =  $t_update = get_time_usec(); 
+  //--- Logging 
+  $txn_type_id   = lkp("txn_type", "insert_test_edit_test_basic");
+  $X0['d_create'] = $d_create;
+  $X0['t_create'] = $t_create;
+  $X0['payload']  = $str_inJ;
+  $X0['api_id']   = lkp("api", "insert_test_edit_test_basic");
+  $log_id = insert_row("request_webapp", $X0);
+  $_SESSION['LOG_ID'] = $log_id;
+
   // START Check inputs
   assert(!empty($str_inJ));
   assert(is_string($str_inJ), "input not string");
   $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
-  $test_name = get_json($inJ, 'TestName'); 
-  $test_type = get_json($inJ, 'TestType'); 
-  $test_dscr = get_json($inJ, 'TestDescription'); 
-  $creator   = get_json($inJ, 'Creator');
-  $variants  = get_json($inJ, 'Variants');
+  $test_name = get_json_element($inJ, 'TestName'); 
+  $test_type = get_json_element($inJ, 'TestType'); 
+  $test_dscr = get_json_element($inJ, 'TestDescription'); 
+  $creator   = get_json_element($inJ, 'Creator');
+  $variants  = get_json_element($inJ, 'Variants');
   assert(is_array($variants));
   $nV = count($variants);
   assert($nV > 0 );
@@ -64,16 +78,18 @@ function insert_test(
   assert(is_good_variants($variant_names));
   assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
+  // Now decide whether to update or insert 
+  /*
+  if ( isset($inJ->{'TestID'} ) { 
+    $test_id = $inJ->{'TestID'};
+  }
+   */
   // STOP Check inputs
-  $txn_name = md5($str_inJ . get_time_usec());
-  $txn_type_id   = lkp("txn_type", "insert_test");
   //----------------------------------------------------
   $test_id = -1;
-  $d_create =  $d_update = get_date(); 
-  $t_create =  $t_update = get_time_usec(); 
   $X1['name']         = $test_name;
-  $X1['txn_name']     = $txn_name;
-  $X1['txn_type_id']  = $txn_type_id;
+  $X1['txn_type_id']     = $txn_type_id;
+  $X1['request_webapp_id']  = $log_id;
   $X1['description']  = $test_dscr;
   $X1['test_type_id'] = $test_type_id;
   $X1['seed']         = make_seed();
@@ -82,7 +98,7 @@ function insert_test(
   $X1['t_create']     = $t_create;
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
-  $X1['creator_id']   = $crtneator_id;
+  $X1['creator_id']   = $creator_id;
   $X1['updater_id']   = $creator_id;
   $X1['state_id']     = $draft_id;
   //-----------------------------------------------
@@ -107,7 +123,7 @@ function insert_test(
     $dbh->beginTransaction();
     $test_id = insert_row("test", $X1);
 
-    $X2['txn_name']     = $txn_name;
+    $X2['request_webapp_id']     = $log_id;
     $X2['txn_type_id']  = $txn_type_id;
     $X2['test_id']  = $test_id;
     $X2['t_update'] = $t_update;
@@ -130,5 +146,13 @@ function insert_test(
   $outJ["status"] = "ok";
   $outJ["stdout"] = "Created test $test_name";
   $outJ["test_id"] = $test_id;
+
+  unset($Y);
+  $Y['msg_stdout'] = $outJ["stdout"];
+  $Y['status_code'] = 200;
+  db_set_row("log_ui_to_webapp", $log_id, $Y);
+
+  header("Error-Code: 200");
+  http_response_code(200);
   return $outJ;
 }

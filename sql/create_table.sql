@@ -3,15 +3,29 @@ DROP DATABASE abdb;
 CREATE DATABASE abdb;
 USE abdb;
 
-DROP TABLE IF EXISTS txn_type; -- config
-CREATE TABLE txn_type (
+DROP TABLE IF EXISTS api; -- config
+CREATE TABLE api (
   id int(8) not null auto_increment,
   name varchar(32) not null,
+  description varchar(128) not null,
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
-insert into txn_type values(NULL, 'insert_test', 'Creating test for first time');
+insert into api values(NULL, 'insert_test_edit_test_basic', 
+"Create a test or edit basic information about test");
+
+DROP TABLE IF EXISTS txn_type; -- config
+CREATE TABLE txn_type (
+  id int(8) not null auto_increment,
+  name varchar(32) not null,
+  description varchar(128) not null,
+  PRIMARY KEY (id),
+  CONSTRAINT uq_name UNIQUE (name)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
+
+insert into txn_type values(NULL, 'insert_test_edit_test_basic', 
+"Create a test or edit basic information about test");
 
 DROP TABLE IF EXISTS admin; -- config 
 CREATE TABLE admin (
@@ -175,11 +189,38 @@ insert into config values(NULL, 'max_len_variant_name','31');
 insert into config values(NULL, 'max_len_variant_dscr','255');
 insert into config values(NULL, 'max_len_url',         '255');
 
+DROP TABLE IF EXISTS request_webapp; -- debugging
+CREATE TABLE request_webapp (
+  id int(8) not null auto_increment,
+  d_create datetime not null,
+  t_create bigint not null default 0,
+  payload varchar(4096),
+  api_id int(8) not null, 
+  msg_stdout varchar(4096),
+  msg_stderr varchar(4096),
+  status_code int(8) not null default 200,
+  CONSTRAINT fk_api_id FOREIGN KEY (api_id) REFERENCES api(id),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
+
+DROP TABLE IF EXISTS request_rts; -- debugging
+CREATE TABLE request_rts (
+  id int(8) not null auto_increment,
+  -- TODO More work needed on this table 
+  d_create datetime not null,
+  t_create bigint not null default 0,
+  payload varchar(4096),
+  msg_stdout varchar(4096),
+  msg_stderr varchar(4096),
+  status_code int(8) not null default 200,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 DROP TABLE IF EXISTS test; -- test info 
 CREATE TABLE test (
   id int(8) not null auto_increment,
   name varchar(128) not null,
   txn_type_id int(8) not null, 
+  request_webapp_id int(8) not null, 
   test_type_id int(8) not null, 
   bin_type_id int(8) not null, -- 
   pred_id int(8), -- can be null
@@ -203,6 +244,7 @@ CREATE TABLE test (
   CONSTRAINT fk_test_type_id FOREIGN KEY (test_type_id) REFERENCES test_type(id),
   CONSTRAINT fk_txn_type_id FOREIGN KEY (txn_type_id) REFERENCES txn_type(id),
   CONSTRAINT fk_bin_type_id FOREIGN KEY (bin_type_id) REFERENCES bin_type(id),
+  CONSTRAINT fk_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   CONSTRAINT fk_pred_id FOREIGN KEY (pred_id) REFERENCES test(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
@@ -211,6 +253,7 @@ CREATE TABLE variant (
   id int(8) not null auto_increment,
   name varchar(32) not null,
   txn_type_id int(8) not null, 
+  request_webapp_id int(8) not null, 
   description varchar(256),
   test_id int(8) not null,
   percentage float not null, -- percentages for test should add to 100
@@ -224,23 +267,30 @@ CREATE TABLE variant (
   CONSTRAINT chk_perc_ub CHECK (percentage <= 100),
   CONSTRAINT uq_name_test_id UNIQUE (name, test_id),
   CONSTRAINT fk_v_txn_type_id FOREIGN KEY (txn_type_id) REFERENCES txn_type(id),
+  CONSTRAINT fk_v_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   CONSTRAINT fk_test_id FOREIGN KEY (test_id) REFERENCES test(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 DROP TABLE IF EXISTS cat_attr_val_test; -- test info
 CREATE TABLE cat_attr_val_test (
   id int(8) not null auto_increment,
+  txn_type_id int(8) not null, 
+  request_webapp_id int(8) not null, 
   test_id int(8) not null,
   cat_attr_val_id int(8) not null,
   CONSTRAINT fk_cavt_test_id FOREIGN KEY (test_id) REFERENCES test(id),
   CONSTRAINT fk_cavt_cat_attr_val_id FOREIGN KEY (cat_attr_val_id) REFERENCES cat_attr_val(id),
+  CONSTRAINT fk_c_txn_type_id FOREIGN KEY (txn_type_id) REFERENCES txn_type(id),
   CONSTRAINT uq_test_id_cat_attr_val_id UNIQUE (test_id, cat_attr_val_id),
+  CONSTRAINT fk_c_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 DROP TABLE IF EXISTS device_x_variant; -- test info
 CREATE TABLE device_x_variant (
   id int(8) not null auto_increment,
+  txn_type_id int(8) not null, 
+  request_webapp_id int(8) not null, 
   device_id  int(8) not null,
   variant_id int(8) not null,
   ramp_num int(8) not null,
@@ -250,27 +300,9 @@ CREATE TABLE device_x_variant (
   CONSTRAINT dxv_chk_perc_lb CHECK (percentage >= 0),
   CONSTRAINT dxv_chk_perc_ub CHECK (percentage <= 100),
   CONSTRAINT dxv_chk_ramp_num CHECK (ramp_num >= 1),
+  CONSTRAINT fk_d_txn_type_id FOREIGN KEY (txn_type_id) REFERENCES txn_type(id),
+  CONSTRAINT fk_d_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 
-DROP TABLE IF EXISTS log_ui_to_webapp; -- debugging
-CREATE TABLE log_ui_to_webapp (
-  id int(8) not null auto_increment,
-  d_create datetime not null,
-  t_create bigint not null default 0,
-  msg varchar(4096),
-  err_msg varchar(4096),
-  api varchar(32),
-  is_err int(2) not null default 0,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
-
-DROP TABLE IF EXISTS log_webapp_to_rts; -- debugging
-CREATE TABLE log_u_to_rtsi_to_webapp (
-  d_create datetime not null,
-  t_create bigint not null default 0,
-  msg varchar(4096),
-  err_msg varchar(4096),
-  is_err int(2) not null default 0
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
