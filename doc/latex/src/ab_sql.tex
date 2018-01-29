@@ -1,0 +1,78 @@
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- The Database}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Decision Sciences Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+
+\section{Introduction}
+
+The AB Admin Webapp stores information needed by the AB system in a relational database.
+The naming convention used is in \verb+place_doc_here+.
+
+There are four kinds of tables 
+\be
+\item configuration tables. These do not directly contain information about AB test.
+Instead, they contain auxiliary information e.g., list of authorized users,
+kinds of tests supported, names od devices recognized, \ldots
+\item test info tables. These contain the details of tests created by users
+\item debugging tables. These are used to create audit reports and to
+  analyze usage of the system.
+\item log tables. These contain changes made to the test info tables as
+described in Section~\ref{journaling_tables}
+\ee
+
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Name } & {\bf Table Type} \\ \hline \hline
+\input{_table_type}
+\hline
+\end{tabular}
+\caption{View/Edit Config Variables}
+\label{tbl_config}
+\end{table}
+
+\section{Journaling Tables}
+\label{journaling_tables}
+
+All changes to the database are made by the Admin WebApp using transactions.
+There are no deletes to the database, only inserts and updates. 
+In every transaction, a copy of the rows modified/created are stored in log
+tables that are identical to the original table with the following exceptions
+\be
+\item there is no primary key
+\item there are no constraints place on data in these tables
+\item every field in the original table exists in the journaling table
+\item there are two additional fields
+  \be
+\item \verb+txn_name+ a string that has the same value for all rows affected by
+  a particular transaction
+\item \verb+txn_id+ which identifies the operation made by the middle-tier i.e.,
+  it identifies the logical purpose for performing the transaction. This is a
+  foreign key to the table \verb+txn_type+
+  \ee
+  \ee
+For a ``hello world'' explanation of what this is about, see 
+\verb+pointer to Indrajeet's test+
+
+\end{document}
+
