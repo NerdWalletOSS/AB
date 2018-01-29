@@ -25,7 +25,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd 
+all : ab_httpd libspooky_hash.so
 
 ../luajit-2.0.5/src/libluajit.a :
 	make -C ../luajit-2.0.5
@@ -64,8 +64,11 @@ ab_httpd : $(COBJS) \
 	../libevent-2.0.22-stable/.libs/libevent.so \
 	-lm  -lpthread -ldl 
 
+libspooky_hash.so:
+	gcc spooky_hash.c -I ./ -shared -fPIC -o libspooky_hash.so
+
 clean:
-	rm -r -f ab_httpd $(COBJS) 
+	rm -r -f ab_httpd $(COBJS) libspooky_hash.so 
 	make -i -C ../luajit-2.0.5/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
