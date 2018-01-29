@@ -9,4 +9,8 @@ lua get_endpoints.lua | \
   sed s'/\/\// \& /'g | \
   sed s'/,//'g | \
   sed s'/$/\\\\ \\hline/'g > _endpoints.tex
+lua get_logs.lua > _counters.tex
 make -f ../tools/docdir.mk ab_rts.pdf
+#-- 
+lua get_tbl_type.lua > _table_type.tex
+make -f ../tools/docdir.mk ab_sql.pdf

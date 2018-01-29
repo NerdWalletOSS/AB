@@ -65,11 +65,15 @@ function insert_test(
   assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
   // STOP Check inputs
+  $txn_name = md5($str_inJ . get_time_usec());
+  $txn_type_id   = lkp("txn_type", "insert_test");
   //----------------------------------------------------
   $test_id = -1;
   $d_create =  $d_update = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
   $X1['name']         = $test_name;
+  $X1['txn_name']     = $txn_name;
+  $X1['txn_type_id']  = $txn_type_id;
   $X1['description']  = $test_dscr;
   $X1['test_type_id'] = $test_type_id;
   $X1['seed']         = make_seed();
@@ -78,7 +82,7 @@ function insert_test(
   $X1['t_create']     = $t_create;
   $X1['d_update']     = $d_update;
   $X1['t_update']     = $t_update;
-  $X1['creator_id']   = $creator_id;
+  $X1['creator_id']   = $crtneator_id;
   $X1['updater_id']   = $creator_id;
   $X1['state_id']     = $draft_id;
   //-----------------------------------------------
@@ -102,6 +106,9 @@ function insert_test(
   try {
     $dbh->beginTransaction();
     $test_id = insert_row("test", $X1);
+
+    $X2['txn_name']     = $txn_name;
+    $X2['txn_type_id']  = $txn_type_id;
     $X2['test_id']  = $test_id;
     $X2['t_update'] = $t_update;
     $X2['d_update'] = $d_update;

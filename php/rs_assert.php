@@ -17,6 +17,8 @@ function rs_assert(
       header("Error-BackTrace: " . nl2br($x));
       header("Error-Message: " . nl2br($err));
       header("Error-Code: " . $code);
+      http_response_code($code);
+
       ob_flush();
     }
     exit(1);
