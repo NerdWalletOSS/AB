@@ -79,72 +79,110 @@ function insert_test(
   assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
   // Now decide whether to update or insert 
-  /*
-  if ( isset($inJ->{'TestID'} ) { 
+  if ( isset($inJ->{'TestID'} ) ) { 
     $test_id = $inJ->{'TestID'};
+    if ( ( is_integer($test_id) ) && ( $test_id > 0 ) )  {
+    }
+    else {
+      $test_id = null;
+    }
   }
-   */
   // STOP Check inputs
   //----------------------------------------------------
-  $test_id = -1;
-  $X1['name']         = $test_name;
-  $X1['txn_type_id']     = $txn_type_id;
-  $X1['request_webapp_id']  = $log_id;
-  $X1['description']  = $test_dscr;
-  $X1['test_type_id'] = $test_type_id;
-  $X1['seed']         = make_seed();
-  $X1['external_id']  = $t_create;
-  $X1['d_create']     = $d_create;
-  $X1['t_create']     = $t_create;
-  $X1['d_update']     = $d_update;
-  $X1['t_update']     = $t_update;
-  $X1['creator_id']   = $creator_id;
-  $X1['updater_id']   = $creator_id;
-  $X1['state_id']     = $draft_id;
-  //-----------------------------------------------
-  //-- In subsequent versions, we will allow user to pick $bin_type
-  //-- For now, following is hard coded
-  switch ( $test_type ) {
-  case "ABTest" :
-    $bin_type_id = lkp("bin_type", "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
-    break;
-  case "XYTest" :
-    $bin_type_id = lkp("bin_type", "free_for_all");
-    break;
-  default : 
-    assert(null, "Invalid test type $test_type");
-    break;
-  }
-  assert(isset($bin_type_id));
-  $X1['bin_type_id'] = $bin_type_id;
-  //-----------------------------------------------
-  $dbh = dbconn(); assert(!empty($dbh)); 
-  try {
-    $dbh->beginTransaction();
-    $test_id = insert_row("test", $X1);
-
-    $X2['request_webapp_id']     = $log_id;
-    $X2['txn_type_id']  = $txn_type_id;
-    $X2['test_id']  = $test_id;
-    $X2['t_update'] = $t_update;
-    $X2['d_update'] = $d_update;
-    //-------------------------------------------------------
-    for ( $i = 0; $i < $nV; $i++ ) { 
-      $X2['percentage']  = $variant_percs[$i];
-      $X2['name']        = $variant_names[$i];
-      insert_row("variant", $X2);
+  if ( $test_id > 0 ) {  // update
+    $X1['description']  = $test_dscr;
+    $X1['d_update']     = $d_update;
+    $X1['t_update']     = $t_update;
+    $X1['updater_id']   = $updater_id;
+    //-----------------------------------------------
+    $dbh = dbconn(); assert(isset($dbh)); 
+    try {
+      $dbh->beginTransaction();
+      mod_row("test", $X1, "where id = $test_id ");
+      $X2['t_update'] = $t_update;
+      $X2['d_update'] = $d_update;
+      //-------------------------------------------------------
+      for ( $i = 0; $i < $nV; $i++ ) { 
+        $X2['percentage']  = $variant_percs[$i];
+        // Can change some stuff only when draft 
+        if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
+          $X2['name']        = $variant_names[$i];
+          if ( $test_type == "XYTest" ) {
+            $X2['url']        = $variant_urls[$i];
+          }
+        }
+        mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
+      }
+      //------------------------------------------
+      $dbh->commit();
+    } catch ( PDOException $ex ) {
+      $dbh->rollBack();
+      $GLOBALS["err"] .= "ERROR: Transaction aborted\n";
+      $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
+      return false;
     }
-    //------------------------------------------
-    $dbh->commit();
-  } catch ( PDOException $ex ) {
-    $dbh->rollBack();
-    $GLOBALS["err"] .= "ERROR: Transaction aborted\n";
-    $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
-    return false;
+    $outJ["stdout"] = "Updated test $test_name";
+  } 
+  else { // insert
+    $X1['name']         = $test_name;
+    $X1['txn_type_id']     = $txn_type_id;
+    $X1['request_webapp_id']  = $log_id;
+    $X1['description']  = $test_dscr;
+    $X1['test_type_id'] = $test_type_id;
+    $X1['seed']         = make_seed();
+    $X1['external_id']  = $t_create;
+    $X1['d_create']     = $d_create;
+    $X1['t_create']     = $t_create;
+    $X1['d_update']     = $d_update;
+    $X1['t_update']     = $t_update;
+    $X1['creator_id']   = $creator_id;
+    $X1['updater_id']   = $creator_id;
+    $X1['state_id']     = $draft_id;
+    //-----------------------------------------------
+    //-- In subsequent versions, we will allow user to pick $bin_type
+    //-- For now, following is hard coded
+    switch ( $test_type ) {
+    case "ABTest" :
+      $bin_type_id = lkp("bin_type", "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
+      break;
+    case "XYTest" :
+      $bin_type_id = lkp("bin_type", "free_for_all");
+      break;
+    default : 
+      assert(null, "Invalid test type $test_type");
+      break;
+    }
+    assert(isset($bin_type_id));
+    $X1['bin_type_id'] = $bin_type_id;
+    //-----------------------------------------------
+    $dbh = dbconn(); assert(!empty($dbh)); 
+    try {
+      $dbh->beginTransaction();
+      $test_id = insert_row("test", $X1);
+
+      $X2['request_webapp_id']     = $log_id;
+      $X2['txn_type_id']  = $txn_type_id;
+      $X2['test_id']  = $test_id;
+      $X2['t_update'] = $t_update;
+      $X2['d_update'] = $d_update;
+      //-------------------------------------------------------
+      for ( $i = 0; $i < $nV; $i++ ) { 
+        $X2['percentage']  = $variant_percs[$i];
+        $X2['name']        = $variant_names[$i];
+        insert_row("variant", $X2);
+      }
+      //------------------------------------------
+      $dbh->commit();
+    } catch ( PDOException $ex ) {
+      $dbh->rollBack();
+      $GLOBALS["err"] .= "ERROR: Transaction aborted\n";
+      $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
+      return false;
+    }
+    $outJ["stdout"] = "Created test $test_name";
   }
   //------------------------------------------
   $outJ["status"] = "ok";
-  $outJ["stdout"] = "Created test $test_name";
   $outJ["test_id"] = $test_id;
 
   unset($Y);

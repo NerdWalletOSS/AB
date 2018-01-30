@@ -11,5 +11,5 @@ $infile = $argv[1];
 assert(is_file($infile));
 $str_inJ = file_get_contents($infile);
 $outJ = insert_test($str_inJ);
-var_dump($outJ);
+echo(json_encode($outJ));
 ?>
