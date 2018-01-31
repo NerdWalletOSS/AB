@@ -1,6 +1,7 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 require_once 'db_set_row.php';
 function rs_assert(
   $val, 
@@ -11,10 +12,10 @@ function rs_assert(
   if ( empty($val) ) {
     $Y['msg_stderr'] = $err;
     $Y['status_code'] = $code;
-    if ( isset($_SESSION['LOG_ID']) ) {
-      $log_id = $_SESSION['LOG_ID'];
-      if ( is_int($log_id) && ( $log_id > 0 ) ) { 
-        db_set_row("log_ui_to_webapp", $log_id, $Y);
+    if ( isset($_SESSION['REQUEST_WEBAPP_ID']) ) {
+      $request_webapp_id = $_SESSION['REQUEST_WEBAPP_ID'];
+      if ( is_int($request_webapp_id) && ( $request_webapp_id > 0 ) ) { 
+        db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
       }
     }
     if ( getenv("AB_PHP_CLI") ) { 

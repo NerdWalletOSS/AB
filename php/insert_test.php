@@ -7,6 +7,8 @@ require_once 'make_seed.php'; // NO PROBLEM
 require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
 require_once 'get_json_element.php';
+require_once 'db_get_row.php';
+require_once 'mod_row.php';
 require_once 'is_good_test_name.php';
 require_once 'aux_chk_name.php';
 require_once 'is_good_variants.php';
@@ -17,16 +19,16 @@ function insert_test(
   $str_inJ
 )
 {
-  $d_create =  $d_update = get_date(); 
+  $created_at =  $updated_at = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
   //--- Logging 
-  $txn_type_id   = lkp("txn_type", "insert_test_edit_test_basic");
-  $X0['d_create'] = $d_create;
+  $api_id   = lkp("api", "insert_test_edit_test_basic");
+  $X0['created_at'] = $created_at;
   $X0['t_create'] = $t_create;
   $X0['payload']  = $str_inJ;
   $X0['api_id']   = lkp("api", "insert_test_edit_test_basic");
-  $log_id = insert_row("request_webapp", $X0);
-  $_SESSION['LOG_ID'] = $log_id;
+  $request_webapp_id = insert_row("request_webapp", $X0);
+  $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
 
   // START Check inputs
   assert(!empty($str_inJ));
@@ -35,7 +37,6 @@ function insert_test(
   $test_name = get_json_element($inJ, 'TestName'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'TestDescription'); 
-  $creator   = get_json_element($inJ, 'Creator');
   $variants  = get_json_element($inJ, 'Variants');
   assert(is_array($variants));
   $nV = count($variants);
@@ -48,7 +49,6 @@ function insert_test(
   assert(is_good_test_name($test_name, $test_type));
 
   $test_type_id = lkp("test_type", $test_type);
-  $creator_id   = lkp("admin", $creator);
   $draft_id     = lkp("state", "draft");
 
   $variant_names = array($nV);
@@ -64,7 +64,7 @@ function insert_test(
     assert(isset($perc));
     assert(is_string($perc));
     $perc = floatval($perc);
-    
+
     $url = $v->{'URL'};
     assert(isset($url));
     assert(is_string($url));
@@ -79,19 +79,28 @@ function insert_test(
   assert(is_good_urls($variant_urls));
   assert(is_good_percs($variant_percs));
   // Now decide whether to update or insert 
-  if ( isset($inJ->{'TestID'} ) ) { 
-    $test_id = $inJ->{'TestID'};
-    if ( ( is_integer($test_id) ) && ( $test_id > 0 ) )  {
-    }
-    else {
+  if ( ( isset($inJ->{'TestID'} )  && ($inJ->{'TestID'} == "" ) ) ||
+    ( !isset($inJ->{'TestID'}) ) ) {
       $test_id = null;
+      rs_assert(is_test_name_unique($test_name, $test_type, 
+        "test name [$test_name] not unique"));
+      $creator   = get_json_element($inJ, 'Creator');
+      $creator_id   = lkp("admin", $creator);
     }
+  else {
+    $test_id = $inJ->{'TestID'};
+    print("test_id  = <<$test_id>>\n");
+    rs_assert(is_numeric($test_id));
+    $test_id = intval($test_id);
+    rs_assert(db_get_row("test", "id", $test_id));
+    $updater    = get_json_element($inJ, 'Updater');
+    $updater_id = lkp("admin", $updater);
   }
   // STOP Check inputs
   //----------------------------------------------------
   if ( $test_id > 0 ) {  // update
     $X1['description']  = $test_dscr;
-    $X1['d_update']     = $d_update;
+    $X1['updated_at']     = $updated_at;
     $X1['t_update']     = $t_update;
     $X1['updater_id']   = $updater_id;
     //-----------------------------------------------
@@ -100,7 +109,7 @@ function insert_test(
       $dbh->beginTransaction();
       mod_row("test", $X1, "where id = $test_id ");
       $X2['t_update'] = $t_update;
-      $X2['d_update'] = $d_update;
+      $X2['updated_at'] = $updated_at;
       //-------------------------------------------------------
       for ( $i = 0; $i < $nV; $i++ ) { 
         $X2['percentage']  = $variant_percs[$i];
@@ -125,15 +134,15 @@ function insert_test(
   } 
   else { // insert
     $X1['name']         = $test_name;
-    $X1['txn_type_id']     = $txn_type_id;
-    $X1['request_webapp_id']  = $log_id;
+    $X1['api_id']       = $api_id;
+    $X1['request_webapp_id']  = $request_webapp_id;
     $X1['description']  = $test_dscr;
     $X1['test_type_id'] = $test_type_id;
     $X1['seed']         = make_seed();
     $X1['external_id']  = $t_create;
-    $X1['d_create']     = $d_create;
+    $X1['created_at']     = $created_at;
     $X1['t_create']     = $t_create;
-    $X1['d_update']     = $d_update;
+    $X1['updated_at']     = $updated_at;
     $X1['t_update']     = $t_update;
     $X1['creator_id']   = $creator_id;
     $X1['updater_id']   = $creator_id;
@@ -160,11 +169,11 @@ function insert_test(
       $dbh->beginTransaction();
       $test_id = insert_row("test", $X1);
 
-      $X2['request_webapp_id']     = $log_id;
-      $X2['txn_type_id']  = $txn_type_id;
+      $X2['request_webapp_id']     = $request_webapp_id;
+      $X2['api_id']   =  $api_id;
       $X2['test_id']  = $test_id;
       $X2['t_update'] = $t_update;
-      $X2['d_update'] = $d_update;
+      $X2['updated_at'] = $updated_at;
       //-------------------------------------------------------
       for ( $i = 0; $i < $nV; $i++ ) { 
         $X2['percentage']  = $variant_percs[$i];
@@ -183,12 +192,12 @@ function insert_test(
   }
   //------------------------------------------
   $outJ["status"] = "ok";
-  $outJ["test_id"] = $test_id;
+  $outJ["TestID"] = $test_id;
 
   unset($Y);
   $Y['msg_stdout'] = $outJ["stdout"];
   $Y['status_code'] = 200;
-  db_set_row("log_ui_to_webapp", $log_id, $Y);
+  db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
 
   header("Error-Code: 200");
   http_response_code(200);

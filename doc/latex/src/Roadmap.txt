@@ -1,0 +1,3 @@
+Restrict who can update a test. Obviously creator can.
+But creator can also create delegates who can.
+------------

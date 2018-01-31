@@ -35,6 +35,19 @@ We have tried to hew as closely as possible to the
 naming conventions in
 \url{http://guides.rubyonrails.org/active_record_basics.html}
 
+Some more Rails conventions
+\bi
+\item  tables are plural, e.g., users, page\_views, clicks
+\item primary key is always {\tt id}
+\item foreign keys are primary key table singular concatenated with \verb+_id+
+  e.g., fk in clicks pointing to users is \verb+user_id+, 
+  fk in clicks to \verb+page_views+ is \verb+page_view_id+
+\item Almost every table has cols ``created\_at'' and
+``updated\_at'' of type datetime. 
+\item Use suffix \verb+_on+ for dates, e.g., \verb+expires_on+ '2018-12-31'
+(as opposed to \verb+_at+ used for datetime/timestamps).
+\ei
+
 There are four kinds of tables 
 \be
 \item Configuration tables. These do not directly contain information about AB test.
@@ -92,6 +105,30 @@ tables that are identical to the original table with the following exceptions
   \ee
 For a ``hello world'' explanation of what this is about, see 
 \verb+sql/triggers_example.sql+
+
+\section{Permissions}
+
+Hewing to the principle of least privelege, we create database users with
+minimal ability to modify the database.  The two users are (1) {\tt webapp} (2)
+{\tt backend}. All users can read all tables.
+
+\be
+\item Triggers allow inserts (no updates or deletes) into tables marked as
+  ``journaling''
+\item 
+Neither webapp nor backend user can delete from any table. All 
+deletes are soft deletes using the {\tt is\_del} field. 
+\item 
+Only inserts (no updates or deletes) are allowed into tables marked as
+``debugging'' 
+\item 
+Webapp users can update and insert only into tables marked as ``test info''
+\item 
+  \ee
+
+
+
+
 
 \end{document}
 
