@@ -27,7 +27,7 @@ lkp(
       load_globals();
     }
   }
-  rs_assert(isset($GLOBALS[$tbl]));
+  rs_assert(isset($GLOBALS[$tbl]), "Table [$tbl] not loaded");
   if (! isset($GLOBALS[$tbl][$val]) ) {
     echo("UNDEFINED $tbl, $val\n");
   }

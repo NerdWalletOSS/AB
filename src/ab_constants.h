@@ -3,7 +3,6 @@
 #define TRUE 1
 #define FALSE 0
 #define AB_ERR_MSG_LEN 1023
-#define SERVER_REQ_Q 128 // number of concurrent requests 
 #define AB_MAX_LEN_API_NAME 31
 #define AB_MAX_LEN_ARGS     4095
 #define AB_MAX_LEN_URL      4095 // used for URLs fired by RTS
@@ -43,8 +42,7 @@
 #define AB_GUID_LENGTH      8 // TO delete and replace by out tracer
 
 #define AB_MAX_LEN_XY_ARGS 1023
-#define AB_MAX_LEN_REDIRECT_URL \
-  (AB_MAX_LEN_VARIANT_URL+1+AB_MAX_LEN_XY_ARGS+1+128)
+#define AB_MAX_LEN_REDIRECT_URL (AB_MAX_LEN_VARIANT_URL+1+AB_MAX_LEN_XY_ARGS+1+128)
 /* Leave some extra space for UUID and VariantID
     sprintf(g_redirect_url, "%s?%s&VariantID=%dGUID=%s", 
 */

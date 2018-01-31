@@ -1,26 +1,26 @@
 {
   "TestType": "ABTest",
-  "TestDescription": "some bogus description",
+  "description": "some bogus description",
   "Creator": "joe",
-  "TestName": "T1",
-  "TestID": "",
+  "name": "T1",
+  "id": "",
   "Variants": [{
-    "ID": "100",
-    "Name": "Control",
-    "Percentage": "50",
-    "URL": "www.google.com"
+    "id": "100",
+    "name": "Control",
+    "percentage": "50",
+    "url": "www.google.com"
   },
   {
-    "ID": "200",
-    "Name": "Variant_A",
-    "Percentage": "30",
-    "URL": "www.yahoo.com"
+    "id": "200",
+    "name": "Variant_A",
+    "percentage": "30",
+    "url": "www.yahoo.com"
   },
   {
-    "ID": "300",
-    "Name": "Variant_B",
-    "Percentage": "20",
-    "URL": "www.cnn.com"
+    "id": "300",
+    "name": "Variant_B",
+    "percentage": "20",
+    "url": "www.cnn.com"
   }
   ]
 }

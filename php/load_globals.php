@@ -24,5 +24,6 @@ function load_globals()
   make_lkp("bin_type");
   make_lkp("admin");
   make_lkp("api");
+  make_lkp("channel");
 }
 ?>
