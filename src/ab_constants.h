@@ -1,3 +1,9 @@
+/* Lua uses this file to generate constants for itself
+ * the format should always be #define<space>variable<space><value>
+ * Note that the value is on a single line and has no spaces
+ * Also only a single underscore should be used between two alphabets
+ */
+
 #ifndef __AB_CONSTANTS
 #define __AB_CONSTANTS
 #define TRUE 1
