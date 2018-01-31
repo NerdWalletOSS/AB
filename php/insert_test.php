@@ -34,9 +34,9 @@ function insert_test(
   assert(!empty($str_inJ));
   assert(is_string($str_inJ), "input not string");
   $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
-  $test_name = get_json_element($inJ, 'TestName'); 
+  $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
-  $test_dscr = get_json_element($inJ, 'TestDescription'); 
+  $test_dscr = get_json_element($inJ, 'description'); 
   $variants  = get_json_element($inJ, 'Variants');
   assert(is_array($variants));
   $nV = count($variants);
@@ -51,45 +51,49 @@ function insert_test(
   $test_type_id = lkp("test_type", $test_type);
   $draft_id     = lkp("state", "draft");
 
+  $variant_ids   = array($nV);
   $variant_names = array($nV);
   $variant_percs = array($nV);
   $variant_urls  = array($nV);
   $vidx = 0;
   foreach ( $variants as $v ) { 
-    $name = $v->{'Name'};
+    if ( isset($v->{'id'}) ) {
+      $variant_ids[$vidx] = $v->{'id'};
+    }
+
+    $name = $v->{'name'};
     assert(isset($name));
     assert(is_string($name));
+    $variant_names[$vidx] = $name;
 
-    $perc = $v->{'Percentage'};
+    $perc = $v->{'percentage'};
     assert(isset($perc));
     assert(is_string($perc));
     $perc = floatval($perc);
-
-    $url = $v->{'URL'};
-    assert(isset($url));
-    assert(is_string($url));
-
-    $variant_names[$vidx] = $name;
     $variant_percs[$vidx] = $perc;
-    $variant_urls[$vidx]   = $url;
+
+    if ( isset($v->{'id'}) ) {
+      $variant_urls[$vidx] = $v->{'url'};
+    }
 
     $vidx++;
   }
   assert(is_good_variants($variant_names));
-  assert(is_good_urls($variant_urls));
+  if ( $test_type == "XYTest" ) { 
+    assert(is_good_urls($variant_urls));
+  }
   assert(is_good_percs($variant_percs));
   // Now decide whether to update or insert 
-  if ( ( isset($inJ->{'TestID'} )  && ($inJ->{'TestID'} == "" ) ) ||
-    ( !isset($inJ->{'TestID'}) ) ) {
+  if ( ( isset($inJ->{'id'} )  && ($inJ->{'id'} == "" ) ) ||
+    ( !isset($inJ->{'id'}) ) ) {
       $test_id = null;
-      rs_assert(is_test_name_unique($test_name, $test_type, 
-        "test name [$test_name] not unique"));
+      rs_assert(is_test_name_unique($test_name, $test_type),
+        "test name [$test_name] not unique");
       $creator   = get_json_element($inJ, 'Creator');
       $creator_id   = lkp("admin", $creator);
     }
   else {
-    $test_id = $inJ->{'TestID'};
-    print("test_id  = <<$test_id>>\n");
+    $test_id = $inJ->{'id'};
     rs_assert(is_numeric($test_id));
     $test_id = intval($test_id);
     rs_assert(db_get_row("test", "id", $test_id));
@@ -99,6 +103,7 @@ function insert_test(
   // STOP Check inputs
   //----------------------------------------------------
   if ( $test_id > 0 ) {  // update
+    $state = get_json_element($inJ, 'State');
     $X1['description']  = $test_dscr;
     $X1['updated_at']     = $updated_at;
     $X1['t_update']     = $t_update;

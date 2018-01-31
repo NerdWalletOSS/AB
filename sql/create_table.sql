@@ -293,6 +293,19 @@ CREATE TABLE cat_attr_val_test (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
+DROP TABLE IF EXISTS bool_attr_test; -- test info
+CREATE TABLE bool_attr_test (
+  id int(8) not null auto_increment,
+  api_id int(8) not null, 
+  request_webapp_id int(8) not null, 
+  test_id int(8) not null,
+  val int(2) not null, -- 0 is false, 1 is true 
+  CONSTRAINT fk_b_api_id FOREIGN KEY (api_id) REFERENCES api(id),
+  CONSTRAINT fk_b_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
+  CONSTRAINT b_uq_test_id UNIQUE (test_id),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
+
 DROP TABLE IF EXISTS device_x_variant; -- test info
 CREATE TABLE device_x_variant (
   id int(8) not null auto_increment,
@@ -300,6 +313,7 @@ CREATE TABLE device_x_variant (
   request_webapp_id int(8) not null, 
   device_id  int(8) not null,
   variant_id int(8) not null,
+  test_id int(8) not null, -- redundant but useful 
   ramp_num int(8) not null,
   percentage int(8) not null,
   CONSTRAINT dxv_fk_dev_id   FOREIGN KEY (device_id) REFERENCES device(id),
@@ -308,6 +322,8 @@ CREATE TABLE device_x_variant (
   CONSTRAINT dxv_chk_perc_ub CHECK (percentage <= 100),
   CONSTRAINT dxv_chk_ramp_num CHECK (ramp_num >= 1),
   CONSTRAINT fk_d_api_id FOREIGN KEY (api_id) REFERENCES api(id),
+  CONSTRAINT fk_d_variant_id FOREIGN KEY (variant_id) REFERENCES variant(id),
+  CONSTRAINT fk_d_test_id FOREIGN KEY (test_id) REFERENCES test(id),
   CONSTRAINT fk_d_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
