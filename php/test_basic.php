@@ -121,27 +121,37 @@ function insert_test(
   //----------------------------------------------------
   if ( $test_id > 0 ) {  // update
     $state = get_json_element($inJ, 'State');
+    rs_assert($state != "archived");  // no changes to archived state
     $X1['description']  = $test_dscr;
-    $X1['updated_at']     = $updated_at;
+    $X1['updated_at']   = $updated_at;
     $X1['t_update']     = $t_update;
     $X1['updater_id']   = $updater_id;
+    if ( $state == "draft" ) { 
+      $X1['name']  = $test_name;
+    }
+    /* TODO What about following?
+     bin_type_id       
+     is_dev_specific   
+     */
     //-----------------------------------------------
     $dbh = dbconn(); assert(isset($dbh)); 
     try {
       $dbh->beginTransaction();
       mod_row("test", $X1, "where id = $test_id ");
+      //-------------------------------------------------------
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
-      //-------------------------------------------------------
-      for ( $i = 0; $i < $nV; $i++ ) { 
+      if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
+        $X2['name']        = $variant_names[$i];
+      }
+      if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
+           ( $state == "started" ) ) {
         $X2['percentage']  = $variant_percs[$i];
-        // Can change some stuff only when draft 
-        if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
-          $X2['name']        = $variant_names[$i];
-          if ( $test_type == "XYTest" ) {
-            $X2['url']        = $variant_urls[$i];
-          }
+        if ( $test_type == "XYTest" ) {
+          $X2['url']        = $variant_urls[$i];
         }
+      }
+      for ( $i = 0; $i < $nV; $i++ ) { 
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
       }
       //------------------------------------------

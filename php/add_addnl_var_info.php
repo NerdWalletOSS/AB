@@ -1,5 +1,6 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 require_once 'aux.php';
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
