@@ -13,6 +13,9 @@ function inform_rts(
   &$err_msg
 )
 {
+  //TODO P0 Needs to be fixed ASAP
+  return true;
+
   $err_msg = "";
   $is_ok = true;
   $SP = list_rts();

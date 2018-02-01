@@ -1,6 +1,7 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
 require_once 'dbconn.php';
 require_once 'insert_row.php'; // NO PROBLEM
 require_once 'make_seed.php'; // NO PROBLEM
@@ -14,6 +15,7 @@ require_once 'aux_chk_name.php';
 require_once 'is_good_variants.php';
 require_once 'is_good_urls.php';
 require_once 'is_good_percs.php';
+require_once 'inform_rts.php';
 
 function insert_test(
   $str_inJ
