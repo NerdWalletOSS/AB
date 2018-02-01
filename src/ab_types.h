@@ -34,25 +34,18 @@ typedef enum _ab_req_type {
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
-typedef struct _dev_spec_perc_type {
-  uint32_t variant_idx;
-  uint32_t final_variant_idx;
-  uint32_t percentage;
-  uint32_t cum_percentage;
-} DEV_SPEC_PERC_TYPE;
-
 typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
   char name[AB_MAX_LEN_VARIANT_NAME+1];
-  char *url; // AB_MAX_LEN_VARIANT_URL+1
-  char *custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
+  char * url; // AB_MAX_LEN_VARIANT_URL+1
+  char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
   char name[AB_MAX_LEN_TEST_NAME+1];
   int test_type; // whether AB_TEST_TYPE or XY_TEST_TYPE or ..
-  uint32_t x_tst_id; // external test id
+  uint32_t id; // external test id
   uint64_t name_hash; // set by Lua, read by C 
   uint64_t external_id; // exposed to external entities
   bool has_filters; // has filters using categorical/boolean attributes
@@ -60,16 +53,15 @@ typedef struct _test_meta_type {
   int state;   // one of TEST_STATE_....
   uint64_t seed; // seed for spooky hash 
 
-  uint32_t num_variants;  // set by Lua, read by C 
+  // Following are set by Lua, read by C 
+  uint32_t num_variants;  
   VARIANT_REC_TYPE *variants;
 
-  uint32_t final_variant_id; 
-  uint32_t final_variant_idx; 
+  // If device specific is not set, we use device_idx = 0
+  uint32_t *final_variant_id; // [g_num_devices]; 
+  uint32_t *final_variant_idx; // [g_num_devices]; 
+  uint8_t *variant_per_bin[AB_NUM_BINS]; // [g_num_devices][AB_NUM_BINS]; 
 
-  uint8_t variant_per_bin[AB_NUM_BINS]; // set by Lua, read by C 
-
-  DEV_SPEC_PERC_TYPE *dev_spec_perc; // [g_num_devices]
-  uint32_t n_dev_spec_perc; // redundant since =  g_num_devices
 } TEST_META_TYPE;
 
 typedef struct _payload_type {
@@ -85,6 +77,35 @@ typedef struct _dev_rec_type {
   uint32_t id;
   char name[AB_MAX_LEN_DEVICE+1];
 } DEV_REC_TYPE;
+
+typedef struct _service_type {
+  uint16_t  port; 
+  char server[AB_MAX_LEN_SERVER_NAME+1]; 
+  char url[AB_MAX_LEN_URL+1]; 
+  char health_url[AB_MAX_LEN_URL+1]; 
+} SERVICE_TYPE;
+
+typedef struct _cftype {
+
+  uint16_t  port;  // port on which AB RTS will run 
+  bool verbose;    // how chatty should RTS be 
+  
+  SERVICE_TYPE logger;
+  SERVICE_TYPE ss;
+  SERVICE_TYPE statsd;
+
+  uint32_t sz_log_q;
+  int num_post_retries;  
+  
+  char default_url[AB_MAX_LEN_REDIRECT_URL+1]; 
+
+  int uuid_len; 
+
+  char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; 
+
+  uint32_t num_devices;
+  char *devices[AB_MAX_LEN_DEVICE+1];
+} CFG_TYPE;
 
 #endif
 

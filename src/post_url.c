@@ -44,7 +44,7 @@ post_url(
       }
     }
     if ( good_post ) { break;}
-  } while ( num_tries < g_num_post_retries );
+  } while ( num_tries < g_cfg.num_post_retries );
   if ( !good_post ) { 
     g_log_bad_posts++; status = -2; 
   }

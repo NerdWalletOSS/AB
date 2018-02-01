@@ -123,6 +123,7 @@ int alt_get_variant(
 
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
+  uint32_t test_id = g_tests[test_idx].id;
   g_log_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
   set_tracer(out_tracer, AB_MAX_LEN_TRACER); 
@@ -131,114 +132,36 @@ int alt_get_variant(
   bin = pseudo_rand_num % AB_NUM_BINS;
   if ( g_tests[test_idx].is_dev_specific ) {
     // TODO P3 Delete later. Following is temporary code to aid debugging
+    // We change g_device_idx if (1) GET param Device sent (2) it is valid
     char buf[16]; memset(buf, '\0', 16); 
     status = extract_name_value(args, "Device=", '&', buf, 16);
-    bool found = false;
     if ( *buf != '\0' ) { 
       for ( unsigned int j = 0; j < g_n_devices; j++ ) { 
         if ( strcmp(g_devices[j].name, buf) == 0 ) { 
-          found = true; g_device_idx = j; break;
+          g_device_idx = j; break;
         }
       }
     }
-    // We change g_device_idx if (1) GET param Device sent (2) it is valid
-    //-----------------------
-    if ( !found ) { 
-      fprintf(stderr, "Unknown device. Defaulting to other\n");
-      g_device_idx = g_other_idx;
-    }
-    // TODO P1: Should not we be using MAX_NUM_BINS here??
-    double rnum = drand48();
-    // Based on device, X gives us proportions for that variant
-    DEV_SPEC_PERC_TYPE *X = g_tests[test_idx].dev_spec_perc;
-    uint32_t  nX = g_tests[test_idx].n_dev_spec_perc;
-    if ( g_device_idx > nX ) { go_BYE(-1); }
-    uint32_t nV = g_tests[test_idx].num_variants; 
-    //----------------------------------
-    if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
-      variant_idx = X[test_idx].final_variant_idx;
-    }
-    else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
-    found = false;
-      for ( uint32_t i = 0; i < nV; i++ ) { 
-        if ( ( rnum <= X[i].cum_percentage ) && ( X[i].percentage > 0 ) ) {
-          found = true; variant_idx = i; break;
-        }
-      }
-      // catch a fall through 
-      if ( !found ) { variant_idx = nV-1; } // TODO: Log error 
-    }
-    else {
-      go_BYE(-1);
-    }
   }
-  else { // Test is NOT device specific 
-    if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
-      variant_idx = g_tests[test_idx].final_variant_idx;
-      uint32_t variant_id  = g_tests[test_idx].final_variant_id;
-      sprintf(g_rslt, "{ \"Variant\" : \"%s\", \"GUID\" : \"%s\", \"VariantID\" :  %d, \"URL\" : \"%s\" }",
-          g_tests[test_idx].variants[variant_idx].name, 
-          temp_guid,
-          g_tests[test_idx].variants[variant_idx].id, 
-          g_tests[test_idx].variants[variant_idx].url);
-      if ( ( strlen(g_tests[test_idx].variants[variant_idx].url) + strlen(args) 
-            + AB_GUID_LENGTH + 16 ) > AB_MAX_LEN_REDIRECT_URL ) {
-        go_BYE(-1);
-      }
-      // START: Handle fact that question mark should occur only once
-      char separator = '?';
-      for ( char *cptr = g_tests[test_idx].variants[variant_idx].url; 
-          *cptr != '\0'; cptr++ ) { 
-        if ( *cptr == '?' ) { separator = '&'; break; }
-      }
-      if ( *args == '?' ) { args++; }
-      // STOP: Handle qmark 
-
-      int nw = snprintf(g_redirect_url, AB_MAX_LEN_REDIRECT_URL,
-          "%s%c%s&VariantID=%uGUID=%s", 
-          g_tests[test_idx].variants[variant_idx].url, 
-          separator, 
-          args, 
-          variant_id,
-          temp_guid);
-      if ( nw >= AB_MAX_LEN_REDIRECT_URL ) { 
-        memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
-        status = -1;
-      }
-      goto BYE;
-    }
-    else if ( g_tests[test_idx].state == TEST_STATE_STARTED )  { 
-      variant_idx = g_tests[test_idx].variant_per_bin[bin];
-      if ( variant_idx > g_tests[test_idx].num_variants ) { go_BYE(-1); }
-      if ( g_tests[test_idx].variants[variant_idx].percentage == 0 ) {
-        go_BYE(-1);
-      }
-    }
-    else {
-      go_BYE(-1);
-    }
+  else {
+    g_device_idx = 0; 
   }
-
-  // double check 
-  if ( *g_tests[test_idx].variants[variant_idx].url == '\0' ) {go_BYE(-1);}
-
-  uint32_t variant_id = g_tests[test_idx].variants[variant_idx].id;
-  uint32_t x_tst_id = g_tests[test_idx].x_tst_id;
-  sprintf(g_rslt, " { \"Variant\" : \"%s\", \"GUID\" : \"%s\", \"VariantID\" : \"%u\", \"URL\" : \"%s\" }", 
-      g_tests[test_idx].variants[variant_idx].name, 
-      (char *)temp_guid,
-      g_tests[test_idx].variants[variant_idx].id,
-      g_tests[test_idx].variants[variant_idx].url);
-  PAYLOAD_TYPE lcl_payload;
-  memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
-  strcpy(lcl_payload.uuid, temp_guid);
-  lcl_payload.time       = curr_time;
-  lcl_payload.test_id    = x_tst_id;
-  lcl_payload.variant_id = variant_id;
-
-  status = log_decision(lcl_payload); cBYE(status);
-  cBYE(status);
-  // TODO: P4 Do we need trailing slash afterlanding page URL?
+  //----------------------------------
+  if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
+    variant_idx = g_tests[test_idx].final_variant_idx[g_device_idx];
+  }
+  else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
+    variant_idx = g_tests[test_idx].variant_per_bin[g_device_idx][bin];
+  }
+  else {
+    go_BYE(-1);
+  }
+  uint32_t variant_id  = g_tests[test_idx].final_variant_id;
+  char *url = g_tests[test_idx].variants[variant_idx].url;
+  char *var_name = g_tests[test_idx].variants[variant_idx].name;
+  //----------------------------------
+  sprintf(g_rslt, "{ \"Variant\" : \"%s\", \"GUID\" : \"%s\", \"VariantID\" :  %d, \"URL\" : \"%s\" }",
+      var_name, temp_guid, variant_id, url);
   // START: Handle fact that question mark should occur only once
   char separator = '?';
   for ( char *cptr = g_tests[test_idx].variants[variant_idx].url; 
@@ -247,12 +170,29 @@ int alt_get_variant(
   }
   if ( *args == '?' ) { args++; }
   // STOP: Handle qmark 
-  int nw = snprintf(g_redirect_url, AB_MAX_LEN_REDIRECT_URL, 
-      "%s%c%s&VariantID=%d&GUID=%s", 
-      g_tests[test_idx].variants[variant_idx].url, separator, args, 
-      variant_id, temp_guid);
-  if ( nw >= AB_MAX_LEN_REDIRECT_URL ) { go_BYE(-1); }
 
+  int nw = snprintf(g_redirect_url, AB_MAX_LEN_REDIRECT_URL,
+      "%s%c%s&VariantID=%uGUID=%s", 
+      g_tests[test_idx].variants[variant_idx].url, 
+      separator, 
+      args, 
+      variant_id,
+      temp_guid);
+  if ( nw >= AB_MAX_LEN_REDIRECT_URL ) { 
+    memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
+    status = -1;
+  }
+
+  PAYLOAD_TYPE lcl_payload;
+  memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
+  strcpy(lcl_payload.uuid, temp_guid);
+  lcl_payload.time       = curr_time;
+  lcl_payload.test_id    = test_id;
+  lcl_payload.variant_id = variant_id;
+
+  status = log_decision(lcl_payload); cBYE(status);
+  cBYE(status);
+  // TODO: P4 Do we need trailing slash afterlanding page URL?
 BYE:
   return status;
 }

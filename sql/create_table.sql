@@ -225,7 +225,10 @@ CREATE TABLE test (
   pred_id int(8), -- can be null
   channel_id int(8),
   description varchar(256),
+
   is_dev_specific  boolean default false not null,
+  has_filters  boolean default false not null,
+
   seed bigint(22) not null default 0,
   external_id bigint not null default 0,
 

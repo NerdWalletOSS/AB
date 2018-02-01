@@ -143,16 +143,16 @@ main(
   struct event_base *base;
   //--------------------------------------------
   status = zero_globals(); cBYE(status); /* Done only on startup */
-  if ( argc != 2 )  { go_BYE(-1); }
-#define HARD_CODE
-#ifdef HARD_CODE
-  hard_code_config(); // only for testing 
-#else
-  status = l_load_config(argv[1]); cBYE(status);
-#endif
+  if ( argc == 1 )  { 
+    hard_code_config(); // only for testing 
+  }
+  else {
+    if ( argc != 2 ) { go_BYE(-1); }
+    status = l_load_config(argv[1]); cBYE(status);
+  }
   status = init(); cBYE(status);
   //---------------------------------------------
-  if ( g_sz_log_q > 0 ) { 
+  if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);
     pthread_cond_init(&g_condp, NULL);
@@ -166,9 +166,9 @@ main(
   httpd = evhttp_new(base);
   evhttp_set_max_headers_size(httpd, AB_MAX_HEADERS_SIZE);
   evhttp_set_max_body_size(httpd, AB_MAX_LEN_BODY);
-  status = evhttp_bind_socket(httpd, "0.0.0.0", g_port); 
+  status = evhttp_bind_socket(httpd, "0.0.0.0", g_cfg.port); 
   if ( status < 0 ) { 
-    fprintf(stderr, "Port %d busy \n", g_port); go_BYE(-1);
+    fprintf(stderr, "Port %d busy \n", g_cfg.port); go_BYE(-1);
   }
   evhttp_set_gencb(httpd, generic_handler, base);
   event_base_dispatch(base);    

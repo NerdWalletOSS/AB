@@ -2,7 +2,7 @@
 #define __MACROS_H
 #ifdef CAPTURE_SERVER_ERROR
 #define WHEREAMI { \
-  sprintf(g_buf, "%u:%s:%u Line %3d of File %s \n", get_time_sec(), g_my_name, g_port, __LINE__, __FILE__);  \
+  sprintf(g_buf, "%u:%s:%u Line %3d of File %s \n", get_time_sec(), g_my_name, g_cfg.port, __LINE__, __FILE__);  \
   strcat(g_err, g_buf); \
 }
 #else

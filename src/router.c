@@ -24,7 +24,7 @@ router(
   if ( ( status < 0 ) || ( *g_redirect_url == '\0' ) ) {
     status = 0;
     g_log_bad_router_calls++;
-    strcpy(g_redirect_url, g_default_url);
+    strcpy(g_redirect_url, g_cfg.default_url);
     // following helps to detect error 
     // TODO P3: Make sure that g_redirect_url does 
     // not have a question mark in it

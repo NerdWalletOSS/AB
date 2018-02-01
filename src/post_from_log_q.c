@@ -33,7 +33,7 @@ post_from_log_q(
       break; // get out of the loop and out of here
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);
-    int eff_rd_idx = g_q_rd_idx % g_sz_log_q;
+    int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
     lcl_payload = g_log_q[eff_rd_idx];
     memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
     g_q_rd_idx++; 
@@ -49,7 +49,7 @@ post_from_log_q(
     g_log_posts++;
     int retry_count = 0;
     bool post_succeeded = false;
-    for ( ;  retry_count < g_num_post_retries ; retry_count++ ) {
+    for ( ;  retry_count < g_cfg.num_post_retries ; retry_count++ ) {
       curl_res = curl_easy_perform(g_ch);
       if ( curl_res != CURLE_OK ) { 
         g_log_failed_posts++;

@@ -50,8 +50,8 @@ function db_get_test(
   }
   return $T;
 }
-/*
+
 $x = db_get_test(1);
 var_dump($x);
- */
+
 ?>

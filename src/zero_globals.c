@@ -41,29 +41,26 @@ zero_globals(
   int status = 0;
 
   //------------------------------
-  g_port        = 0; 
-  g_verbose     = false;
+  g_cfg.port        = 0; 
+  g_cfg.verbose     = false;
 
-  g_log_port    = 0; 
-  memset(g_log_server, '\0', AB_MAX_LEN_SERVER_NAME+1);
-  memset(g_log_url, '\0', AB_MAX_LEN_URL+1);
-  memset(g_log_health_url, '\0', AB_MAX_LEN_URL+1);
+  g_cfg.logger.port    = 0; 
+  memset(g_cfg.logger.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
+  memset(g_cfg.logger.url, '\0', AB_MAX_LEN_URL+1);
+  memset(g_cfg.logger.health_url, '\0', AB_MAX_LEN_URL+1);
 
-  g_ss_port    = 0; 
-  memset(g_ss_server, '\0', AB_MAX_LEN_SERVER_NAME+1);
-  memset(g_ss_url, '\0', AB_MAX_LEN_URL+1);
-  memset(g_ss_health_url, '\0', AB_MAX_LEN_URL+1);
+  g_cfg.ss.port    = 0; 
+  memset(g_cfg.ss.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
+  memset(g_cfg.ss.url, '\0', AB_MAX_LEN_URL+1);
+  memset(g_cfg.ss.health_url, '\0', AB_MAX_LEN_URL+1);
 
-  memset(g_statsd_host,    '\0', AB_MAX_LEN_SERVER_NAME+1);
-  memset(g_statsd_inc,     '\0', AB_MAX_LEN_URL+1);
-  memset(g_statsd_timing,  '\0', AB_MAX_LEN_URL+1);
-  g_statsd_port = 0;
+  g_cfg.statsd.port = 0;
+  memset(g_cfg.statsd.server,    '\0', AB_MAX_LEN_SERVER_NAME+1);
 
-  g_num_post_retries = 0;
-  g_reload_on_startup = true;
-  memset(g_default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
+  g_cfg.num_post_retries = 0;
+  memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
 
-  g_uuid_len = AB_MAX_LEN_UUID; // default 
+  g_cfg.uuid_len = AB_MAX_LEN_UUID; // default 
   g_uuid = malloc((AB_MAX_LEN_UUID+1));
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
@@ -77,7 +74,7 @@ zero_globals(
 
   g_statsd_link  = NULL;
 
-  g_sz_log_q    = AB_DEFAULT_N_LOG_Q;
+  g_cfg.sz_log_q    = AB_DEFAULT_N_LOG_Q;
   g_n_log_q     = 0;
   g_log_q       = NULL;
   g_q_rd_idx    = 0;
