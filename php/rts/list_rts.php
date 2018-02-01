@@ -1,12 +1,15 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers");
-require_once "rs_asert.php";
+set_include_path(get_include_path() . PATH_SEPARATOR . "../");
+require_once "rs_assert.php";
 require_once "load_configs.php";
-require_once "yurl.php";
+require_once "post_url.php";
 
 function list_rts(
 )
 {
+  return null;
+  // TODO P0
   $servers = null;
   $ports   = null;
   // Load configs 
@@ -36,12 +39,11 @@ function list_rts(
       $s = $configs['rts_finder_server'] ;
       $p = $configs['rts_finder_port'] ;
       $http_code = 0; $rslt = "";
-      yurl($s, $p, "DescribeInstances", $http_code, $rslt);
+      post_url($s, $p, "DescribeInstances", $http_code, $rslt);
       if ( $http_code != 200 ) { return null; }
       $X = json_decode($rslt);
       if ( !$X ) { return null; }
-      if ( !isset($X->{'server'}) ) { return null; }
-      if ( !isset($X->{'port'}) ) { return null; }
+      if ( !isset($X->{'server'}) ) { return null; } if ( !isset($X->{'port'}) ) { return null; }
       $servers = $X->{'server'};
       $ports = $X->{'port'};
       if ( count($servers) != count($ports) )  { return null; }

@@ -1,4 +1,5 @@
 <?php
+// TODO Serious updates needed to this code
 set_include_path(get_include_path() . PATH_SEPARATOR . "../test/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 require_once "xurl.php";
@@ -38,7 +39,7 @@ function l_chk_rts(
 )
 {
   $http_code = 0; $rslt = "";
-  yurl($server, $port, "Ignore", $http_code, $rslt);
+  post_url($server, $port, "Ignore", $http_code, $rslt);
   if( !$rslt ) {
     $GLOBALS["err"] .= "Timeout when trying to connect to RTS \n";
     $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__. "\n";
@@ -52,7 +53,7 @@ function l_chk_rts(
   $T = db_get_rows("abtest", 
     " ( ( state_id = $started_id or state_id = $terminated_id ) ) ");
   $http_code = 0; $rslt = "";
-  yurl($server, $port, "NumTests", $http_code, $rslt);
+  post_url($server, $port, "NumTests", $http_code, $rslt);
   if( $http_code != 200 ) { 
     $GLOBALS["err"] .= "$rslt\n";
     $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__. "\n";
@@ -85,7 +86,7 @@ function l_chk_rts(
     $test_type = id_to_name($t['test_type_id'], "test_type");
     $state     = id_to_name($t['state_id'],     "state");
     $http_code = 0; $rslt = "";
-    yurl($server, $port, 
+    post_url($server, $port, 
       "TestInfo?TestName=$test_name&TestType=$test_type", $http_code, $rslt);
     if( $http_code != 200 ) { 
       $GLOBALS["err"] .= "RTS does not know of Test [$test_name] \n"; 

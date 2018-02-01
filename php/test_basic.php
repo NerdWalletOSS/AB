@@ -17,18 +17,18 @@ require_once 'is_good_urls.php';
 require_once 'is_good_percs.php';
 require_once 'inform_rts.php';
 
-function insert_test(
+function test_basic(
   $str_inJ
 )
 {
+  //--- Logging 
   $created_at =  $updated_at = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
-  //--- Logging 
   $api_id   = lkp("api", "insert_test_edit_test_basic");
   $X0['created_at'] = $created_at;
   $X0['t_create'] = $t_create;
   $X0['payload']  = $str_inJ;
-  $X0['api_id']   = lkp("api", "insert_test_edit_test_basic");
+  $X0['api_id']   = $api_id;
   $request_webapp_id = insert_row("request_webapp", $X0);
   $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
 
@@ -95,11 +95,11 @@ function insert_test(
 
     $vidx++;
   }
-  assert(is_good_variants($variant_names));
+  is_good_variants($variant_names, $bin_type);
   if ( $test_type == "XYTest" ) { 
-    assert(is_good_urls($variant_urls));
+    is_good_urls($variant_urls);
   }
-  assert(is_good_percs($variant_percs, $bin_type));
+  is_good_percs($variant_percs, $bin_type);
   // Now decide whether to update or insert 
   if ( ( isset($inJ->{'id'} )  && ($inJ->{'id'} == "" ) ) ||
     ( !isset($inJ->{'id'}) ) ) {
@@ -119,7 +119,12 @@ function insert_test(
   }
   // STOP Check inputs
   //----------------------------------------------------
+  $X1['request_webapp_id']  = $request_webapp_id;
+  $X1['api_id']       = $api_id;
+  $X2['request_webapp_id']  = $request_webapp_id;
+  $X2['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
+    $action = "updated";
     $state = get_json_element($inJ, 'State');
     rs_assert($state != "archived");  // no changes to archived state
     $X1['description']  = $test_dscr;
@@ -129,10 +134,6 @@ function insert_test(
     if ( $state == "draft" ) { 
       $X1['name']  = $test_name;
     }
-    /* TODO What about following?
-     bin_type_id       
-     is_dev_specific   
-     */
     //-----------------------------------------------
     $dbh = dbconn(); assert(isset($dbh)); 
     try {
@@ -141,17 +142,17 @@ function insert_test(
       //-------------------------------------------------------
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
-      if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
-        $X2['name']        = $variant_names[$i];
-      }
-      if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
-           ( $state == "started" ) ) {
-        $X2['percentage']  = $variant_percs[$i];
-        if ( $test_type == "XYTest" ) {
-          $X2['url']        = $variant_urls[$i];
+      for ( $i = 0; $i < $nV; $i++ ) {
+        if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
+          $X2['name']        = $variant_names[$i];
         }
-      }
-      for ( $i = 0; $i < $nV; $i++ ) { 
+        if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
+          ( $state == "started" ) ) {
+            $X2['percentage']  = $variant_percs[$i];
+            if ( $test_type == "XYTest" ) {
+              $X2['url']        = $variant_urls[$i];
+            }
+          }
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
       }
       //------------------------------------------
@@ -162,12 +163,11 @@ function insert_test(
       $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
       return false;
     }
-    $outJ["stdout"] = "Updated test $test_name";
   } 
   else { // insert
+    $action = "inserted";
+    $state = "draft";
     $X1['name']         = $test_name;
-    $X1['api_id']       = $api_id;
-    $X1['request_webapp_id']  = $request_webapp_id;
     $X1['description']  = $test_dscr;
     $X1['test_type_id'] = $test_type_id;
     $X1['seed']         = make_seed();
@@ -186,8 +186,6 @@ function insert_test(
       $dbh->beginTransaction();
       $test_id = insert_row("test", $X1);
 
-      $X2['request_webapp_id']     = $request_webapp_id;
-      $X2['api_id']   =  $api_id;
       $X2['test_id']  = $test_id;
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
@@ -208,18 +206,20 @@ function insert_test(
     $outJ["stdout"] = "Created test $test_name";
   }
   //------------------------------------------
-  $outJ["status"] = "ok";
+  $http_code = 200;
+  $outJ["status_code"] = $http_code;
+  $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
   $outJ["TestID"] = $test_id;
-
-  unset($Y);
-  $Y['msg_stdout'] = $outJ["stdout"];
-  $Y['status_code'] = 200;
+  $Y['msg_stdout']  = $outJ["msg_stdout"];
+  $Y['status_code'] = $outJ["status_code"];
   db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
   // Note it is possible for both msg_stdout and msg_stderr to be set
-  $status = inform_rts($test_id, $rts_err_msg);
-  if ( !$status ) { 
-    $http_code = 400; 
-    $Y['msg_stderr'] = $rts_err_msg;
+  if ( $state == "started" ) {
+    $status = inform_rts($test_id, $rts_err_msg);
+    if ( !$status ) { 
+      $http_code = 400; 
+      $Y['msg_stderr'] = $rts_err_msg;
+    }
   }
 
   header("Error-Code: $http_code");

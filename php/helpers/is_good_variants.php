@@ -3,20 +3,31 @@ require_once 'is_unique.php';
 require_once 'rs_assert.php';
 
 function is_good_variants(
-  $V
+  $V,
+  $bin_type
 )
 {
-  assert(isset($V));
-  assert(is_array($V));
-  assert(count($V) > 0 );
+  rs_assert(isset($V));
+  rs_assert(is_array($V));
+  rs_assert(count($V) > 0 );
   $nV = count($V);
-  assert($nV >= lkp('configs', "min_num_variants"));
-  assert($nV <= lkp('configs', "max_num_variants"));
-  assert(is_unique($V));
+  rs_assert($nV >= lkp('configs', "min_num_variants"));
+  rs_assert($nV <= lkp('configs', "max_num_variants"));
+  rs_assert(is_unique($V));
+  $is_control = false;
   foreach ( $V as $v ) {
-    assert(aux_chk_name($v), "variant name is invalid");
-    assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
+    rs_assert(aux_chk_name($v), "variant name is invalid");
+    rs_assert(strlen($v) <= lkp("configs", "max_len_variant_name"));
+    if ( $v == "Control" ) {
+      $is_control = true;
+    }
   }
+  if ( $bin_type ==  "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) { 
+    if ( !$is_control ) { 
+      return false;
+    }
+  }
+
   return true;
 }
 ?>

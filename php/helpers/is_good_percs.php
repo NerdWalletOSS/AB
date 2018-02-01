@@ -1,7 +1,8 @@
 <?php
 require_once 'rs_assert.php';
 function is_good_percs(
-  $X
+  $X,
+  $bin_type
 )
 {
   rs_assert(isset($X));
@@ -23,5 +24,9 @@ function is_good_percs(
     $sum += $X[$i];
   }
   rs_assert($sum = 100);
+  if ( $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) { 
+    // TODO
+
+  }
   return true;
 }
