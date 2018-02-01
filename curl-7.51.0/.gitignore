@@ -18,3 +18,5 @@ configure.ac
 config.log
 config.status
 projects/Windows/VC*
+lib/curl_config.h
+src/tool_hugehelp.c
