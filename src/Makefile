@@ -25,7 +25,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ab_consts.lua
+all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua
 
 ../luajit-2.0.5/src/libluajit.a :
 	make -C ../luajit-2.0.5
@@ -68,10 +68,14 @@ libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ab_consts.lua:
-	bash consts_gen.sh
+	bash gen_consts.sh
+
+ab_ffi.lua:
+	bash gen_ab_ffi.sh
+
 
 clean:
-	rm -r -f ab_httpd $(COBJS) libspooky_hash.so ab_consts.lua 
+	rm -r -f ab_httpd $(COBJS) libspooky_hash.so ab_consts.lua ab_ffi.lua
 	make -i -C ../luajit-2.0.5/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
