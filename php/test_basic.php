@@ -41,6 +41,21 @@ function insert_test(
   assert(is_array($variants));
   $nV = count($variants);
   assert($nV > 0 );
+  //-----------------------------------------------
+  //-- In subsequent versions, we will allow user to pick $bin_type
+  //-- For now, following is hard coded
+  switch ( $test_type ) {
+  case "ABTest" :
+    $bin_type =  "c_to_v_ok_v_to_c_ok_v_to_v_not_ok";
+    break;
+  case "XYTest" :
+    $bin_type = "free_for_all";
+    break;
+  default : 
+    rs_assert(null, "Invalid test type $test_type");
+    break;
+  }
+  $bin_type_id = lkp("bin_type", $bin_type);
 
   if ( isset($test_dscr) ) {
     assert(is_string($test_dscr));
@@ -82,7 +97,7 @@ function insert_test(
   if ( $test_type == "XYTest" ) { 
     assert(is_good_urls($variant_urls));
   }
-  assert(is_good_percs($variant_percs));
+  assert(is_good_percs($variant_percs, $bin_type));
   // Now decide whether to update or insert 
   if ( ( isset($inJ->{'id'} )  && ($inJ->{'id'} == "" ) ) ||
     ( !isset($inJ->{'id'}) ) ) {
@@ -152,21 +167,6 @@ function insert_test(
     $X1['creator_id']   = $creator_id;
     $X1['updater_id']   = $creator_id;
     $X1['state_id']     = $draft_id;
-    //-----------------------------------------------
-    //-- In subsequent versions, we will allow user to pick $bin_type
-    //-- For now, following is hard coded
-    switch ( $test_type ) {
-    case "ABTest" :
-      $bin_type_id = lkp("bin_type", "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
-      break;
-    case "XYTest" :
-      $bin_type_id = lkp("bin_type", "free_for_all");
-      break;
-    default : 
-      assert(null, "Invalid test type $test_type");
-      break;
-    }
-    assert(isset($bin_type_id));
     $X1['bin_type_id'] = $bin_type_id;
     //-----------------------------------------------
     $dbh = dbconn(); assert(!empty($dbh)); 
@@ -203,8 +203,14 @@ function insert_test(
   $Y['msg_stdout'] = $outJ["stdout"];
   $Y['status_code'] = 200;
   db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
+  // Note it is possible for both msg_stdout and msg_stderr to be set
+  $status = inform_rts($test_id, $rts_err_msg);
+  if ( !$status ) { 
+    $http_code = 400; 
+    $Y['msg_stderr'] = $rts_err_msg;
+  }
 
-  header("Error-Code: 200");
-  http_response_code(200);
+  header("Error-Code: $http_code");
+  http_response_code($http_code);
   return $outJ;
 }

@@ -1,6 +1,6 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "../test/");
-require_once "bye.php";
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers");
+require_once "rs_asert.php";
 require_once "load_configs.php";
 require_once "yurl.php";
 
@@ -55,7 +55,7 @@ function list_rts(
       return $SP;
     }
   else {
-    echo "ERROR: NO RTS found\n";
+    echo("NO RTS found\n");
     return null;
   }
 }
