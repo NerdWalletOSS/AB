@@ -35,22 +35,23 @@ end
 
 local function get_test_index(g_tests, test_name)
   local idx = ffi.cast("int*", ffi.gc(ffi.C.malloc(ffi.sizeof("int")), ffi.C.free))
-  local status = spooky_hash.get_test_idx(test.TestName, 0, idx) -- TODO Check test type argument, where defined
+  local status = spooky_hash.get_test_idx(test_name, 0, idx) -- TODO Check test type argument, where defined
   status = tonumber(status)
   assert( status == 0, "Unable to get position to insert value")
   return ffi.cast("TEST_META_TYPE*", g_tests)[idx[0]]
 end
 
 function Tests.add(test_str, g_tests)
+  print(test_str)
   local test_data = json.decode(test_str)
-  local test_type = assert(test_data.test_type, "value cannot be nil for test")
-  assert(test_data.TestName ~= nil, "Test should have a name")
-  assertx(#test_data.TestName <= consts.AB_MAX_LEN_TEST_NAME,
-  "Test name should be below test name limit. Got ", #test_data.TestName,
+  local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
+  assert(test_data.name ~= nil, "Test should have a name")
+  assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
+  "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   if test_type == "ABTest" then
-    local c_test = get_test_index(g_tests, test_data.TestName)
-    ffi.copy(c_test.name, test_data.TestName)
+    local c_test = get_test_index(g_tests, test_data.name)
+    ffi.copy(c_test.name, test_data.name)
     c_test.test_type = consts.AB_TEST_TYPE_AB
     c_test.x_tst_id = assert(tonumber(test_data.id), "Must have a valid test id")
     c_test.name_hash = spooky_hash.spooky_hash64(c_test.name, ffi.C.strlen(c_test.name), g_seed1) -- TODO remove spooky from ffi
