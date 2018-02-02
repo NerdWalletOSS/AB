@@ -23,7 +23,9 @@ l_add_test(
   status = lua_pcall(g_L, 2, 0, 0);
   if (status != 0) {
     fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
+    go_BYE(-1);
   }
   // printf("changed value: %d\n", cdata[0]);
 BYE:
