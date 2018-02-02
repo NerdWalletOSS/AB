@@ -1,6 +1,6 @@
 local json = require 'json'
 local assertx = require 'assertx'
-ilocal ffi = require 'ab_ffi'
+local ffi = require 'ab_ffi'
 local Tests = {}
 local consts = require 'ab_consts'
 local assertx = require 'assertx'
@@ -72,4 +72,4 @@ function Tests.add(test_str, g_tests)
   end
 end
 
-return tests
+return Tests
