@@ -31,7 +31,7 @@ get_body(
     if ( n > 0) {
       // verify that it is good JSON
       if ( offset + n > AB_MAX_LEN_BODY + 1) {
-        sprintf(g_err, "Post body is larger than maximum allowed size")
+        sprintf(g_err, "Post body is larger than maximum allowed size");
         go_BYE(-1);
       }
       memcpy(body + offset, cbuf, n);
