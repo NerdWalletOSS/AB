@@ -11,10 +11,10 @@ local function add_variants(c_test, json_table)
   assert(type(variants) == "table", "Variants should be an array of variants")
   assertx(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <=consts.AB_MAX_NUM_VARIANTS,
   "Expected variants to be between ", consts.AB_MIN_NUM_VARIANTS)
-  c_test.num_variant = #variantss
+  c_test.num_variants = #variants
   c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
   ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
-  c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
+  -- c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
   local total = 0
   for index, value in ipairs(variants) do
     local entry = c_test.variants[index -1]
@@ -53,7 +53,7 @@ function Tests.add(test_str, g_tests)
     local c_test = get_test_index(g_tests, test_data.name)
     ffi.copy(c_test.name, test_data.name)
     c_test.test_type = consts.AB_TEST_TYPE_AB
-    c_test.x_tst_id = assert(tonumber(test_data.id), "Must have a valid test id")
+    c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
     c_test.name_hash = spooky_hash.spooky_hash64(c_test.name, ffi.C.strlen(c_test.name), g_seed1) -- TODO remove spooky from ffi
     -- c_test.external_id -- TODO onlt for XY Test
     -- c_test.has_filters -- TODO boolean value of 0 or 1 only for AB
