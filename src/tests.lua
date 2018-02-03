@@ -42,7 +42,7 @@ local function get_test_index(g_tests, test_name)
 end
 
 function Tests.add(test_str, g_tests)
-  print(test_str)
+  -- print(test_str)
   local test_data = json.decode(test_str)
   local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
   assert(test_data.name ~= nil, "Test should have a name")
