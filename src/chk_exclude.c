@@ -32,7 +32,7 @@ chk_exclude(
    *  */
   size_t nw = snprintf(url, AB_MAX_LEN_URL,
       "%s:%d/%s/v1/%s/?caller_client_id=abrts&fields=", 
-      g_ss_server, g_ss_port, g_ss_url, uuid);
+      g_cfg.ss.server, g_cfg.ss.port, g_cfg.ss.url, uuid);
   if ( nw > AB_MAX_LEN_URL ) { go_BYE(-1); } // Log this failure
 
   // Fire URL to session service

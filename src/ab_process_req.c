@@ -80,7 +80,7 @@ ab_process_req(
     case Halt : /* done by C */
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       g_halt = true;
-      if ( g_sz_log_q > 0 ) { 
+      if ( g_cfg.sz_log_q > 0 ) { 
         // Tell consumer ead nothing more is coming 
         pthread_cond_signal(&g_condc);	/* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
@@ -102,18 +102,21 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
-      ping_server(g_log_server, g_log_port, g_log_health_url, g_rslt);
+      ping_server(g_cfg.logger.server, g_cfg.logger.port, 
+          g_cfg.logger.health_url, g_rslt);
       break;
       //--------------------------------------------------------
     case PingSessionServer : /* done by C */
-      ping_server(g_log_server, g_log_port, g_log_health_url, g_rslt);
+      ping_server(g_cfg.ss.server, 
+          g_cfg.ss.port, 
+          g_cfg.ss.health_url, g_rslt);
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
     case Restart : /* done by Lua */
       // t1 = get_time_usec(); 
       g_halt = true;
-      if ( g_sz_log_q > 0 ) { 
+      if ( g_cfg.sz_log_q > 0 ) { 
         // Tell consumer thread nothing more is coming 
         pthread_cond_signal(&g_condc);	/* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
@@ -129,7 +132,7 @@ ab_process_req(
       status = zero_globals();  cBYE(status);
       // Note; We do NOT do zero_conf()
       status = init(); cBYE(status);
-      if ( g_sz_log_q > 0 ) { 
+      if ( g_cfg.sz_log_q > 0 ) { 
         pthread_mutex_init(&g_mutex, NULL);	
         pthread_cond_init(&g_condc, NULL);
         pthread_cond_init(&g_condp, NULL);

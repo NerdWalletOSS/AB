@@ -25,8 +25,6 @@ function mod_row(
   }
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);
-  var_dump($sql);
-  var_dump($X);
   $rslt = $stmt->execute($X); if ( !$rslt ) { go_BYE(""); }
   return true;
 }

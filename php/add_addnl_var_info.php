@@ -1,5 +1,6 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 require_once 'aux.php';
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
@@ -24,7 +25,6 @@ function add_addnl_var_info(
   $variant     = get_json($inJ, 'Variant'); 
   $description = get_json($inJ, 'Description');
   $custom_data = get_json($inJ, 'CustomData');
-  $url         = get_json($inJ, 'URL');
 
   $t = db_get_test(null, $test_name, $test_type);
   assert($t, "No test [$test_name] of type [$test_type]");
@@ -41,12 +41,6 @@ function add_addnl_var_info(
     mod_cell("variant", "custom_data", $custom_data_str, "id = $vid");
     break;
   case "XYTest" :
-    assert(chk_url_text($url), "Bad URL [$url]\n");
-    $is_chk = lkp('configs', "check_url_reachable");
-    if ( $is_chk ) { 
-      assert(chk_url($url), "URL [$url] not reachable\n");
-    }
-    mod_cell("variant", "url", $url, "id = $vid\n");
     break;
   default : 
     assert(null, "Invalid test_type $test_type");

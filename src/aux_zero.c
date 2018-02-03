@@ -17,7 +17,7 @@ zero_test(
 
   memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
   ptr_test->test_type = 0;
-  ptr_test->x_tst_id = 0;
+  ptr_test->id = 0;
   ptr_test->name_hash = 0;
   ptr_test-> external_id = 0;
   ptr_test-> has_filters = false;
@@ -32,8 +32,8 @@ zero_test(
   free_if_non_null(ptr_test->variants);
   ptr_test->num_variants = 0;
 
-  ptr_test->final_variant_id = UINT_MAX;
-  ptr_test->final_variant_idx = UINT_MAX;
+  ptr_test->final_variant_id = NULL;
+  ptr_test->final_variant_idx = NULL;
 BYE:
   return status;
 }

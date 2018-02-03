@@ -11,27 +11,27 @@ log_decision(
 {
   int status = 0;
   bool is_wait = false;
-  if ( g_sz_log_q > 0  ) {
-    if ( g_n_log_q >= g_sz_log_q ) { go_BYE(-1); }
-    if ( g_n_log_q > g_sz_log_q - 2 ) {
+  if ( g_cfg.sz_log_q > 0  ) {
+    if ( g_n_log_q >= g_cfg.sz_log_q ) { go_BYE(-1); }
+    if ( g_n_log_q > g_cfg.sz_log_q - 2 ) {
       // TODO: Raise alert using statsd
       g_log_dropped_posts++; 
       goto BYE; 
     }
 
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
-    if ( g_n_log_q == g_sz_log_q ) { // TODO P3 Remove
+    if ( g_n_log_q == g_cfg.sz_log_q ) { // TODO P3 Remove
       fprintf(stderr, "Waiting for space \n");
       is_wait = true;
     }
-    while ( g_n_log_q == g_sz_log_q ) {
+    while ( g_n_log_q == g_cfg.sz_log_q ) {
       /* If there is no space in the buffer, then wait */
       // fprintf(stderr, "producer waiting\n");
       pthread_cond_wait(&g_condp, &g_mutex);
     }
     if ( is_wait ) { fprintf(stderr, "Got space \n"); }
 
-    int eff_wr_idx = g_q_wr_idx % g_sz_log_q;
+    int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
     g_log_q[eff_wr_idx] = lcl_payload;
     g_q_wr_idx++; 
     g_n_log_q++;

@@ -14,31 +14,8 @@
 #include <lauxlib.h>
 #include <pthread.h>
 
-EXTERN uint16_t  g_port; // Lua config
-EXTERN bool g_verbose; // Lua config
+EXTERN CFG_TYPE g_cfg; // Set by Lua . Config variables
 //
-//--------  For logging 
-EXTERN uint16_t  g_log_port; // Lua config 
-EXTERN char g_log_server[AB_MAX_LEN_SERVER_NAME+1]; // Lua config 
-EXTERN char g_log_url[AB_MAX_LEN_URL+1]; // Lua config 
-EXTERN char g_log_health_url[AB_MAX_LEN_URL+1]; // Lua config 
-//-----------------------------------------------------
-//--------  For session sevice
-EXTERN uint16_t  g_ss_port; // Lua config 
-EXTERN char g_ss_server[AB_MAX_LEN_SERVER_NAME+1]; // Lua config 
-EXTERN char g_ss_url[AB_MAX_LEN_URL+1]; // Lua config 
-EXTERN char g_ss_health_url[AB_MAX_LEN_URL+1]; // Lua config
-//
-EXTERN char g_statsd_host[AB_MAX_LEN_SERVER_NAME+1]; // Lua config
-EXTERN int g_statsd_port; // Lua config
-EXTERN char g_statsd_inc[AB_MAX_LEN_URL+1]; // Lua config
-EXTERN char g_statsd_timing[AB_MAX_LEN_URL+1]; // Lua config
-
-EXTERN uint32_t g_sz_log_q;  // size of queue of pending post requests Lua config
-EXTERN int g_num_post_retries;  // Lua config 
-EXTERN bool g_reload_on_startup; // Lua config  TODO
-EXTERN char g_default_url[AB_MAX_LEN_REDIRECT_URL+1]; // Lua config 
-
 EXTERN char *g_ss_response; // For C. Get response from Session Server
 EXTERN int  g_sz_ss_response; // For C. Size of response
 
@@ -49,7 +26,6 @@ EXTERN PAYLOAD_TYPE *g_log_q; // For C
 EXTERN uint32_t g_q_rd_idx; // For C: spot where producer is to write
 EXTERN uint32_t g_q_wr_idx; // For C: spot where consumer is to read
 
-EXTERN int g_uuid_len; // Lua config 
 EXTERN char *g_uuid; // For C
 EXTERN uint64_t g_xy_guid; // For C. Set to positive integer for debugging. 
 // Normally this should be 0

@@ -25,7 +25,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ab_consts.lua
+all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua
 
 ../luajit-2.0.5/src/libluajit.a :
 	make -C ../luajit-2.0.5
@@ -52,11 +52,16 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
 
+../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
+	cd ../mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
+	make -C ../mysql-connector-c-6.1.6-src
+
 ab_httpd : $(COBJS) \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
-	../libevent-2.0.22-stable/.libs/libevent.so 
+	../libevent-2.0.22-stable/.libs/libevent.so \
+	../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	../statsd-c-client-master/libstatsdclient.so \
 	../curl-7.51.0/lib/.libs/libcurl.so \
@@ -68,14 +73,19 @@ libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ab_consts.lua:
-	bash consts_gen.sh
+	bash gen_consts.sh
+
+ab_ffi.lua:
+	bash gen_ab_ffi.sh
+
 
 clean:
-	rm -r -f ab_httpd $(COBJS) libspooky_hash.so ab_consts.lua 
+	rm -r -f ab_httpd $(COBJS) libspooky_hash.so ab_consts.lua ab_ffi.lua
 	make -i -C ../luajit-2.0.5/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
+	make -i -C ../mysql-connector-c-6.1.6-src distclean
 	echo "ALL CLEAN"
 
 qclean :

@@ -183,8 +183,6 @@ A few other notes
 \bi
 \item If TestType = AB, then the name of the first variant must be set to
   Control and is {\bf never} editable.
-\item 
-If IsDeviceSpecific = true, then percentgae column is not displayed.
 \item If Action = terminate, then an additional column called ``Winner'' is
 displayed with radio buttons allowing the user to select any one variant as
 winner. In this case, {\tt Next} button leads to home page, after a confirmation
@@ -237,8 +235,13 @@ This page is for use only when TestType = AB and state = draft or dormant
 \section{Device Specific Routing}
 \label{device_specific}
 This page is for use only when TestType = XY and State is draft, dormant,
-started
+started. 
 \be
+\item There is a check-box which indicates whether 
+  \verb+is_device_specific+ is true for this test. This can be turned on and off
+  at any point in time. Turning it off means that we use the percentage
+  information in Section~\ref{add_edit_basic_page}. Turning it on means that we use the
+  percentage information in this page.
 \item {\bf Previous} leads to Section~\ref{addnl_variant_info}
 \item {\bf Next} leads to Section~\ref{follow_on}
 \item Table as in Section~\ref{tbl_device_specific}

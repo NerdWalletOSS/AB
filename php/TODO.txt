@@ -1,4 +1,3 @@
 Make sure that all changes to the database are within a transaction
 
-Merge insert_test and update_test_basic
-
+Inform RTS needs to be fixed
