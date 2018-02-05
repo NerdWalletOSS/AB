@@ -1,0 +1,45 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 0px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.error {
+ color: red;
+ font-size: 150%;
+ text-align: center;
+}
+.mesg {
+ color: blue;
+ font-size: 150%;
+ text-align: center;
+}
+.success {
+ color: green;
+ font-size: 150%;
+ text-align: center;
+}
+
+.msg {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: white; /*#FF0000;*/
+	background-color: black; /*#F2F2F2;*/
+	padding: 4px;
+	border: 1px dotted #424242;
+	font-weight: bold;
+
+}
