@@ -1,1 +1,0 @@
-/usr/local/bin/c++    -Wall -Wextra -Wformat-security -Wvla -Woverloaded-virtual -Wno-unused-parameter -O3 -g -fabi-version=2 -fno-omit-frame-pointer -fno-strict-aliasing -DDBUG_OFF    CMakeFiles/mysql_client_test.dir/mysql_client_test.c.o  -o mysql_client_test  -L/usr/lib/gcc/x86_64-linux-gnu/4.8  -lpthread ../libmysql/libmysqlclient.a -lpthread -lm -lrt -ldl 
