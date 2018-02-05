@@ -68,6 +68,7 @@ int get_test_idx(
     }
   }
   if ( *ptr_test_idx < 0 ) { 
+    status = -1;
     g_log_missing_test++;
   }
 BYE:
