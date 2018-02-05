@@ -36,6 +36,7 @@ get_body(
       }
       memcpy(body + offset, cbuf, n);
       offset += n;
+      // TODO: Make sure no overflow
     }
     else {
       go_BYE(-1);
