@@ -68,8 +68,8 @@ int get_test_idx(
     }
   }
   if ( *ptr_test_idx < 0 ) { 
-    status = -1;
     g_log_missing_test++;
+    go_BYE(-1);
   }
 BYE:
   return status;
@@ -119,7 +119,7 @@ get_test_type(
   }
   else { 
     g_log_bad_test_type++;
-    go_BYE(-1);
+    go_BYE(-1); 
   }
 BYE:
   return status;

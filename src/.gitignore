@@ -1,3 +1,4 @@
 ab_httpd
 *.o
 _*
+*.so
