@@ -1,0 +1,36 @@
+<?php
+require_once 'get_json_element.php';
+
+function create_good_json_test($str_inJ) {
+
+// START Check inputs
+assert(!empty($str_inJ));
+assert(is_string($str_inJ), "input not string");
+$inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+
+// START CREATING DESIRED OUTPUT
+$X = array();
+$X['TestType'] = get_json_element($inJ, 'TestType'); 
+$X['description'] = get_json_element($inJ, 'TestDescription');
+$X['Creator']  = get_json_element($inJ, 'Creator');
+$X['name']  = get_json_element($inJ, 'TestName');
+$X['id']  = get_json_element($inJ, 'TestID');
+
+$n = get_json_element($inJ, 'NumVariants');
+$V = array();
+for ( $i = 0; $i < $n; $i++) {
+//$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');
+$V[$i]['name']  = get_json_element($inJ, 'VName_'.$i.'');
+$V[$i]['percentage']  = get_json_element($inJ, 'VPercentage_'.$i.'');
+//$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');
+}
+
+$X['Variants'] = $V;
+$outJ = json_encode($X);
+
+return $outJ;
+
+}
+
+?>
+
