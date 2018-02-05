@@ -29,20 +29,19 @@ get_body(
     memset(cbuf, '\0', n_body+1);
     n = evbuffer_remove(inbuf, cbuf, sizeof(cbuf));
     if ( n > 0) {
-      // verify that it is good JSON
-      if ( offset + n > AB_MAX_LEN_BODY + 1) {
+      if ( offset + n > AB_MAX_LEN_BODY ) { // Make sure no overflow
         sprintf(g_err, "Post body is larger than maximum allowed size");
         go_BYE(-1);
       }
       memcpy(body + offset, cbuf, n);
       offset += n;
-      // TODO: Make sure no overflow
     }
     else {
       go_BYE(-1);
     }
     free_if_non_null(cbuf);
   }
+  /* In this code, we do not verify contents of body */
 BYE:
   free_if_non_null(cbuf);
   return status;
