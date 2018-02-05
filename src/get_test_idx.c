@@ -145,29 +145,3 @@ get_test_name(
 BYE:
   return status;
 }
-//<hdr>
-int
-does_test_exist(
-    const char *test_name, 
-    int test_type,
-    uint64_t name_hash
-    )
-//</hdr>
-{
-  int cnt = 0; 
-  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
-    cnt += ( (g_tests[i].name_hash == name_hash ) && 
-             (g_tests[i].test_type == test_type ));
-  }
-  if ( cnt == 0 ) { return -1; }
-  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
-    if ( g_tests[i].name_hash == name_hash ) { 
-      if ( strcmp(g_tests[i].name, test_name) == 0 ) { 
-        if ( g_tests[i].test_type == test_type ) { 
-          return i;
-        }
-      }
-    }
-  }
-  WHEREAMI; return -1; // Control should never come here
-}
