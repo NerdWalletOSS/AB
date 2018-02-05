@@ -113,10 +113,10 @@ init()
   // For Lua
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
-  if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
-      ( lua_pcall(g_L, 0, 0, 0)) )   {
-    go_BYE(-1);
-  }
+  status = luaL_loadfile(g_L, "ab.lua"); cBYE(status);
+  // TODO WHat is the correct status to check for above?
+  status = lua_pcall(g_L, 0, 0, 0); cBYE(status);
+  // TODO WHat is the correct status to check for above?
 #ifdef TEST_STATSD
   statsd_count(g_statsd_link, "count1", 123, 1.0);
   statsd_count(g_statsd_link, "count2", 125, 1.0);

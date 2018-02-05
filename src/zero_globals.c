@@ -135,14 +135,6 @@ zero_globals(
   }
 
   g_L = NULL;
-  // For Lua
-  g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
-  luaL_openlibs(g_L);  
-  if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
-      ( lua_pcall(g_L, 0, 0, 0)) )   {
-    go_BYE(-1);
-  }
-
   zero_log();
 BYE:
   return status;
