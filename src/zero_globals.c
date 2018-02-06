@@ -140,6 +140,7 @@ zero_globals(
   luaL_openlibs(g_L);  
   if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
       ( lua_pcall(g_L, 0, 0, 0)) )   {
+    fprintf(stderr, "calling initialization failed: %s\n", lua_tostring(g_L, -1));
     go_BYE(-1);
   }
 
