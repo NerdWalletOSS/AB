@@ -1,5 +1,4 @@
--- TODO assert cleanups is important
-local dbg = require 'debugger'
+-- local dbg = require 'debugger'
 local json = require 'json'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
@@ -57,11 +56,10 @@ local function get_test(g_tests, test_name, c_index)
   local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
-  -- c_index = ffi.cast("int*", c_index)
+  c_index = ffi.cast("int*", c_index)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local test = nil
   local stop = false
-  -- dbg()
   repeat
     test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
     position = position + 1
@@ -71,8 +69,8 @@ local function get_test(g_tests, test_name, c_index)
   until stop == true
   if position <= consts.AB_MAX_NUM_TESTS and (test.name_hash == 0 or test.name_hash == name_hash) then
     test.name_hash = name_hash
-    print(position -1)
-    -- c_index[0] = position -1
+    -- print(position -1)
+    c_index[0] = position -1
     return test
   else
     -- Now search from 0 to orignal position -1
@@ -86,11 +84,11 @@ local function get_test(g_tests, test_name, c_index)
     until stop == true
     if position <= original_position and (test.name_hash == 0 or test.name_hash == name_hash) then
       test.name_hash = name_hash
-      print(position -1)
-      -- c_index[0] = position - 1
+      -- print(position -1)
+      c_index[0] = position - 1
       return test
     else
-      -- c_index[0] = -1
+      c_index[0] = -1
       assert(nil, "Unable to find any position for insertion")
     end
   end
@@ -106,7 +104,7 @@ function Tests.add(test_str, g_tests, c_index)
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   if test_type == "ABTest" then
-    local c_test = get_test(g_tests, test_data.name)
+    local c_test = get_test(g_tests, test_data.name, c_index)
     assert(c_test ~= nil, "Position not found to insert")
     c_test = ffi.cast("TEST_META_TYPE*", c_test)[0]
     ffi.copy(c_test.name, test_data.name)
