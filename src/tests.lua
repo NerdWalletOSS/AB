@@ -1,3 +1,4 @@
+local dbg = require 'debugger'
 local json = require 'json'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
@@ -33,12 +34,27 @@ local function add_variants(c_test, json_table)
   assertx(total == 100, "all the percentages should add up to 100, added to ", total)
 end
 
-local function get_test_index(g_tests, test_name)
-  local idx = ffi.cast("int*", ffi.gc(ffi.C.malloc(ffi.sizeof("int")), ffi.C.free))
-  local status = spooky_hash.get_test_idx(test_name, 0, idx) -- TODO Check test type argument, where defined
-  status = tonumber(status)
-  assert( status == 0, "Unable to get position to insert value")
-  return ffi.cast("TEST_META_TYPE*", g_tests)[idx[0]]
+local function get_test(g_tests, test_name)
+  local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
+  local position = name_hash % consts.AB_MAX_NUM_TESTS
+  g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
+  local test = nil
+  local stop = false
+  -- dbg()
+  repeat 
+    test = ffi.cast("TEST_META_TYPE*", g_tests) + position
+    position = position + 1
+    if position == consts.AB_MAX_NUM_TESTS or test[0].name_hash == 0 or test[0].name_hash == name_hash then
+      stop = true
+    end
+  until stop == true
+  if position < consts.AB_MAX_NUM_TESTS and test[0].name_hash == 0 or test[0].name_hash == name_hash then
+    test[0].name_hash = name_hash
+    print(position -1)
+    return test
+  else
+    return nil
+  end
 end
 
 function Tests.add(test_str, g_tests)
@@ -50,11 +66,13 @@ function Tests.add(test_str, g_tests)
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   if test_type == "ABTest" then
-    local c_test = get_test_index(g_tests, test_data.name)
+    local c_test = get_test(g_tests, test_data.name)
+    assert(c_test ~= nil, "Position not found to insert")
+    c_test = ffi.cast("TEST_META_TYPE*", c_test)[0]
     ffi.copy(c_test.name, test_data.name)
     c_test.test_type = consts.AB_TEST_TYPE_AB
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
-    c_test.name_hash = spooky_hash.spooky_hash64(c_test.name, ffi.C.strlen(c_test.name), g_seed1) -- TODO remove spooky from ffi
+    -- c_test.name_hash = spooky_hash.spooky_hash64(c_test.name, ffi.C.strlen(c_test.name), g_seed1) -- TODO remove spooky from ffi
     -- c_test.external_id -- TODO onlt for XY Test
     -- c_test.has_filters -- TODO boolean value of 0 or 1 only for AB
     -- c_test.is_dev_specific -- TODO boolean value of 0 or 1 only for AB
