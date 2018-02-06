@@ -1,0 +1,20 @@
+#one time only
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+#every other time
+source venv/bin/activate
+
+#to get ab log events for experiment_id=1609
+
+python get_raw_ab_data.py fetch_ab_log_events 1609
+
+#to get eee events for experiment_id=1609 
+
+python get_raw_ab_data.py fetch_eee 1609
+
+# to get sponsored click events for the banking vertical after 2017-1-1
+
+python get_raw_ab_data.py get_sponsored_clicks Banking 1 1 2017
+
