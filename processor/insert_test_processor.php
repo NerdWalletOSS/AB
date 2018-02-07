@@ -21,7 +21,8 @@ if ( !$json_input ) {
 //-------------------------------------
 // Call to add test
 $rslt =  test_basic($json_input);
-
+//var_dump($rslt);
+header("TestID: ".$rslt["TestID"]);
 ob_clean();
 
 ?>

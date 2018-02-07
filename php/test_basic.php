@@ -1,6 +1,7 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
 require_once 'dbconn.php';
 require_once 'insert_row.php'; // NO PROBLEM

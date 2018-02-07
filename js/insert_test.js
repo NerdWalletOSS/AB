@@ -21,11 +21,13 @@ $(document).ready(function(){
 			 		$("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
 				}
 				else    {
-			 		window.location="home.php";
+					var id = response.getResponseHeader('TestID');
+			 		window.location="aev_test_2.php?id=" + id;
 				}
 		   	},
         success: function(response, textStatus, XHR) {
-    	 		window.location="home.php";
+					var id = XHR.getResponseHeader('TestID');
+			 		window.location="aev_test_2.php?id=" + id;
         },
 		   	beforeSend:function()
 		   {
