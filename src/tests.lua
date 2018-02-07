@@ -25,6 +25,61 @@ end
 
 local states = create_state_table(consts)
 
+local function set_variants_per_bin(c_test, variant_count)
+  --clean all the entries
+  -- TODO account for devices later
+  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
+  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
+  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
+  ffi.C.malloc(ffi.sizeof(cast_type)), ffi.C.free))
+
+  print(ffi.typeof(c_test.variant_per_bin[0]))
+  c_test.variant_per_bin[0] = ffi.cast("uint8_t*", ffi.gc(
+  ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
+
+
+  local variants = c_test.variants
+  -- TODO expand to per device later
+  local variants_bin = c_test.variant_per_bin[0]
+  ffi.fill(variants_bin, ffi.sizeof(c_type))
+  -- TODO sort and check that control is first
+
+
+  -- First use dedicated bins for each variant
+  -- Dedicated bins for variant i are i, i+1*nV, i+2*nV ...
+  for index = 1,variant_count -1 do -- Dont care about 0 index as that is control
+    local variant = variants[index]
+    local total_bins = math.floor(variant.percentage * 0.01 * consts.AB_NUM_BINS)
+    local num_set = 0
+    for set_index=index,consts.AB_NUM_BINS-1 ,variant_count do
+      -- If target is reached then stop else claim the bin
+      if num_set ~= total_bins then
+        num_set = num_set + 1
+        variants_bin[set_index] = index -- set_indexth bucket points to indexth variant
+      end
+    end
+    if num_set ~= total_bins then
+      -- If we dont have adequate bins we get buckets from control
+      -- A variant can only get a bucket from control if (j/nV)%(i-1) == 0
+      -- So, if nV = 3,
+      -- Control's bins are 0, 3, 6, 9, 12, 15, ... These are
+      -- renumbered by dividing by 3:  0, 1, 2, 3, 4,  5,
+      --Variant 1 gets renumbered bins 0, 2, 4, ....
+      --Variant 1 gets original   bins 0, 6, 12, ....
+      --Variant 2 gets renumbered bins 1, 3, 5, ...
+      --Variant 2 gets original   bins 3, 9, 15, ...
+      local start = (index-1)*variant_count
+      local incr = (variant_count-1)*variant_count
+      for set_index=start, consts.AB_NUM_BINS -1 , incr do
+        if num_set ~= total_bins then
+          variants_bin[set_index] = ffi.cast("uint8_t", index)
+          num_set = num_set + 1
+        end
+      end
+    end
+  end
+end
+
 local function add_variants(c_test, json_table)
   local variants = assert(json_table.Variants, "Test should have variants")
   assert(type(variants) == "table", "Variants should be an array of variants")
@@ -50,6 +105,7 @@ local function add_variants(c_test, json_table)
     entry.custom_data = value.custom_data or "" -- TODO why do we have a max length
   end
   assertx(total == 100, "all the percentages should add up to 100, added to ", total)
+  set_variants_per_bin(c_test, #variants)
 end
 
 local function get_test(g_tests, test_name, c_index)
