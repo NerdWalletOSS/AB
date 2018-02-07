@@ -71,7 +71,7 @@ ab_httpd : $(COBJS) \
 	-lm  -lpthread -ldl 
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ab_consts.lua:
 	bash gen_consts.sh
