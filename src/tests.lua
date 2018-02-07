@@ -33,16 +33,16 @@ local function set_variants_per_bin(c_test, variant_count)
   c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
   ffi.C.malloc(ffi.sizeof(cast_type)), ffi.C.free))
 
-  print(ffi.typeof(c_test.variant_per_bin[0]))
+  -- print(ffi.typeof(c_test.variant_per_bin[0]))
   c_test.variant_per_bin[0] = ffi.cast("uint8_t*", ffi.gc(
   ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
 
-
   local variants = c_test.variants
+  -- print("variant 0", ffi.string(variants[0].name):lower())
+  assert(ffi.string(variants[0].name):lower() == "control", "The first entry should always be control")
   -- TODO expand to per device later
   local variants_bin = c_test.variant_per_bin[0]
   ffi.fill(variants_bin, ffi.sizeof(c_type))
-  -- TODO sort and check that control is first
 
 
   -- First use dedicated bins for each variant
@@ -89,16 +89,24 @@ local function add_variants(c_test, json_table)
   c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
   ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   -- c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
-  local total = 0
-  for index, value in ipairs(variants) do
-    local entry = c_test.variants[index -1]
+  local pos, curr_index, total = 1, 0, 0
+  for _, value in ipairs(variants) do
+    local entry
+    if value.name:lower() == "control" then
+      entry = c_test.variants[0]
+      curr_index = 0
+    else
+      entry = c_test.variants[pos]
+      curr_index = pos
+      pos = pos + 1
+    end
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
     if entry.id == c_test.final_variant_id then
-      c_test.final_variant_idx = index - 1
+      c_test.final_variant_idx = curr_index
     end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
     total = total + entry.percentage
-    -- TODO check sum is == 100
+    -- print(curr_index, value.name)
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
     ffi.copy(entry.name, value.name)
     entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
