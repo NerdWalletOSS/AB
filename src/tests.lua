@@ -175,18 +175,14 @@ function Tests.add(test_str, g_tests, c_index)
     c_test.test_type = consts.AB_TEST_TYPE_AB
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
-    -- c_test.name_hash = spooky_hash.spooky_hash64(c_test.name, ffi.C.strlen(c_test.name), g_seed1) -- TODO remove spooky from ffi
+   c_test.seed = spooky_hash.convert_str_to_u64(assert(test_data.seed, "Seed needs to be specified for test"))
     -- c_test.external_id -- TODO onlt for XY Test
     -- c_test.has_filters -- TODO boolean value of 0 or 1 only for AB
     -- c_test.is_dev_specific -- TODO boolean value of 0 or 1 only for AB
-    -- c_test.state -- TODO started updated terminated or deleted
-    -- c_test.seed -- TODO have to ask about this one
     add_variants(c_test, test_data)
-    -- c_test.variant_per_bin [AB_NUM_BINS] -- TODO have to ask about this one
     -- c_test.dev_spec_perc -- TODO device specific to variants or this
     -- c_test.n_dev_spec_per -- TODO device specific to variants or thisc
 
-    -- c_struct[position] = data
   elseif test_type == "XYTest" then
 
   else
