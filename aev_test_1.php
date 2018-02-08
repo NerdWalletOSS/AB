@@ -36,13 +36,12 @@ $config = config_html($TestType);
   </td>
   </tr>
   <tr>
-  <td style="width: 33%">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
-  <textarea class="form-control" rows="3" cols="9" name="TestDescription" 
+  <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
+  <textarea class="form-control" rows="3" cols="20" name="TestDescription" 
     maxlength="<?php echo $config['desc_maxlength']; ?>" 
     <?php echo $readonly; ?> required>
+<?php if (isset($description)) {echo $description;}?>
   </textarea>
-  </td>
-  <td>	
   </td>	
   </tr>
 <?php
@@ -62,10 +61,11 @@ if ( isset($TestType) && ($TestType == "XYTest")) {
   <tr>
   <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
   <input type="text" name="VName_0" size="16" maxlength="15" value="control" readonly="readonly"></td>
-  <td>Description
-  <textarea class="form-control" rows="3" cols="9" maxlength="128"  readonly="readonly" >Standard Feature</textarea></td>
+  <!--<td>Description
+  <textarea class="form-control" rows="3" cols="9" maxlength="128"  readonly="readonly" >Standard Feature</textarea></td>-->
+  <td></td>
   <td>Percentage &nbsp;&nbsp;
-  <input type="number"  style='width:5em' min="0" max="100" maxlength="3" size='2' id="control"  class="control" name="VPercentage_0" readonly="readonly"></td>
+  <input type="number"  style='width:5em' min="0" max="100" maxlength="3" size='2' id="control"  class="control" name="VPercentage_0" value="<?php echo $rslt['Variants'][0]['percentage']; ?>" readonly="readonly"></td>
   </tr>
 <?php 
   for ( $i = 1; $i <= $num_var; $i++ ) { 
@@ -73,13 +73,14 @@ if ( isset($TestType) && ($TestType == "XYTest")) {
 ?>
   <tr>
   <td>Variant <?php echo $i; ?>&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
-  <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
-  <td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>
+  <input type='text' size='16' name='VName_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
+  <!--<td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>-->
 <!--
   <textarea class='form-control' rows='3' cols='9' maxlength='128' name='var".$i."_desc' required></textarea>
 -->
 </td>
-  <td>Percentage &nbsp;&nbsp;<input type='number' style='width:5em' min='0' max='<?php echo (100/$num_var); ?>' step='1' size='2' name='VPercentage_<?php echo $i; ?>' class='prop' required></td>
+<td></td>
+  <td>Percentage &nbsp;&nbsp;<input type='number' style='width:5em' min='0' max='<?php echo (100/$num_var); ?>' step='1' size='2' name='VPercentage_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>" class='prop' required></td>
 <?php } ?>
   </tr>
 <?php } ?>
@@ -89,7 +90,6 @@ if ( isset($TestType) && ($TestType == "XYTest")) {
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
 <input type='hidden' name='TestID' value='<?php echo $id; ?>'>
   <tr>
-    <td></td>
     <td></td>
     <td >TOTAL: <br/>
       <span style="color: Red">Total must be 100*</span>
