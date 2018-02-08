@@ -110,7 +110,7 @@ local function add_variants(c_test, json_table)
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
     ffi.copy(entry.name, value.name)
     entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
-    entry.custom_data = value.custom_data or "" -- TODO why do we have a max length
+    entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
   assertx(total == 100, "all the percentages should add up to 100, added to ", total)
   set_variants_per_bin(c_test, #variants)
@@ -175,8 +175,10 @@ function Tests.add(test_str, g_tests, c_index)
     c_test.test_type = consts.AB_TEST_TYPE_AB
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
-   c_test.seed = spooky_hash.convert_str_to_u64(assert(test_data.seed, "Seed needs to be specified for test"))
-    -- c_test.external_id -- TODO onlt for XY Test
+    local seed = assert(test_data.seed, "Seed needs to be specified for test")
+    c_test.seed = spooky_hash.convert_str_to_u64(seed)
+    local external_id = assert(test_data.external_id, "External id needs to be specified for test")
+    c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
     -- c_test.has_filters -- TODO boolean value of 0 or 1 only for AB
     -- c_test.is_dev_specific -- TODO boolean value of 0 or 1 only for AB
     add_variants(c_test, test_data)
