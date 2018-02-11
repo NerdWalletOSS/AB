@@ -50,13 +50,14 @@ if ( isset($TestType) && ($TestType == "XYTest")) {
   $max_prop = (100 /($num_var));
 ?>
   <tr> 
+   <input type='hidden' name='VID_<?php echo $i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
     <td>Variant <?php echo $i; ?>&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
-  <input type='text' size='16' name='variant<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
+  <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
-  <input type='url' name='var<?php echo $i; ?>_desc' required>
+  <input type='url' name='VURL_<?php echo $i; ?>' required>
   </td>
   <td>Distribution:&nbsp;&nbsp; 
-  <input type='text' style='width:5em'  size='3' name='prop_".$i."' class='prop' required></td></tr>
+  <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' required></td></tr>
 <?php } }else { ?>
   <tr>
   <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
@@ -72,6 +73,7 @@ if ( isset($TestType) && ($TestType == "XYTest")) {
   $max_prop = (100 /($num_var));
 ?>
   <tr>
+   <input type='hidden' name='<?php echo "VID_".$id; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
   <td>Variant <?php echo $i; ?>&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
   <input type='text' size='16' name='VName_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
   <!--<td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>-->

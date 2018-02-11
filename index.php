@@ -17,13 +17,28 @@ if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location:
     <!-- Bootstrap core CSS -->
     <link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="css/signin.css" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
   </head>
 
   <body>
-    <div class="container">
+<!-- Fixed navbar -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+	<div class="navbar-header">
+<!-- Application Title -->
+	<a class="navbar-brand" id="modLink" href="#">AB/URL Test Manager</a>
+	</div>
+  </div>
+  </nav>
+<div class="container theme-showcase" role="main" >
+		<div class="row" >
+	        <div class="col-xs-6">
+		  <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Please Login</h3>
+            </div>
+            <div class="panel-body">
 	<form class="form-signin" action="login_process.php">
-        <h2 class="form-signin-heading">Please sign in</h2>
 	<!-- Error Div to display error, if exist -->
 	<div class="error"><?php if (isset($_GET['error']) ) { echo $_GET['error'];} else {/*Do nothing */} ?></div>
         <label for="user" class="sr-only">User Name</label>
@@ -36,6 +51,8 @@ if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location:
          </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
-    </div> 
-  </body>
-</html>
+    </div></div></div></div>
+</div>
+<!-- /container -->
+	<!-- FOOTER -->
+<?php require_once "common/footer.php"; ?>

@@ -12,7 +12,7 @@
 	<span class="icon-bar"></span>
 	</button>
 <!-- Application Title -->
-	<a class="navbar-brand" id="modLink" href="index.php">AB Test Manager</a>
+	<a class="navbar-brand" id="modLink" href="home.php"><?php echo $TestType; ?> Manager</a>
 	</div>
 	<div id="navbar" class="navbar-collapse collapse">
 <ul class="nav navbar-nav navbar-right">
@@ -22,4 +22,3 @@
   </div><!--/.nav-collapse -->
   </div>
   </nav>
-<div class="container theme-showcase" role="main"> 

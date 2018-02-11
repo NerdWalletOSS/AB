@@ -1,19 +1,20 @@
+<?php require_once "common/header_1.php"; ?>
 <?php
 # -- CALL REQUIRED FILES 
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 # -- Get Active Tests
-
-$is_archived = false;
-if (isset($test_type)) {
-$result = db_get_tests($test_type, $is_archived);
+require_once "db_get_rows.php";
+if (isset($TestType)) {
+if ($TestType == "ABTest") { $test_type_id = 1; }
+if ($TestType == "XYTest") { $test_type_id = 2; }
+$result = db_get_rows("test", "test_type_id = ".$test_type_id);
 $nR = count($result);
 }
 
 ?>
-<?php require_once "common/header_1.php"; ?>
 <?php require_once "common/header_2.php"; ?>
     <div class="container theme-showcase" role="main"> 
 		<div class="row">
@@ -22,11 +23,11 @@ $nR = count($result);
             <div class="panel-heading">
               <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#" >
 <!--<button type="button" style="align: right;" class="btn btn-sm btn-info">See Archived Test</button></a>-->
-<a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-sm btn-primary"><strong>+</strong></button></a>
+<a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-sm btn-success"><strong>+</strong></button></a>
 </h3>
             </div>
             <div class="panel-body">
-<?php if (isset($TestType)) { require_once "panel/".$TestType."_active_test_table.php"; } 
+<?php if (isset($TestType)) { require_once "panel/test_table.php"; } 
        else { echo "<h1>Test Type not defined.</h1>";} 
 ?>
     </div></div></div></div>

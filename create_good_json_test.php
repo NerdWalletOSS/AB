@@ -19,10 +19,12 @@ $X['id']  = get_json_element($inJ, 'TestID');
 $n = get_json_element($inJ, 'NumVariants');
 $V = array();
 for ( $i = 0; $i < $n; $i++) {
-if (isset(get_json_element($inJ, 'VID_'.$i.''))) { $V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');}
+$id = get_json_element($inJ, 'VID_'.$i.'');
+if (isset($id)) {$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');}
 $V[$i]['name']  = get_json_element($inJ, 'VName_'.$i.'');
 $V[$i]['percentage']  = get_json_element($inJ, 'VPercentage_'.$i.'');
-if (isset(get_json_element($inJ, 'VURL_'.$i.''))) { $V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');}
+$url = get_json_element($inJ, 'VURL_'.$i.'');
+if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');}
 }
 
 $X['Variants'] = $V;
