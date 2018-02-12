@@ -45,10 +45,9 @@ if (isset($_GET['num_var'])) {$num_var = $_GET['num_var'];} else {
   } else {
   echo 'size="63"  maxlength="63"';
   }
-?> pattern="^[A-Za-z0-9\S]{1,31}$" required <?php if ($mode != "Add") { echo "readonly='readonly'"; echo "value=".$rslt['name']."";
-
-} ?>
-
+?> 
+pattern="^[A-Za-z0-9\S]{1,31}$" required 
+<?php if ($mode != "Add") { echo "readonly='readonly'"; echo "value=".$rslt['name']."";} ?>
 >
   </td>
 
