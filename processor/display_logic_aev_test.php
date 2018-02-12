@@ -1,4 +1,7 @@
 <?php
+require_once "db_get_test.php";
+require_once "db_get_row.php";
+
 // Decide Mode
 if ($id == "") { $mode = "Add"; }
 if ($id != "") {
@@ -27,8 +30,9 @@ if ( $mode == "Edit" )
   $id = $rslt['id'];
   $TestName = $rslt['name'];
   $description = $rslt['description'];
-  $state = $rslt['State'];
-  $num_var = count($rslt['Variants']) - 1;
+  $st = db_get_row("state", "id", $rslt['state_id']);
+  $state = $st['name'];
+  $num_var = count($rslt['Variants']);
 }
 
 ## -- Mode = View

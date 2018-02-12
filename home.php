@@ -7,21 +7,32 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 # -- Get Active Tests
 require_once "db_get_rows.php";
+$state = '2, 3 and 4';
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }
 if ($TestType == "XYTest") { $test_type_id = 2; }
-$result = db_get_rows("test", "test_type_id = ".$test_type_id);
-$nR = count($result);
+$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '".$state."'");
+//$nR = count($result);
 }
-
 ?>
+<link href="css/dataTables.min.css" rel="stylesheet">
+<script src="js/dataTables.min.js"></script>
+<script src="js/filter_test.js"></script>
+
+<script>
+
+</script>
 <?php require_once "common/header_2.php"; ?>
     <div class="container theme-showcase" role="main"> 
 		<div class="row">
 	        <div class="col-xs-12">
 		  <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#" >
+              <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+								<input type="radio" name="option" value="1" />Default  &nbsp;&nbsp;
+                <input type="radio" name="option" value="2" />Draft &nbsp;&nbsp; 
+                <input type="radio" name="option" value="3" />Archive &nbsp;&nbsp; 
+								<input type="hidden" name="TestType" id="TestType" value="<?php echo $TestType; ?>">
 <!--<button type="button" style="align: right;" class="btn btn-sm btn-info">See Archived Test</button></a>-->
 <a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-sm btn-success"><strong>+</strong></button></a>
 </h3>

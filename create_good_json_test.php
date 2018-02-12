@@ -12,9 +12,14 @@ $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
 $X = array();
 $X['TestType'] = get_json_element($inJ, 'TestType'); 
 $X['description'] = get_json_element($inJ, 'TestDescription');
-$X['Creator']  = get_json_element($inJ, 'Creator');
-$X['name']  = get_json_element($inJ, 'TestName');
 $X['id']  = get_json_element($inJ, 'TestID');
+if ((isset($X['id'])) && ($X['id'] == "")) {
+$X['Creator']  = get_json_element($inJ, 'Creator');
+} else {
+$X['State']  = get_json_element($inJ, 'State');
+$X['Updater']  = get_json_element($inJ, 'Updater');
+}
+$X['name']  = get_json_element($inJ, 'TestName');
 
 $n = get_json_element($inJ, 'NumVariants');
 $V = array();
@@ -29,7 +34,7 @@ if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_
 
 $X['Variants'] = $V;
 $outJ = json_encode($X);
-
+echo $outJ;
 return $outJ;
 
 }
