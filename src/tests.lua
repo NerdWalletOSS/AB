@@ -6,6 +6,7 @@ local Tests = {}
 local consts = require 'ab_consts'
 local assertx = require 'assertx'
 local g_seed1 = 961748941 -- TODO remove manual copy
+Tests.g_seed1 = g_seed1
 local spooky_hash = require 'spooky_hash'
 
 local function create_state_table(consts)
@@ -116,7 +117,7 @@ local function add_variants(c_test, json_table)
   set_variants_per_bin(c_test, #variants)
 end
 
-local function get_test(g_tests, test_name, c_index)
+function Tests.get_test(g_tests, test_name, c_index)
   local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
@@ -131,7 +132,7 @@ local function get_test(g_tests, test_name, c_index)
       stop = true
     end
   until stop == true
-  if position <= consts.AB_MAX_NUM_TESTS and (test.name_hash == 0 or test.name_hash == name_hash) then
+  if test.name_hash == 0 or test.name_hash == name_hash then
     test.name_hash = name_hash
     -- print(position -1)
     c_index[0] = position -1
@@ -139,6 +140,7 @@ local function get_test(g_tests, test_name, c_index)
   else
     -- Now search from 0 to orignal position -1
     position = 0
+    stop = false
     repeat
       test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
       position = position + 1
@@ -146,7 +148,7 @@ local function get_test(g_tests, test_name, c_index)
         stop = true
       end
     until stop == true
-    if position <= original_position and (test.name_hash == 0 or test.name_hash == name_hash) then
+    if test.name_hash == 0 or test.name_hash == name_hash then
       test.name_hash = name_hash
       -- print(position -1)
       c_index[0] = position - 1
@@ -167,25 +169,25 @@ function Tests.add(test_str, g_tests, c_index)
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
+  local c_test = Tests.get_test(g_tests, test_data.name, c_index)
+  assert(c_test ~= nil, "Position not found to insert")
+  ffi.copy(c_test.name, test_data.name)
+  c_test.test_type = consts.AB_TEST_TYPE_AB
+  c_test.state = assert(states[test_data.State], "Must have a valid state")
+  c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
+  local seed = assert(test_data.seed, "Seed needs to be specified for test")
+  c_test.seed = spooky_hash.convert_str_to_u64(seed)
   if test_type == "ABTest" then
-    local c_test = get_test(g_tests, test_data.name, c_index)
-    assert(c_test ~= nil, "Position not found to insert")
-    c_test = ffi.cast("TEST_META_TYPE*", c_test)[0]
-    ffi.copy(c_test.name, test_data.name)
-    c_test.test_type = consts.AB_TEST_TYPE_AB
-    c_test.state = assert(states[test_data.State], "Must have a valid state")
-    c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
-    local seed = assert(test_data.seed, "Seed needs to be specified for test")
-    c_test.seed = spooky_hash.convert_str_to_u64(seed)
-    local external_id = assert(test_data.external_id, "External id needs to be specified for test")
-    c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
+    c_test.is_dev_specific = consts.FALSE
     -- c_test.has_filters -- TODO boolean value of 0 or 1 only for AB
-    -- c_test.is_dev_specific -- TODO boolean value of 0 or 1 only for AB
     add_variants(c_test, test_data)
     -- c_test.dev_spec_perc -- TODO device specific to variants or this
     -- c_test.n_dev_spec_per -- TODO device specific to variants or thisc
 
   elseif test_type == "XYTest" then
+    -- c_test.is_dev_specific -- TODO boolean value of 0 or 1 only for AB
+    local external_id = assert(test_data.external_id, "External id needs to be specified for test")
+    c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
 
   else
     error("Tests can only be of type ABTest or XYTest")
