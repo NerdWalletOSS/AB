@@ -22,6 +22,7 @@ $X = db_get_test($test_id);
 $X['description'] = "New Description";
 $X['Updater'] = $X['Creator'];
 $str_inJ = json_encode($X);
+ echo("\n" . json_encode($X) . "\n");
 $outJ = test_basic($str_inJ);
  echo("\n" . json_encode($outJ) . "\n");
 

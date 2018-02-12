@@ -749,6 +749,5 @@ set_tracer(
     )
 {
   memset(tracer, '\0', n+1);
-  WHEREAMI;
-  exit(1);
+  // TODO TO BE IMPLEMENTED 
 }
