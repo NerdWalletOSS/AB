@@ -32,7 +32,7 @@ if ( $mode == "Edit" )
   $description = $rslt['description'];
   $st = db_get_row("state", "id", $rslt['state_id']);
   $state = $st['name'];
-  $num_var = count($rslt['Variants']);
+  if($TestType == "XYTest") { $num_var = count($rslt['Variants']); } else {$num_var = count($rslt['Variants']) - 1; }
 }
 
 ## -- Mode = View
@@ -46,6 +46,7 @@ if ( $mode == "View" )
   $description = $rslt['description'];
   $state = $rslt['State'];
   $num_var = count($rslt['Variants']) - 1;
+if($TestType == "XYTest") { $num_var = count($rslt['Variants']); } else {$num_var = count($rslt['Variants']) - 1; }
 }
 
 // LOGIC: Declaring Variables

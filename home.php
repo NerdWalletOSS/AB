@@ -29,9 +29,9 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
 		  <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-								<input type="radio" name="option" value="1" />Default  &nbsp;&nbsp;
-                <input type="radio" name="option" value="2" />Draft &nbsp;&nbsp; 
-                <input type="radio" name="option" value="3" />Archive &nbsp;&nbsp; 
+								<input type="radio" name="option" value="1" id="1" checked/>Dormant/Started/Terminated  &nbsp;&nbsp;
+                <input type="radio" name="option" value="2" id="2"  />Draft &nbsp;&nbsp; 
+                <input type="radio" name="option" value="3" id="3"  />Archive &nbsp;&nbsp; 
 								<input type="hidden" name="TestType" id="TestType" value="<?php echo $TestType; ?>">
 <!--<button type="button" style="align: right;" class="btn btn-sm btn-info">See Archived Test</button></a>-->
 <a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-sm btn-success"><strong>+</strong></button></a>
