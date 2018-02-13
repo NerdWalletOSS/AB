@@ -2,19 +2,19 @@ $(document).ready(function(){
 function action_state(state_id) {
   switch (state_id) {
     case '1':
-      return 'dormant';
+      return 'Publish';
     break;
 
     case '2':
-      return 'start';
+      return 'Start';
     break;
 
     case '3':
-      return 'terminate';
+      return 'Stop';
     break;
 
     case '4':
-      return 'archive';
+      return 'Archive';
     break;
   }
 }
@@ -64,7 +64,7 @@ function action_state(state_id) {
           var TableRow = "<tr>";
           TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</td>";
           TableRow += "<td>" + value['name'] + "</td>";
-          TableRow += "<td><a href='set_state.php?TestID="+ value['id'] + "&state_id=" + value['state_id'] + "'>" + action_state(value['state_id']) + "</td>";
+          TableRow += "<td><a href='set_state.php?TestID="+ value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
 					TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID="+ value['id'] +"'>Edit/View,</a></td>";
           TableRow += "</tr>";
           $(table).append(TableRow);

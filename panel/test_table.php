@@ -17,7 +17,7 @@ unset($_SESSION["err"]); } else { /* Do Nothing */ }?>
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>";
-  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['state_id']."</td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button type='button' class='btn btn-success btn-lg'>".$result[$i]['state_id']."</button></td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >Edit/View,</a> ,
   Change State</td>";
 } ?>

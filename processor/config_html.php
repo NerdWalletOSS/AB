@@ -7,11 +7,15 @@ $X = array();
     $X['name_size'] = "63";
 		$X['name_maxlength'] = "63";
 		$X['desc_maxlength'] = "128";
-  } else {
+  } elseif  ($TestType == "XYTest") {
     $X['name_size'] = "127";
 		$X['name_maxlength'] = "127";
+  }
+		else {
+  // throw error & die
   }
 
 return $X;
 }
+
 ?>

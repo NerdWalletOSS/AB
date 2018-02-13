@@ -20,7 +20,11 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
 <script src="js/filter_test.js"></script>
 
 <script>
-
+.btn-xxl {
+    padding: 5px 5px;
+    font-size: 30px;
+    border-radius: 5px;
+}
 </script>
 <?php require_once "common/header_2.php"; ?>
     <div class="container theme-showcase" role="main"> 
@@ -29,12 +33,15 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
 		  <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-								<input type="radio" name="option" value="1" id="1" checked/>Dormant/Started/Terminated  &nbsp;&nbsp;
-                <input type="radio" name="option" value="2" id="2"  />Draft &nbsp;&nbsp; 
-                <input type="radio" name="option" value="3" id="3"  />Archive &nbsp;&nbsp; 
+								<input type="radio" name="option" value="1" id="1" checked/>&nbsp;Dormant/Started/Terminated  &nbsp;&nbsp;
+                <input type="radio" name="option" value="2" id="2"  />&nbsp;Draft &nbsp;&nbsp; 
+                <input type="radio" name="option" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
 								<input type="hidden" name="TestType" id="TestType" value="<?php echo $TestType; ?>">
 <!--<button type="button" style="align: right;" class="btn btn-sm btn-info">See Archived Test</button></a>-->
-<a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-sm btn-success"><strong>+</strong></button></a>
+<a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-success btn-xl">
+<span style="font-size:25px;"><strong>+</strong></span>
+</button>
+</a>
 </h3>
             </div>
             <div class="panel-body">
