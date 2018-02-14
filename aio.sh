@@ -16,11 +16,15 @@ clean(){
   make -C ./curl-7.51.0 clean
 }
 
-build(){
+buildall(){
 	sudo apt-get install gcc python python-pip -y
 	sudo pip install pystatsd
 	clean
 	set -e
+    build
+}
+
+build(){
 	mkdir bin
 	cd ./curl-7.51.0/
 	./configure
@@ -49,6 +53,10 @@ do
 			exit 0
       ;;
     b)
+      buildall
+      exit 0
+      ;;
+    bb)
       build
       exit 0
       ;;
