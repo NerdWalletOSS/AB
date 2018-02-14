@@ -1,11 +1,12 @@
 #!/bin/bash
 usage(){
-	echo "Usage: $0 [-h|-b|-c|-p] -- program to build AB and pack the bin and dependencies" 1>&2
-	echo "where:" 1>&2
-	echo "  -h  shows this message" 1>&2
-	echo "  -b  builds AB and places everything in the bin directory" 1>&2
- 	echo "  -c  Cleans out all the binary files" 1>&2
-  echo "  -p  Builds a tarball in addition to building everything" 1>&2
+	echo "Usage: $0 [-h|-b|-c|-p] -- program to build AB and pack the bin and dependencies" 
+	echo "where:" 
+	echo "  -h  shows this message" 
+	echo "  -b  builds AB and places everything in the bin directory" 
+	echo "  -o  Same as -b but doesn't install packages build" 
+ 	echo "  -c  Cleans out all the binary files" 
+    echo "  -p  Builds a tarball in addition to building everything" 
 	exit 1 ;
 }
 
@@ -16,11 +17,15 @@ clean(){
   make -C ./curl-7.51.0 clean
 }
 
-build(){
+buildall(){
 	sudo apt-get install gcc python python-pip -y
 	sudo pip install pystatsd
 	clean
 	set -e
+    build
+}
+
+build(){
 	mkdir bin
 	cd ./curl-7.51.0/
 	./configure
@@ -35,11 +40,10 @@ build(){
   set +e
 }
 
-while getopts "bchp" opt;
+while getopts "bochp" opt;
 do
 	case $opt in
 		h)
-			echo "I am here to help you"
       usage
 			;;
 		p)
@@ -49,6 +53,10 @@ do
 			exit 0
       ;;
     b)
+      buildall
+      exit 0
+      ;;
+    o)
       build
       exit 0
       ;;
