@@ -12,12 +12,14 @@ c_index[0] = -1
 local valid_json = [[
 {
   "TestType": "ABTest",
+  "BinType": "c_to_v_ok_v_to_c_ok_v_to_v_not_ok",
   "description": "some bogus description",
   "Creator": "joe",
   "name": "T1",
   "id": "777",
   "State": "started",
   "seed": "123453789",
+  "is_dev_specific": "0",
   "Variants": [{
     "id": "100",
     "name": "Control",
@@ -73,7 +75,7 @@ describe('AddTests framework', function()
     describe('should add a test which', function()
       it("should work for a valid json string", function()
         local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
-        assert(status == true, "Insert for valid test should succeed. Failure: ")
+        assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         assert(c_index[0] ~= -1, "Entry should have a valid index")
         cleanup(g_tests, c_index)
       end)
@@ -106,7 +108,7 @@ describe('AddTests framework', function()
         j_table.name = string.rep("a", consts.AB_MAX_LEN_TEST_NAME)
         j_str = json.encode(j_table)
         local status, res = pcall(Tests.add, j_str, g_tests, c_index)
-        assert(status == true, "Insert for valid name should succeed")
+        assertx(status == true, "Insert for valid name should succeed Failure: ", res)
         assert(c_index[0] ~= -1, "Entry should have a valid index")
         cleanup(g_tests, c_index)
       end)
@@ -139,8 +141,8 @@ describe('AddTests framework', function()
         assert(c_index[0] ~= -1, "Entry should have a valid index")
         cleanup(g_tests, c_index)
         empty_g_tests()
-        
-        
+
+
         fill_g_tests()
         local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
         assert(status == false, "Insert should fail in a full tests array`")
