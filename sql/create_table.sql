@@ -123,6 +123,7 @@ CREATE TABLE bin_type (
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
+insert into bin_type values (NULL, 'anonymous', 0); 
 insert into bin_type values (NULL, 'free_for_all', 0); 
 insert into bin_type values (NULL, 'memory_c_to_v_ok', 0); 
 insert into bin_type values (NULL, 'memory_no_changes', 0); 
@@ -317,13 +318,11 @@ CREATE TABLE device_x_variant (
   device_id  int(8) not null,
   variant_id int(8) not null,
   test_id int(8) not null, -- redundant but useful 
-  ramp_num int(8) not null,
   percentage int(8) not null,
   CONSTRAINT dxv_fk_dev_id   FOREIGN KEY (device_id) REFERENCES device(id),
   CONSTRAINT dxv_fk_var_id   FOREIGN KEY (variant_id) REFERENCES variant(id),
   CONSTRAINT dxv_chk_perc_lb CHECK (percentage >= 0),
   CONSTRAINT dxv_chk_perc_ub CHECK (percentage <= 100),
-  CONSTRAINT dxv_chk_ramp_num CHECK (ramp_num >= 1),
   CONSTRAINT fk_d_api_id FOREIGN KEY (api_id) REFERENCES api(id),
   CONSTRAINT fk_d_variant_id FOREIGN KEY (variant_id) REFERENCES variant(id),
   CONSTRAINT fk_d_test_id FOREIGN KEY (test_id) REFERENCES test(id),

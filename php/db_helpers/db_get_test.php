@@ -22,7 +22,7 @@ function db_get_test(
     $T['Channel']  = lkp("channel",   $T['channel_id'],   "reverse");
   }
   //------------------------------------
-  $V = db_get_rows("variant", "test_id", $test_id);
+  $V = db_get_rows("variant", " test_id = $test_id");
   $nV = count($V);
   $Variants = array($nV);
   $vidx = 0;
@@ -31,27 +31,33 @@ function db_get_test(
   }
   $T['Variants'] = $Variants;
   //------------------------------------
-  $FC = db_get_rows("cat_attr_val_test", "test_id", $test_id);
+  $FC = db_get_rows("cat_attr_val_test", "test_id = $test_id");
   if ( !is_null($FC) ) {
     $T['CatAttrValTest'] = $FC;
     // TODO Needs to be completed
   }
   //------------------------------------
-  $FB = db_get_rows("bool_attr_test", "test_id", $test_id);
+  $FB = db_get_rows("bool_attr_test", "test_id = $test_id");
   if ( !is_null($FB) ) {
     $T['BoolAttrTest'] = $FB;
     // TODO Needs to be completed
   }
   //------------------------------------
-  $DV = db_get_rows("device_x_variant", "test_id", $test_id);
+  $DV = db_get_rows("device_x_variant", "test_id = $test_id ");
   if ( !is_null($DV) ) {
-    $T['DeviceCrossVariant'] = $DV;
-    // TODO Needs to be completed
+    $D  = $GLOBALS['device'];
+    $xxx = array(count($D));
+    foreach ( $D as $k => $v ) { 
+      $xxx[$k] = db_get_rows("device_x_variant", 
+          "test_id = $test_id and device_id = $v " );
+    }
+    $T['DeviceCrossVariant'] = $xxx;
   }
   return $T;
 }
-
+/*
 $x = db_get_test(1);
-var_dump($x);
-
+$y = json_encode($x);
+print($y);
+ */
 ?>
