@@ -34,10 +34,10 @@ $config = config_html($TestType);
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
 	<tr>
-		<td colspan="3">Test ID: <?php echo $id; ?></td>
+		<td colspan="3">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
 	</tr>
 	<tr>
-		<td colspan="3">Test Name: <?php echo $TestName; ?></td>
+		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
 	</tr>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
@@ -75,8 +75,9 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?ph
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"required></td></tr>
-<?php } }else { ?>
+<?php } }elseif ($TestType == "ABTest") { ?>
   <tr>
+<input type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
   <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
   <input type="text" name="VName_0" size="16" maxlength="15" value="control" readonly="readonly"></td>
   <!--<td>Description
@@ -90,7 +91,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   $max_prop = (100 /($num_var));
 ?>
   <tr>
-   <input type='hidden' name='<?php echo "VID_".$id; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
+   <input type='hidden' name='<?php echo "VID_".$i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
   <td>Variant <?php echo $i + 1; ?>&nbsp;&nbsp;( ID : <?php if ($mode == "Edit") {echo $rslt['Variants'][$i]['id'];} ?>&nbsp;)&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
   <input type='text' size='16' name='VName_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' required></td>
   <!--<td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>-->
@@ -112,7 +113,6 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input type='hidden' name='State' value='<?php echo $state; ?>'>
 <?php } ?>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-<input type='hidden' name='TestID' value='<?php echo $id; ?>'>
   <tr>
     <td></td>
     <td >TOTAL: &nbsp; &nbsp;
