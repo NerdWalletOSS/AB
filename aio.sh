@@ -30,13 +30,13 @@ build(){
 	cd ./curl-7.51.0/
 	./configure
 	make
-	cd ../src
-	make
-	cp ab_httpd ../bin
 	cd ../
 	mkdir ./bin/libs
-	find ./ -name "*.so*" -exec cp {} ./bin/libs \;
-	find ./src -name "*.lua" -exec cp {} ./bin \;
+	cd ./src
+	make
+	cp ab_httpd ../bin
+	find ./ -name "*.so*" -exec cp {} ../bin/libs \;
+	find ./ -name "*.lua" -exec cp {} ../bin \;
   set +e
 }
 
