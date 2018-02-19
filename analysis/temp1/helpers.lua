@@ -1,12 +1,13 @@
 local cmem   = require 'libcmem' ; 
 local Scalar = require 'libsclr' ; 
+local Q = require 'Q'
 local helpers = {}
 local function get_min_max(T, f)
   local mint = Q.min(T[f]):eval()
   local maxt = Q.max(T[f]):eval()
   return mint, maxt
 end
-helpers.find_test_period = find_test_period
+helpers.get_min_max = get_min_max
 --============================================
 local function restrict_by_time(T, timefld, mint, maxt)
   local geq_mint = Q.vsgeq(T[timefld], mint)
