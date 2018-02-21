@@ -4,7 +4,6 @@ local consts = require 'ab_consts'
 local bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok = {}
 local function set_variants_per_bin(c_test, variant_count)
   --clean all the entries
-  -- TODO account for devices later
   local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
   local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
   c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
@@ -15,12 +14,8 @@ local function set_variants_per_bin(c_test, variant_count)
   ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
 
   local variants = c_test.variants
-  -- print("variant 0", ffi.string(variants[0].name):lower())
-  assert(ffi.string(variants[0].name):lower() == "control", "The first entry should always be control")
-  -- TODO expand to per device later
   local variants_bin = c_test.variant_per_bin[0]
   ffi.fill(variants_bin, ffi.sizeof(c_type))
-
 
   -- First use dedicated bins for each variant
   -- Dedicated bins for variant i are i, i+1*nV, i+2*nV ...
@@ -54,19 +49,20 @@ local function set_variants_per_bin(c_test, variant_count)
         end
       end
     end
+    assert(total_bins == num_set, "We should get the total number")
   end
 end
 
 function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, test_data)
   local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific or not")
   assert(is_dev_spec == consts.FALSE, "ABTests cannot have device specific routing")
-    c_test.is_dev_specific = consts.FALSE
+  c_test.is_dev_specific = consts.FALSE
 
   local variants = assert(test_data.Variants, "Test should have variants")
   assert(type(variants) == "table", "Variants should be an array of variants")
   assertx(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <=consts.AB_MAX_NUM_VARIANTS,
   "Expected variants to be between ", consts.AB_MIN_NUM_VARIANTS)
-  c_test.num_variants = #variants -- TODO i dont think this makes sense for device specific routing
+  c_test.num_variants = #variants
   c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
   ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   -- c_test.final_variant_id = assert(test_data.FinalVariantID, "need a final variant") -- TODO check where this comes in
@@ -77,7 +73,6 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
     return a.id < b.id
   end
   table.sort(variants, compare)
-  -- TODO if ABTest
   if test_data.TestType == "ABTest" then
     assert(variants[1].name:lower() == "control", "First entry has to be control")
   end
@@ -94,10 +89,9 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
     ffi.copy(entry.name, value.name)
     entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
-
-
   end
-    assertx(total == 100, "all the percentages should add up to 100, added to ", total)
+  
+  assertx(total == 100, "all the percentages should add up to 100, added to ", total)
   set_variants_per_bin(c_test, #variants)
 end
 

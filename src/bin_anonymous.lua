@@ -53,72 +53,76 @@ local function set_bins_for_device(variants_bin, variants)
 end
 
 local function add_device_specific(c_test, json_table)
-  local variants = assert(json_table.Variants, "Test should have device specific variants")
-  assert(type(variants) == "table", "Variants should be an array of variants")
-  local compare = function(a,b)
-    return a.device_id < b.device_id
-  end
-  for k,v in ipairs(variants) do -- sorting all the device specific variants
-    table.sort(v)
+  -- get all variants
+  local variants = {}
+  local num_devices = #json_table.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
+  for device_name ,variants_table  in ipairs(json_table.DeviceCrossVariant) do
+    local device_id = variants_table[0].device_id
+    for _, variant in ipairs(variants_table) do
+      variants[#variants +1] = variant
+      assert(device_id == variant.device_id, "Device id in the same device should not change")
+    end
   end
 
-  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
-  -- TODO this is not number of variants but number of devices that comes in a
-  -- config
-  -- c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
-  local pos, curr_index, total = 1, 0, 0
-  -- sort the variants table
-  -- ensures that control is at the first position
-  local function compare(a,b)
+  local compare = function(a,b)
     return a.id < b.id
   end
   table.sort(variants, compare)
-  -- TODO if ABTest
-  c_test.final_variant_id = ffi.cast("unit32_t*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint32_t")*#variants), ffi.C.free))
-  ffi.fill(c_test.final_variant_id, ffi.sizeof("uint32_t")*#variants)
-  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
-  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof(cast_type)*#variants), ffi.C.free))
-  ffi.fill(c_test.variant_per_bin, ffi.sizeof(cast_type)*#variants)
-  -- TODO think about merging device specific with variants, right now all
-  -- transitions are allowed in device specific so just fill bins one at a time
-  for key, entry in pairs(variants) do
-    local index = entry[0].device_id -- TODO somehow map device name to index position
-    local mod_entry = {}
-    for entry_index, entry_value in ipairs(entry) do
-      local test = {}
-      test.id = entry_value.variante_id
-      test.percentage = entry_value.percentage
-      mod_entry[#mod_entry + 1] = test
-    end
-    -- sort and call the poulation of the index
-  end
+
+  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
+  ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
+  ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
+  -- c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
+
+  -- TODO Check this for anonymous
+  -- c_test.final_variant_id = ffi.cast("unit32_t*", ffi.gc(
+  -- ffi.C.malloc(ffi.sizeof("uint32_t")*#variants), ffi.C.free))
+  -- ffi.fill(c_test.final_variant_id, ffi.sizeof("uint32_t")*#variants)
+  local var_id_to_index_map = {}
+
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]
+    var_id_to_index_map[value.id] = index - 1
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
-    if entry.id == c_test.final_variant_id then
-      c_test.final_variant_idx = curr_index
-    end
+    -- TODO check about final variant
+    -- if entry.id == c_test.final_variant_id then
+    --   c_test.final_variant_idx = curr_index
+    -- end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
-    total = total + entry.percentage
-    -- print(curr_index, value.name)
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
     ffi.copy(entry.name, value.name)
     entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
-
-
   end
-  assertx(total == 100, "all the percentages should add up to 100, added to ", total)
-  set_variants_per_bin(c_test, #variants)
+
+  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
+  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
+  ffi.C.malloc(ffi.sizeof(cast_type)*#variants), ffi.C.free))
+  ffi.fill(c_test.variant_per_bin, ffi.sizeof(cast_type)*num_devices)
+
+  compare= function(a,b)
+    return a[0].device_id < b[0].device_id
+  end
+  table.sort(variants, compare)
+  for index, dev_variants in ipairs(variants) do
+    -- TODO strong assumption is that the devices will have ids starting from 0
+    -- Idea is bin[device_id]
+    set_variants_per_bin(c_test.variant_per_bin[index -1], dev_variants, var_id_to_index_map)
+  end
 end
 
 
 function bin_anonymous.add_bins_and_variants(c_test, test_data)
-    local external_id = assert(test_data.external_id, "External id needs to be specified for test")
-    c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
+  local external_id = assert(test_data.external_id, "External id needs to be specified for test")
+  c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
+  local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific or not")
+  assert(is_dev_spec == consts.FALSE or is_dev_spec == consts.TRUE, "Test canonly have TRUE or FALSE in  device specific routing")
+  c_test.is_dev_specific = is_dev_spec
+  if c_test.is_dev_specific == consts.TRUE then
+
+  else
+
+  end
 
 
 end

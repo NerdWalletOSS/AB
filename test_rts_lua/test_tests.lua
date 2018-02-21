@@ -151,21 +151,45 @@ describe('AddTests framework', function()
         empty_g_tests()
       end)
 
-      it("should have a valid TestType", function()
-        local j_table = json.decode(valid_json)
-        j_table.TestType = nil
-        local j_str = json.encode(j_table)
-        local status, res = pcall(Tests.add, j_str, g_tests, c_index)
-        assert(status == false)
-        cleanup(g_tests, c_index)
-      end)
-      it("should have a valid TestType", function()
-        local j_table = json.decode(valid_json)
-        j_table.TestType = nil
-        local j_str = json.encode(j_table)
-        local status, res = pcall(Tests.add, j_str, g_tests, c_index)
-        assert(status == false)
-        cleanup(g_tests, c_index)
+      describe("for c_to_v_ok_v_to_c_ok_v_to_v_not_ok", function()
+
+        it("should have a control type", function()
+          local j_table = json.decode(valid_json)
+          j_table.Variants[1].name = 'failme'
+          local j_str = json.encode(j_table)
+          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          assert(status == false)
+          cleanup(g_tests, c_index)
+        end)
+        it('reordered variants should result in same ordering', function()
+          local j_table = json.decode(valid_json)
+          table.sort(j_table.Variants, function(a,b) return a.name > b.name end)
+          local j_str = json.encode(j_table)
+          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          assert(status == true, 'Insertion for valid json should succeed')
+          local variant_bin = g_tests[c_index[0]].variant_per_bin[0]
+          local bin_size = ffi.sizeof(string.format("uint8_t[%s]", consts.AB_NUM_BINS))
+          local old_bin = ffi.cast("uint8_t*", ffi.gc(ffi.C.malloc(bin_size), ffi.C.free))
+          ffi.copy(old_bin , variant_bin, bin_size)
+          cleanup(g_tests, c_index)
+
+          table.sort(j_table.Variants, function(a,b) return a.name < b.name end)
+          j_str = json.encode(j_table)
+          status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          variant_bin = g_tests[c_index[0]].variant_per_bin[0]
+          for i=1,consts.AB_NUM_BINS do
+            assert(variant_bin[i-1] == old_bin[i-1])
+          end
+        end)
+        it("should not allow the variant proportions to be high", function()
+          local j_table = json.decode(valid_json)
+          j_table.Variants[1].percentage = "10"
+          j_table.Variants[2].percentage = "70"
+          local j_str = json.encode(j_table)
+          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          assert(status == false)
+          cleanup(g_tests, c_index)
+        end)
       end)
     end)
   end)
