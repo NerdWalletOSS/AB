@@ -1,61 +1,33 @@
 local bin_anonymous = {}
 local assertx = require 'assertx'
-local ffi = require 'ab_ffi'
 local consts = require 'ab_consts'
+local ffi = require 'ab_ffi'
+local spooky_hash = require 'spooky_hash'
 
-local function set_bins_for_device(variants_bin, variants)
-  local function compare(a,b)
-    return a.id < b.id
-  end
-  table.sort(variants, compare) -- TODO sorting should happen outside here is just creating the bins
-  -- if test_type == "ABTest" then
-  --   assert(ffi.string(variants[0].name):lower() == "control", "The first entry should always be control")
-  -- end
-  -- TODO expand to per device later
-  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
-  ffi.fill(variants_bin, ffi.sizeof(c_type))
+local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 
-  -- First use dedicated bins for each variant
-  -- Dedicated bins for variant i are i, i+1*nV, i+2*nV ...
-  for index = 1,#variants -1 do -- Dont care about 0 index as that is control
-    local variant = variants[index]
-    local total_bins = math.floor(variant.percentage * 0.01 * consts.AB_NUM_BINS)
-    local num_set = 0
-    for set_index=index,consts.AB_NUM_BINS-1 ,variant_count do
-      -- If target is reached then stop else claim the bin
-      if num_set ~= total_bins then
-        num_set = num_set + 1
-        variants_bin[set_index] = index -- set_indexth bucket points to indexth variant
-      end
+  local total = 0
+  local num_set = 0
+  local total_percentage = 0i
+  -- In case the bins dont fill up
+  ffi.fill(bin, consts,AB_NUM_BINS, var_id_to_index_map[dev_variants[0].id])
+
+  for index, variant in ipairs(dev_variants) do
+    local percent = assert(tonumber(variant.percentage), "Variant must have a valid percentage")
+    local total_bins = math.floor(percent * 0.01 * consts.AB_NUM_BINS)
+    assert(num_set + total_bins <= consts.AB_NUM_BINS, "Total number of bins should be less that total bins")
+    for set_vals=num_set, num_set + total_bins - 1 do
+      bin[set_vals] = var_id_to_index_map[variant.id]
     end
-    if num_set ~= total_bins then
-      -- If we dont have adequate bins we get buckets from control
-      -- A variant can only get a bucket from control if (j/nV)%(i-1) == 0
-      -- So, if nV = 3,
-      -- Control's bins are 0, 3, 6, 9, 12, 15, ... These are
-      -- renumbered by dividing by 3:  0, 1, 2, 3, 4,  5,
-      --Variant 1 gets renumbered bins 0, 2, 4, ....
-      --Variant 1 gets original   bins 0, 6, 12, ....
-      --Variant 2 gets renumbered bins 1, 3, 5, ...
-      --Variant 2 gets original   bins 3, 9, 15, ...
-      local start = (index-1)*variant_count
-      local incr = (variant_count-1)*variant_count
-      for set_index=start, consts.AB_NUM_BINS -1 , incr do
-        if num_set ~= total_bins then
-          variants_bin[set_index] = ffi.cast("uint8_t", index)
-          num_set = num_set + 1
-        end
-      end
-    end
+    total = total + total_bins
+    total_percentage = total_percentage + percent
   end
-
-
+  assert(total <= consts.AB_NUM_BINS, "More than max bins cannot be occupied")
+  assert(total_percentage == 100, "Total percentage should add up to 100 percent")
 end
 
-local function add_device_specific(c_test, json_table)
-  -- get all variants
+local function get_all_variants(json_table)
   local variants = {}
-  local num_devices = #json_table.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
   for device_name ,variants_table  in ipairs(json_table.DeviceCrossVariant) do
     local device_id = variants_table[0].device_id
     for _, variant in ipairs(variants_table) do
@@ -63,23 +35,16 @@ local function add_device_specific(c_test, json_table)
       assert(device_id == variant.device_id, "Device id in the same device should not change")
     end
   end
+  -- Sort all the variants
+  table.sort(variants, function(a, b) return tonumber(a.id) < tonumber(b.id) end)
+  return variants
+end
 
-  local compare = function(a,b)
-    return a.id < b.id
-  end
-  table.sort(variants, compare)
-
-  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
-  ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
-  -- c_test.final_variant_id = assert(json_table.FinalVariantID, "need a final variant") -- TODO check where this comes in
-
-  -- TODO Check this for anonymous
-  -- c_test.final_variant_id = ffi.cast("unit32_t*", ffi.gc(
-  -- ffi.C.malloc(ffi.sizeof("uint32_t")*#variants), ffi.C.free))
-  -- ffi.fill(c_test.final_variant_id, ffi.sizeof("uint32_t")*#variants)
+local function populate_variants(c_test, variants)
   local var_id_to_index_map = {}
-
+  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
+  ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
+  -- TODO final variants, HELP
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]
     var_id_to_index_map[value.id] = index - 1
@@ -94,23 +59,39 @@ local function add_device_specific(c_test, json_table)
     entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
+  return var_id_to_index_map
+end
+
+local function add_device_specific(c_test, json_table)
+  -- get all variants
+  local variants = get_all_variants(json_table)
+  local num_devices = #json_table.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
+
+  local var_id_to_index_map = populate_variants(c_test, variants)
 
   local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
+  -- TODO num devices not #variants
   c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof(cast_type)*#variants), ffi.C.free))
+  ffi.C.malloc(ffi.sizeof(cast_type)*num_devices), ffi.C.free))
   ffi.fill(c_test.variant_per_bin, ffi.sizeof(cast_type)*num_devices)
 
-  compare= function(a,b)
-    return a[0].device_id < b[0].device_id
-  end
-  table.sort(variants, compare)
-  for index, dev_variants in ipairs(variants) do
+  table.sort(json_table.DeviceCrossVariant, function(a,b) return tonumber(a[0].device_id) < tonumber(b[0].device_id) end)
+
+  for index, dev_variants in ipairs(json_table.DeviceCrossVariant) do
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
     set_variants_per_bin(c_test.variant_per_bin[index -1], dev_variants, var_id_to_index_map)
   end
 end
 
+local function add_device_agnostic(c_test, json_table)
+  local variants = json_table.Variants
+  assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants >= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
+  c_test.num_variants = #variants -- TODO check for device specific too`
+  table.sort(variants, function(a,b) return tonumber(a[0].device_id) < tonumber(b[0].device_id) end)
+   local var_id_to_index_map = populate_variants(c_test, variants)
+
+end
 
 function bin_anonymous.add_bins_and_variants(c_test, test_data)
   local external_id = assert(test_data.external_id, "External id needs to be specified for test")
@@ -119,12 +100,10 @@ function bin_anonymous.add_bins_and_variants(c_test, test_data)
   assert(is_dev_spec == consts.FALSE or is_dev_spec == consts.TRUE, "Test canonly have TRUE or FALSE in  device specific routing")
   c_test.is_dev_specific = is_dev_spec
   if c_test.is_dev_specific == consts.TRUE then
-
+    add_device_specific(c_test, json_table)
   else
-
+    add_device_agnostic(c_test, json_table)
   end
-
-
 end
 
 return bin_anonymous

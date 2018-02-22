@@ -61,7 +61,7 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
   local variants = assert(test_data.Variants, "Test should have variants")
   assert(type(variants) == "table", "Variants should be an array of variants")
   assertx(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <=consts.AB_MAX_NUM_VARIANTS,
-  "Expected variants to be between ", consts.AB_MIN_NUM_VARIANTS)
+  "Expected variants to be between ", consts.AB_MIN_NUM_VARIANTS, " and ", consts.AB_MAX_NUM_VARIANTS)
   c_test.num_variants = #variants
   c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
   ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants

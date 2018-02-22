@@ -152,7 +152,6 @@ describe('AddTests framework', function()
       end)
 
       describe("for c_to_v_ok_v_to_c_ok_v_to_v_not_ok", function()
-
         it("should have a control type", function()
           local j_table = json.decode(valid_json)
           j_table.Variants[1].name = 'failme'
@@ -191,18 +190,35 @@ describe('AddTests framework', function()
           cleanup(g_tests, c_index)
         end)
       end)
+
+      describe("for anonymous", function()
+        it("should allow the variant proportions to be high", function()
+          local j_table = json.decode(valid_json)
+          j_table.external_id="123456789"
+          j_table.Variants[1].percentage = "10"
+          j_table.Variants[2].percentage = "70"
+          j_table.BinType = "anonymous"
+          local j_str = json.encode(j_table)
+          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          assertx(status == true, res)
+          cleanup(g_tests, c_index)
+        end)
+
+        -- This is about dev specific routing too:
+      
+      end)
     end)
   end)
+end)
 
-  -- describe("for XYTests", function()
-  -- end)
+-- describe("for XYTests", function()
+-- end)
 
-  describe("should fail for any other testtype", function()
-    local j_table = json.decode(valid_json)
-    j_table.TestType = "InvalidTest"
-    local j_str = json.encode(j_table)
-    local status, res = pcall(Tests.add, j_str, g_tests, c_index)
-    assert(status == false)
-    cleanup(g_tests, c_index)
-  end)
+describe("should fail for any other testtype", function()
+  local j_table = json.decode(valid_json)
+  j_table.TestType = "InvalidTest"
+  local j_str = json.encode(j_table)
+  local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+  assert(status == false)
+  cleanup(g_tests, c_index)
 end)
