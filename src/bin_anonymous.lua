@@ -1,3 +1,4 @@
+-- local dbg = require 'debugger'
 local bin_anonymous = {}
 local assertx = require 'assertx'
 local consts = require 'ab_consts'
@@ -8,9 +9,9 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 
   local total = 0
   local num_set = 0
-  local total_percentage = 0i
+  local total_percentage = 0
   -- In case the bins dont fill up
-  ffi.fill(bin, consts,AB_NUM_BINS, var_id_to_index_map[dev_variants[0].id])
+  ffi.fill(bin, consts,AB_NUM_BINS, var_id_to_index_map[dev_variants[1].id])
 
   for index, variant in ipairs(dev_variants) do
     local percent = assert(tonumber(variant.percentage), "Variant must have a valid percentage")
@@ -26,10 +27,10 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   assert(total_percentage == 100, "Total percentage should add up to 100 percent")
 end
 
-local function get_all_variants(json_table)
+local function get_all_variants(test_data)
   local variants = {}
-  for device_name ,variants_table  in ipairs(json_table.DeviceCrossVariant) do
-    local device_id = variants_table[0].device_id
+  for device_name ,variants_table  in ipairs(test_data.DeviceCrossVariant) do
+    local device_id = variants_table[1].device_id
     for _, variant in ipairs(variants_table) do
       variants[#variants +1] = variant
       assert(device_id == variant.device_id, "Device id in the same device should not change")
@@ -62,10 +63,10 @@ local function populate_variants(c_test, variants)
   return var_id_to_index_map
 end
 
-local function add_device_specific(c_test, json_table)
+local function add_device_specific(c_test, test_data)
   -- get all variants
-  local variants = get_all_variants(json_table)
-  local num_devices = #json_table.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
+  local variants = get_all_variants(test_data)
+  local num_devices = #test_data.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
@@ -75,20 +76,20 @@ local function add_device_specific(c_test, json_table)
   ffi.C.malloc(ffi.sizeof(cast_type)*num_devices), ffi.C.free))
   ffi.fill(c_test.variant_per_bin, ffi.sizeof(cast_type)*num_devices)
 
-  table.sort(json_table.DeviceCrossVariant, function(a,b) return tonumber(a[0].device_id) < tonumber(b[0].device_id) end)
+  table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 
-  for index, dev_variants in ipairs(json_table.DeviceCrossVariant) do
+  for index, dev_variants in ipairs(test_data.DeviceCrossVariant) do
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
     set_variants_per_bin(c_test.variant_per_bin[index -1], dev_variants, var_id_to_index_map)
   end
 end
 
-local function add_device_agnostic(c_test, json_table)
-  local variants = json_table.Variants
-  assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants >= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
+local function add_device_agnostic(c_test, test_data)
+  local variants = test_data.Variants
+  assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
   c_test.num_variants = #variants -- TODO check for device specific too`
-  table.sort(variants, function(a,b) return tonumber(a[0].device_id) < tonumber(b[0].device_id) end)
+  table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
    local var_id_to_index_map = populate_variants(c_test, variants)
 
 end
@@ -99,10 +100,10 @@ function bin_anonymous.add_bins_and_variants(c_test, test_data)
   local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific or not")
   assert(is_dev_spec == consts.FALSE or is_dev_spec == consts.TRUE, "Test canonly have TRUE or FALSE in  device specific routing")
   c_test.is_dev_specific = is_dev_spec
-  if c_test.is_dev_specific == consts.TRUE then
-    add_device_specific(c_test, json_table)
+  if tonumber(test_data.is_dev_specific) == consts.TRUE then
+    add_device_specific(c_test, test_data)
   else
-    add_device_agnostic(c_test, json_table)
+    add_device_agnostic(c_test, test_data)
   end
 end
 

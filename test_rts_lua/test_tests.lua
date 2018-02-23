@@ -9,38 +9,8 @@ local spooky_hash = require 'spooky_hash'
 local g_tests = ffi.cast("TEST_META_TYPE*", ffi.C.malloc(ffi.sizeof("TEST_META_TYPE")*consts.AB_MAX_NUM_TESTS))
 local c_index = ffi.cast("int*", ffi.C.malloc(ffi.sizeof("int")))
 c_index[0] = -1
-local valid_json = [[
-{
-  "TestType": "ABTest",
-  "BinType": "c_to_v_ok_v_to_c_ok_v_to_v_not_ok",
-  "description": "some bogus description",
-  "Creator": "joe",
-  "name": "T1",
-  "id": "777",
-  "State": "started",
-  "seed": "123453789",
-  "is_dev_specific": "0",
-  "Variants": [{
-    "id": "100",
-    "name": "Control",
-    "percentage": "50",
-    "url": "www.google.com"
-  },
-  {
-    "id": "200",
-    "name": "Variant_A",
-    "percentage": "30",
-    "url": "www.yahoo.com"
-  },
-  {
-    "id": "300",
-    "name": "Variant_B",
-    "percentage": "20",
-    "url": "www.cnn.com"
-  }
-  ]
-}
-]]
+local valid_json = require 'valid_json'
+local valid_json2 = require 'valid_json2'
 
 local function cleanup(g_tests, c_index)
   local index = tonumber(c_index[0])
@@ -205,7 +175,48 @@ describe('AddTests framework', function()
         end)
 
         -- This is about dev specific routing too:
-      
+        describe("should add device specific routes", function()
+          local j_table = json.decode(valid_json2)
+          j_table.is_dev_specific = tostring(consts.TRUE)
+          j_table.BinType = "anonymous"
+          local j_str = json.encode(j_table)
+          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          assertx(status == true, res)
+          local dev_variants = j_table.DeviceCrossVariant
+          table.sort(dev_variants, function(a,b) return a[0].device_id < b[0].device_id end)
+          for index, variant in ipairs(dev_variants) do
+            table.sort(variant, function(a,b) return a.id < b.id end)
+          end
+          it("Percentages should match with input", function()
+            local bins = g_tests[c_index[0]].variant_per_bin
+            local variants = g_tests[c_index[0]].variants
+            local total = consts.AB_NUM_BINS
+            for index, variant in ipairs(dev_variants) do
+              local counts = {}
+              for i=1,total do
+                local idx = variant[i-1]
+                local variant_id = tonumber(variants[idx].id)
+                if counts[variant_id] == nil then
+                  counts[variant_id] = 1
+                else
+                  counts[variant_id] = counts[variant_id] + 1
+                end
+              end
+              local keys = {}
+              for _, dev_spec_variants in ipairs(devs_variants) do
+                for _, variant in ipairs(dev_spec_variants) do
+                  local v_percentage = tonumber(variant.percentage)
+                  local v_actual = counts[tonumber(variant.id)]
+                  assert((v_actual - v_percentage < 0.1) or (v_percentage - v_actual< 0.1), "Variation between request and actual should be less than 0.1%")
+                end
+              end
+            end
+          end)
+
+
+          cleanup(g_tests, c_index)
+        end)
+
       end)
     end)
   end)
