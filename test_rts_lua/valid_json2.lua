@@ -225,7 +225,7 @@ return [=[
 		"variant_id": "2",
 		"test_id": "1",
 		"ramp_num": "1",
-		"percentage": "6"
+		"percentage": "4"
 		}, {
 		"id": "18",
 		"api_id": "1",

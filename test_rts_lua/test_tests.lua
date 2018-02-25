@@ -159,6 +159,7 @@ describe('AddTests framework', function()
           assert(status == false)
           cleanup(g_tests, c_index)
         end)
+        -- TODO check percentages match overall
       end)
 
       describe("for anonymous", function()
@@ -173,7 +174,7 @@ describe('AddTests framework', function()
           assertx(status == true, res)
           cleanup(g_tests, c_index)
         end)
-
+        -- TODO check percentages
         -- This is about dev specific routing too:
         describe("should add device specific routes", function()
           local j_table = json.decode(valid_json2)
@@ -202,14 +203,17 @@ describe('AddTests framework', function()
                   counts[variant_id] = counts[variant_id] + 1
                 end
               end
-              local keys = {}
-              for _, dev_spec_variants in ipairs(devs_variants) do
+              local keys = 0
+              for _, dev_spec_variants in pairs(devs_variants) do
                 for _, variant in ipairs(dev_spec_variants) do
+                  keys = keys + 1
                   local v_percentage = tonumber(variant.percentage)
                   local v_actual = counts[tonumber(variant.id)]
-                  assert((v_actual - v_percentage < 0.1) or (v_percentage - v_actual< 0.1), "Variation between request and actual should be less than 0.1%")
+                  assert((v_actual - v_percentage < 0.1) or (v_percentage - v_actual< 0.1),
+                    "Variation between request and actual should be less than 0.1%")
                 end
               end
+              assert(keys == #counts, "No keys should repeat")
             end
           end)
 

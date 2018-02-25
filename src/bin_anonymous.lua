@@ -1,4 +1,4 @@
--- local dbg = require 'debugger'
+local dbg = require 'debugger'
 local bin_anonymous = {}
 local assertx = require 'assertx'
 local consts = require 'ab_consts'
@@ -11,7 +11,7 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   local num_set = 0
   local total_percentage = 0
   -- In case the bins dont fill up
-  ffi.fill(bin, consts,AB_NUM_BINS, var_id_to_index_map[dev_variants[1].id])
+  ffi.fill(bin, consts.AB_NUM_BINS, var_id_to_index_map[dev_variants[1].id])
 
   for index, variant in ipairs(dev_variants) do
     local percent = assert(tonumber(variant.percentage), "Variant must have a valid percentage")
@@ -23,13 +23,13 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
     total = total + total_bins
     total_percentage = total_percentage + percent
   end
-  assert(total <= consts.AB_NUM_BINS, "More than max bins cannot be occupied")
-  assert(total_percentage == 100, "Total percentage should add up to 100 percent")
+  assertx(total <= consts.AB_NUM_BINS, "More than max bins cannot be occupied, total:", total)
+  assertx(total_percentage == 100, "Total percentage should add up to 100 percent", total_percentage)
 end
 
 local function get_all_variants(test_data)
   local variants = {}
-  for device_name ,variants_table  in ipairs(test_data.DeviceCrossVariant) do
+  for device_name ,variants_table  in pairs(test_data.DeviceCrossVariant) do
     local device_id = variants_table[1].device_id
     for _, variant in ipairs(variants_table) do
       variants[#variants +1] = variant
@@ -55,9 +55,11 @@ local function populate_variants(c_test, variants)
     --   c_test.final_variant_idx = curr_index
     -- end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
-    assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
-    ffi.copy(entry.name, value.name)
-    entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
+    -- TODO THIS NEEDS TO BE UNDONE, Ramesh to tell if name is absent for device
+    -- specific
+    -- assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Invalid name for variant at position " , index, " NAME:", value.name)
+    -- ffi.copy(entry.name, value.name)
+    -- entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
   return var_id_to_index_map
@@ -66,22 +68,35 @@ end
 local function add_device_specific(c_test, test_data)
   -- get all variants
   local variants = get_all_variants(test_data)
-  local num_devices = #test_data.DeviceCrossVariant -- TODO this comes as a constant not based on count heret
+  local num_devices = 0
+  for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
   local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
-  -- TODO num devices not #variants
-  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof(cast_type)*num_devices), ffi.C.free))
-  ffi.fill(c_test.variant_per_bin, ffi.sizeof(cast_type)*num_devices)
+  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
 
+  -- TODO num devices not #variants
+  -- c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
+  -- ffi.C.malloc(ffi.sizeof(c_type)*num_devices), ffi.C.free))
+  -- ffi.fill(c_test.variant_per_bin, ffi.sizeof(c_type)*num_devices)
+  
+  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
+  ffi.C.malloc(ffi.sizeof("uint8_t*") * num_devices), ffi.C.free))
+  for index=0, num_devices-1 do
+    local z = ffi.cast("uint8_t*", ffi.gc(
+    ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
+    ffi.fill(z, ffi.sizeof(c_type))
+    c_test.variant_per_bin[index] = z
+  end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 
-  for index, dev_variants in ipairs(test_data.DeviceCrossVariant) do
+  local index = 0
+  for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
-    set_variants_per_bin(c_test.variant_per_bin[index -1], dev_variants, var_id_to_index_map)
+    set_variants_per_bin(c_test.variant_per_bin[index], dev_variants, var_id_to_index_map)
+    index = index + 1
   end
 end
 
