@@ -27,22 +27,11 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   assertx(total_percentage == 100, "Total percentage should add up to 100 percent", total_percentage)
 end
 
-local function get_all_variants(test_data)
-  local variants = {}
-  for device_name ,variants_table  in pairs(test_data.DeviceCrossVariant) do
-    local device_id = variants_table[1].device_id
-    for _, variant in ipairs(variants_table) do
-      variants[#variants +1] = variant
-      assert(device_id == variant.device_id, "Device id in the same device should not change")
-    end
-  end
-  -- Sort all the variants
-  table.sort(variants, function(a, b) return tonumber(a.id) < tonumber(b.id) end)
-  return variants
-end
-
 local function populate_variants(c_test, variants)
   local var_id_to_index_map = {}
+  assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
+  c_test.num_variants = #variants -- TODO check for device specific too`
+  table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
   c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
   -- TODO final variants, HELP
@@ -51,15 +40,19 @@ local function populate_variants(c_test, variants)
     var_id_to_index_map[value.id] = index - 1
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
     -- TODO check about final variant
-    -- if entry.id == c_test.final_variant_id then
-    --   c_test.final_variant_idx = curr_index
-    -- end
+    if tonumber(value.is_final) == consts.TRUE then
+      c_test.final_variant_idx = curr_index
+     end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
     -- TODO THIS NEEDS TO BE UNDONE, Ramesh to tell if name is absent for device
     -- specific
-    -- assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Invalid name for variant at position " , index, " NAME:", value.name)
-    -- ffi.copy(entry.name, value.name)
-    -- entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
+    assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Invalid name for variant at position " , index, " NAME:", value.name)
+    ffi.copy(entry.name, value.name)
+    if c_test.test_type == "ABTest" then
+      entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
+    else
+      entry.url = value.url
+    end
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
   return var_id_to_index_map
@@ -67,7 +60,7 @@ end
 
 local function add_device_specific(c_test, test_data)
   -- get all variants
-  local variants = get_all_variants(test_data)
+  local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
 
@@ -76,11 +69,6 @@ local function add_device_specific(c_test, test_data)
   local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
   local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
 
-  -- TODO num devices not #variants
-  -- c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  -- ffi.C.malloc(ffi.sizeof(c_type)*num_devices), ffi.C.free))
-  -- ffi.fill(c_test.variant_per_bin, ffi.sizeof(c_type)*num_devices)
-  
   c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
   ffi.C.malloc(ffi.sizeof("uint8_t*") * num_devices), ffi.C.free))
   for index=0, num_devices-1 do
@@ -93,6 +81,13 @@ local function add_device_specific(c_test, test_data)
 
   local index = 0
   for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
+    -- Also note that the id field in device specific part is useless and what
+    -- we want is that variant_id so we can think of providing a getter function
+    -- later but right now i am simply setting the id field to variant_id field
+
+    for _,dev in ipairs(dev_variants) do
+      dev.id = dev.variant_id
+    end
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
     set_variants_per_bin(c_test.variant_per_bin[index], dev_variants, var_id_to_index_map)
@@ -102,11 +97,7 @@ end
 
 local function add_device_agnostic(c_test, test_data)
   local variants = test_data.Variants
-  assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
-  c_test.num_variants = #variants -- TODO check for device specific too`
-  table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
-   local var_id_to_index_map = populate_variants(c_test, variants)
-
+  local var_id_to_index_map = populate_variants(c_test, variants)
 end
 
 function bin_anonymous.add_bins_and_variants(c_test, test_data)
