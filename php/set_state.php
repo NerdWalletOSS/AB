@@ -8,8 +8,8 @@ require_once 'get_json_element.php';
 require_once 'db_set_row.php';
 require_once 'inform_rts.php';
 
-function start_test(
-  $test_id
+function set_state(
+  $str_inJ
 )
 {
   //--- Logging 
@@ -34,22 +34,35 @@ function start_test(
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
   $state_id = $T['state_id'];
-  $state   = lkp("state", $state_id, "reverse");
+  $old_state   = lkp("state", $state_id, "reverse");
+  // return if new state is same as current one
+  if ( $old_state == $new_state ) { 
+    $outJ["status_code"] = 200;
+    $outJ["msg_stdout"] = "No change in state for $test_id from $new_state";
+    db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
+    http_response_code($http_code);
+    return $outJ;
+  }
+  //--------------------------------------
 
   $X1['updated_at'] = $updated_at;
-  switch ( $action ) {
+  switch ( $new_state ) {
   case "dormant" : 
-    rs_assert($state == "draft");
+    rs_assert($old_state == "draft");
+    // TODO Make sure that test is good to go 
     $X1['state_id'] = lkp("state", "dormant");
     break;
   case "started" : 
-    rs_assert($state == "dormant");
+    rs_assert($old_state == "dormant");
     $X1['state_id'] = lkp("state", "started");
     break;
   case "terminated" : 
     $winner  = get_json_element($inJ, 'Winner'); 
+    rs_assert($winner, "Need to provide winner to terminate test");
     $X1['state_id'] = lkp("state", "terminated");
-    $winner_id = 0; // TODO verify that winner is a valid variant 
+    $v = db_get_row("variant", "name", trim($winner), " test_id = $test_id ");
+    rs_assert($v);
+    $winner_id = $v['id'];
     $X2['is_final'] = 1;
 
     break;
@@ -64,10 +77,9 @@ function start_test(
     db_set_row("variant", $winner_id, $X2);
   }
   //---------------------------------
-
   $http_code = 200;
   $outJ["status_code"] = $http_code;
-  $outJ["msg_stdout"] = "Started Test $test_id ";
+  $outJ["msg_stdout"] = "Changed state of Test $test_id from $old_state to $new_state";
   db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
   // Note it is possible for both msg_stdout and msg_stderr to be set
   $status = inform_rts($test_id, $rts_err_msg);
