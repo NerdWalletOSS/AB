@@ -208,7 +208,7 @@ describe('AddTests framework', function()
                 for _, variant in ipairs(dev_spec_variants) do
                   keys = keys + 1
                   local v_percentage = tonumber(variant.percentage)
-                  local v_actual = counts[tonumber(variant.id)]
+                  local v_actual = counts[tonumber(variant.variant_id)]
                   assert((v_actual - v_percentage < 0.1) or (v_percentage - v_actual< 0.1),
                     "Variation between request and actual should be less than 0.1%")
                 end
