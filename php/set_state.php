@@ -7,6 +7,7 @@ require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'db_set_row.php';
 require_once 'inform_rts.php';
+require_once 'chk_test_basic.php';
 
 function set_state(
   $str_inJ
@@ -15,7 +16,7 @@ function set_state(
   //--- Logging 
   $created_at = $updated_at = get_date(); 
   $t_create   = get_time_usec(); 
-  $api_id   = lkp("api", "start_test");
+  $api_id   = lkp("api", "set_state");
   $X0['created_at'] = $created_at;
   $X0['t_create'] = $t_create;
   $X0['payload']  = $str_inJ;
@@ -45,6 +46,8 @@ function set_state(
   }
   //--------------------------------------
 
+  $chk_rslt = chk_test_basic($test_id);
+  assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   switch ( $new_state ) {
   case "dormant" : 
@@ -73,7 +76,7 @@ function set_state(
   }
     // TODO Use transaction
   db_set_row("test", $test_id, $X1);
-  if ( isset($X2 ) { 
+  if ( isset($X2) ) { 
     db_set_row("variant", $winner_id, $X2);
   }
   //---------------------------------

@@ -2,6 +2,7 @@
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 require_once 'dbconn.php';
 require_once 'insert_row.php'; // NO PROBLEM
 require_once 'make_seed.php'; // NO PROBLEM
@@ -10,12 +11,9 @@ require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'db_get_row.php';
 require_once 'mod_row.php';
-require_once 'is_good_test_name.php';
-require_once 'aux_chk_name.php';
-require_once 'is_good_variants.php';
-require_once 'is_good_urls.php';
-require_once 'is_good_percs.php';
+require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
+require_once 'is_new_test.php';
 
 function test_basic(
   $str_inJ
@@ -38,78 +36,17 @@ function test_basic(
   $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
-  $test_dscr = get_json_element($inJ, 'description'); 
-  $variants  = get_json_element($inJ, 'Variants');
-  assert(is_array($variants));
-  $nV = count($variants);
-  assert($nV > 0 );
   //-----------------------------------------------
-  //-- In subsequent versions, we will allow user to pick $bin_type
-  //-- For now, following is hard coded
-  switch ( $test_type ) {
-  case "ABTest" :
-    $bin_type =  "c_to_v_ok_v_to_c_ok_v_to_v_not_ok";
-    break;
-  case "XYTest" :
-    $bin_type = "free_for_all";
-    break;
-  default : 
-    rs_assert(null, "Invalid test type $test_type");
-    break;
+  // Decide whether to update or insert 
+  $is_new = is_new_test($inJ);
+  if ( $is_new ) { // if insert
+    $test_id = null;
+    rs_assert(is_test_name_unique($test_name, $test_type),
+      "test name [$test_name] not unique");
+    $creator   = get_json_element($inJ, 'Creator');
+    $creator_id   = lkp("admin", $creator);
   }
-  $bin_type_id = lkp("bin_type", $bin_type);
-
-  if ( isset($test_dscr) ) {
-    assert(is_string($test_dscr));
-    assert(strlen($test_dscr) <= lkp("configs", "max_len_test_dscr"));
-  }
-  assert(is_good_test_name($test_name, $test_type));
-
-  $test_type_id = lkp("test_type", $test_type);
-  $draft_id     = lkp("state", "draft");
-
-  $variant_ids   = array($nV);
-  $variant_names = array($nV);
-  $variant_percs = array($nV);
-  $variant_urls  = array($nV);
-  $vidx = 0;
-  foreach ( $variants as $v ) { 
-    if ( isset($v->{'id'}) ) {
-      $variant_ids[$vidx] = $v->{'id'};
-    }
-
-    $name = $v->{'name'};
-    assert(isset($name));
-    assert(is_string($name));
-    $variant_names[$vidx] = $name;
-
-    $perc = $v->{'percentage'};
-    assert(isset($perc));
-    assert(is_string($perc));
-    $perc = floatval($perc);
-    $variant_percs[$vidx] = $perc;
-
-    if ( isset($v->{'id'}) ) {
-      $variant_urls[$vidx] = $v->{'url'};
-    }
-
-    $vidx++;
-  }
-  is_good_variants($variant_names, $bin_type);
-  if ( $test_type == "XYTest" ) { 
-    is_good_urls($variant_urls);
-  }
-  is_good_percs($variant_percs, $bin_type);
-  // Now decide whether to update or insert 
-  if ( ( isset($inJ->{'id'} )  && ($inJ->{'id'} == "" ) ) ||
-    ( !isset($inJ->{'id'}) ) ) {
-      $test_id = null;
-      rs_assert(is_test_name_unique($test_name, $test_type),
-        "test name [$test_name] not unique");
-      $creator   = get_json_element($inJ, 'Creator');
-      $creator_id   = lkp("admin", $creator);
-    }
-  else {
+  else { // if update
     $test_id = $inJ->{'id'};
     rs_assert(is_numeric($test_id));
     $test_id = intval($test_id);
@@ -117,6 +54,40 @@ function test_basic(
     $updater    = get_json_element($inJ, 'Updater');
     $updater_id = lkp("admin", $updater);
   }
+  if ( $is_new ) {
+    switch ( $test_type ) {
+    case "ABTest" :
+      $bin_type =  "c_to_v_ok_v_to_c_ok_v_to_v_not_ok";
+      break;
+    case "XYTest" :
+      $bin_type = "free_for_all";
+      break;
+    default : 
+      rs_assert(null, "Invalid test type $test_type");
+      break;
+    }
+    $inJ->{'State'}   = $state = "draft";
+    $inJ->{'BinType'} = $bin_type;
+  }
+
+  $state     = get_json_element($inJ, 'State');
+  $test_name = get_json_element($inJ, 'name'); 
+  $test_type = get_json_element($inJ, 'TestType'); 
+  $test_dscr = get_json_element($inJ, 'description'); 
+  $variants  = get_json_element($inJ, 'Variants');
+  $bin_type  = get_json_element($inJ, 'BinType');
+  $state     = get_json_element($inJ, 'State');
+  //-------------------------------------------------
+  $test_type_id = lkp("test_type", $test_type);
+  $bin_type_id  = lkp("bin_type", $bin_type);
+  $state_id     = lkp("state", $state);
+
+  $chk_rslt = chk_test_basic($inJ); 
+  rs_assert($chk_rslt);
+  $variant_percs = $chk_rslt['variant_percs'];
+  $variant_ids   = $chk_rslt['variant_ids'];
+  $variant_names = $chk_rslt['variant_names'];
+  $variant_urls  = $chk_rslt['variant_urls'];
   // STOP Check inputs
   //----------------------------------------------------
   $X1['request_webapp_id']  = $request_webapp_id;
@@ -142,7 +113,7 @@ function test_basic(
       //-------------------------------------------------------
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
-      for ( $i = 0; $i < $nV; $i++ ) {
+      for ( $i = 0; $i < count($variants); $i++ ) {
         if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
           $X2['name']        = $variant_names[$i];
         }
@@ -178,7 +149,7 @@ function test_basic(
     $X1['t_update']     = $t_update;
     $X1['creator_id']   = $creator_id;
     $X1['updater_id']   = $creator_id;
-    $X1['state_id']     = $draft_id;
+    $X1['state_id']     = $state_id;
     $X1['bin_type_id'] = $bin_type_id;
     //-----------------------------------------------
     $dbh = dbconn(); assert(!empty($dbh)); 
@@ -190,7 +161,7 @@ function test_basic(
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
       //-------------------------------------------------------
-      for ( $i = 0; $i < $nV; $i++ ) { 
+      for ( $i = 0; $i < count($variants); $i++ ) { 
         $X2['percentage']  = $variant_percs[$i];
         $X2['name']        = $variant_names[$i];
         insert_row("variant", $X2);

@@ -15,6 +15,8 @@ CREATE TABLE api (
 
 insert into api values(NULL, 'insert_test_edit_test_basic', 
 "Create a test or edit basic information about test", 0);
+insert into api values(NULL, 'set_state', 
+"Change state of test", 0);
 
 DROP TABLE IF EXISTS admin; -- config 
 CREATE TABLE admin (
