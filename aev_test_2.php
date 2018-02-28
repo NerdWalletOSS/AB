@@ -87,7 +87,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 </td>
 <td></td>
   <td>Percentage &nbsp;&nbsp;<input type='number' style='width:5em' min='0' max='<?php echo (100/$num_var); ?>' step='1' size='2' name='VPercentage_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>" class='prop' readonly required></td>
-<td><a href="#" data-toggle="modal" data-target="#basicModal"><button type="button" class="btn btn-success btn-sm">
+<td><a href="#" data-toggle="modal" data-target="#basicModal" ><button type="button" class="btn btn-success btn-sm">
 <span style="font-size:15px;"><strong>Edit</strong></span>
 </button>
 </a></td>
@@ -95,14 +95,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   </tr>
 <?php } ?>
 
-<input type='hidden' name='NumVariants' value="<?php echo $n_var; ?>">
-<?php if ($mode == "Add") { ?>
-<input type='hidden' name='Creator' value='<?php echo $User; ?>'>
-<?php } else { ?>
-<input type='hidden' name='Updater' value='<?php echo $User; ?>'>
-<input type='hidden' name='State' value='<?php echo $state; ?>'>
-<?php } ?>
-<input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
+
   <tr>
     <td></td>
     <td >TOTAL: &nbsp; &nbsp;
@@ -121,6 +114,54 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   </div>
   </div>
   </div>
+
+
+<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+  <div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Edit Description:</h4>
+    </div>
+    <form class="test" name="test" action="aev_test_1.php">
+    <div class="modal-body">
+    <div class="form-group">
+
+
+  <tr>
+   <input type='hidden' name='<?php echo "VID_".$i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
+  <td>Variant&nbsp;&nbsp;( ID : <?php if ($mode == "Edit") {echo $rslt['Variants'][$i]['id'];} ?>&nbsp;)&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
+  <input type='text' size='16' name='VName_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' readonly required></td>
+  <td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>
+  <textarea class='form-control' rows='3' cols='9' maxlength='128' name='var".$i."_desc' readonly required></textarea>
+</td>
+<td></td>
+  <td>Percentage &nbsp;&nbsp;<input type='number' style='width:5em' min='0' max='<?php echo (100/$num_var); ?>' step='1' size='2' name='VPercentage_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>" class='prop' readonly required></td>
+  </tr>
+
+
+<input type='hidden' name='NumVariants' value="<?php echo $n_var; ?>">
+<?php if ($mode == "Add") { ?>
+<input type='hidden' name='Creator' value='<?php echo $User; ?>'>
+<?php } else { ?>
+<input type='hidden' name='Updater' value='<?php echo $User; ?>'>
+<input type='hidden' name='State' value='<?php echo $state; ?>'>
+<?php } ?>
+<input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
+
+  <input type='hidden' name='TestID' value=''>
+       </div>
+     </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <input class="btn btn-success" type="submit" value="Add Test" id="submit">
+      </div>
+      </form>
+      </div>
+      </div>
+    </div>
+
+
 <!-- /container -->
 <script>
 //prop calculator

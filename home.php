@@ -26,6 +26,7 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
     border-radius: 5px;
 }
 </script>
+
 <?php require_once "common/header_2.php"; ?>
     <div class="container theme-showcase" role="main"> 
 		<div class="row">

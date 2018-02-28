@@ -1,4 +1,9 @@
 $(document).ready(function(){
+
+function confirm() {
+    confirm("Are you sure, you wnat to change the state?");
+}
+
 function action_state(state_id) {
   switch (state_id) {
     case '1':
@@ -90,4 +95,5 @@ function action_state(state_id) {
 option.prop('checked', true);
 		return false;
 	});
+
 });

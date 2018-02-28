@@ -34,7 +34,7 @@ $config = config_html($TestType);
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
 	<tr>
-		<td colspan="3">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td colspan="3">Test ID: <?php echo $id; ?></td>
 	</tr>
 	<tr>
 		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
@@ -45,6 +45,7 @@ $config = config_html($TestType);
     <span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a descriptive name for your test that represents your vertical, date, and test. It should be easy to read and memorable. .Only Alphanumeric char without space">
     </span>
   <input type="text" name="TestName" size="<?php echo $config['name_size']; ?>" maxlength="<?php echo $config['name_maxlength']; ?>" pattern="^[A-Za-z0-9\S]{1,31}$" required>
+
   </td>
   </tr>
   <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
@@ -104,7 +105,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <?php } ?>
   </tr>
 <?php } ?>
-
+<input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 <input type='hidden' name='NumVariants' value="<?php echo $n_var; ?>">
 <?php if ($mode == "Add") { ?>
 <input type='hidden' name='Creator' value='<?php echo $User; ?>'>
