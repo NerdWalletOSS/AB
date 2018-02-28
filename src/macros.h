@@ -4,6 +4,7 @@
 #define WHEREAMI { \
   sprintf(g_buf, "%u:%s:%u Line %3d of File %s \n", get_time_sec(), g_my_name, g_cfg.port, __LINE__, __FILE__);  \
   strcat(g_err, g_buf); \
+  fprintf(stderr, "Line %3d of File %s \n", __LINE__, __FILE__);  \
 }
 #else
 #define WHEREAMI {  \

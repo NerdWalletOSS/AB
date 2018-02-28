@@ -1,0 +1,17 @@
+*.o
+*.a
+*.so
+*.la
+*.make
+*.cmake
+*.marks
+*.includecache
+*.internal
+*.log
+*.spec
+*.cc
+*.bin
+*.cache
+*.check_cache
+Docs/INFO_BIN
+VERSION.dep

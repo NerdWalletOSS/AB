@@ -27,6 +27,9 @@ COBJS = $(CSRCS:.c=.o)
 
 all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua
 
+./libs:
+	mkdir libs
+
 ../luajit-2.0.5/src/libluajit.a :
 	make -C ../luajit-2.0.5
 
@@ -44,33 +47,46 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ../curl-7.51.0/lib/.libs/libcurl.so : 
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
+./libs/libcurl.so: ./libs ../curl-7.51.0/lib/.libs/libcurl.so ./libs
+	cp ../curl-7.51.0/lib/.libs/libcurl.so ./libs
+
 ../libevent-2.0.22-stable/.libs/libevent.so : 
 	cd ../libevent-2.0.22-stable/ &&  ./configure && make && cd - 
+
+./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
+	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
 $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
 
+./libs/libstatsdclient.so: ./libs ../statsd-c-client-master/libstatsdclient.so
+	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
+
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
 	cd ../mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
 	make -C ../mysql-connector-c-6.1.6-src
+		 -
+./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
+	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
+
 
 ab_httpd : $(COBJS) \
-	../statsd-c-client-master/libstatsdclient.so \
-	../curl-7.51.0/lib/.libs/libcurl.so \
+	./libs/libstatsdclient.so \
+	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
-	../libevent-2.0.22-stable/.libs/libevent.so \
-	../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
+	./libs/libevent.so \
+	./libs/libmysqlclient.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
-	../statsd-c-client-master/libstatsdclient.so \
-	../curl-7.51.0/lib/.libs/libcurl.so \
+	./libs/libstatsdclient.so \
+	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
-	../libevent-2.0.22-stable/.libs/libevent.so \
+	./libs/libevent.so \
 	-lm  -lpthread -ldl 
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ab_consts.lua:
 	bash gen_consts.sh
@@ -85,7 +101,6 @@ clean:
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
-	make -i -C ../mysql-connector-c-6.1.6-src distclean
 	echo "ALL CLEAN"
 
 qclean :

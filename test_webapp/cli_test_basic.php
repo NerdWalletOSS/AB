@@ -7,6 +7,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers");
 require_once 'rs_assert.php';
 require_once 'test_basic.php';
 require_once 'db_get_test.php';
+require_once 'set_state.php';
 
 if ( $argc != 2 ) { echo "Expected 3 arguments. Got $argc"; exit(1); }
 
@@ -23,7 +24,12 @@ $X['description'] = "New Description";
 $X['Updater'] = $X['Creator'];
 $str_inJ = json_encode($X);
 $outJ = test_basic($str_inJ);
- echo("\n" . json_encode($outJ) . "\n");
+// Publish the test
+$X = db_get_test($test_id);
+$X['NewState'] = "dormant";
+$X['Updater'] = $X['Creator'];
+$str_inJ = json_encode($X);
+$outJ = set_state($str_inJ);
 
 
 ?>

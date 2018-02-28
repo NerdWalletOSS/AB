@@ -21,9 +21,3 @@ get_test_name(
     const char *args, 
     char *test_name
     );
-extern int
-does_test_exist(
-    const char *test_name, 
-    int test_type,
-    uint64_t name_hash
-    );

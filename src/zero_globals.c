@@ -61,7 +61,7 @@ zero_globals(
   memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
 
   g_cfg.uuid_len = AB_MAX_LEN_UUID; // default 
-  g_uuid = malloc((AB_MAX_LEN_UUID+1));
+  g_uuid = malloc(AB_MAX_LEN_UUID+1);
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
   g_xy_guid = 0;
@@ -79,8 +79,6 @@ zero_globals(
   g_log_q       = NULL;
   g_q_rd_idx    = 0;
   g_q_wr_idx    = 0;
-
-  g_uuid        = NULL;
 
   memset(g_my_name, '\0', AB_MAX_LEN_HOSTNAME+1);
   status = gethostname(g_my_name, AB_MAX_LEN_HOSTNAME);
@@ -142,6 +140,7 @@ zero_globals(
   luaL_openlibs(g_L);  
   if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
       ( lua_pcall(g_L, 0, 0, 0)) )   {
+    fprintf(stderr, "calling initialization failed: %s\n", lua_tostring(g_L, -1));
     go_BYE(-1);
   }
 
