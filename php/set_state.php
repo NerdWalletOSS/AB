@@ -46,7 +46,12 @@ function set_state(
   }
   //--------------------------------------
 
-  $chk_rslt = chk_test_basic($test_id);
+  // $chk_rslt = chk_test_basic(json_encode(db_get_test($test_id)));
+  $t1 = db_get_test($test_id);
+  $t2 = json_encode($t1);
+  var_dump($t2);
+  $chk_rslt = chk_test_basic($t2, false);
+  exit;
   assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   switch ( $new_state ) {
