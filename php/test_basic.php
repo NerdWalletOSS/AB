@@ -14,21 +14,19 @@ require_once 'mod_row.php';
 require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
+require_once 'start_log.php';
 
 function test_basic(
   $str_inJ
 )
 {
-  //--- Logging 
-  $created_at =  $updated_at = get_date(); 
-  $t_create =  $t_update = get_time_usec(); 
-  $api_id   = lkp("api", "insert_test_edit_test_basic");
-  $X0['created_at'] = $created_at;
-  $X0['t_create'] = $t_create;
-  $X0['payload']  = $str_inJ;
-  $X0['api_id']   = $api_id;
-  $request_webapp_id = insert_row("request_webapp", $X0);
-  $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
+  $ret_val = start_log($str_inJ);
+  $created_at = $ret_val['created_at'];
+  $updated_at = $ret_val['updated_at'];
+  $t_create   = $ret_val['t_create'];
+  $t_update   = $ret_val['t_update'];
+  $api_id     = $ret_val['api_id'];
+  $request_webapp_id = $ret_val['request_webapp_id'];
 
   // START Check inputs
   assert(!empty($str_inJ));
