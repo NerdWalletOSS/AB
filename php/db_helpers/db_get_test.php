@@ -23,6 +23,7 @@ function db_get_test(
   }
   //------------------------------------
   $V = db_get_rows("variant", " test_id = $test_id");
+
   $nV = count($V);
   $Variants = array($nV);
   $vidx = 0;
@@ -59,5 +60,5 @@ function db_get_test(
 $x = db_get_test(1);
 $y = json_encode($x);
 print($y);
- */
+*/
 ?>
