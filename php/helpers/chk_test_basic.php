@@ -18,10 +18,12 @@ require_once 'is_good_percs.php';
 require_once 'inform_rts.php';
 
 function chk_test_basic(
-  $inJ // json representation of test 
+  $inJ, // json representation of test 
+  $dbg
 )
 {
   $test_name = get_json_element($inJ, 'name'); 
+  if ( $dbg ) { echo("PREMATURE"); exit; }
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'description'); 
   $variants  = get_json_element($inJ, 'Variants');
