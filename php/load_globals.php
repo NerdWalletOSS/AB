@@ -25,5 +25,6 @@ function load_globals()
   make_lkp("admin");
   make_lkp("api");
   make_lkp("channel");
+  make_lkp("device");
 }
 ?>

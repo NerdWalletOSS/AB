@@ -118,4 +118,19 @@ service with the fields listed below
 \verbatiminput{_logger_fields}
 
 \TBC
+
+\section{Miscellaneous}
+\subsection{Feature requests from Robby}
+\be
+\item 
+If you see an incoming \verb+X-Caller-Client-ID+ header, 
+include it as callerClientID on any ServiceCallHeaders in events you emit.
+\item If you see an \verb+X-Cookie-ID+ or \verb+X-Request-ID+ HTTP header, 
+\be
+\item include it in any outbound calls you make to other NW services.
+\item include it as cookieId or requestId on any EventHeaders in events you emit.
+\ee
+\item Generally send an ``ab-service'' \verb+X-Caller-Client-ID+ header 
+with all outbound calls you make.
+\ee
 \end{document}
