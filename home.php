@@ -19,7 +19,7 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
 <script src="js/dataTables.min.js"></script>
 <script src="js/filter_test.js"></script>
 
-<script>
+<script type="text/css">
 .btn-xxl {
     padding: 5px 5px;
     font-size: 30px;
