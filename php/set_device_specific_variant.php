@@ -10,7 +10,7 @@ require_once 'get_json_element.php';
 require_once 'mod_row.php';
 require_once 'inform_rts.php';
 
-function set_device_specific(
+function set_device_specific_variant(
   $str_inJ
 )
 {
@@ -29,10 +29,16 @@ function set_device_specific(
   assert(!empty($str_inJ));
   assert(is_string($str_inJ), "input not string");
   $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+  $tid = get_json_element($inJ, 'id'); 
+  $T = db_get_row("test", "id", $tid);
+  rs_assert($T);
+  $test_name = $T['name'];
+  $state_id = $T['state_id'];
+  $state = lkp("state", $state_id, "reverse");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   foreach ( $dxv as $d => $v ) { 
-    $device_id   = lkp($d, "device");
+    $device_id   = lkp("device", $d);
     rs_assert(is_array($v));
   }
   //------------------------------------------

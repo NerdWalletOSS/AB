@@ -56,21 +56,15 @@ function add_addnl_var_info(
   $test_name = $T['name'];
   $test_type = lkp("test_type", $T['test_type_id'], "reverse");
   $state     = lkp("state",     $T['state_id'], "reverse");
-  $X1['description'] = $description;
-  if ( $test_type  == "ABTest" ) { 
-    if ( $custom_data != "" ) {  // must be valid JSON
-      rs_assert(json_decode($custom_data));
-    }
-    $X1['custom_data'] = $custom_data;
+  if ( $custom_data != "" ) {  // must be valid JSON
+    rs_assert(json_decode($custom_data));
   }
   // START: Database write
   $dbh = dbconn(); assert(!empty($dbh)); 
   try {
     $dbh->beginTransaction();
     mod_cell("variant", "description", $description, "id = $vid");
-    if ( $test_type  == "ABTest" ) { 
-      mod_cell("variant", "custom_data", $custom_data, "id = $vid");
-    }
+    mod_cell("variant", "custom_data", $custom_data, "id = $vid");
     $dbh->commit();
   } catch ( PDOException $ex ) {
     $dbh->rollBack();

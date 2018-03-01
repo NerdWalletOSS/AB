@@ -72,9 +72,7 @@ function chk_test_basic(
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
 
-    if ( isset($v->{'id'}) ) {
-      $variant_urls[$vidx] = $v->{'url'};
-    }
+    $variant_urls[$vidx] = $v->{'url'};
 
     $vidx++;
   }
@@ -82,7 +80,7 @@ function chk_test_basic(
   if ( $test_type == "XYTest" ) { 
     is_good_urls($variant_urls);
   }
-  is_good_percs($variant_percs, $bin_type);
+  is_good_percs($variant_percs, $bin_type, $variant_names);
   $chk_rslt['variant_names']  = $variant_names;
   $chk_rslt['variant_urls']   = $variant_urls;
   $chk_rslt['variant_percs']  = $variant_percs;
