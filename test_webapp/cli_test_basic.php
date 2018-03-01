@@ -9,6 +9,8 @@ require_once 'test_basic.php';
 require_once 'db_get_test.php';
 require_once 'set_state.php';
 require_once 'add_addnl_var_info.php';
+require_once 'find_tests_to_follow.php';
+require_once 'set_follow_on.php';
 
 if ( $argc != 2 ) { echo "Expected 3 arguments. Got $argc"; exit(1); }
 
@@ -72,5 +74,14 @@ $X['NewState'] = "archived";
 $X['Updater'] = $X['Creator'];
 $str_inJ = json_encode($X);
 $outJ = set_state($str_inJ);
+// create new test with same name 
+$str_inJ = file_get_contents($infile);
+$outJ = test_basic($str_inJ);
+$test_id = $outJ['TestID'];
+$X = db_get_test($test_id);
+$Channel = $X['Channel'];
+$F = find_tests_to_follow($Channel);
+$tid_to_follow = $F[0]['id'];
+set_follow_on($test_id, $tid_to_follow);
 echo "COMPLETED";
 ?>

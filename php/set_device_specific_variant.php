@@ -18,7 +18,7 @@ function set_device_specific_variant(
   //--- Logging 
   $created_at =  $updated_at = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
-  $api_id   = lkp("api", "insert_test_edit_test_basic");
+  $api_id   = lkp("api", "set_device_specific_variant");
   $X0['created_at'] = $created_at;
   $X0['t_create'] = $t_create;
   $X0['payload']  = $str_inJ;
