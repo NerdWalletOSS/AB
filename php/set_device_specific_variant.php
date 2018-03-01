@@ -8,6 +8,7 @@ require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'mod_row.php';
+require_once 'mod_cell.php';
 require_once 'inform_rts.php';
 
 function set_device_specific_variant(
@@ -40,6 +41,22 @@ function set_device_specific_variant(
   foreach ( $dxv as $d => $v ) { 
     $device_id   = lkp("device", $d);
     rs_assert(is_array($v));
+    $sum = 0;
+    foreach ( $v as $vv ) { 
+      $p = $vv->{'percentage'};
+      rs_assert(is_numeric($p), "percentage must be a number");
+      rs_assert($p >=   0, "percentage must not be negative");
+      rs_assert($p <= 100, "percentage cannot exceed 100");
+      $sum += $p;
+    }
+    rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ) );
+    foreach ( $v as $vv ) { 
+      $percentage = $vv->{'percentage'};
+      $variant_id = $vv->{'variant_id'};
+      $device_id  = $vv->{'device_id'};
+      mod_cell("device_x_variant", "percentage", $percentage, 
+        " device_id = $device_id and variant_id = $variant_id ");
+    }
   }
   //------------------------------------------
   $http_code = 200;
