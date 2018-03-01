@@ -34,23 +34,9 @@ $outJ = set_state($str_inJ);
 // Update the custom data and description
 $X = db_get_test($test_id);
 $X['Updater'] = $X['Creator'];
-$V = $X['Variants'];
-$newV = array(); $vidx = 0;
-foreach ( $V as $v ) { 
-  if ( $vidx == 0 ) { 
-    $variant_id = $v['id'];
-    $newv = $v;
-    $newv['custom_data'] = " {} ";
-    $newv['description'] = " foo bar ";
-  }
-  else {
-    $newv = $v;
-  }
-  $newV[$vidx] = $newv;
-  $vidx++;
-}
-$X['Variants'] = $newV;
-$X['VariantID'] = $variant_id;
+$X['Variants'][0]['custom_data'] = " {} ";
+$X['Variants'][0]['description'] = " foo bar";
+$X['VariantID'] = $X['Variants'][0]['id'];
 $outJ = add_addnl_var_info(json_encode($X));
 // Update the percentages
 $X = db_get_test($test_id);
@@ -67,4 +53,5 @@ foreach ( $V as $v ) {
   $vidx++;
 }
 $outJ = test_basic(json_encode($X));
+echo "COMPLETED";
 ?>
