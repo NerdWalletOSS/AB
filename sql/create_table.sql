@@ -179,7 +179,7 @@ CREATE TABLE config (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 insert into config values(NULL, 'default_landing_page', 'www.nerdwallet.com', 0);
-insert into config values(NULL, 'check_url_reachable', 'true', 0);
+insert into config values(NULL, 'check_url_reachable', 'false', 0);
 insert into config values(NULL, 'num_retries',         '10', 0);
 insert into config values(NULL, 'max_len_admin_name',  '31', 0);
 insert into config values(NULL, 'max_len_channel_name','15', 0);

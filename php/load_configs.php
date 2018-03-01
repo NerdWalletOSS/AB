@@ -95,7 +95,6 @@ function load_configs(
   foreach ( $X as $x ) {
     $C[$x['name']] = $x['value'];
   }
-  foreach ( $C as $c ) {
     $C['check_url_reachable'] = make_boolean($C['check_url_reachable']);
     $C['num_retries'] = make_pos_int($C['num_retries']);
     $C['max_len_variant_dscr'] = make_pos_int($C['max_len_variant_dscr']);
@@ -114,7 +113,6 @@ function load_configs(
     $C['max_len_variant_name'] = make_pos_int($C['max_len_variant_name']);
     $C['max_len_variant_dscr'] = make_pos_int($C['max_len_variant_dscr']);
     $C['max_len_url'] = make_pos_int($C['max_len_url']);
-  }
   $GLOBALS['configs'] = $C;
   return true;
 }
