@@ -78,6 +78,12 @@ function test_basic(
   $variants  = get_json_element($inJ, 'Variants');
   $bin_type  = get_json_element($inJ, 'BinType');
   $state     = get_json_element($inJ, 'State');
+  $channel   = get_json_element($inJ, 'Channel', false);
+  $channel_id = null;
+  if ( !empty($channel) ) {
+    $channel_id = lkp("channel", $channel);
+  }
+
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
   $bin_type_id  = lkp("bin_type", $bin_type);
@@ -95,6 +101,8 @@ function test_basic(
   $X1['api_id']       = $api_id;
   $X2['request_webapp_id']  = $request_webapp_id;
   $X2['api_id']       = $api_id;
+  $X3['request_webapp_id']  = $request_webapp_id;
+  $X3['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
     $action = "updated";
     $state = get_json_element($inJ, 'State');
@@ -110,8 +118,9 @@ function test_basic(
     $dbh = dbconn(); assert(isset($dbh)); 
     try {
       $dbh->beginTransaction();
+      //--- Update test table 
       mod_row("test", $X1, "where id = $test_id ");
-      //-------------------------------------------------------
+      //--- Update variant table 
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
       for ( $i = 0; $i < count($variants); $i++ ) {
@@ -126,6 +135,17 @@ function test_basic(
             }
           }
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
+      }
+      //--- Update device_x_variant table --------
+      $D = db_get_rows("device");
+      foreach ( $D as $d ) { 
+        $device_id = $d['id'];
+        for ( $i = 0; $i < count($variants); $i++ ) {
+          $variant_id       = $variant_ids[$i];
+          $X3['percentage'] = $variant_percs[$i];
+          mod_row("device_x_variant", $X3, 
+            " where variant_id = $variant_id and device_id = $device_id ");
+        }
       }
       //------------------------------------------
       $dbh->commit();
@@ -142,11 +162,12 @@ function test_basic(
     $X1['name']         = $test_name;
     $X1['description']  = $test_dscr;
     $X1['test_type_id'] = $test_type_id;
+    $X1['channel_id']   = $channel_id;
     $X1['seed']         = make_seed();
     $X1['external_id']  = $t_create;
-    $X1['created_at']     = $created_at;
+    $X1['created_at']   = $created_at;
     $X1['t_create']     = $t_create;
-    $X1['updated_at']     = $updated_at;
+    $X1['updated_at']   = $updated_at;
     $X1['t_update']     = $t_update;
     $X1['creator_id']   = $creator_id;
     $X1['updater_id']   = $creator_id;
@@ -156,16 +177,31 @@ function test_basic(
     $dbh = dbconn(); assert(!empty($dbh)); 
     try {
       $dbh->beginTransaction();
+      //---- Insert into test table 
+      unset($test_id);
       $test_id = insert_row("test", $X1);
-
+      //---- Insert into variant table 
+      unset($variant_ids); $vidx = 0;
       $X2['test_id']  = $test_id;
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
-      //-------------------------------------------------------
       for ( $i = 0; $i < count($variants); $i++ ) { 
         $X2['percentage']  = $variant_percs[$i];
         $X2['name']        = $variant_names[$i];
-        insert_row("variant", $X2);
+        $X2['url']         = $variant_urls[$i];
+        $variant_ids[$vidx] = insert_row("variant", $X2);
+        $vidx++;
+      }
+      //--- Insert into device_x_variant table --------
+      $D = db_get_rows("device");
+      $X3['test_id'] = $test_id;
+      foreach ( $D as $d ) { 
+        $X3['device_id'] = $d['id'];
+        for ( $i = 0; $i < count($variants); $i++ ) {
+          $X3['variant_id'] = $variant_ids[$i];
+          $X3['percentage'] = $variant_percs[$i];
+          $variant_id = insert_row("device_x_variant", $X3);
+        }
       }
       //------------------------------------------
       $dbh->commit();
