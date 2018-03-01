@@ -21,6 +21,7 @@ function test_basic(
   $str_inJ
 )
 {
+  //-- START: For logging
   $ret_val = start_log($str_inJ);
   $created_at = $ret_val['created_at'];
   $updated_at = $ret_val['updated_at'];
@@ -28,6 +29,7 @@ function test_basic(
   $t_update   = $ret_val['t_update'];
   $api_id     = $ret_val['api_id'];
   $request_webapp_id = $ret_val['request_webapp_id'];
+  //-- STOP: For logging
 
   // START Check inputs
   assert(!empty($str_inJ));
@@ -182,7 +184,6 @@ function test_basic(
   $outJ["TestID"] = $test_id;
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
-  db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
   // Note it is possible for both msg_stdout and msg_stderr to be set
   if ( $state == "started" ) {
     $status = inform_rts($test_id, $rts_err_msg);
@@ -191,7 +192,7 @@ function test_basic(
       $Y['msg_stderr'] = $rts_err_msg;
     }
   }
-
+  db_set_row("request_webapp", $request_webapp_id, $Y);
   header("Error-Code: $http_code");
   http_response_code($http_code);
   return $outJ;
