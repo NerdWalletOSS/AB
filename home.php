@@ -7,6 +7,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 # -- Get Active Tests
 require_once "db_get_rows.php";
+require_once "utility_functions.php";
 $state = '2, 3 and 4';
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }

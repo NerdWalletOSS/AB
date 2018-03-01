@@ -69,7 +69,8 @@ function action_state(state_id) {
           var TableRow = "<tr>";
           TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</td>";
           TableRow += "<td>" + value['name'] + "</td>";
-          TableRow += "<td><a href='set_state.php?TestID="+ value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
+          TableRow += "<td><a href='processor/set_state_processor.php?TestID="+ value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
+
 					TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID="+ value['id'] +"'>Edit/View,</a></td>";
           TableRow += "</tr>";
           $(table).append(TableRow);

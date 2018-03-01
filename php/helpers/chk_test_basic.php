@@ -72,9 +72,9 @@ function chk_test_basic(
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
 
-    if ( isset($v->{'id'}) ) {
+    //if ( isset($v->{'id'}) ) {
       $variant_urls[$vidx] = $v->{'url'};
-    }
+   // }
 
     $vidx++;
   }
