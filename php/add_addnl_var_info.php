@@ -49,7 +49,7 @@ function add_addnl_var_info(
   rs_assert(strlen($description) <= lkp("configs", "max_len_variant_dscr"));
   rs_assert(strlen($custom_data) <= lkp("configs", "max_len_custom_data"));
 
-  // TODO: does description/custom data get set to null or empty string?
+  // TODO P3: does description/custom data get set to null or empty string?
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
