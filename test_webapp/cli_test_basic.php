@@ -53,5 +53,24 @@ foreach ( $V as $v ) {
   $vidx++;
 }
 $outJ = test_basic(json_encode($X));
+// start the test
+$X = db_get_test($test_id);
+$X['NewState'] = "started";
+$X['Updater'] = $X['Creator'];
+$str_inJ = json_encode($X);
+$outJ = set_state($str_inJ);
+// terminate the test
+$X = db_get_test($test_id);
+$X['NewState'] = "terminated";
+$X['Winner'] = $X['Variants'][1]['name'];
+$X['Updater'] = $X['Creator'];
+$str_inJ = json_encode($X);
+$outJ = set_state($str_inJ);
+// archive the test
+$X = db_get_test($test_id);
+$X['NewState'] = "archived";
+$X['Updater'] = $X['Creator'];
+$str_inJ = json_encode($X);
+$outJ = set_state($str_inJ);
 echo "COMPLETED";
 ?>

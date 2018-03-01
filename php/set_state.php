@@ -68,13 +68,15 @@ function set_state(
     $winner  = get_json_element($inJ, 'Winner'); 
     rs_assert($winner, "Need to provide winner to terminate test");
     $X1['state_id'] = lkp("state", "terminated");
-    $v = db_get_row("variant", "name", trim($winner), " test_id = $test_id ");
+    $v = db_get_row("variant", "name", trim($winner), " and test_id = $test_id ");
     rs_assert($v);
     $winner_id = $v['id'];
     $X2['is_final'] = 1;
 
     break;
   case "archived" : 
+    // any state can lead to archived
+    $X1['state_id'] = lkp("state", "archived");
     break;
   default : 
     rs_assert(null, "Invalid new state [$new_state]");
