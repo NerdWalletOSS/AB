@@ -56,21 +56,15 @@ $outJ = add_addnl_var_info(json_encode($X));
 $X = db_get_test($test_id);
 $X['Updater'] = $X['Creator'];
 $V = $X['Variants'];
-$newV = array(); $vidx = 0;
+$vidx = 0;
 foreach ( $V as $v ) { 
   if ( $vidx == 0 ) { 
-    $variant_id = $v['id'];
-    $newv = $v;
-    $newv['custom_data'] = " {} ";
-    $newv['description'] = " foo bar ";
+    $X['Variants'][$vidx]['percentage'] = 100;
   }
   else {
-    $newv = $v;
+    $X['Variants'][$vidx]['percentage'] = 0;
   }
-  $newV[$vidx] = $newv;
   $vidx++;
 }
-$X['Variants'] = $newV;
-$X['VariantID'] = $variant_id;
-$outJ = add_addnl_var_info(json_encode($X));
+$outJ = test_basic(json_encode($X));
 ?>

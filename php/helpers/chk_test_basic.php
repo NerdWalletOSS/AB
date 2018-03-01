@@ -68,7 +68,7 @@ function chk_test_basic(
 
     $perc = $v->{'percentage'};
     assert(isset($perc));
-    assert(is_string($perc));
+    assert(is_string($perc) || is_numeric($perc));
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
 
