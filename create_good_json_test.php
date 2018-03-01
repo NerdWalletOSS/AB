@@ -20,6 +20,7 @@ $X['State']  = get_json_element($inJ, 'State');
 $X['Updater']  = get_json_element($inJ, 'Updater');
 }
 $X['name']  = get_json_element($inJ, 'TestName');
+$X['BinType']  = get_json_element($inJ, 'BinType');
 
 $n = get_json_element($inJ, 'NumVariants');
 $V = array();

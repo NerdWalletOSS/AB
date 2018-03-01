@@ -15,19 +15,19 @@ require_once 'db_get_test.php';
 function action_state($state_id) {
   switch ($state_id) {
     case '1':
-      return 'Publish';
+      return 'dormant';
     break;
 
     case '2':
-      return 'Start';
+      return 'started';
     break;
 
     case '3':
-      return 'Stop';
+      return 'terminated';
     break;
 
     case '4':
-      return 'Archive';
+      return 'archived';
     break;
   }
 }

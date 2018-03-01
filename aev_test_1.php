@@ -114,18 +114,26 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input type='hidden' name='State' value='<?php echo $state; ?>'>
 <?php } ?>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
+<input type='hidden' name='BinType' value='<?php echo $BinType; ?>'>
   <tr>
     <td></td>
     <td >TOTAL: &nbsp; &nbsp;
      <input type="number" id="TotalProp" max="100"  size='3' value='<?php if(($mode == "Edit") || ($mode == "View")) {echo "100"; } ?>' disabled>
      <span style="color: Red">(Total must be 100*)</span>
     </td>
-    <td></td>
+    <td> </td>
   </tr>
+<tr>
+<td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
+<td></td>
+<td>  <a href="aev_test_2.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a></td>
+
+</tr>
   </tbody>
   </table>
-  <button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button>
+
   </form>
+
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>

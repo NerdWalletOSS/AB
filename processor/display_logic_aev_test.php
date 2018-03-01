@@ -30,6 +30,7 @@ if ( $mode == "Edit" )
   $id = $rslt['id'];
   $TestName = $rslt['name'];
   $description = $rslt['description'];
+  $BinType = $rslt['BinType'];
   $st = db_get_row("state", "id", $rslt['state_id']);
   $state = $st['name'];
   if ($state == "draft") {$readonly = "";}

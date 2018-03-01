@@ -23,7 +23,7 @@ function action_state(state_id) {
     break;
   }
 }
-      $('#TestTable').DataTable({
+      $('#jsTestTable').DataTable({
         "order": [
           [0, "asc"]
         ]
@@ -61,7 +61,7 @@ function action_state(state_id) {
 				//console.log(response);
       // Make customised table
       $.makeTable = function(jsonData) {
-        var table = $('<table id="jsTestTable_' + option + '" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th></tr></tfoot>');
+        var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th></tr></tfoot>');
         for (var k in jsonData[0])
 					var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -70,7 +70,6 @@ function action_state(state_id) {
           TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</td>";
           TableRow += "<td>" + value['name'] + "</td>";
           TableRow += "<td><a href='processor/set_state_processor.php?TestID="+ value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
-
 					TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID="+ value['id'] +"'>Edit/View,</a></td>";
           TableRow += "</tr>";
           $(table).append(TableRow);
@@ -78,10 +77,11 @@ function action_state(state_id) {
         return ($(table));
       };
       var jsonData = eval(response);
-      if (jsonData == null ) { var TableRow = ""; var table = '<table id="jsTestTable_' + option + '" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'} else { var table = $.makeTable(jsonData);}
+      if (jsonData == null ) { var TableRow = ""; var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'} else { var table = $.makeTable(jsonData);}
 		  $("#show-data").html(table);
       //$(table).appendTo("#show-data");
-      $('#jsTestTable_' + option + '').DataTable({
+      //$('#jsTestTable_' + option + '').DataTable({
+      $('#jsTestTable').DataTable({
         "order": [
           [0, "asc"]
         ]
