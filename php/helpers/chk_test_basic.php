@@ -87,4 +87,5 @@ function chk_test_basic(
   $chk_rslt['variant_ids']    = $variant_ids;
   return $chk_rslt;
 }
+// COMMENT
 ?>
