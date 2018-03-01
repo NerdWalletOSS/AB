@@ -29,7 +29,8 @@ function is_good_percs(
     $max_perc_non_control = floor(100.0 / ($nV-1.0));
     foreach ( $P as $p ) {
       if ( $N[$idx] != "Control" )  {
-        rs_assert($p <= $max_perc_non_control);
+        rs_assert($p <= $max_perc_non_control, 
+          "max percentage for non-control variant is $max_perc_non_control");
       }
       $idx++;
     }

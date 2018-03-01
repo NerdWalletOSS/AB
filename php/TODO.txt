@@ -1,3 +1,15 @@
 Make sure that all changes to the database are within a transaction
 
 Inform RTS needs to be fixed
+
+When you terminate a device specific test, the winning variant 
+is the same for all devices. This needs to be fixed.
+
+If a test is marked as device specific, then you should not be able to 
+change percentages in variants table.
+
+Have is_device_specific and channel be set when a test is created
+This needs more thought since we need to set percentages for variants in any
+case to something legal.
+
+

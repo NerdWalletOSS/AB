@@ -21,6 +21,10 @@ insert into api values(NULL, 'additional_variant_info',
 "Add/Edit Description and/or Custom Data to Variant", 0);
 insert into api values(NULL, 'set_percentage', 
 "Change percentages of variants", 0);
+insert into api values(NULL, 'set_device_specific_variant', 
+"Device Specific Routing", 0);
+insert into api values(NULL, 'set_follow_on', 
+"Set Follow On", 0);
 
 DROP TABLE IF EXISTS admin; -- config 
 CREATE TABLE admin (
@@ -175,7 +179,7 @@ CREATE TABLE config (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 
 insert into config values(NULL, 'default_landing_page', 'www.nerdwallet.com', 0);
-insert into config values(NULL, 'check_url_reachable', 'true', 0);
+insert into config values(NULL, 'check_url_reachable', 'false', 0);
 insert into config values(NULL, 'num_retries',         '10', 0);
 insert into config values(NULL, 'max_len_admin_name',  '31', 0);
 insert into config values(NULL, 'max_len_channel_name','15', 0);

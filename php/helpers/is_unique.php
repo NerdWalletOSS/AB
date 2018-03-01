@@ -10,7 +10,8 @@ function is_unique(
   rs_assert(count($X) > 0 );
   for ( $i = 0; $i < count($X); $i++ ) { 
     for ( $j = $i+1; $j < count($X); $j++ ) { 
-      rs_assert(strtolower($X[$i]) != strtolower($X[$j]));
+      rs_assert(strtolower($X[$i]) != strtolower($X[$j]), 
+      "Uniqueness condition fails");
     }
   }
   return true;

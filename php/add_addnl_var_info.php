@@ -5,6 +5,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
 require_once 'lkp.php';
+require_once 'is_valid_json.php';
 
 function add_addnl_var_info(
   $str_inJ
@@ -57,7 +58,7 @@ function add_addnl_var_info(
   $test_type = lkp("test_type", $T['test_type_id'], "reverse");
   $state     = lkp("state",     $T['state_id'], "reverse");
   if ( $custom_data != "" ) {  // must be valid JSON
-    rs_assert(json_decode($custom_data));
+    rs_assert(is_valid_json($custom_data));
   }
   // START: Database write
   $dbh = dbconn(); assert(!empty($dbh)); 
