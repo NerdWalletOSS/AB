@@ -19,11 +19,10 @@ require_once 'inform_rts.php';
 
 function chk_test_basic(
   $inJ, // json representation of test 
-  $dbg
+  $dbg = false
 )
 {
   $test_name = get_json_element($inJ, 'name'); 
-  if ( $dbg ) { echo("PREMATURE"); exit; }
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'description'); 
   $variants  = get_json_element($inJ, 'Variants');
@@ -69,7 +68,7 @@ function chk_test_basic(
 
     $perc = $v->{'percentage'};
     assert(isset($perc));
-    assert(is_string($perc));
+    assert(is_string($perc) || is_numeric($perc));
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
 

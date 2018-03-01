@@ -18,7 +18,7 @@ function list_rts(
     return null;
   }
   //-----------------------------------------------------------
-  $configs = $GLOBALS['CONFIGS'];
+  $configs = $GLOBALS['configs'];
   if ( ( !isset($configs['port']) ) ||  ( $configs['port'] == "" ) ) { 
     return null;
   }

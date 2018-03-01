@@ -31,6 +31,8 @@ function set_state(
 
   $test_id = get_json_element($inJ, 'id'); 
   $new_state  = get_json_element($inJ, 'NewState'); 
+  $updater    = get_json_element($inJ, 'Updater');
+  $updater_id = lkp("admin", $updater);
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
@@ -45,19 +47,17 @@ function set_state(
     return $outJ;
   }
   //--------------------------------------
-
-  // $chk_rslt = chk_test_basic(json_encode(db_get_test($test_id)));
+  // Verify that test is in good state. Ideally, needed only for 
+  // draft->dormant transition but never hurts to leave it in 
   $t1 = db_get_test($test_id);
-  $t2 = json_encode($t1);
-  var_dump($t2);
-  $chk_rslt = chk_test_basic($t2, false);
-  exit;
+  $t2 = json_decode(json_encode($t1));
+  $chk_rslt = chk_test_basic($t2, true);
   assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
+  $X1['updater_id'] = $updater_id;
   switch ( $new_state ) {
   case "dormant" : 
     rs_assert($old_state == "draft");
-    // TODO Make sure that test is good to go 
     $X1['state_id'] = lkp("state", "dormant");
     break;
   case "started" : 
@@ -79,12 +79,22 @@ function set_state(
   default : 
     rs_assert(null, "Invalid new state [$new_state]");
   }
-    // TODO Use transaction
-  db_set_row("test", $test_id, $X1);
-  if ( isset($X2) ) { 
-    db_set_row("variant", $winner_id, $X2);
+  //-- START: Database updates
+  $dbh = dbconn(); assert(isset($dbh)); 
+  try {
+    $dbh->beginTransaction();
+    db_set_row("test", $test_id, $X1);
+    if ( isset($X2) ) { 
+      db_set_row("variant", $winner_id, $X2);
+    }
+    $dbh->commit();
+  } catch ( PDOException $ex ) {
+    $dbh->rollBack();
+    $GLOBALS["err"] .= "ERROR: Transaction aborted\n";
+    $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
+    return false;
   }
-  //---------------------------------
+  //-- STOP : Database updates
   $http_code = 200;
   $outJ["status_code"] = $http_code;
   $outJ["msg_stdout"] = "Changed state of Test $test_id from $old_state to $new_state";

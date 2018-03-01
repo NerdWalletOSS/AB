@@ -20,12 +20,8 @@ lkp(
     rs_assert(null, "Value $val not specified"); 
   }
   if ( !isset($GLOBALS[$tbl]) ) {
-    if ( strtolower($tbl) == "configs" ) {
-      load_configs();
-    }
-    else {
-      load_globals();
-    }
+    load_configs();
+    load_globals();
   }
   rs_assert(isset($GLOBALS[$tbl]), "Table [$tbl] not loaded");
   if (! isset($GLOBALS[$tbl][$val]) ) {
