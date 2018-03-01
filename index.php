@@ -32,7 +32,7 @@ if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location:
   </nav>
 <div class="container theme-showcase" role="main" >
 		<div class="row" >
-	        <div class="col-xs-6">
+	        <div class="col-xs-6 col-xs-offset-3">
 		  <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">Please Login</h3>

@@ -12,7 +12,8 @@
 	<span class="icon-bar"></span>
 	</button>
 <!-- Application Title -->
-	<a class="navbar-brand" id="modLink" href="home.php"><?php echo $TestType; ?> Manager</a>
+	<a class="navbar-brand" id="modLink" href="home.php"><?php if ($TestType == "ABTest"){ echo "A/B Test Manager"; } elseif ($TestType == "XYTest") 
+{echo "URL Router";} else { echo "SOMETHING WRONG";}?></a>
 	</div>
 	<div id="navbar" class="navbar-collapse collapse">
 <ul class="nav navbar-nav navbar-right">

@@ -43,3 +43,9 @@ body {
 	font-weight: bold;
 
 }
+.btn-xxl {
+    font-family: "Arial Bold", Gadget, sans-serif;
+     font-style: normal;
+     font-size: 60px 
+/*! important; //to make fontsize bigger */
+}

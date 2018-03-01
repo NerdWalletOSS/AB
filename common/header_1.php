@@ -21,7 +21,8 @@ else {header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . '
     <meta name="author" content="Nerdwallet QA Team">
     <link rel="icon" href="images/favicon.ico">
 
-     <title><?php echo $TestType; ?> Manager</title>
+     <title><?php if ($TestType == "ABTest"){ echo "A/B Test Manager"; } elseif ($TestType == "XYTest") 
+{echo "URL Router";} else { echo "SOMETHING WRONG";}?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">

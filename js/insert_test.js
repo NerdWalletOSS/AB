@@ -22,12 +22,12 @@ $(document).ready(function(){
 				}
 				else    {
 					var id = response.getResponseHeader('TestID');
-			 		window.location="aev_test_2.php?id=" + id;
+			 		window.location="aev_test_2.php?TestID=" + id;
 				}
 		   	},
         success: function(response, textStatus, XHR) {
 					var id = XHR.getResponseHeader('TestID');
-			 		window.location="aev_test_2.php?id=" + id;
+			 		window.location="aev_test_2.php?TestID=" + id;
         },
 		   	beforeSend:function()
 		   {

@@ -20,16 +20,20 @@ $X['State']  = get_json_element($inJ, 'State');
 $X['Updater']  = get_json_element($inJ, 'Updater');
 }
 $X['name']  = get_json_element($inJ, 'TestName');
+$X['BinType']  = get_json_element($inJ, 'BinType');
 
 $n = get_json_element($inJ, 'NumVariants');
 $V = array();
 for ( $i = 0; $i < $n; $i++) {
-$id = get_json_element($inJ, 'VID_'.$i.'');
-if (isset($id)) {$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');}
+if ($X['id'] != "") { $V[$i]['id'] = get_json_element($inJ, 'VID_'.$i.''); }
+//if (isset($id)) {$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');}
 $V[$i]['name']  = get_json_element($inJ, 'VName_'.$i.'');
 $V[$i]['percentage']  = get_json_element($inJ, 'VPercentage_'.$i.'');
+if($X['TestType'] == "XYTest") {
 $url = get_json_element($inJ, 'VURL_'.$i.'');
-if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');}
+if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');
+}
+}
 }
 
 $X['Variants'] = $V;

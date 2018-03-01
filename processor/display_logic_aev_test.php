@@ -30,8 +30,10 @@ if ( $mode == "Edit" )
   $id = $rslt['id'];
   $TestName = $rslt['name'];
   $description = $rslt['description'];
+  $BinType = $rslt['BinType'];
   $st = db_get_row("state", "id", $rslt['state_id']);
   $state = $st['name'];
+  if ($state == "draft") {$readonly = "";}
   if($TestType == "XYTest") { $num_var = count($rslt['Variants']); } else {$num_var = count($rslt['Variants']) - 1; }
 }
 
