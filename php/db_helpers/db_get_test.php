@@ -18,11 +18,12 @@ function db_get_test(
   $T['TestType'] = lkp("test_type", $T['test_type_id'], "reverse");
   $T['BinType']  = lkp("bin_type",  $T['bin_type_id'],  "reverse");
   $T['State']    = lkp("state",     $T['state_id'],     "reverse");
-  if ( isset($T['Channel']) ) {
+  if ( isset($T['channel_id']) ) {
     $T['Channel']  = lkp("channel",   $T['channel_id'],   "reverse");
   }
   //------------------------------------
   $V = db_get_rows("variant", " test_id = $test_id");
+
   $nV = count($V);
   $Variants = array($nV);
   $vidx = 0;

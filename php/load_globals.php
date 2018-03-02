@@ -27,4 +27,5 @@ function load_globals()
   make_lkp("channel");
   make_lkp("device");
 }
+// load_globals();
 ?>

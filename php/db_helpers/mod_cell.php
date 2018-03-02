@@ -14,10 +14,8 @@ function mod_cell(
   $sql  = "update $tbl set $field = :$field ";
   $sql .= " where $where_clause ";
   $X[$field] = $val;
-  var_dump($sql);
-  var_dump($X);
   $stmt = $dbh->prepare($sql);
-  $rslt = $stmt->execute($X); assert($rslt );
+  $rslt = $stmt->execute($X); rs_assert($rslt );
   return true;
 }
 /*

@@ -8,16 +8,17 @@ require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'mod_row.php';
+require_once 'mod_cell.php';
 require_once 'inform_rts.php';
 
-function set_device_specific(
+function set_device_specific_variant(
   $str_inJ
 )
 {
   //--- Logging 
   $created_at =  $updated_at = get_date(); 
   $t_create =  $t_update = get_time_usec(); 
-  $api_id   = lkp("api", "insert_test_edit_test_basic");
+  $api_id   = lkp("api", "set_device_specific_variant");
   $X0['created_at'] = $created_at;
   $X0['t_create'] = $t_create;
   $X0['payload']  = $str_inJ;
@@ -26,14 +27,36 @@ function set_device_specific(
   $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
 
   // START Check inputs
-  assert(!empty($str_inJ));
-  assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+  rs_assert(!empty($str_inJ));
+  rs_assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
+  $tid = get_json_element($inJ, 'id'); 
+  $T = db_get_row("test", "id", $tid);
+  rs_assert($T);
+  $test_name = $T['name'];
+  $state_id = $T['state_id'];
+  $state = lkp("state", $state_id, "reverse");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   foreach ( $dxv as $d => $v ) { 
-    $device_id   = lkp($d, "device");
+    $device_id   = lkp("device", $d);
     rs_assert(is_array($v));
+    $sum = 0;
+    foreach ( $v as $vv ) { 
+      $p = $vv->{'percentage'};
+      rs_assert(is_numeric($p), "percentage must be a number");
+      rs_assert($p >=   0, "percentage must not be negative");
+      rs_assert($p <= 100, "percentage cannot exceed 100");
+      $sum += $p;
+    }
+    rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ) );
+    foreach ( $v as $vv ) { 
+      $percentage = $vv->{'percentage'};
+      $variant_id = $vv->{'variant_id'};
+      $device_id  = $vv->{'device_id'};
+      mod_cell("device_x_variant", "percentage", $percentage, 
+        " device_id = $device_id and variant_id = $variant_id ");
+    }
   }
   //------------------------------------------
   $http_code = 200;

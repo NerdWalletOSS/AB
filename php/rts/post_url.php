@@ -11,11 +11,11 @@ function post_url(
 )
 {
   if ( !load_configs() ) { return null; }
-  $configs = $GLOBALS['CONFIGS'];
+  $configs = $GLOBALS['configs'];
   $ch = curl_init();
   curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, true);
-  curl_setopt($ch, CURLOPT_POST, 0);
+  curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain')); 
   if ( ( is_null($port) ) || ( $port == "" ) ) { 
@@ -33,7 +33,7 @@ function post_url(
     $rslt = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ( $http_code == 200 ) { break; }
-    trigger_error("RTS ERROR: $server, $url\n");
+    trigger_error("ERROR: $server, $port, $url\n");
   } 
   curl_close($ch);
 }

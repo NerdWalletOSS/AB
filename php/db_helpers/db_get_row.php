@@ -1,4 +1,7 @@
 <?php
+set_include_path(get_include_path() . PATH_SEPARATOR . "../");
+require_once 'bye.php';
+require_once 'dbconn.php';
 function db_get_row(
   $tbl,
   $key,
@@ -13,7 +16,7 @@ function db_get_row(
   $sql .= " $additional_where_clause ";
   $stmt = $dbh->prepare($sql);
   $X['value'] = $value;
-  // echo "$sql\n";
+  // echo "$sql\n"; var_dump($X);
   $rslt = $stmt->execute($X); if ( !$rslt ) { go_BYE(""); }
   $nR = $stmt->rowCount();
   if ( $nR != 1 ) { return null; }

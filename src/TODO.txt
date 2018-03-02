@@ -28,3 +28,11 @@ include it as callerClientID on any ServiceCallHeaders in events you emit.
 \item Generally send an ``ab-service'' \verb+X-Caller-Client-ID+ header 
 with all outbound calls you make.
 \ee
+
+[INDRAJEET] verify thatwe are firing events properly
+
+The updated schema is now in stage. You can view the final schema here:
+https://github.com/NerdWallet/schemas/pull/222/files
+
+The logger PR that is merged to stage:
+https://github.com/NerdWallet/logger.nerdwallet/pull/459

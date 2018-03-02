@@ -1,5 +1,6 @@
 {
-  "TestType": "ABTest",
+  "TestType": "XYTest",
+  "Channel": "facebook",
   "description": "some bogus description",
   "Creator": "joe",
   "name": "T1",

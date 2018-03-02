@@ -12,22 +12,33 @@ $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
 $X = array();
 $X['TestType'] = get_json_element($inJ, 'TestType'); 
 $X['description'] = get_json_element($inJ, 'TestDescription');
-$X['Creator']  = get_json_element($inJ, 'Creator');
-$X['name']  = get_json_element($inJ, 'TestName');
 $X['id']  = get_json_element($inJ, 'TestID');
+if ((isset($X['id'])) && ($X['id'] == "")) {
+$X['Creator']  = get_json_element($inJ, 'Creator');
+} else {
+$X['State']  = get_json_element($inJ, 'State');
+$X['Updater']  = get_json_element($inJ, 'Updater');
+}
+$X['name']  = get_json_element($inJ, 'TestName');
+$X['BinType']  = get_json_element($inJ, 'BinType');
 
 $n = get_json_element($inJ, 'NumVariants');
 $V = array();
 for ( $i = 0; $i < $n; $i++) {
-//$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');
+if ($X['id'] != "") { $V[$i]['id'] = get_json_element($inJ, 'VID_'.$i.''); }
+//if (isset($id)) {$V[$i]['id']  = get_json_element($inJ, 'VID_'.$i.'');}
 $V[$i]['name']  = get_json_element($inJ, 'VName_'.$i.'');
 $V[$i]['percentage']  = get_json_element($inJ, 'VPercentage_'.$i.'');
-//$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');
+if($X['TestType'] == "XYTest") {
+$url = get_json_element($inJ, 'VURL_'.$i.'');
+if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_'.$i.'');
+}
+}
 }
 
 $X['Variants'] = $V;
 $outJ = json_encode($X);
-
+echo $outJ;
 return $outJ;
 
 }
