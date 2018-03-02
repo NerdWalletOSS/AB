@@ -25,9 +25,9 @@ function set_state(
   $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
   //--------------------------------------
   // START Check inputs
-  assert(!empty($str_inJ));
-  assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+  rs_assert(!empty($str_inJ));
+  rs_assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
 
   $test_id = get_json_element($inJ, 'id'); 
   $new_state  = get_json_element($inJ, 'NewState'); 
@@ -52,7 +52,7 @@ function set_state(
   $t1 = db_get_test($test_id);
   $t2 = json_decode(json_encode($t1));
   $chk_rslt = chk_test_basic($t2, true);
-  assert($chk_rslt);
+  rs_assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   $X1['updater_id'] = $updater_id;
   switch ( $new_state ) {
@@ -82,7 +82,7 @@ function set_state(
     rs_assert(null, "Invalid new state [$new_state]");
   }
   //-- START: Database updates
-  $dbh = dbconn(); assert(isset($dbh)); 
+  $dbh = dbconn(); rs_assert($dbh); 
   try {
     $dbh->beginTransaction();
     db_set_row("test", $test_id, $X1);
