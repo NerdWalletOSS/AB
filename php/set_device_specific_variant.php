@@ -27,9 +27,9 @@ function set_device_specific_variant(
   $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
 
   // START Check inputs
-  assert(!empty($str_inJ));
-  assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+  rs_assert(!empty($str_inJ));
+  rs_assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $tid = get_json_element($inJ, 'id'); 
   $T = db_get_row("test", "id", $tid);
   rs_assert($T);

@@ -25,8 +25,10 @@ function mod_row(
   }
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);
-  // var_dump($sql); var_dump($X);
-  $rslt = $stmt->execute($X); if ( !$rslt ) { go_BYE(""); }
+  $rslt = $stmt->execute($X); if ( !$rslt ) { 
+    var_dump($sql); var_dump($X);
+    rs_assert(false, "db_get_rows failed");
+  }
   return true;
 }
 /*

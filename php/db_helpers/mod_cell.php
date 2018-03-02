@@ -15,7 +15,7 @@ function mod_cell(
   $sql .= " where $where_clause ";
   $X[$field] = $val;
   $stmt = $dbh->prepare($sql);
-  $rslt = $stmt->execute($X); assert($rslt );
+  $rslt = $stmt->execute($X); rs_assert($rslt );
   return true;
 }
 /*

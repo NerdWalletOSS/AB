@@ -32,9 +32,9 @@ function test_basic(
   //-- STOP: For logging
 
   // START Check inputs
-  assert(!empty($str_inJ));
-  assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
+  rs_assert(!empty($str_inJ));
+  rs_assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------
@@ -115,7 +115,7 @@ function test_basic(
       $X1['name']  = $test_name;
     }
     //-----------------------------------------------
-    $dbh = dbconn(); assert(isset($dbh)); 
+    $dbh = dbconn(); rs_assert(isset($dbh)); 
     try {
       $dbh->beginTransaction();
       //--- Update test table 
@@ -174,7 +174,7 @@ function test_basic(
     $X1['state_id']     = $state_id;
     $X1['bin_type_id'] = $bin_type_id;
     //-----------------------------------------------
-    $dbh = dbconn(); assert(!empty($dbh)); 
+    $dbh = dbconn(); rs_assert(!empty($dbh)); 
     try {
       $dbh->beginTransaction();
       //---- Insert into test table 

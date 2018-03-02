@@ -16,8 +16,8 @@ function is_good_urls(
   rs_assert(is_unique($U), "URLS need to be unique");
   foreach ( $U as $u ) {
     rs_assert(strlen($u) <= lkp("configs", "max_len_url"),
-      "URL is too long. Max length is $max_len_url");
-    rs_assert(chk_url_text($u), "Bad URL [$u]\n");
+      "URL is too long. Max length is " . lkp("configs", "max_len_url"));
+    rs_assert(chk_url_text($u), 
       "URL [$u] contains bad characters\n");
     $is_chk = lkp('configs', "check_url_reachable");
     if ( $is_chk ) { 
