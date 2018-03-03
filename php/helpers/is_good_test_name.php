@@ -10,7 +10,7 @@ function is_good_test_name(
   rs_assert(aux_chk_name($test_name), 
   "test name is invalid. Only alphanumeric and underscore allowed");
   rs_assert(strlen($test_name) <= lkp("configs", "max_len_test_name"),
-    "Test name too long. Max length is " ..  lkp("configs", "max_len_test_name"));
+    "Test name too long. Max length is " .  lkp("configs", "max_len_test_name"));
   return true;
 }
 ?>

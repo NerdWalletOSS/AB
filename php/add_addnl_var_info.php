@@ -1,11 +1,12 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
 require_once 'lkp.php';
 require_once 'is_valid_json.php';
+require_once 'start_log.php';
 
 function add_addnl_var_info(
   $str_inJ

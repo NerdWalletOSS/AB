@@ -80,7 +80,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   <tr>
 <input type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
   <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
-  <input type="text" name="VName_0" size="16" maxlength="15" value="control" readonly="readonly"></td>
+  <input type="text" name="VName_0" size="16" maxlength="15" value="Control" readonly="readonly"></td>
   <!--<td>Description
   <textarea class="form-control" rows="3" cols="9" maxlength="128"  readonly="readonly" >Standard Feature</textarea></td>-->
   <td></td>
