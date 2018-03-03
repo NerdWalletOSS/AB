@@ -16,7 +16,7 @@ require_once "processor/display_logic_aev_test.php";
 $config = config_html($TestType);
 $device    = db_get_rows('device');
 $nD = count($device);
-$T = db_get_test($id);
+$T = db_get_test('5');
 var_dump($T);
 ?>
 

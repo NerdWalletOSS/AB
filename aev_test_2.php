@@ -23,9 +23,7 @@ $config = config_html($TestType);
   <h3 class="panel-title"><?php echo $mode; ?> Additional Variant Information</h3>
   </div>
   <div class="panel-body">
-  <!-- AJAX ERROR DIV START -->
-  <?php require_once "common/error_div.php"; ?>
-  <!-- AJAX ERROR DIV END -->
+
   <!-- ADD/EDIT FORM START  -->
   <form class="form-signin" id='addTest' type='post'>
   <table class="table table-striped table-condensed" style="space=5px">
@@ -38,60 +36,36 @@ $config = config_html($TestType);
   </td>
 	</tr>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
-  <?php
-  if ( isset($TestType) && ($TestType == "XYTest")) {
-  for ( $i = 0; $i < $num_var; $i++ ) { 
-  ?>
+  <?php for ( $i = 0; $i < $n_var; $i++ ) { ?>
   <tr> 
    <td>
    <p>Variant ID: &nbsp; <span id='VID_<?php echo $i; ?>' > <?php echo $rslt['Variants'][$i]['id'];  ?></span>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Variant Name: &nbsp;<span id='VName_<?php echo $i; ?>'><?php echo $rslt['Variants'][$i]['name']; ?></span>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="#myModal" class="btn btn-success btn-small" id="custId" data-toggle="modal" data-id="<?php echo $rslt['Variants'][$i]['id']; ?>"
+<?php   if ( ($rslt['Variants'][$i]['name'] == "Control") && ($TestType == "ABTest")) { 
+// Do Nothing
+} else {
+?>
+   <a href="#myModal" class="btn btn-success btn-small" id="custId" data-toggle="modal" data-id="<?php echo $rslt['Variants'][$i]['id']; ?>"
     data-position="<?php echo $i; ?>">Edit</a></p>
+<?php } ?>
     <p><strong>Description:</strong> &nbsp;<span id="Vdesc_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]["description"]; ?></span></p>
+
+<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
     <p><strong>Custom Data:</strong> &nbsp;<span id="Vcd_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]['custom_data']; ?></span></p>
+<?php } ?>
   </td>
 </tr>
-<?php } } elseif ($TestType == "ABTest") { ?>
-  <tr>
-<input type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
-  <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
-  <input type="text" name="VName_0" size="16" maxlength="15" value="control" readonly="readonly"></td>
-  <td>Description
-  <textarea class="form-control" rows="3" cols="9" maxlength="128"  readonly="readonly" >Standard Feature</textarea></td>
-  <td></td>
-  <td>Percentage &nbsp;&nbsp;
-  <input type="number"  style='width:5em' min="0" max="100" maxlength="3" size='2' id="control"  class="control" name="VPercentage_0" value="<?php echo $rslt['Variants'][0]['percentage']; ?>" readonly="readonly"></td>
-  </tr>
-<?php 
-  for ( $i = 1; $i <= $num_var; $i++ ) { 
-  $max_prop = (100 /($num_var));
-?>
-  <tr>
-   <input type='hidden' name='<?php echo "VID_".$i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
-  <td>Variant <?php echo $i + 1; ?>&nbsp;&nbsp;( ID : <?php if ($mode == "Edit") {echo $rslt['Variants'][$i]['id'];} ?>&nbsp;)&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
-  <input type='text' size='16' name='VName_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' readonly required></td>
-  <td>Description &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Human-readable description for what this variant is, i.e. `the blue apply now button link.`'></span>
-  <textarea class='form-control' rows='3' cols='9' maxlength='128' name='var".$i."_desc' readonly required></textarea>
-</td>
-<td></td>
-  <td>Percentage &nbsp;&nbsp;<input type='number' style='width:5em' min='0' max='<?php echo (100/$num_var); ?>' step='1' size='2' name='VPercentage_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>" class='prop' readonly required></td>
-<td><a href="#" data-toggle="modal" data-target="#basicModal" ><button type="button" class="btn btn-success btn-sm">
-<span style="font-size:15px;"><strong>Edit</strong></span>
-</button>
-</a></td>
 <?php } ?>
-  </tr>
-<?php } ?>
+ 
 <tr><td>
-<a href="aev_test_3.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a>
 </td></tr>
   </tbody>
   </table>
   
   </form>
+<a href="aev_test_3.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a>
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>
@@ -107,6 +81,9 @@ $config = config_html($TestType);
                 <h4 class="modal-title">Additional Variant Information</h4>
             </div>
             <div class="modal-body">
+  <!-- AJAX ERROR DIV START -->
+  <?php require_once "common/error_div.php"; ?>
+  <!-- AJAX ERROR DIV END -->
                 <div class="fetched-data">
 <form id='addVI' type='post'>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
@@ -115,13 +92,16 @@ $config = config_html($TestType);
 <input type='hidden' name='Updater' value='<?php echo $User; ?>'>
 <input type='hidden' name='VariantID'>
 <input type='hidden' name='VariantName'>
+<input type='hidden' name='Position'>
 <table>
   <tr>
 <td>
 <p>Variant ID: &nbsp; <span id='VariantID' ></span></p>
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
 <p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' required></textarea></p>
+<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' required></textarea></p>
+<?php } ?>
 </td>
 </tr>
 </table>
@@ -137,21 +117,5 @@ $config = config_html($TestType);
 </div>
 
 <!-- /container -->
-<script>
-//prop calculator
-$('.prop').keyup(function () {
-  var sum = 0;
-  $('.prop').each(function() {
-  sum += Number($(this).val());
-<?php if ( isset($TestType) && ($TestType == 'ABTest')) { ?>
-  control=100-sum;
-  $('#control').val(control);
-  $('#TotalProp').val(sum+control);
-<?php } elseif ( isset($TestType) && ($TestType == 'XYTest')){ ?>
-  $('#TotalProp').val(sum);
-<?php  } ?>
-});
-});
-</script>
 <!-- FOOTER -->
 <?php require_once "common/footer.php"; ?>

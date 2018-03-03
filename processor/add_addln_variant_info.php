@@ -4,8 +4,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
 
+require_once 'db_get_test.php';
 require_once 'add_addnl_var_info.php';
-require_once '../create_good_json_test.php';
 //-----------------------------------------------------------
 //-------- ACCESS POST parameters
 
@@ -14,18 +14,19 @@ if ( !$_POST ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
 var_dump($_POST);
-$str_inJ = json_encode($_POST);
-/*
-$json_input = create_good_json_test($str_inJ);
-if ( !$json_input ) {
-  echo '{ "InsertTest" : "ERROR", "Message" : "Bad JSOn" }'; exit;
+$test_id = $_POST['TestID'];
+$i = $_POST['Position'];
+$X = db_get_test($test_id);
+$X['Updater'] = $_POST['Updater'];
+$X['Variants'][$i]['description'] = $_POST['Description'];
+if ( isset($TestType) && ($TestType == "XYTest")) {
+$X['Variants'][$i]['custom_data'] = $_POST['CustomData'];
 }
-*/
+$X['VariantID'] = $_POST['VariantID'];
 //-------------------------------------
-// Call to add test
-$rslt =  add_addnl_var_info($str_inJ);
+// Call to Add/Edit Additional Variant Information
+$rslt =  add_addnl_var_info(json_encode($X));
 //var_dump($rslt);
 header("TestID: ".$rslt["TestID"]);
 ob_clean();
-
 ?>
