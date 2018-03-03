@@ -22,26 +22,35 @@ function add_addnl_var_info(
   $request_webapp_id = $ret_val['request_webapp_id'];
   //-- STOP: For logging
   // START Check inputs
-  assert(isset($str_inJ));
-  assert(is_string($str_inJ));
-  $inJ = json_decode($str_inJ); assert(!is_null($inJ));
+  rs_assert(isset($str_inJ));
+  rs_assert(is_string($str_inJ));
+  $inJ = json_decode($str_inJ); rs_assert(!is_null($inJ));
 
   $test_id = get_json_element($inJ, 'id'); 
   $updater    = get_json_element($inJ, 'Updater');
-  $updater_id = lkp("admin", $updater);
+  // TODO P4 $updater_id = lkp("admin", $updater);
   $vid = get_json_element($inJ, 'VariantID'); 
+
+  $T = db_get_row("test", "id", $test_id);
+  rs_assert($T, "test [$test_id] not found");
+  $test_name = $T['name'];
+  $test_type = lkp("test_type", $T['test_type_id'], "reverse");
+  $state     = lkp("state",     $T['state_id'], "reverse");
+  rs_assert(( $state != "terminated" ) &&( $state != "archived" ));
 
   $variants  = get_json_element($inJ, 'Variants');
   $found = false;
   $custom_data = "";
   $description = "";
+  $url         = "";
   foreach ( $variants as $v ) { 
     if ( $v->{'id'} != $vid )  { 
       continue; 
     }
     rs_assert($found == false); 
-    $description = trim($v->{'description'});
     $custom_data = trim($v->{'custom_data'});
+    $description = trim($v->{'description'});
+    $url         = trim($v->{'url'});
     $vname = trim($v->{'name'});
     $found = true;
     break;
@@ -49,24 +58,40 @@ function add_addnl_var_info(
   rs_assert($found == true);
   //-- check input data 
   rs_assert(strlen($description) <= lkp("configs", "max_len_variant_dscr"));
+  // check custom data 
   rs_assert(strlen($custom_data) <= lkp("configs", "max_len_custom_data"));
-
-  // TODO P3: does description/custom data get set to null or empty string?
-
-  $T = db_get_row("test", "id", $test_id);
-  rs_assert($T, "test [$test_id] not found");
-  $test_name = $T['name'];
-  $test_type = lkp("test_type", $T['test_type_id'], "reverse");
-  $state     = lkp("state",     $T['state_id'], "reverse");
   if ( $custom_data != "" ) {  // must be valid JSON
     rs_assert(is_valid_json($custom_data));
   }
+  // check url 
+  if ( $test_type == "XYTest" ) {
+    rs_assert(strlen($url)         > 1, "URL cannot be null");
+  }
+  rs_assert(strlen($url)         <= lkp("configs", "max_len_url"));
+  rs_assert(chk_url_text($url), "URL [$url] contains bad characters\n");
+  $is_chk = lkp('configs', "check_url_reachable");
+  if ( $is_chk ) { 
+    rs_assert(chk_url($url), "URL [$url] not reachable\n");
+  }
+  $V = db_get_rows("variant", " test_id= $test_id ");
+  foreach ( $V as $v ) { 
+    if ( $v['id'] == $vid ) { continue; };
+    rs_assert($v['url'] != $url, "URL should be unique");
+  }
+
+  // TODO P3: does description/custom data get set to null or empty string?
+
+  $X1['description'] = $description;
+  $X1['custom_data'] = $custom_data;
+  $X1['url']         = $url;
+  // TODO P4 $X1['updater_id']  = $updater_id;
+  $X1['api_id']      = $api_id;
+  $X1['request_webapp_id']      = $request_webapp_id;
   // START: Database write
-  $dbh = dbconn(); assert(!empty($dbh)); 
+  $dbh = dbconn(); rs_assert(!empty($dbh)); 
   try {
     $dbh->beginTransaction();
-    mod_cell("variant", "description", $description, "id = $vid");
-    mod_cell("variant", "custom_data", $custom_data, "id = $vid");
+    mod_row("variant", $X1, " where id = $vid");
     $dbh->commit();
   } catch ( PDOException $ex ) {
     $dbh->rollBack();

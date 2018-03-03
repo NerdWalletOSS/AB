@@ -1,8 +1,11 @@
 <?php  
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 require_once 'make_pos_int.php';
 require_once 'make_boolean.php';
+require_once 'db_get_rows.php';
 function load_configs(
   $conf_file = "/opt/abadmin/db.json",
   $reload=false
@@ -88,10 +91,12 @@ function load_configs(
   $C['dbpass'] = $dbpass; 
   $C['server'] = $server; 
   $C['port']   = $port; 
+  $C['rts_finder_server']   = $rts_finder_server; 
+  $C['rts_finder_port']   = $rts_finder_port; 
   //----------------------------------------
   unset($X);
   $X = db_get_rows("config");
-  assert(isset($X));
+  rs_assert($X, "No table config in database");
   foreach ( $X as $x ) {
     $C[$x['name']] = $x['value'];
   }

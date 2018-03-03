@@ -18,7 +18,12 @@ function is_good_variants(
   foreach ( $V as $v ) {
     rs_assert(aux_chk_name($v), "variant name is invalid");
     rs_assert(strlen($v) <= lkp("configs", "max_len_variant_name"),
+<<<<<<< HEAD
     "Variant name too long. Max length is " .  lkp("configs", "max_len_variant_name"));
+=======
+      "Variant name too long. Max length is " .  
+      lkp("configs", "max_len_variant_name"));
+>>>>>>> dev
     if ( $v == "Control" ) {
       $is_control = true;
     }
