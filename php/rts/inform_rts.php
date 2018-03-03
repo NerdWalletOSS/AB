@@ -17,9 +17,8 @@ function inform_rts(
   $err_msg = "";
   $is_ok = true;
   $SP = list_rts();
-  rs_assert($SP);
   if ( !is_array($SP) ) { // NOTHING MORE TO DO 
-    $err_msg = "NOTICE: Not talking to RTS\n";
+    // $err_msg = "NOTICE: Not talking to RTS\n";
     return true;  
   } 
   foreach ( $SP  as $sp ) {
@@ -32,10 +31,10 @@ function inform_rts(
   }
   return $is_ok;
 }
-
+/*
 $err = "";
 $x = inform_rts(1, $err);
 var_dump($x);
 var_dump($err);
-
+ */
 ?>

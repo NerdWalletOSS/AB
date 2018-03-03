@@ -26,6 +26,9 @@ function list_rts(
 
     $SP = array(1);
     $SP[0] = array('server' => $server, 'port' => $port);
+    if ( getenv("AB_WEBAPP_STANDALONE") == "true" ) {
+      $SP = null;
+    }
     return $SP;
   }
   //-----------------------------------------------------------
@@ -66,4 +69,5 @@ else {
   echo "Not using RTS\n";
 }
  */
+
 ?>
