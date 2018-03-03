@@ -38,7 +38,7 @@ function chk_test_basic(
     rs_assert($bin_type ==  "c_to_v_ok_v_to_c_ok_v_to_v_not_ok");
     break;
   case "XYTest" :
-    rs_assert($bin_type == "free_for_all");
+    rs_assert($bin_type == "anonymous");
     break;
   default : 
     rs_assert(null, "Invalid test type $test_type");

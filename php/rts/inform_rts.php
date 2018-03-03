@@ -13,23 +13,28 @@ function inform_rts(
   &$err_msg
 )
 {
-  //TODO P0 Needs to be fixed ASAP
-  return true;
 
   $err_msg = "";
   $is_ok = true;
   $SP = list_rts();
-  rs_assert($SP);
   if ( !is_array($SP) ) { // NOTHING MORE TO DO 
-    $err_msg = "NOTICE: Not talking to RTS\n";
+    // $err_msg = "NOTICE: Not talking to RTS\n";
     return true;  
   } 
   foreach ( $SP  as $sp ) {
     $rslt = ""; $http_code = 0;
     $server = $sp['server']; $port   = $sp['port'];
+    $body = json_encode(db_get_test($test_id));
+    echo($body);
     post_url($server, $port, "AddTest", $body, $http_code, $rslt);
     if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
   }
   return $is_ok;
 }
+/*
+$err = "";
+$x = inform_rts(1, $err);
+var_dump($x);
+var_dump($err);
+ */
 ?>
