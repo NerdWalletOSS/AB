@@ -26,9 +26,16 @@ function inform_rts(
     $rslt = ""; $http_code = 0;
     $server = $sp['server']; $port   = $sp['port'];
     $body = json_encode(db_get_test($test_id));
+    echo($body);
     post_url($server, $port, "AddTest", $body, $http_code, $rslt);
     if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
   }
   return $is_ok;
 }
+
+$err = "";
+$x = inform_rts(1, $err);
+var_dump($x);
+var_dump($err);
+
 ?>

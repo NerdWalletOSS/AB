@@ -109,3 +109,7 @@ dkms.conf
 *.marks
 *.internal
 *.includecache
+
+#Created directories
+bin
+mysql-connector-c-6.1.6-src
