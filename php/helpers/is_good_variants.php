@@ -20,6 +20,7 @@ function is_good_variants(
     rs_assert(strlen($v) <= lkp("configs", "max_len_variant_name"),
       "Variant name too long. Max length is " .  
       lkp("configs", "max_len_variant_name"));
+
     if ( $v == "Control" ) {
       $is_control = true;
     }
