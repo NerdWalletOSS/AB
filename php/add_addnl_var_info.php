@@ -6,6 +6,8 @@ require_once 'db_get_test.php';
 require_once 'mod_cell.php';
 require_once 'lkp.php';
 require_once 'is_valid_json.php';
+require_once 'get_json_element.php';
+require_once 'aux_chk_name.php';
 
 function add_addnl_var_info(
   $str_inJ
