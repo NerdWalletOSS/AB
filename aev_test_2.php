@@ -98,9 +98,9 @@ $config = config_html($TestType);
 <td>
 <p>Variant ID: &nbsp; <span id='VariantID' ></span></p>
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
-<p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' required></textarea></p>
+<p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' ></textarea></p>
 <?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
-<p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' required></textarea></p>
+<p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' ></textarea></p>
 <?php } ?>
 </td>
 </tr>
