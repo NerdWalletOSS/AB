@@ -1,5 +1,5 @@
 <?php require_once "common/header_1.php"; ?>
-<script src="js/add_addln_var_info.js"></script>
+<script src="js/page_3.js"></script>
 <?php require_once "common/header_2.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
@@ -32,7 +32,7 @@ $config = config_html($TestType);
   <?php require_once "common/error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' type='post'>
+  <form class="form-signin" id='device_x_variant' type='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -40,12 +40,13 @@ $config = config_html($TestType);
 	<tr>
 		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1" >
   </td>
 	</tr>
 <tr>
 <table class="table table-striped table-condensed" style="space=5px">
 <thead>
+<th>Variants\Devices</th>
 <?php 
 $device    = db_get_rows('device');
 $nD = count($device);
@@ -58,7 +59,7 @@ for ( $i = 0; $i < $nD; $i++ ) {
   echo "<tr>";
   echo "<td>".$T['Variants'][$i]['name']."</td>";
     for ( $j = 0; $j < $nD; $j++ ) {
-      echo "<td><input type='text' maxlength='3' size='3' name='DxV_".$j."_id' value='".$T['DeviceCrossVariant'][$device[$i]['name']][$i]['percentage']."'</td>";
+      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$i]['name']][$i]['percentage']."'></td>";
         }
   echo "</tr>";
 
@@ -75,6 +76,7 @@ for ( $i = 0; $i < $nD; $i++ ) {
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
  </table>
+</form>
 </div>
 </div>
 </div>
