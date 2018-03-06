@@ -159,8 +159,9 @@ local function update_rts_configs(g_conf, config)
   return is_updated
 end
 
+local load_cfg = {}
 
-local function load_config(conf_str, g_conf, has_changed)
+function load_cfg.load_config(conf_str, g_conf, has_changed)
   local config = json.decode(conf_str)
 
   g_conf = ffi.cast("CFG_TYPE*", g_conf)
@@ -177,4 +178,9 @@ local function load_config(conf_str, g_conf, has_changed)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
 end
 
-return load_config
+function load_cfg.load_config_from_file(conf_str, g_conf, has_changed, file_path)
+  local conf = file_load(file_path)
+  return load_cfg.load_config(conf_str, g_conf, has_changed)
+end
+
+return load_cfg
