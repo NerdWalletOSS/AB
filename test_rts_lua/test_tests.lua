@@ -6,32 +6,6 @@ local json = require 'json'
 local consts = require 'ab_consts'
 local Tests = require 'tests'
 local spooky_hash = require 'spooky_hash'
-local g_tests = ffi.cast("TEST_META_TYPE*", ffi.C.malloc(ffi.sizeof("TEST_META_TYPE")*consts.AB_MAX_NUM_TESTS))
-local c_index = ffi.cast("int*", ffi.C.malloc(ffi.sizeof("int")))
-c_index[0] = -1
-local valid_json = require 'valid_json'
-local valid_json2 = require 'valid_json2'
-
-local function cleanup(g_tests, c_index)
-  local index = tonumber(c_index[0])
-  if index ~= -1 then
-    ffi.fill(g_tests + index, ffi.sizeof("TEST_META_TYPE"))
-
-  end
-
-end
-
-local function fill_g_tests()
-  for i=1,consts.AB_MAX_NUM_TESTS do
-    g_tests[i-1].name_hash=1007
-  end
-end
-
-local function empty_g_tests()
-  for i=1,consts.AB_MAX_NUM_TESTS do
-    g_tests[i-1].name_hash=0
-  end
-end
 
 describe('AddTests framework', function()
   before_each(function()
@@ -41,6 +15,32 @@ describe('AddTests framework', function()
   after_each(function()
 
   end)
+
+  local g_tests = ffi.cast("TEST_META_TYPE*", ffi.C.malloc(ffi.sizeof("TEST_META_TYPE")*consts.AB_MAX_NUM_TESTS))
+  local c_index = ffi.cast("int*", ffi.C.malloc(ffi.sizeof("int")))
+  c_index[0] = -1
+  local valid_json = require 'valid_json'
+  local valid_json2 = require 'valid_json2'
+
+  local function cleanup(g_tests, c_index)
+    local index = tonumber(c_index[0])
+    if index ~= -1 then
+      ffi.fill(g_tests + index, ffi.sizeof("TEST_META_TYPE"))
+    end
+  end
+
+  local function fill_g_tests()
+    for i=1,consts.AB_MAX_NUM_TESTS do
+      g_tests[i-1].name_hash=1007
+    end
+  end
+
+  local function empty_g_tests()
+    for i=1,consts.AB_MAX_NUM_TESTS do
+      g_tests[i-1].name_hash=0
+    end
+  end
+
   describe(", for ABTests ", function()
     describe('should add a test which', function()
       it("should work for a valid json string", function()
@@ -210,7 +210,7 @@ describe('AddTests framework', function()
                   local v_percentage = tonumber(variant.percentage)
                   local v_actual = counts[tonumber(variant.variant_id)]
                   assert((v_actual - v_percentage < 0.1) or (v_percentage - v_actual< 0.1),
-                    "Variation between request and actual should be less than 0.1%")
+                  "Variation between request and actual should be less than 0.1%")
                 end
               end
               assert(keys == #counts, "No keys should repeat")
@@ -224,16 +224,16 @@ describe('AddTests framework', function()
       end)
     end)
   end)
-end)
 
--- describe("for XYTests", function()
--- end)
+  -- describe("for XYTests", function()
+  -- end)
 
-describe("should fail for any other testtype", function()
-  local j_table = json.decode(valid_json)
-  j_table.TestType = "InvalidTest"
-  local j_str = json.encode(j_table)
-  local status, res = pcall(Tests.add, j_str, g_tests, c_index)
-  assert(status == false)
-  cleanup(g_tests, c_index)
+  describe("should fail for any other testtype", function()
+    local j_table = json.decode(valid_json)
+    j_table.TestType = "InvalidTest"
+    local j_str = json.encode(j_table)
+    local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+    assert(status == false)
+    cleanup(g_tests, c_index)
+  end)
 end)
