@@ -39,12 +39,19 @@ $config = config_html($TestType);
 	<tr>
 		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
 	</tr>
+	<tr>
+		<td colspan="3">Channel: <?php echo $Channel; ?><input type='hidden' name='TestName' value='<?php echo $Channel; ?>'></td>
+	</tr>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
     <span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a descriptive name for your test that represents your vertical, date, and test. It should be easy to read and memorable. .Only Alphanumeric char without space">
     </span>
   <input type="text" name="TestName" size="<?php echo $config['name_size']; ?>" maxlength="<?php echo $config['name_maxlength']; ?>" pattern="^[A-Za-z0-9\S]{1,31}$" required>
+
+  </td>
+  </tr>
+  <td>
 
   </td>
   </tr>
@@ -60,8 +67,21 @@ $config = config_html($TestType);
   </textarea>
   </td>	
   </tr>
-  <?php
-  if ( isset($TestType) && ($TestType == "XYTest")) {
+<tr><td>
+  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+
+Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>
+  <select name='Channel'>";
+  <option value=''>None</option>
+<?php 
+$channel    = db_get_rows('channel');
+$nC = count($channel);
+for ( $i = 0; $i < $nC; $i++ ) { 
+  echo "<option value='".$channel[$i]['name']."'>".$channel[$i]['name']."</option>";
+} ?>
+  </select>
+</td></tr>	
+<?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
   $max_prop = (100 /($num_var));
   ?>

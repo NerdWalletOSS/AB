@@ -40,7 +40,11 @@ $config = config_html($TestType);
 	<tr>
 		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1" >
+    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1"  
+<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "checked"; } else { // Do Nothing
+} ?>
+>
   </td>
 	</tr>
 <tr>
@@ -59,7 +63,7 @@ for ( $i = 0; $i < $nD; $i++ ) {
   echo "<tr>";
   echo "<td>".$T['Variants'][$i]['name']."</td>";
     for ( $j = 0; $j < $nD; $j++ ) {
-      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$i]['name']][$i]['percentage']."'></td>";
+      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
         }
   echo "</tr>";
 
