@@ -8,8 +8,10 @@ require_once 'lkp.php';
 require_once 'is_valid_json.php';
 require_once 'get_json_element.php';
 require_once 'aux_chk_name.php';
+
 require_once 'start_log.php'; // UTPAL: Added the required file
 require_once 'mod_row.php';  // UTPAL: Added the required file
+
 
 function add_addnl_var_info(
   $str_inJ
