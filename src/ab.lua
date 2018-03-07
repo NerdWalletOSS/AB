@@ -2,10 +2,14 @@ local csv = require "csv"
 local json = require("json")
 -- local ffi = require 'ffi' 
 local tests = require 'tests'
+local load_config = require 'load_config'
 function add(...)
   tests.add(...)
 end
 
+function load_config(...)
+  load_config.load_config_from_file(...)
+end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)
 --    local x = ffi.cast("int*", c_data)

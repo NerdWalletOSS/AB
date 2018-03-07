@@ -1,11 +1,13 @@
 -- simple test for luajit-mysql
-
+package.path=package.path .. ";./../src/?.lua"
+-- local dbg = require 'debugger'
 local mysql = require( "sql" )
 local table = require( "table")
 local string = require( "string")
 
 
 local conn = mysql:connect( "127.0.0.1", "root", "toor", "luajit_mysql_test" )
+
 print("connect:", conn )
 
 conn:toggleLog(true)
@@ -132,8 +134,17 @@ for k,v in pairs(row) do print(k,v) end
 -- assert(row.ts.min == 28 )
 -- assert(row.ts.sec == 00 )
 
+
+-- conn:close()
+t = {}
+setmetatable(t, { __mode = 'v' })
+t.conn = conn.conn
+print(t.conn)
+conn = nil
+collectgarbage()
+assert(t.conn == nil, "SQL connection should be garbage collected")
 print("test finished")
-
-conn:close()
-
+-- local conn = mysql:connect( "127.0.0.1", "root", "toor", "abdb" )
+-- res = conn:query('select * from device')
+-- for k,v in ipairs(res) do print(k,"HEYHEYHEY", v.name, v.id) end
 
