@@ -4,13 +4,6 @@ local consts = require 'ab_consts'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local sql = require 'sql'
-local function file_load(filename)
-  assert(type(filename) == "string", "Filename must be a string to load confgs")
-  local file = assertx(io.open(filename, "r"), "Unable to find file ", filename)
-  local conf = file:read('*a')
-  file:close()
-  return conf
-end
 
 local function get_value_from_bool(x)
   if x then
@@ -178,8 +171,10 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
 end
 
-function load_cfg.load_config_from_file(conf_str, g_conf, has_changed, file_path)
-  local conf = file_load(file_path)
+function load_cfg.load_config_from_file(g_conf, has_changed, file_path)
+  local file = assert(io.open(file_path, 'r'), "Invalid filename given")
+  local conf_str = file:read('*a')
+  file:close()
   return load_cfg.load_config(conf_str, g_conf, has_changed)
 end
 

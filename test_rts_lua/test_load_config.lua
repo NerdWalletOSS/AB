@@ -7,7 +7,7 @@ local load_config = require 'load_config'
 local cache = require 'cache'
 local config = require 'valid_config'
 describe('Load config should', function()
-  local confs_size = 4
+  local confs_size = consts.NUM_SERVICES
   local g_conf = ffi.cast("CFG_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("CFG_TYPE")), ffi.C.free))
   local has_changed = ffi.cast("unsigned char*", ffi.gc(ffi.C.malloc(ffi.sizeof("unsigned char")* confs_size), ffi.C.free))
   ffi.fill(g_conf, ffi.sizeof("CFG_TYPE"))
@@ -49,7 +49,7 @@ describe('Load config should', function()
       local file = io.open(fname, "w")
       file:write(config)
       file:close()
-      local status, res = pcall(load_config.load_config_from_file, config, g_conf, has_changed, fname)
+      local status, res = pcall(load_config.load_config_from_file, g_conf, has_changed, fname)
       assert(status == true, res)
       os.remove(fname)
     end)
