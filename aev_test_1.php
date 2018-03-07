@@ -39,9 +39,6 @@ $config = config_html($TestType);
 	<tr>
 		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
 	</tr>
-	<tr>
-		<td colspan="3">Channel: <?php echo $Channel; ?><input type='hidden' name='TestName' value='<?php echo $Channel; ?>'></td>
-	</tr>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
@@ -77,7 +74,9 @@ Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="to
 $channel    = db_get_rows('channel');
 $nC = count($channel);
 for ( $i = 0; $i < $nC; $i++ ) { 
-  echo "<option value='".$channel[$i]['name']."'>".$channel[$i]['name']."</option>";
+  echo "<option value='".$channel[$i]['name']."'"; 
+  if($Channel == $channel[$i]['name']) {echo 'checked';}
+  echo ">".$channel[$i]['name']."</option>";
 } ?>
   </select>
 </td></tr>	
