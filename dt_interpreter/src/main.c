@@ -1,6 +1,34 @@
 #include "dt_incs.h"
 #include "read_random_forest.h"
 #include "txt_to_F4.h"
+#include "eval_rf.h"
+
+// START FUNC DECL
+static uint64_t get_time_usec(
+    void
+    )
+// STOP FUNC DECL
+{
+  struct timeval Tps;
+  struct timezone Tpf;
+  unsigned long long t = 0, t_sec = 0, t_usec = 0;
+
+  gettimeofday (&Tps, &Tpf);
+  t_sec  = (uint64_t )Tps.tv_sec;
+  t_usec = (uint64_t )Tps.tv_usec;
+  t = t_sec * 1000000 + t_usec;
+  return t;
+}
+
+
+/* assembly code to read the TSC */
+inline uint64_t 
+RDTSC(void)
+{
+  unsigned int hi, lo;
+  __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
+  return ((uint64_t)hi << 32) | lo;
+}
 
 DT_REC_TYPE *dt = NULL;
 int n_dt = 0;
@@ -35,29 +63,53 @@ main(
 #define MAXLINE 65535
   char line [MAXLINE+1];
   int lno = 0;
-  for ( ; !feof(fp); lno++) { 
-    memset(line, '\0', MAXLINE+1);
-    char *cptr = fgets(line, MAXLINE, fp);
-    if ( cptr == NULL ) { break; }
-    if ( lno == 0 ) { continue; } // skip header line
-    if ( feof(fp) ) { break; }
-    for ( uint32_t i = 0; i < strlen(line); i++ ) { 
-      if ( line[i] == '\n' ) { line[i] = '\0' ; }
-    }
-    for ( int i = 0; i < nF+1; i++ ) { 
-      char *xptr;
-      if ( i == 0 ) { 
-        xptr = strtok(line, ","); 
-      } 
-      else { 
-        xptr = strtok(NULL, ",");
+  uint64_t sum1 = 0, sum2 = 0;
+  int n_iters = 1000; int denom = 0;
+  for ( int iters = 0; iters < n_iters; iters++ ) {
+    bool is_hdr = true;
+    for ( ; !feof(fp); lno++) { 
+      memset(line, '\0', MAXLINE+1);
+      char *cptr = fgets(line, MAXLINE, fp);
+      if ( cptr == NULL ) { break; }
+      if ( is_hdr ) { is_hdr = false; continue; } // skip header line
+      if ( feof(fp) ) { break; }
+      for ( uint32_t i = 0; i < strlen(line); i++ ) { 
+        if ( line[i] == '\n' ) { line[i] = '\0' ; }
       }
-      status = txt_to_F4(xptr, &(invals[i])); 
+      for ( int i = 0; i < nF+1; i++ ) { 
+        char *xptr;
+        if ( i == 0 ) { 
+          xptr = strtok(line, ","); 
+        } 
+        else { 
+          xptr = strtok(NULL, ",");
+        }
+        status = txt_to_F4(xptr, &(invals[i])); 
+        cBYE(status);
+      }
+      uint64_t t1a = RDTSC(); 
+      uint64_t t2a = get_time_usec();
+      status = eval_rf(invals, nF, dt, n_dt, rf, n_rf); // KEY LINE 
+      uint64_t t1b = RDTSC(); 
+      uint64_t t2b = get_time_usec();
+      uint64_t d1 = (t1b - t1a);
+      uint64_t d2 = (t2b - t2a);
+      sum1 += d1;
+      sum2 += d2;
+      denom++;
+      printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, denom, d1, d2);
       cBYE(status);
     }
-    status = eval_rf(invals, nF, dt, n_dt, rf, n_rf);
-    cBYE(status);
+    fclose_if_non_null(fp);
+    fp = fopen(test_data_file_name, "r");
+    return_if_fopen_failed(fp,  test_data_file_name, "r");
+    is_hdr = true;
   }
+  lno--; // remove header line 
+  double n_trials = n_iters * lno;
+  printf("n_trials = %f \n", n_trials);
+  printf("#Test = %d, time = %lf\n", lno, sum1 / (double)denom);
+  printf("#Test = %d, time = %lf\n", lno, sum2 / (double)denom);
   printf("COMPLETED\n");
   
 BYE:

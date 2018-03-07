@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <time.h>
 #include <sys/mman.h>
+#include <sys/time.h>
 #include <math.h>
 #include <inttypes.h>
 #include <stdbool.h>

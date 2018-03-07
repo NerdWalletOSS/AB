@@ -57,10 +57,3 @@ DONE:
 BYE:
   return status;
 }
-
-
-
-
-  
-
-

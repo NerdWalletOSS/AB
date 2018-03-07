@@ -1,6 +1,6 @@
 extern int
 eval_rf(
-  double *features, /* [n_features] */
+  float *features, /* [n_features] */
   int n_features,
   DT_REC_TYPE *dt, // [n_dt] 
   int n_dt, /* number of nodes in decision tree */

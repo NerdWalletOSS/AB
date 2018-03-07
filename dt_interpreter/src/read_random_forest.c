@@ -2,6 +2,7 @@
 #include "mmap.h"
 #include "read_random_forest.h"
 #include "load_csv_fast.h"
+#include "file_exists.h"
 
 int
 read_random_forest(
@@ -118,6 +119,15 @@ read_random_forest(
       rf[i].dt_ub = max(j, rf[i].dt_lb);
     }
   }
+  for ( uint32_t i = 0; i < nC; i++ ) { 
+    if ( file_exists(out_files[i]) ) { 
+      status = remove(out_files[i]); 
+      if ( status < 0 ) { WHEREAMI; }
+      free_if_non_null(out_files[i]); 
+    }
+  }
+  free_if_non_null(out_files);
+
 
 
 
