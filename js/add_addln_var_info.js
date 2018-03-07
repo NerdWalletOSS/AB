@@ -11,11 +11,11 @@ $(document).ready(function(){
   // Set Data
   $("#VariantID").html(rowid);   
   $("input[name=VariantID]").val(rowid);
+  $("input[name=Position]").val(position);
   $("#VariantName").html(vname);   
   $("input[name=VariantName").val(vname);
-  $("#Description").val(vdesc);
-  $("#CustomData").val(vcd);
-  $("#Position").val(position);
+  $("input[name=Description]").val(vdesc);
+  $("input[name=CustomData]").val(vcd);
 
   });
 
