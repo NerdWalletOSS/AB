@@ -48,6 +48,10 @@ $config = config_html($TestType);
 
   </td>
   </tr>
+  <td>
+
+  </td>
+  </tr>
   <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
 
@@ -60,8 +64,23 @@ $config = config_html($TestType);
   </textarea>
   </td>	
   </tr>
-  <?php
-  if ( isset($TestType) && ($TestType == "XYTest")) {
+<tr><td>
+  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+
+Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>
+  <select name='Channel'>";
+  <option value=''>None</option>
+<?php 
+$channel    = db_get_rows('channel');
+$nC = count($channel);
+for ( $i = 0; $i < $nC; $i++ ) { 
+  echo "<option value='".$channel[$i]['name']."'"; 
+  if($Channel == $channel[$i]['name']) {echo 'checked';}
+  echo ">".$channel[$i]['name']."</option>";
+} ?>
+  </select>
+</td></tr>	
+<?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
   $max_prop = (100 /($num_var));
   ?>

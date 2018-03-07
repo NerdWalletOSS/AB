@@ -26,9 +26,10 @@ if ( $mode == "Edit" )
 {
 	$readonly = "readonly";
   $rslt = db_get_test($id);
- // print("<pre>".print_r($rslt,true)."</pre>");
+ print("<pre>".print_r($rslt,true)."</pre>");
   $id = $rslt['id'];
   $TestName = $rslt['name'];
+  if (isset($rslt['Channel'])) {$Channel = $rslt['Channel'];}
   $description = $rslt['description'];
   $BinType = $rslt['BinType'];
   $st = db_get_row("state", "id", $rslt['state_id']);
