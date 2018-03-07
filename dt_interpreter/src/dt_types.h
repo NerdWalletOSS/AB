@@ -2,11 +2,11 @@
 #define __DT_TYPES_H
 
 typedef struct _dt_rec_type { 
-  int tree_id;
-  int node_id;
-  int left_id;
-  int right_id;
-  int feature_id;
+  int tree_idx;
+  int node_idx;
+  int lchild_idx;
+  int rchild_idx;
+  int feature_idx;
   double threshold;
   int nneg;
   int npos;

@@ -1,6 +1,8 @@
+#include "dt_incs.h"
+#include "eval_dt.h"
 
 int
-eval(
+eval_dt(
   double *in, /* [n_features] */
   int n_features,
   DT_REC_TYPE *dt,
@@ -12,14 +14,15 @@ eval(
   int status = 0;
 
   int tidx = 0; // start at root 
-  int *ptr_npos = -1;
-  int *ptr_ppos = -1;
+  *ptr_npos = -1; // set to something clearly wrong
+  *ptr_npos = -1; // set to something clearly wrong
   for ( ; ; ) { /* infinite loop */
-    int fidx = dt[tidx].feature;
+    bool is_left;
+    int fidx = dt[tidx].feature_idx;
     double val       = in[fidx];
     double threshold = dt[tidx].threshold;
 
-    if ( ( dt[tidx].left_child < 0 ) && ( dt[tidx].right_child < 0 ) ) {
+    if ( ( dt[tidx].lchild_idx < 0 ) && ( dt[tidx].rchild_idx < 0 ) ) {
       goto DONE;
     }
     if ( val <= threshold ) { 
@@ -28,22 +31,23 @@ eval(
     else {
       is_left = false;
     }
-    if ( ( is_left )  && ( dt[tidx].left_child < 0 ) ) {
+    if ( ( is_left )  && ( dt[tidx].lchild_idx < 0 ) ) {
       goto DONE;
     }
-    if ( ( !is_left )  && ( dt[tidx].right_child < 0 ) ) {
+    if ( ( !is_left )  && ( dt[tidx].rchild_idx < 0 ) ) {
       goto DONE;
     }
     if ( is_left ) { 
-      tidx = dt[tidx].left_child;
+      tidx = dt[tidx].lchild_idx;
     }
     else {
-      tidx = dt[tidx].right_child;
+      tidx = dt[tidx].rchild_idx;
     }
   }
 DONE:
-  int *ptr_npos = dt[tidx].npos;
-  int *ptr_nneg = dt[tidx].nneg;
+  *ptr_npos = dt[tidx].npos;
+  *ptr_nneg = dt[tidx].nneg;
+  if ( ( *ptr_npos < 0 ) || ( *ptr_nneg < 0 ) ) { go_BYE(-1); }
 BYE:
   return status;
 }

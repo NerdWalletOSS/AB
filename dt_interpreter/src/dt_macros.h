@@ -1,16 +1,8 @@
 #ifndef __MACROS_H
 #define __MACROS_H
-#ifdef CAPTURE_SERVER_ERROR
-#define WHEREAMI { \
-  sprintf(g_buf, "%u:%s:%u Line %3d of File %s \n", get_time_sec(), g_my_name, g_cfg.port, __LINE__, __FILE__);  \
-  strcat(g_err, g_buf); \
-  fprintf(stderr, "Line %3d of File %s \n", __LINE__, __FILE__);  \
-}
-#else
 #define WHEREAMI {  \
   fprintf(stderr, "Line %3d of File %s \n", __LINE__, __FILE__);  \
 }
-#endif
 /*-------------------------------------------------------*/
 #define go_BYE(x) { WHEREAMI; status = x ; goto BYE; }
 #define err_go_BYE() { fprintf(stderr, "Error = %s \n", strerror(errno)); go_BYE(-1); }
