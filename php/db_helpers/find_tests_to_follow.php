@@ -29,7 +29,7 @@ function find_tests_to_follow(
   return $eligible_to_follow;
 }
 /*
-$x = find_test_to_follow(5);
+$x = find_tests_to_follow("facebook");
 var_dump($x);
  */
 ?>

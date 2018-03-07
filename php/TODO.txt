@@ -13,3 +13,5 @@ This needs more thought since we need to set percentages for variants in any
 case to something legal.
 
 
+
+When you unset or change channel, you need to unset pred_id as well
