@@ -19,6 +19,7 @@ typedef struct _rf_rec_type {
   int dt_ub; // upper bound (exclusive) into dt structure
   int nneg; // these will get set at run time 
   int npos; // these will get set at run time 
+  int model_idx;
 } RF_REC_TYPE;
 
 typedef struct _mdl_rec_type { 

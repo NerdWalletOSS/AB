@@ -2,6 +2,7 @@
 #include "eval_dt.h"
 #include "eval_rf.h"
 #include "eval_mdl.h"
+extern uint64_t g_num_models;
 
 int
 eval_mdl(
@@ -19,13 +20,20 @@ eval_mdl(
   for ( int i = 0; i < n_mdl; i++ ) {
     mdl[i].prob = 0;
   }
-#pragma omp parallel for 
+  if ( dt == NULL ) { go_BYE(-1); }
+  if ( n_dt == 0 ) { go_BYE(-1); }
+  if ( rf == NULL ) { go_BYE(-1); }
+  if ( n_rf == 0 ) { go_BYE(-1); }
+  if ( mdl == NULL ) { go_BYE(-1); }
+  if ( n_mdl == 0 ) { go_BYE(-1); }
+#pragma omp parallel for schedule(static, 1) num_threads(4)
   for ( int i = 0; i < n_mdl; i++ ) {
+    // g_num_models++;
     int l_status = 0;
     if ( l_status < 0 ) { status = -1; continue; }
     int rf_lb = mdl[i].rf_lb;
     int rf_ub = mdl[i].rf_ub;
-    int this_n_rf = rf_ub - rf_lb; // TODO Confirm no +1
+    int this_n_rf = rf_ub - rf_lb; 
     l_status = eval_rf(features, n_features, dt, n_dt, rf+rf_lb, this_n_rf);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob

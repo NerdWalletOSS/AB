@@ -111,12 +111,41 @@ read_random_forest(
   // calculate number of models, alloc and initialize
   n_mdl = 0;
   for ( int i = 0; i < n_dt; i++ ) { 
-    n_mdl = max(n_mdl, dt[i].tree_idx);
+    n_mdl = max(n_mdl, dt[i].model_idx);
   }
   n_mdl++;
   mdl = malloc(n_mdl * sizeof(MDL_REC_TYPE));
   return_if_malloc_failed(mdl);
   memset(mdl, '\0', n_mdl * sizeof(MDL_REC_TYPE));
+  //----------------------------------------------------
+  //  Basic integrity testing
+  int n_fixed = 0;
+  for ( int i = 1; i < n_dt; i++ ) { 
+    if ( dt[i].node_idx != i ) { go_BYE(-1); }
+    if ( dt[i].tree_idx < dt[i-1].tree_idx ) { go_BYE(-1); }
+    if ( dt[i].tree_idx != dt[i-1].tree_idx ) { 
+      if ( dt[i].tree_idx != dt[i-1].tree_idx+1 ) { 
+        go_BYE(-1);
+      }
+    }
+    if ( dt[i].model_idx < dt[i-1].model_idx ) { go_BYE(-1); }
+    if ( dt[i].model_idx != dt[i-1].model_idx ) { 
+      if ( dt[i].model_idx != dt[i-1].model_idx+1 ) { 
+        go_BYE(-1);
+      }
+    }
+    if ( dt[i].feature_idx < 0 ) { 
+      if ( ( dt[i].lchild_idx ==  dt[i].rchild_idx ) && 
+          ( dt[i].lchild_idx != -1 ) ) {
+        dt[i].lchild_idx = dt[i].rchild_idx = -1;
+        n_fixed++;
+      }
+    }
+    if ( ( dt[i].lchild_idx ==  dt[i].rchild_idx ) && 
+         ( dt[i].lchild_idx != -1 ) ) {
+      go_BYE(-1); }
+  }
+  printf("Fixed %d \n", n_fixed);
   //----------------------------------------------------
   // calculate number of random forests
   n_rf = 0;
@@ -137,7 +166,22 @@ read_random_forest(
       if ( dt[j].tree_idx != i ) { continue; }
       rf[i].dt_lb = min(j, rf[i].dt_lb);
       rf[i].dt_ub = max(j, rf[i].dt_lb);
+      rf[i].model_idx = dt[j].model_idx;
     }
+    rf[i].dt_ub++; // convention that ub is exclusive
+  }
+  // TODO P4 Fairly dumb way to initialize mdl .Can be improved
+  for ( int i = 0; i < n_mdl; i++ ) { 
+    mdl[i].model_idx = i;
+    mdl[i].rf_lb = INT_MAX;
+    mdl[i].rf_ub = INT_MIN;
+    mdl[i].prob = -1;
+    for ( int j = 0; j < n_rf; j++ ) { 
+      if ( rf[j].model_idx != i ) { continue; }
+      mdl[i].rf_lb = min(j, mdl[i].rf_lb);
+      mdl[i].rf_ub = max(j, mdl[i].rf_ub);
+    }
+    mdl[i].rf_ub++; // convention that ub is exclusive
   }
   for ( uint32_t i = 0; i < nC; i++ ) { 
     if ( file_exists(out_files[i]) ) { 

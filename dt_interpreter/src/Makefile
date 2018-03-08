@@ -10,12 +10,12 @@ WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-proto
 INCS= -I. -I../../src/
 
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
-OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= -O4
+OPTFLAGS= -O4 -fopenmp
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 CFLAGS= $(LFLAGS) 

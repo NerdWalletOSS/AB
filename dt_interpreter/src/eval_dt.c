@@ -1,24 +1,31 @@
 #include "dt_incs.h"
 #include "eval_dt.h"
 
+extern uint64_t g_num_compares;
 int
 eval_dt(
   float *features, /* [n_features] */
   int n_features,
   DT_REC_TYPE *dt,
   int n_dt, /* number of nodes in decision tree */
+  int root_idx,
   int *ptr_npos, // return values
   int *ptr_nneg // return values
   )
 {
   int status = 0;
+  if ( dt == NULL ) { go_BYE(-1); }
+  if ( n_dt == 0 ) { go_BYE(-1); }
+  if ( ( root_idx < 0 ) || ( root_idx >= n_dt ) ) { go_BYE(-1); }
 
-  int tidx = 0; // start at root 
+  int tidx = root_idx; // start at root 
   *ptr_npos = -1; // set to something clearly wrong
   *ptr_npos = -1; // set to something clearly wrong
   for ( ; ; ) { /* infinite loop */
+    // g_num_compares++;
 #ifdef DEBUG
-    if ( ( tidx < 0 ) || ( tidx >= n_dt ) ) { go_BYE(-1); }
+    if ( ( tidx < 0 ) || ( tidx >= n_dt ) ) { 
+      go_BYE(-1); }
 #endif
     if ( ( dt[tidx].lchild_idx < 0 ) && ( dt[tidx].rchild_idx < 0 ) ) {
       goto DONE;
@@ -26,7 +33,8 @@ eval_dt(
     bool is_left;
     int fidx = dt[tidx].feature_idx;
 #ifdef DEBUG
-    if ( ( fidx < 0 ) || ( fidx >= n_features ) ) { go_BYE(-1); }
+    if ( ( fidx < 0 ) || ( fidx >= n_features ) ) { 
+      go_BYE(-1); }
 #endif
     float val       = features[fidx];
     float threshold = dt[tidx].threshold;

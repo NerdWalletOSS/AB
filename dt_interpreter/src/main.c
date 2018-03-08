@@ -3,6 +3,8 @@
 #include "txt_to_F4.h"
 #include "eval_mdl.h"
 
+uint64_t g_num_compares;
+uint64_t g_num_models;
 // START FUNC DECL
 static uint64_t get_time_usec(
     void
@@ -52,6 +54,8 @@ main(
   random_forest_file_name = argv[1];
   test_data_file_name     = argv[2];
 
+  g_num_compares = 0;
+
   status = read_random_forest(random_forest_file_name, 
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
@@ -66,10 +70,10 @@ main(
   char line [MAXLINE+1];
   int lno = 0;
   uint64_t sum1 = 0, sum2 = 0;
-  int n_iters = 1000; int denom = 0;
+  int n_iters = 1000; int n_trials = 0;
   for ( int iters = 0; iters < n_iters; iters++ ) {
     bool is_hdr = true;
-    for ( ; !feof(fp); lno++) { 
+    for ( lno = 0; !feof(fp); lno++) { 
       memset(line, '\0', MAXLINE+1);
       char *cptr = fgets(line, MAXLINE, fp);
       if ( cptr == NULL ) { break; }
@@ -101,8 +105,8 @@ main(
       uint64_t d2 = (t2b - t2a);
       sum1 += d1;
       sum2 += d2;
-      denom++;
-      // printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, denom, d1, d2);
+      n_trials++;
+      // printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, n_trials, d1, d2);
       cBYE(status);
     }
     fclose_if_non_null(fp);
@@ -111,8 +115,12 @@ main(
     is_hdr = true;
   }
   lno--; // remove header line 
-  printf("#Test = %d, time = %lf\n", lno, sum1 / (double)denom);
-  printf("#Test = %d, time = %lf\n", lno, sum2 / (double)denom);
+  printf("Number of trials = %d \n", n_trials);
+  printf("Number of random forests = %d \n", g_num_models);
+  printf("Number of compares = %d \n", g_num_compares);
+  printf("#Test = %d, time = %lf\n", lno, sum1 / (double)n_trials);
+  printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
+  printf("Total time (1, 2) = %llu %llu \n", sum1, sum2);
   printf("COMPLETED\n");
   
 BYE:

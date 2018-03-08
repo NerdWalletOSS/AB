@@ -4,6 +4,7 @@ eval_dt(
   int n_features,
   DT_REC_TYPE *dt,
   int n_dt, /* number of nodes in decision tree */
+  int root_idx,
   int *ptr_npos, // return values
   int *ptr_nneg // return values
   );

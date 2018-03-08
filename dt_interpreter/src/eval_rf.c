@@ -13,14 +13,17 @@ eval_rf(
   )
 {
   int status = 0;
+  if ( dt == NULL ) { go_BYE(-1); }
+  if ( n_dt == 0 ) { go_BYE(-1); }
+  if ( rf == NULL ) { go_BYE(-1); }
+  if ( n_rf == 0 ) { go_BYE(-1); }
   for ( int i = 0; i < n_rf; i++ ) {
     rf[i].npos = rf[i].nneg = -1;
   }
   for ( int i = 0; i < n_rf; i++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;
-    int this_n_dt = dt_ub-dt_lb+1; // TODO P0 Confirm +1
-    status = eval_dt(features, n_features, dt+dt_lb, this_n_dt,
+    status = eval_dt(features, n_features, dt, n_dt, dt_lb,
         &(rf[i].npos), &(rf[i].nneg));
     cBYE(status);
   }
