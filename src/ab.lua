@@ -15,6 +15,10 @@ end
 function list_tests()
   return json.encode(cache.get('tests'))
 end
+
+function get_config()
+  return cache.get('config')
+end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)
 --    local x = ffi.cast("int*", c_data)
