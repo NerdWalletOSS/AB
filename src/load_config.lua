@@ -43,7 +43,7 @@ local function update_config(c_struct, config)
     assertx(#url > 0 and #url <= consts.AB_MAX_LEN_URL, "url length  must be in the valid range", url)
     ffi.copy(c_struct.url, url)
   end
-  
+
   if config.HEALTH_URL ~= nil then
     local health_url = config.HEALTH_URL.VALUE
     is_updated = is_modified(ffi.string(c_struct.health_url), health_url, is_updated)
@@ -152,6 +152,36 @@ local function update_rts_configs(g_conf, config)
   return is_updated
 end
 
+local function get_valid_values(elem, valid_keys)
+  local ret = {}
+  for k,v in pairs(elem) do
+    if valid_keys[k] == true then
+      if type(v) == "table" then
+        ret[k]= get_valid_values(v, valid_keys)
+      else
+        ret[k] = v
+      end
+    end
+  end
+  return ret
+end
+
+local function cache_config(config)
+  local conf = {}
+  -- TOD figure out statd inc and timing with ramesh
+  local valid_keys= {
+    AB=true, HEALTH_URL=true, PORT=true, SERVER=true, URL=true, LOGGER=true,
+    NUM_POST_RETRIES=true, SZ_LOG_Q=true, MYSQL=true, USER=true, PASSWORD=true,
+    SERVER=true, MYSQL=true, STATSD=true, STATSD_INC=true, STATSD_TIMING=true,
+    DEFAULT_URL=true, VALUE=true, RELOAD_ON_STARTUP=true, SZ_UUID_HT=true,
+    TEST_UUID_LEN=true, UA_TO_DEV_MAP_FILE=true, UUID_LEN=true, VERBOSE=true,
+    VALUE=true
+  }
+  conf = get_valid_values(config, valid_keys)
+  conf = json.encode(conf)
+  cache.put("conf", conf)
+end
+
 local load_cfg = {}
 
 function load_cfg.load_config(conf_str, g_conf, has_changed)
@@ -169,6 +199,7 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
+  cache_config(config)
 end
 
 function load_cfg.load_config_from_file(g_conf, has_changed, file_path)

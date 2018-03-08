@@ -6,7 +6,7 @@ local json = require 'json'
 local consts = require 'ab_consts'
 local Tests = require 'tests'
 local spooky_hash = require 'spooky_hash'
-
+local cache = require 'cache'
 describe('AddTests framework', function()
   before_each(function()
 
@@ -16,6 +16,8 @@ describe('AddTests framework', function()
 
   end)
 
+  -- TODO setup devices in cache
+  cache.put('devices', {}) -- Should actually put all devices from sql query
   local g_tests = ffi.cast("TEST_META_TYPE*", ffi.C.malloc(ffi.sizeof("TEST_META_TYPE")*consts.AB_MAX_NUM_TESTS))
   local c_index = ffi.cast("int*", ffi.C.malloc(ffi.sizeof("int")))
   c_index[0] = -1

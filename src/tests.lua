@@ -1,5 +1,6 @@
 -- local dbg = require 'debugger'
 local json = require 'json'
+local cache = require 'cache'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
 local Tests = {}
@@ -27,6 +28,37 @@ end
 
 local states = create_state_table(consts)
 
+local function get_valid_json(data, valid_keys)
+  local res = {}
+  for k,v in pairs(data) do
+    if valid_keys[k] == true then
+      if type(v) == "table" then
+        res[k] = get_valid_json(v, valid_keys)
+      else
+        res[k] = v
+      end
+    end
+  end
+  return res
+end
+
+local function add_test_to_cache(test_data)
+  local tests = cache.get("tests")
+  tests = cache.get("tests") or {}
+  local valid_keys = {
+    id=true, is_dev_specific=true, seed=true, state_id=true, TestType=true,
+    State=true, Variants=true, name=true, percentage=true, is_final=true,
+    url=true, custom_data=true, DeviceCrossVariant=true, device_id=true,
+    variant_id=true
+  }
+  local devices = assert(cache.get('devices'), 'Devices must be in cache')
+  for _,v in ipairs(devices) do
+    valid_keys[v] = true
+  end
+  tests[test_data.id] = json.encode(get_valid_json(test_data, valid_keys))
+  -- add the devices names too
+  cache.put("tests", tests)
+end
 
 function Tests.get_test(g_tests, test_name, c_index)
   local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
@@ -98,6 +130,7 @@ function Tests.add(test_str, g_tests, c_index)
   error("Invalid TestType given")
   end
   bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
+  add_test_to_cache(test_data)
 end
 
 return Tests
