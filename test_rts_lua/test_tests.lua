@@ -16,8 +16,6 @@ describe('AddTests framework', function()
 
   end)
 
-  -- TODO setup devices in cache
-  cache.put('devices', {}) -- Should actually put all devices from sql query
   local g_tests = ffi.cast("TEST_META_TYPE*", ffi.C.malloc(ffi.sizeof("TEST_META_TYPE")*consts.AB_MAX_NUM_TESTS))
   local c_index = ffi.cast("int*", ffi.C.malloc(ffi.sizeof("int")))
   c_index[0] = -1
