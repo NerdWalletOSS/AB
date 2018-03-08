@@ -18,7 +18,7 @@ l_load_config(
   lua_pop(g_L, 1);
     go_BYE(-1);
   }
-  lua_pushlightuserdata(g_L, g_conf);
+  lua_pushlightuserdata(g_L, &g_cfg);
   lua_pushlightuserdata(g_L, has_changed);
   lua_pushstring(g_L, file_name); // not pushing string as it causes a copy
   status = lua_pcall(g_L, 3, 0, 0);
