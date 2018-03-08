@@ -1,7 +1,7 @@
 #include "dt_incs.h"
 #include "read_random_forest.h"
 #include "txt_to_F4.h"
-#include "eval_rf.h"
+#include "eval_mdl.h"
 
 // START FUNC DECL
 static uint64_t get_time_usec(
@@ -22,7 +22,7 @@ static uint64_t get_time_usec(
 
 
 /* assembly code to read the TSC */
-inline uint64_t 
+static uint64_t 
 RDTSC(void)
 {
   unsigned int hi, lo;
@@ -34,6 +34,8 @@ DT_REC_TYPE *dt = NULL;
 int n_dt = 0;
 RF_REC_TYPE *rf = NULL;
 int n_rf = 0;
+MDL_REC_TYPE *mdl = NULL;
+int n_mdl = 0;
 
 int
 main(
@@ -51,7 +53,7 @@ main(
   test_data_file_name     = argv[2];
 
   status = read_random_forest(random_forest_file_name, 
-      &dt, &n_dt, &rf, &n_rf); 
+      &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
   int nF = 0 ; 
   for ( int i = 0; i < n_dt; i++ ) { nF = max(nF, dt[i].feature_idx); }
@@ -85,11 +87,14 @@ main(
           xptr = strtok(NULL, ",");
         }
         status = txt_to_F4(xptr, &(invals[i])); 
+        if ( status < 0 ) { 
+          printf("hello world\n");
+        }
         cBYE(status);
       }
       uint64_t t1a = RDTSC(); 
       uint64_t t2a = get_time_usec();
-      status = eval_rf(invals, nF, dt, n_dt, rf, n_rf); // KEY LINE 
+      status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl); 
       uint64_t t1b = RDTSC(); 
       uint64_t t2b = get_time_usec();
       uint64_t d1 = (t1b - t1a);
@@ -97,7 +102,7 @@ main(
       sum1 += d1;
       sum2 += d2;
       denom++;
-      printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, denom, d1, d2);
+      // printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, denom, d1, d2);
       cBYE(status);
     }
     fclose_if_non_null(fp);
@@ -106,8 +111,6 @@ main(
     is_hdr = true;
   }
   lno--; // remove header line 
-  double n_trials = n_iters * lno;
-  printf("n_trials = %f \n", n_trials);
   printf("#Test = %d, time = %lf\n", lno, sum1 / (double)denom);
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)denom);
   printf("COMPLETED\n");
@@ -116,6 +119,7 @@ BYE:
   fclose_if_non_null(fp);
   free_if_non_null(dt);
   free_if_non_null(rf);
+  free_if_non_null(mdl);
   free_if_non_null(invals);
   return status;
 }

@@ -10,7 +10,9 @@ read_random_forest(
   DT_REC_TYPE **ptr_dt,
   int *ptr_n_dt, /* number of nodes in decision tree */
   RF_REC_TYPE **ptr_rf,
-  int *ptr_n_rf /* number of nodes in random forest */
+  int *ptr_n_rf, /* number of nodes in random forest */
+  MDL_REC_TYPE **ptr_mdl,
+  int *ptr_n_mdl /* number of models */
   )
 {
   int status = 0;
@@ -20,12 +22,13 @@ read_random_forest(
   *ptr_n_rf = 0;
   DT_REC_TYPE *dt = NULL; int n_dt = 0;
   RF_REC_TYPE *rf = NULL; int n_rf = 0;
+  MDL_REC_TYPE *mdl = NULL; int n_mdl = 0;
   char *X = NULL; size_t nX = 0;
 
   // tree_idx,node_idx,lchild_idx,rchild_idx,feature_idx,threshold,nnneg,npos
   const char *const q_data_dir = "/tmp/";
   const char *const infile = file_name;
-  uint32_t nC = 8;
+  uint32_t nC = 9; // HARD CODED
   uint64_t nR = 0;
   char *fldtypes[nC];
   for ( uint32_t i = 0; i < nC; i++ ) { fldtypes[i] = NULL; }
@@ -34,9 +37,10 @@ read_random_forest(
   fldtypes[2] = strdup("I4");
   fldtypes[3] = strdup("I4");
   fldtypes[4] = strdup("I4");
-  fldtypes[5] = strdup("F4");
-  fldtypes[6] = strdup("F4"); // TODO Lumpy should make this I4
-  fldtypes[7] = strdup("F4"); // TODO Lumpy should make this I4
+  fldtypes[5] = strdup("I4");
+  fldtypes[6] = strdup("F4");
+  fldtypes[7] = strdup("I4"); 
+  fldtypes[8] = strdup("I4"); 
   bool is_hdr = true;
   bool is_load[nC]; 
   for ( uint32_t i = 0; i < nC; i++ ) { is_load[i] = true; }
@@ -61,44 +65,60 @@ read_random_forest(
   // transfer stuff from columns into rows. TODO P4 IMPROVE 
   status = rs_mmap(out_files[0], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].tree_idx = iptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].model_idx = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[1], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].node_idx = iptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].tree_idx = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[2], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].lchild_idx = iptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].node_idx = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[3], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].rchild_idx = iptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].lchild_idx = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[4], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].feature_idx = iptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].rchild_idx = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[5], &X, &nX, 0); cBYE(status);
+  iptr = (int *)X;
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].feature_idx = iptr[i]; }
+  mcr_rs_munmap(X, nX);
+  //----------------------------------------------------
+  status = rs_mmap(out_files[6], &X, &nX, 0); cBYE(status);
   fptr = (float *)X;
   for ( int i = 0; i < n_dt; i++ ) { dt[i].threshold = fptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
-  status = rs_mmap(out_files[6], &X, &nX, 0); cBYE(status);
-  fptr = (float *)X; // TODO SHOULD BE I4 
+  status = rs_mmap(out_files[7], &X, &nX, 0); cBYE(status);
+  iptr = (int *)X;
   for ( int i = 0; i < n_dt; i++ ) { dt[i].nneg = fptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
-  status = rs_mmap(out_files[7], &X, &nX, 0); cBYE(status);
-  fptr = (float *)X; // TODO SHOULD BE I4 
+  status = rs_mmap(out_files[8], &X, &nX, 0); cBYE(status);
+  iptr = (int *)X; 
   for ( int i = 0; i < n_dt; i++ ) { dt[i].npos = fptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
+  // calculate number of models, alloc and initialize
+  n_mdl = 0;
+  for ( int i = 0; i < n_dt; i++ ) { 
+    n_mdl = max(n_mdl, dt[i].tree_idx);
+  }
+  n_mdl++;
+  mdl = malloc(n_mdl * sizeof(MDL_REC_TYPE));
+  return_if_malloc_failed(mdl);
+  memset(mdl, '\0', n_mdl * sizeof(MDL_REC_TYPE));
+  //----------------------------------------------------
+  // calculate number of random forests
   n_rf = 0;
   for ( int i = 0; i < n_dt; i++ ) { 
     n_rf = max(n_rf, dt[i].tree_idx);
@@ -138,5 +158,7 @@ BYE:
   *ptr_n_dt = n_dt;
   *ptr_rf = rf;
   *ptr_n_rf = n_rf;
+  *ptr_mdl = mdl;
+  *ptr_n_mdl = n_mdl;
   return status;
 }

@@ -19,7 +19,8 @@ eval_rf(
   for ( int i = 0; i < n_rf; i++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;
-    status = eval_dt(features, n_features, dt+dt_lb, dt_ub-dt_lb+1,
+    int this_n_dt = dt_ub-dt_lb+1; // TODO P0 Confirm +1
+    status = eval_dt(features, n_features, dt+dt_lb, this_n_dt,
         &(rf[i].npos), &(rf[i].nneg));
     cBYE(status);
   }
