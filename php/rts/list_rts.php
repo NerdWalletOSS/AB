@@ -58,7 +58,7 @@ function list_rts(
   }
 }
 /*
-$SP = list_rts($servers, $ports);
+$SP = list_rts();
 if ( $SP ) { 
    foreach ( $SP as $sp ) { 
      $server = $sp['server']; $port = $sp['port'];
@@ -68,6 +68,6 @@ if ( $SP ) {
 else {
   echo "Not using RTS\n";
 }
- */
+*/
 
 ?>

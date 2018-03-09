@@ -1,5 +1,5 @@
 <?php require_once "common/header_1.php"; ?>
-<script src="js/insert_test.js"></script>
+<script src="js/page_3.js"></script>
 <?php require_once "common/header_2.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
@@ -7,137 +7,81 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 
-# -- Check if number of variants are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-if ( $id == "") { $mode = "Add"; } else {$mode = "Edit/View";}
-if ($id != "") {
+require_once "processor/config_html.php";
+require_once "db_get_rows.php";
 require_once "db_get_test.php";
-$rslt = db_get_test($id);
-//var_dump($rslt);
-}
+# -- Check if number of TestID are set.
+if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+$T = db_get_test($id);
+require_once "processor/display_logic_aev_test.php";
+$config = config_html($TestType);
+
+
+//print("<pre>".print_r($T,true)."</pre>");
 ?>
+
   <div class="container theme-showcase" role="main">
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
   <div class="panel-heading">
-  <h3 class="panel-title"> Add Filters</h3>
+  <h3 class="panel-title"><?php echo $mode; ?> Device X Variant</h3>
   </div>
   <div class="panel-body">
-<?php require_once "common/error_div.php"; ?>
-  <form class="form-signin" id='addTest' type='post'>
+  <!-- AJAX ERROR DIV START -->
+  <?php require_once "common/error_div.php"; ?>
+  <!-- AJAX ERROR DIV END -->
+  <!-- ADD/EDIT FORM START  -->
+  <form class="form-signin" id='device_x_variant' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
-  <tr>
-  <td colspan="3">Test Name &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a descriptive name for your test that represents your vertical, date, and test. It should be easy to read and memorable. .Only Alphanumeric char without space"></span>
-  <input type="text" name="TestName"  
-<?php if ( isset($TestType) && ($TestType == "XYTest")) {
-  echo 'size="127" maxlength="127"';
-  } else {
-  echo 'size="63"  maxlength="63"';
-  }
-?> pattern="^[A-Za-z0-9\S]{1,31}$" required <?php if ($mode != "Add") { echo "readonly='readonly'"; echo "value=".$rslt['name']."";
 
+  <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
+	<tr>
+		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1"  
+<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "checked"; } else { // Do Nothing
 } ?>
-
 >
   </td>
-
- </tr>
+	</tr>
 <tr>
 <td>
-<table style="border: none; border-collapse: collapse;">
-<tbody>
-<tr style="height: 21pt;">
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Attribute </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Value </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Checkbox </span></p>
-</td>
+<tr>
+<td>Variants\Devices</td>
+<?php 
+$device    = db_get_rows('device');
+$nD = count($device);
+for ( $i = 0; $i < $nD; $i++ ) { 
+  echo "<td>".$device[$i]['name']."</td>";
+} ?>
 </tr>
-<tr style="height: 21pt;">
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Platform </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Desktop </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">&nbsp;</td>
-</tr>
-<tr style="height: 21pt;">
-<td style="vertical-align: middle; border: solid #000000 1pt;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Platform </span></p>
-</td>
-<td style="vertical-align: middle; border: solid #000000 1pt;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Tablet </span></p>
-</td>
-<td style="vertical-align: middle; border: solid #000000 1pt;">&nbsp;</td>
-</tr>
-<tr style="height: 21pt;">
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Platform </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">Mobile </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">&nbsp;</td>
-</tr>
-<tr style="height: 13pt;">
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">IsPaid </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">true </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 1pt; border-top: solid #000000 3pt; vertical-align: middle;">&nbsp;</td>
-</tr>
-<tr style="height: 13pt;">
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">IsPaid </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">
-<p style="line-height: 1.2; margin-top: 0pt; margin-bottom: 12pt;"><span style="font-size: 13pt; font-family: Times; color: #000000; background-color: transparent; font-weight: 400; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;">false </span></p>
-</td>
-<td style="border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-bottom: solid #000000 3pt; border-top: solid #000000 1pt; vertical-align: middle;">&nbsp;</td>
+<?php for ( $i = 0; $i < $n_var; $i++ ) { 
+  echo "<tr>";
+  echo "<td>".$T['Variants'][$i]['name']."</td>";
+    for ( $j = 0; $j < $nD; $j++ ) {
+      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
+        }
+  echo "</tr>";
+
+  } ?>
+<tr>
+<td ><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
+<td > <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
-</table>
-</td>
-</tr>
+  <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
+ </table>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-<?php echo "
-  <input type='hidden' name='Creator' value='".$User."'>
-  <input type='hidden' name='TestType' value='".$TestType."'>"; ?>
-  <input type='hidden' name='TestID' value='<?php echo $id; ?>'>
-  </tbody>
-  </table>
-  <button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button>
-  </form>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
+
 <!-- /container -->
-<script>
-$('.prop').keyup(function () {
-  var sum = 0;
-  $('.prop').each(function() {
-  sum += Number($(this).val());
-<?php if ($TestType== "ABTest"){ ?>
-  control=100-sum; 
-<?php } ?>
-  total=sum;
- });
-<?php if ( isset($TestType) && ($TestType == 'ABTest')){ ?>
-  $('#control').val(control);
-<?php } ?>
-  $('#TotalProp').val(sum);
-});
-</script>
 <!-- FOOTER -->
 <?php require_once "common/footer.php"; ?>

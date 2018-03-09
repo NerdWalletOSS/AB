@@ -20,12 +20,14 @@ function make_lkp($tbl)
 function load_globals()
 {
   make_lkp("test_type");
-  make_lkp("state");
+  make_lkp("state"); 
   make_lkp("bin_type");
   make_lkp("admin");
   make_lkp("api");
   make_lkp("channel");
   make_lkp("device");
+  make_lkp("attr");
+  make_lkp("attr_type");
 }
-// load_globals();
+//load_globals();
 ?>

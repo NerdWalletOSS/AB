@@ -27,7 +27,7 @@ $config = config_html($TestType);
   <?php require_once "common/error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' type='post'>
+  <form class="form-signin" id='addTest' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -48,6 +48,10 @@ $config = config_html($TestType);
 
   </td>
   </tr>
+  <td>
+
+  </td>
+  </tr>
   <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
 
@@ -60,8 +64,23 @@ $config = config_html($TestType);
   </textarea>
   </td>	
   </tr>
-  <?php
-  if ( isset($TestType) && ($TestType == "XYTest")) {
+<tr><td>
+  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+
+Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>
+  <select name='Channel'>";
+  <option value=''>None</option>
+<?php 
+$channel    = db_get_rows('channel');
+$nC = count($channel);
+for ( $i = 0; $i < $nC; $i++ ) { 
+  echo "<option value='".$channel[$i]['name']."'"; 
+  if((isset($Channel)) && ($Channel == $channel[$i]['name'])) {echo 'selected';}
+  echo ">".$channel[$i]['name']."</option>";
+} ?>
+  </select>
+</td></tr>	
+<?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
   $max_prop = (100 /($num_var));
   ?>
@@ -80,7 +99,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   <tr>
 <input type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
   <td>Original Feature&nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Standard Feature is called Control"></span>
-  <input type="text" name="VName_0" size="16" maxlength="15" value="control" readonly="readonly"></td>
+  <input type="text" name="VName_0" size="16" maxlength="15" value="Control" readonly="readonly"></td>
   <!--<td>Description
   <textarea class="form-control" rows="3" cols="9" maxlength="128"  readonly="readonly" >Standard Feature</textarea></td>-->
   <td></td>
@@ -114,7 +133,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input type='hidden' name='State' value='<?php echo $state; ?>'>
 <?php } ?>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-<input type='hidden' name='BinType' value='<?php echo $BinType; ?>'>
+<input type='hidden' name='BinType' value='<?php if (isset($BinType)) { echo $BinType;} ?>'>
   <tr>
     <td></td>
     <td >TOTAL: &nbsp; &nbsp;
@@ -126,7 +145,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <tr>
 <td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
 <td></td>
-<td>  <a href="aev_test_2.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a></td>
+<td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 
 </tr>
   </tbody>

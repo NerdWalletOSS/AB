@@ -25,6 +25,7 @@ function set_follow_on(
   $request_webapp_id = insert_row("request_webapp", $X0);
   $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
 
+  // TODO: Handle case where tid_to_follow is null
   // START Check inputs
   rs_assert(is_numeric($tid));
   rs_assert(is_numeric($tid_to_follow));

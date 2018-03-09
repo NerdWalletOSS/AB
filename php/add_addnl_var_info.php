@@ -1,13 +1,17 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
 require_once 'lkp.php';
 require_once 'is_valid_json.php';
 require_once 'get_json_element.php';
 require_once 'aux_chk_name.php';
+
+require_once 'start_log.php'; // UTPAL: Added the required file
+require_once 'mod_row.php';  // UTPAL: Added the required file
+
 
 function add_addnl_var_info(
   $str_inJ
@@ -31,6 +35,7 @@ function add_addnl_var_info(
   $updater    = get_json_element($inJ, 'Updater');
   // TODO P4 $updater_id = lkp("admin", $updater);
   $vid = get_json_element($inJ, 'VariantID'); 
+
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
@@ -67,18 +72,21 @@ function add_addnl_var_info(
   // check url 
   if ( $test_type == "XYTest" ) {
     rs_assert(strlen($url)         > 1, "URL cannot be null");
-  }
-  rs_assert(strlen($url)         <= lkp("configs", "max_len_url"));
-  rs_assert(chk_url_text($url), "URL [$url] contains bad characters\n");
-  $is_chk = lkp('configs', "check_url_reachable");
-  if ( $is_chk ) { 
-    rs_assert(chk_url($url), "URL [$url] not reachable\n");
-  }
+    // UTPAL START: Shifted the closed curly bracket of if condition to line 85 to include all checks corresponding to URLs
+    rs_assert(strlen($url)         <= lkp("configs", "max_len_url"));
+    rs_assert(chk_url_text($url), "URL [$url] contains bad characters\n");
+    $is_chk = lkp('configs', "check_url_reachable");
+    if ( $is_chk ) { 
+      rs_assert(chk_url($url), "URL [$url] not reachable\n");
+    }
+  // Included the following check inside the if condition of XYTest
   $V = db_get_rows("variant", " test_id= $test_id ");
-  foreach ( $V as $v ) { 
+    foreach ( $V as $v ) { 
     if ( $v['id'] == $vid ) { continue; };
     rs_assert($v['url'] != $url, "URL should be unique");
+    }
   }
+  // UTPAL END
 
   // TODO P3: does description/custom data get set to null or empty string?
 
@@ -106,6 +114,7 @@ function add_addnl_var_info(
   $Y['status_code'] = $outJ["status_code"] = $http_code;
   $Y['msg_stdout'] = $outJ["msg_stdout"] = 
     "Variant [$vname, $vid] of Test [$test_name, $test_id] updated";
+  $outJ["TestID"] = $test_id; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
   if ( $state == "started" ) {
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 

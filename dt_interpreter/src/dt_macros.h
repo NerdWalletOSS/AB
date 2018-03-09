@@ -19,7 +19,7 @@
 #define max(X, Y)  ((X) > (Y) ? (X) : (Y))
 #define sqr(X)  ((X) * (X))
 
-#define rs_munmap(X, nX) { \
+#define mcr_rs_munmap(X, nX) { \
   if ( ( X == NULL ) && ( nX != 0 ) ) {  WHEREAMI; return(-1); } \
   if ( ( X != NULL ) && ( nX == 0 ) )  { WHEREAMI; return(-1); } \
   if ( X != NULL ) { munmap(X, nX); X = NULL; nX = 0; } \

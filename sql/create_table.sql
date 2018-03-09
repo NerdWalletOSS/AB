@@ -312,11 +312,14 @@ CREATE TABLE bool_attr_test (
   id int(8) not null auto_increment,
   api_id int(8) not null, 
   request_webapp_id int(8) not null, 
+  attr_id int(8) not null,
   test_id int(8) not null,
-  val int(2) not null, -- 0 is false, 1 is true 
+  val  boolean not null,
   CONSTRAINT fk_b_api_id FOREIGN KEY (api_id) REFERENCES api(id),
   CONSTRAINT fk_b_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
-  CONSTRAINT b_uq_test_id UNIQUE (test_id),
+  CONSTRAINT fk_b_test_id FOREIGN KEY (test_id) REFERENCES test(id),
+  CONSTRAINT fk_b_attr_id FOREIGN KEY (attr_id) REFERENCES attr(id),
+  CONSTRAINT b_uq_test_id UNIQUE (test_id, attr_id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
 

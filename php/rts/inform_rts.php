@@ -18,7 +18,7 @@ function inform_rts(
   $is_ok = true;
   $SP = list_rts();
   if ( !is_array($SP) ) { // NOTHING MORE TO DO 
-    // $err_msg = "NOTICE: Not talking to RTS\n";
+    $err_msg = "NOTICE: Not talking to RTS\n";
     return true;  
   } 
   foreach ( $SP  as $sp ) {
