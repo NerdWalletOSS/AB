@@ -4,10 +4,10 @@ local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local consts = require 'ab_consts'
-local Tests = require 'tests'
+local AddTest = require 'add_test'
 local spooky_hash = require 'spooky_hash'
 local cache = require 'cache'
-describe('AddTests framework', function()
+describe('AddTest framework', function()
   before_each(function()
 
   end)
@@ -44,7 +44,7 @@ describe('AddTests framework', function()
   describe(", for ABTests ", function()
     describe('should add a test which', function()
       it("should work for a valid json string", function()
-        local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         assert(c_index[0] ~= -1, "Entry should have a valid index")
         cleanup(g_tests, c_index)
@@ -54,7 +54,7 @@ describe('AddTests framework', function()
         local j_table = json.decode(valid_json)
         j_table.TestType = nil
         local j_str = json.encode(j_table)
-        local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+        local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assert(status == false)
         cleanup(g_tests, c_index)
       end)
@@ -63,13 +63,13 @@ describe('AddTests framework', function()
         local j_table = json.decode(valid_json)
         j_table.name = nil
         local j_str = json.encode(j_table)
-        local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+        local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assert(status == false)
         cleanup(g_tests, c_index)
 
         j_table.name = string.rep("a", consts.AB_MAX_LEN_TEST_NAME + 1)
         j_str = json.encode(j_table)
-        status, res = pcall(Tests.add, j_str, g_tests, c_index)
+        status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assert(status == false)
         cleanup(g_tests, c_index)
 
@@ -77,7 +77,7 @@ describe('AddTests framework', function()
 
         j_table.name = string.rep("a", consts.AB_MAX_LEN_TEST_NAME)
         j_str = json.encode(j_table)
-        local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+        local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assertx(status == true, "Insert for valid name should succeed Failure: ", res)
         assert(c_index[0] ~= -1, "Entry should have a valid index")
         cleanup(g_tests, c_index)
@@ -86,10 +86,10 @@ describe('AddTests framework', function()
       it("should have a valid position", function()
         -- se default position 1 before and 1 after are only positions left
         local j_table = json.decode(valid_json)
-        local default_pos = spooky_hash.spooky_hash64(j_table.name, #j_table.name, Tests.g_seed1) % consts.AB_MAX_NUM_TESTS
+        local default_pos = spooky_hash.spooky_hash64(j_table.name, #j_table.name, AddTest.g_seed1) % consts.AB_MAX_NUM_TESTS
         fill_g_tests()
         g_tests[default_pos].name_hash = 0
-        local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
         assertx(status == true, "Insert should succeed in default position ", res)
         assert(c_index[0] == default_pos, "should insert in empty position")
         assert(c_index[0] ~= -1, "Entry should have a valid index")
@@ -97,7 +97,7 @@ describe('AddTests framework', function()
 
         fill_g_tests()
         g_tests[default_pos + 1].name_hash = 0
-        local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
         assert(status == true, "Insert should succeed in next to default position")
         assert(c_index[0] == default_pos + 1, "should insert in empty position")
         assert(c_index[0] ~= -1, "Entry should have a valid index")
@@ -105,7 +105,7 @@ describe('AddTests framework', function()
 
         fill_g_tests()
         g_tests[default_pos - 1].name_hash = 0
-        local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
         assert(status == true, "Insert should succeed in previous to default  position")
         assert(c_index[0] == default_pos - 1, "should insert in empty position")
         assert(c_index[0] ~= -1, "Entry should have a valid index")
@@ -114,7 +114,7 @@ describe('AddTests framework', function()
 
 
         fill_g_tests()
-        local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
         assert(status == false, "Insert should fail in a full tests array`")
         assert(c_index[0] == -1, "Entry should not exist")
         cleanup(g_tests, c_index)
@@ -126,7 +126,7 @@ describe('AddTests framework', function()
           local j_table = json.decode(valid_json)
           j_table.Variants[1].name = 'failme'
           local j_str = json.encode(j_table)
-          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assert(status == false)
           cleanup(g_tests, c_index)
         end)
@@ -134,7 +134,7 @@ describe('AddTests framework', function()
           local j_table = json.decode(valid_json)
           table.sort(j_table.Variants, function(a,b) return a.name > b.name end)
           local j_str = json.encode(j_table)
-          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assert(status == true, 'Insertion for valid json should succeed')
           local variant_bin = g_tests[c_index[0]].variant_per_bin[0]
           local bin_size = ffi.sizeof(string.format("uint8_t[%s]", consts.AB_NUM_BINS))
@@ -144,7 +144,7 @@ describe('AddTests framework', function()
 
           table.sort(j_table.Variants, function(a,b) return a.name < b.name end)
           j_str = json.encode(j_table)
-          status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           variant_bin = g_tests[c_index[0]].variant_per_bin[0]
           for i=1,consts.AB_NUM_BINS do
             assert(variant_bin[i-1] == old_bin[i-1])
@@ -155,7 +155,7 @@ describe('AddTests framework', function()
           j_table.Variants[1].percentage = "10"
           j_table.Variants[2].percentage = "70"
           local j_str = json.encode(j_table)
-          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assert(status == false)
           cleanup(g_tests, c_index)
         end)
@@ -170,7 +170,7 @@ describe('AddTests framework', function()
           j_table.Variants[2].percentage = "70"
           j_table.BinType = "anonymous"
           local j_str = json.encode(j_table)
-          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assertx(status == true, res)
           cleanup(g_tests, c_index)
         end)
@@ -181,7 +181,7 @@ describe('AddTests framework', function()
           j_table.is_dev_specific = tostring(consts.TRUE)
           j_table.BinType = "anonymous"
           local j_str = json.encode(j_table)
-          local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assertx(status == true, res)
           local dev_variants = j_table.DeviceCrossVariant
           table.sort(dev_variants, function(a,b) return a[0].device_id < b[0].device_id end)
@@ -226,13 +226,13 @@ describe('AddTests framework', function()
   end)
   describe("should delete archived tests", function()
     empty_g_tests()
-    local status, res = pcall(Tests.add, valid_json, g_tests, c_index)
+    local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
     assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
     assert(c_index[0] ~= -1, "Entry should have a valid index")
     local j_table = json.decode(valid_json)
     j_table.State = "archived"
     local j_str = json.encode(j_table)
-    status, res = pcall(Tests.add, j_str, g_tests, c_index)
+    status, res = pcall(AddTest.add, j_str, g_tests, c_index)
     assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
     assert(c_index[0] ~= -1, "Entry should have a valid index")
     assert(g_tests[c_index[0]].id == 0, 'expect 0 as id  when nulled out')
@@ -245,7 +245,7 @@ describe('AddTests framework', function()
     local j_table = json.decode(valid_json)
     j_table.TestType = "InvalidTest"
     local j_str = json.encode(j_table)
-    local status, res = pcall(Tests.add, j_str, g_tests, c_index)
+    local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
     assert(status == false)
     cleanup(g_tests, c_index)
   end)

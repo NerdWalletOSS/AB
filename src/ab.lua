@@ -1,7 +1,7 @@
 local csv = require "csv"
 local json = require "json"
 -- local ffi = require 'ffi' 
-local tests = require 'tests'
+local tests = require 'add_test'
 local load_config = require 'load_config'
 local cache = require 'cache'
 function add(...)

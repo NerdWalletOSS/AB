@@ -3,12 +3,12 @@ local json = require 'json'
 local cache = require 'cache'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
-local Tests = {}
+local AddTests = {}
 local bins = require 'bins'
 local consts = require 'ab_consts'
 local assertx = require 'assertx'
 local g_seed1 = 961748941 -- TODO remove manual copy
-Tests.g_seed1 = g_seed1
+AddTests.g_seed1 = g_seed1
 local spooky_hash = require 'spooky_hash'
 
 local function create_state_table(consts)
@@ -28,7 +28,7 @@ end
 
 local states = create_state_table(consts)
 
-function Tests.get_test(g_tests, test_name, c_index)
+function AddTests.get_test(g_tests, test_name, c_index)
   local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
@@ -72,7 +72,7 @@ function Tests.get_test(g_tests, test_name, c_index)
 end
 
 
-function Tests.add(test_str, g_tests, c_index)
+function AddTests.add(test_str, g_tests, c_index)
   -- print(test_str)
   local test_data = json.decode(test_str)
   local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
@@ -80,7 +80,7 @@ function Tests.add(test_str, g_tests, c_index)
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
-  local c_test = Tests.get_test(g_tests, test_data.name, c_index)
+  local c_test = AddTests.get_test(g_tests, test_data.name, c_index)
   assert(c_test ~= nil, "Position not found to insert")
   if test_data.State:lower() == "archived" then
     -- delete the test
@@ -113,4 +113,4 @@ function Tests.add(test_str, g_tests, c_index)
   end
 end
 
-return Tests
+return AddTests
