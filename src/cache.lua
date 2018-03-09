@@ -8,7 +8,7 @@ local c_store, c_weak_store
 local function init()
   c_store = {}
   c_weak_store = {}
-  setmetatable(c_weak_store, { __mode = 'kv' })
+  setmetatable(c_weak_store, { __mode = 'v' })
 end
 
 function cache.put(key, value, weak)
