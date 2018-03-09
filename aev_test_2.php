@@ -95,16 +95,16 @@ $config = config_html($TestType);
 <input type='hidden' name='Updater' value='<?php echo $User; ?>'>
 <input type='hidden' name='VariantID'>
 <input type='hidden' name='VariantName'>
-<input type='hidden' name='Position'>
+<input type='hidden' name='Position' id='Position'>
 <table>
   <tr>
 <td>
 <p>Variant ID: &nbsp; <span id='VariantID' ></span></p>
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
-<p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' >
+<p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' id='Description'>
 </textarea></p>
 <?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
-<p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' >
+<p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' id='CustomData' >
 </textarea></p>
 <?php } ?>
 </td>

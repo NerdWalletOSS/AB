@@ -1,4 +1,4 @@
-<?
+<?php
 require_once 'db_get_rows.php';
 require_once 'db_get_row.php';
 require_once 'lkp.php';

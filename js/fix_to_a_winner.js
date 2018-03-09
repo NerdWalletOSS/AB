@@ -1,29 +1,9 @@
 $(document).ready(function(){
-
- $('#myModal').on('show.bs.modal', function (e) {
-  // Get Data
-  var rowid = $(e.relatedTarget).data('id');
-  var position = $(e.relatedTarget).data('position');
-  var vname = $("#VName_" + position).html();
-  var vdesc = $("#Vdesc_" + position).html();
-  var vcd = $("#Vcd_" + position).html();
-
-  // Set Data
-  $("#VariantID").html(rowid);   
-  $("input[name=VariantID]").val(rowid);
-  $("input[name=Position]").val(position);
-  $("#VariantName").html(vname);   
-  $("input[name=VariantName").val(vname);
-  $("#Description").val(vdesc);
-  $("#CustomData").val(vcd);
-
-  });
-
   $("#error").css('display', 'none', 'important');
-		$('#addVI').submit(function(){
+		$('#fix_to_a_winner').submit(function(){
 			$.ajax({
 				type: "POST",
-		   	url: "processor/add_addln_variant_info.php",
+		   	url: "processor/fix_to_a_winner_processor.php",
 			 	data: $(this).serialize(),
 			 	//dataType: "json",//set to JSON
 		   	error: function(response, textStatus, XHR){  
@@ -42,12 +22,12 @@ $(document).ready(function(){
 				}
 				else    {
 					var id = response.getResponseHeader('TestID');
-			 		window.location="aev_test_2.php?TestID=" + id;
+			 		window.location="home.php?TestID=" + id;
 				}
 		   	},
         success: function(response, textStatus, XHR) {
 					var id = XHR.getResponseHeader('TestID');
-			 		window.location="aev_test_2.php?TestID=" + id;
+			 		window.location="home.php?TestID=" + id;
         },
 		   	beforeSend:function()
 		   {

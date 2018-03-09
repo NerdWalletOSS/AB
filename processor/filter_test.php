@@ -21,12 +21,12 @@ switch ($option) {
         $state = '5';
         break;
     default:
-        $state = '2, 3, or 4';
+        $state = "'2','3','4'";
 }
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }
 if ($TestType == "XYTest") { $test_type_id = 2; }
-$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '".$state."'");
+$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id IN (".$state.")");
 echo json_encode($result);
 }
 

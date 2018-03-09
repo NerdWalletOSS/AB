@@ -8,11 +8,11 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 # -- Get Active Tests
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
-$state = '2, 3 and 4';
+$state = "'2','3','4'";
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }
 if ($TestType == "XYTest") { $test_type_id = 2; }
-$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '".$state."'");
+$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id IN (".$state.")");
 //$nR = count($result);
 }
 ?>
@@ -35,7 +35,7 @@ $result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id = '
 		  <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-								<input type="radio" name="option" value="1" id="1" checked/>&nbsp;Dormant/Started/Terminated  &nbsp;&nbsp;
+								<input type="radio" name="option" value="'2','3','4'" id= "1" checked/>&nbsp;Dormant/Started/Terminated  &nbsp;&nbsp;
                 <input type="radio" name="option" value="2" id="2"  />&nbsp;Draft &nbsp;&nbsp; 
                 <input type="radio" name="option" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
 								<input type="hidden" name="TestType" id="TestType" value="<?php echo $TestType; ?>">

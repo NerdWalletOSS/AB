@@ -93,7 +93,7 @@ function action_state(state_id) {
 					$("#error_message").html("Loading...")
 		   }
 		  });
-option.prop('checked', true);
+		option.prop('checked', true);
 		return false;
 	});
 
