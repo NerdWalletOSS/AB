@@ -8,16 +8,16 @@ local c_store, c_weak_store
 local function init()
   c_store = {}
   c_weak_store = {}
-  setmetatable(c_weak_store, { __mode = 'v' })
+  setmetatable(c_weak_store, { __mode = 'kv' })
 end
 
 function cache.put(key, value, weak)
-  if weak == nil then weak = false end
+  if weak ~= true then weak = false end
   
-  if weak == true then
+  if weak == false then
     c_store[key]= value
   else
-    c_weak_store[key]= value
+    c_weak_store[key]= {value}
   end
   return true
 end
@@ -25,7 +25,12 @@ end
 function cache.get(key)
   local value = c_store[key]
   if value == nil then
-    return c_weak_store[key]
+    local val = c_weak_store[key]
+    if val ~= nil then 
+      return val[0]
+      else
+      return nil
+    end
   else
     return value
   end
