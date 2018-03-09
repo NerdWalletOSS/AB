@@ -1,0 +1,16 @@
+{
+  "dbhost" : "localhost",
+  "dbname" : "abdb",
+  "dbuser" : "root",
+  "dbpass" : "",
+  "webapp_server" : "localhost",
+  "webapp_port" : "8080",
+  "ab_rts_server" : "",
+  "ab_rts_port" : "8000",
+  "ab_log_server" : "localhost",
+  "ab_log_port" : "8004",
+  "rts_finder_server" : "",
+  "rts_finder_port" : "8020",
+  "check_url_reachable" : "false",
+  "default_landing_page" : "http://www.nerdwallet.com"
+}
