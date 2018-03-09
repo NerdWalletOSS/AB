@@ -82,25 +82,35 @@ function Tests.add(test_str, g_tests, c_index)
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   local c_test = Tests.get_test(g_tests, test_data.name, c_index)
   assert(c_test ~= nil, "Position not found to insert")
-  ffi.copy(c_test.name, test_data.name)
-  c_test.test_type = consts.AB_TEST_TYPE_AB
-  c_test.state = assert(states[test_data.State], "Must have a valid state")
-  c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
-  local seed = assert(test_data.seed, "Seed needs to be specified for test")
-  c_test.seed = spooky_hash.convert_str_to_u64(seed)
-  local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
-  assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")
-  if test_type == "ABTest" then
-    c_test.test_type = consts.AB_TEST_TYPE_AB
-  elseif test_type == "XYTest" then
-    c_test.test_type = consts.AB_TEST_TYPE_XY
+  if test_data.State:lower() == "archived" then
+    -- delete the test
+    -- delete from cache
+    ffi.fill( ffi.cast("TEST_META_TYPE*", g_tests) + c_index[0], ffi.sizeof("TEST_META_TYPE"))
+    local tests = cache.get("tests") or {}
+    tests[test_data.id] = nil
+    cache.put("tests", tests)
+
   else
-    error("Invalid TestType given")
+    ffi.copy(c_test.name, test_data.name)
+    c_test.test_type = consts.AB_TEST_TYPE_AB
+    c_test.state = assert(states[test_data.State], "Must have a valid state")
+    c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
+    local seed = assert(test_data.seed, "Seed needs to be specified for test")
+    c_test.seed = spooky_hash.convert_str_to_u64(seed)
+    local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
+    assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")
+    if test_type == "ABTest" then
+      c_test.test_type = consts.AB_TEST_TYPE_AB
+    elseif test_type == "XYTest" then
+      c_test.test_type = consts.AB_TEST_TYPE_XY
+    else
+      error("Invalid TestType given")
+    end
+    bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
+    local tests = cache.get("tests") or {}
+    tests[test_data.id] = test_str
+    cache.put("tests", tests)
   end
-  bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
-  local tests = cache.get("tests") or {}
-  tests[test_data.id] = test_str
-  cache.put("tests", tests)
 end
 
 return Tests
