@@ -108,6 +108,7 @@ function test_basic(
     $state = get_json_element($inJ, 'State');
     rs_assert($state != "archived");  // no changes to archived state
     $X1['description']  = $test_dscr;
+    $X1['channel_id']   = $channel_id; // UTPAL: To allow channel editing 
     $X1['updated_at']   = $updated_at;
     $X1['t_update']     = $t_update;
     $X1['updater_id']   = $updater_id;
@@ -174,6 +175,7 @@ function test_basic(
     $X1['state_id']     = $state_id;
     $X1['bin_type_id'] = $bin_type_id;
     //-----------------------------------------------
+
     $dbh = dbconn(); rs_assert(!empty($dbh)); 
     try {
       $dbh->beginTransaction();

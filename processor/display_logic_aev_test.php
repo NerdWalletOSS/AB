@@ -7,6 +7,8 @@ if ($id == "") { $mode = "Add"; }
 if ($id != "") {
   $rslt = db_get_test($id);
 if ($rslt == "") { header('Location: home.php'); return false; }
+if ($rslt['state_id'] != "2") { $can_fix_to_a_winner = "0"; }
+
   $state_id = $rslt['state_id'];
   if (($state_id == "1") || ($state_id == "2") || ($state_id == "3") ) { $mode = "Edit"; }
   if (($state_id == "4") || ($state_id == "5")) { $mode = "View"; }
@@ -26,7 +28,7 @@ if ( $mode == "Edit" )
 {
 	$readonly = "readonly";
   $rslt = db_get_test($id);
- print("<pre>".print_r($rslt,true)."</pre>");
+  //print("<pre>".print_r($rslt,true)."</pre>");
   $id = $rslt['id'];
   $TestName = $rslt['name'];
   if (isset($rslt['Channel'])) {$Channel = $rslt['Channel'];}
@@ -46,7 +48,9 @@ if ( $mode == "View" )
   //print("<pre>".print_r($rslt,true)."</pre>");
   $id = $rslt['id'];
   $TestName = $rslt['name'];
+  if (isset($rslt['Channel'])) {$Channel = $rslt['Channel'];}
   $description = $rslt['description'];
+  $BinType = $rslt['BinType'];
   $state = $rslt['State'];
   $num_var = count($rslt['Variants']) - 1;
 if($TestType == "XYTest") { $num_var = count($rslt['Variants']); } else {$num_var = count($rslt['Variants']) - 1; }

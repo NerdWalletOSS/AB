@@ -3,8 +3,7 @@ require_once 'load_globals.php';
 require_once 'load_configs.php';
 require_once 'rs_assert.php';
 
-function
-lkp(
+function lkp(
   $tbl, 
   $val,
   $reverse = false
@@ -24,7 +23,7 @@ lkp(
     load_globals();
   }
   rs_assert(isset($GLOBALS[$tbl]), "Table [$tbl] not loaded");
-  if (! isset($GLOBALS[$tbl][$val]) ) {
+  if (!isset($GLOBALS[$tbl][$val]) ) {
     echo("UNDEFINED $tbl, $val\n");
   }
   rs_assert(isset($GLOBALS[$tbl][$val]));

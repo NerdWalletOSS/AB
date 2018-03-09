@@ -10,12 +10,14 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 require_once "processor/config_html.php";
 require_once "db_get_rows.php";
 require_once "db_get_test.php";
+require_once "find_tests_to_follow.php";
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 $T = db_get_test($id);
 require_once "processor/display_logic_aev_test.php";
 $config = config_html($TestType);
-
+$fo_tests =  find_tests_to_follow($Channel);
+$nF = count($fo_tests);
 
 //print("<pre>".print_r($T,true)."</pre>");
 ?>
@@ -25,14 +27,14 @@ $config = config_html($TestType);
   <div class="col-xs-12">
   <div class="panel panel-primary">
   <div class="panel-heading">
-  <h3 class="panel-title"><?php echo $mode; ?> Device X Variant</h3>
+  <h3 class="panel-title"><?php echo $mode; ?> Follow On</h3>
   </div>
   <div class="panel-body">
   <!-- AJAX ERROR DIV START -->
   <?php require_once "common/error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='device_x_variant' method='post'>
+  <form class="form-signin" id='device_x_variant' type='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -41,40 +43,39 @@ $config = config_html($TestType);
 		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1"  
-<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "checked"; } else { // Do Nothing
-} ?>
->
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Channel: <?php echo $Channel; ?> <input type='hidden' name='Channel' value='<?php echo $Channel; ?>'>
   </td>
 	</tr>
 <tr>
-<td>
-<tr>
-<td>Variants\Devices</td>
+<table class="table table-striped table-condensed" style="space=5px">
+<thead>
+<th>TestID</th>
+<th>TestName</th>
+<th>&nbsp;</th>
+</thead>
+<tbody>
 <?php 
-$device    = db_get_rows('device');
-$nD = count($device);
-for ( $i = 0; $i < $nD; $i++ ) { 
-  echo "<td>".$device[$i]['name']."</td>";
-} ?>
-</tr>
-<?php for ( $i = 0; $i < $n_var; $i++ ) { 
+for ( $fidx = 0; $i < $nF; $fidx++ ) { 
   echo "<tr>";
-  echo "<td>".$T['Variants'][$i]['name']."</td>";
-    for ( $j = 0; $j < $nD; $j++ ) {
-      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
-        }
+  echo "<td>".$fo_tests[$fidx]['id']."<input type='hidden' name='TID_to_follow' value='".$fo_tests[$fidx]['id']."'></td>";
+  echo "<td>".$fo_tests[$fidx]['name']."<input type='hidden' name='TNAME_to_follow' value='".$fo_tests[$fidx]['name']."'></td>";
   echo "</tr>";
-
   } ?>
 <tr>
-<td ><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
-<td > <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td colspan="3"><button class="btn btn-lg btn-success btn-block" type="submit" id="follow_on">Next</button></td>
+</form>
+<td></td>
+<td colspan="3">  <a href="thankyou.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a></td>
+
+8934988782
 </tr>
 </tbody>
+</table>
+</td>
+
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
  </table>
-</form>
+
 </div>
 </div>
 </div>

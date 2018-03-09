@@ -39,6 +39,9 @@ if ( !$_GET ) {
 //$str_inJ = json_encode($_POST);
 $X = db_get_test($_GET['TestID']);
 $X['NewState'] = action_state($_GET['state_id']);
+if ((isset($_GET['Winner'])) && ($_GET['state_id'] == "2")) {
+$X['Winner'] = $_GET['Winner'];
+}
 $X['Updater'] = $User;
 $str_inJ = json_encode($X);
 

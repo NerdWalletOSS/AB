@@ -27,7 +27,7 @@ $config = config_html($TestType);
   <?php require_once "common/error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' type='post'>
+  <form class="form-signin" id='addTest' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -75,7 +75,7 @@ $channel    = db_get_rows('channel');
 $nC = count($channel);
 for ( $i = 0; $i < $nC; $i++ ) { 
   echo "<option value='".$channel[$i]['name']."'"; 
-  if($Channel == $channel[$i]['name']) {echo 'checked';}
+  if((isset($Channel)) && ($Channel == $channel[$i]['name'])) {echo 'selected';}
   echo ">".$channel[$i]['name']."</option>";
 } ?>
   </select>
@@ -133,7 +133,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input type='hidden' name='State' value='<?php echo $state; ?>'>
 <?php } ?>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-<input type='hidden' name='BinType' value='<?php echo $BinType; ?>'>
+<input type='hidden' name='BinType' value='<?php if (isset($BinType)) { echo $BinType;} ?>'>
   <tr>
     <td></td>
     <td >TOTAL: &nbsp; &nbsp;
@@ -145,7 +145,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <tr>
 <td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
 <td></td>
-<td>  <a href="aev_test_2.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Skip</button></a></td>
+<td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 
 </tr>
   </tbody>
