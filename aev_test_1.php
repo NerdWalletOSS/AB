@@ -1,17 +1,20 @@
-<?php require_once "common/header_1.php"; ?>
+<?php 
+# -- CHECKIF TEST ID IS SET
+  if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+  require_once "common/header.php"; 
+?>
 <script src="js/insert_test.js"></script>
-<?php require_once "common/header_2.php"; ?>
+<?php require_once "common/navbar.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 
+require_once "processor/display_logic_aev_test.php";
 require_once "processor/config_html.php";
 
-# -- Check if number of TestID are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-require_once "processor/display_logic_aev_test.php";
+# -- CONFIGURE HTML CONSTRAINTS
 $config = config_html($TestType);
 ?>
 
@@ -67,7 +70,15 @@ $config = config_html($TestType);
 <tr><td>
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 
-Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>
+Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>&nbsp;
+<?php 
+if ( $mode == "View" ) 
+  {
+    echo $Channel;
+  }
+else
+  { 
+?>
   <select name='Channel'>";
   <option value=''>None</option>
 <?php 
@@ -79,6 +90,7 @@ for ( $i = 0; $i < $nC; $i++ ) {
   echo ">".$channel[$i]['name']."</option>";
 } ?>
   </select>
+<?php } ?>
 </td></tr>	
 <?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
@@ -94,7 +106,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?ph
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
-value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"required></td></tr>
+value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"required <?php echo $readonly; ?>></td></tr>
 <?php } }elseif ($TestType == "ABTest") { ?>
   <tr>
 <input type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
@@ -143,8 +155,17 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
     <td> </td>
   </tr>
 <tr>
+<td><button onclick="location.href = 'home.php'"  class="btn btn-lg btn-primary btn-block" >Cancel</button></td>
+<?php 
+if ( $mode == "View" ) 
+  {
+    echo "<td>&nbsp;</td>";
+  }
+else
+  { 
+?>
 <td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
-<td></td>
+<?php } ?>
 <td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 
 </tr>

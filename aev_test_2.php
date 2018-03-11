@@ -1,6 +1,6 @@
-<?php require_once "common/header_1.php"; ?>
+<?php require_once "common/header.php"; ?>
 <script src="js/add_addln_var_info.js"></script>
-<?php require_once "common/header_2.php"; ?>
+<?php require_once "common/navbar.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
@@ -25,7 +25,7 @@ $config = config_html($TestType);
   <div class="panel-body">
 
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' type='post'>
+  <form class="form-signin" id='addTest' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -62,13 +62,14 @@ $config = config_html($TestType);
 </tr>
 <?php } ?>
  
-<tr><td>
-</td></tr>
+<tr>
+<td><button onclick="location.href = 'aev_test_1.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<td> <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+</tr>
   </tbody>
   </table>
   
   </form>
-<a href="aev_test_3.php?TestID=<?php echo $id; ?>"><button class="btn btn-lg btn-warning btn-block" >Next</button></a>
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>
@@ -109,8 +110,10 @@ $config = config_html($TestType);
 <?php } ?>
 </td>
 </tr>
+
+<td><button class="btn btn-lg btn-success btn-block" type="submit" id="addln_vi_2">Submit</button></td>
+</tr>
 </table>
-<button class="btn btn-lg btn-success btn-block" type="submit" id="addln_vi_2">Submit</button>
 </form>
 						</div> 
             </div>

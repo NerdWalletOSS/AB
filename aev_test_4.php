@@ -1,6 +1,6 @@
-<?php require_once "common/header_1.php"; ?>
+<?php require_once "common/header.php"; ?>
 <script src="js/page_3.js"></script>
-<?php require_once "common/header_2.php"; ?>
+<?php require_once "common/navbar.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
