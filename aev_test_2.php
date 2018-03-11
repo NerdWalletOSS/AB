@@ -25,20 +25,20 @@ $config = config_html($TestType);
   <div class="panel-body">
 
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' method='post'>
+  <!--<form class="form-signin" id='addTest' method='post'>-->
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
+		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
   </td>
 	</tr>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
   <?php for ( $i = 0; $i < $n_var; $i++ ) { ?>
   <tr> 
-   <td>
+   <td colspan="2">
    <p>Variant ID: &nbsp; <span id='VID_<?php echo $i; ?>' > <?php echo $rslt['Variants'][$i]['id'];  ?></span>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Variant Name: &nbsp;<span id='VName_<?php echo $i; ?>'><?php echo $rslt['Variants'][$i]['name']; ?></span>
@@ -69,7 +69,7 @@ $config = config_html($TestType);
   </tbody>
   </table>
   
-  </form>
+  <!--</form>-->
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>

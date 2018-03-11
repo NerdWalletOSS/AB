@@ -38,13 +38,20 @@ $config = config_html($TestType);
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
+		<td colspan="7">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: <input type="checkbox" name="is_dev_specific" value="1"  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: 
+<?php if ( $mode == "View" ) 
+  { ?>
+<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php } else { ?>
+<input type="checkbox" name="is_dev_specific" value="1"  
 <?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "checked"; } else { // Do Nothing
-} ?>
+} 
+?>
 >
+<?php } ?>
   </td>
 	</tr>
 <tr>
@@ -62,14 +69,31 @@ for ( $i = 0; $i < $nD; $i++ ) {
   echo "<tr>";
   echo "<td>".$T['Variants'][$i]['name']."</td>";
     for ( $j = 0; $j < $nD; $j++ ) {
-      echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
+      if($mode == "View") {
+        echo "<td>".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."</td>";
+      }
+      elseif (($mode == "Edit")) {
+        echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
+       } 
+        else { // Do Nothing
+       }
         }
   echo "</tr>";
 
   } ?>
 <tr>
-<td ><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
-<td > <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td colspan="2"> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<?php 
+if ( $mode == "View" ) 
+  {
+    echo "<td colspan='3'>&nbsp;</td>";
+  }
+else
+  { 
+?>
+<td colspan="3"><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
+<?php } ?>
+<td colspan="2"> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
