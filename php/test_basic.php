@@ -105,6 +105,8 @@ function test_basic(
   $X3['api_id']       = $api_id;
   $X4['request_webapp_id']  = $request_webapp_id;
   $X4['api_id']       = $api_id;
+  $X5['request_webapp_id']  = $request_webapp_id;
+  $X5['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
     $action = "updated";
     $state = get_json_element($inJ, 'State');
@@ -217,6 +219,21 @@ function test_basic(
           $X4['attr_id'] = $a['id'];
           $X4['test_id'] = $test_id;
           insert_row("bool_attr_test", $X4);
+        }
+      }
+      //------------------------------------------
+      //--- Insert into cat_attr_val_test table
+      $cat_attr_id = lkp("attr_type", "categorical");
+      rs_assert($cat_attr_id);
+      $A = db_get_rows("attr", "attr_type_id = $cat_attr_id");
+      if ( !empty($A) ) { 
+        foreach ( $A as $a ) { 
+          $CV = db_get_rows("cat_attr_val", "attr_id = $cat_attr_id");
+          foreach ( $CV as $cv ) { 
+            $X5['cat_attr_val_id'] = $cv['id'];
+            $X5['test_id'] = $test_id;
+            insert_row("cat_attr_val_test", $X5);
+          }
         }
       }
       //------------------------------------------

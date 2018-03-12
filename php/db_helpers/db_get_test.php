@@ -55,17 +55,31 @@ function db_get_test(
     $T['DeviceCrossVariant'] = $xxx;
   }
   //--- boolean attributes as filters
-  $B = db_get_rows("bool_attr_test", " test_id = $test_id ");
-  if ( !$B ) { 
+  $B = db_get_rows("bool_attr_test", 
+    " test_id = $test_id and is_on = true ");
+  if ( $B ) { 
     $bidx = 0;
     unset($xxx);
     foreach ( $B as $b ) { 
       $attr_id = $b['attr_id'];
-      $attr = lkp("attr", $attr_id);
-      $val     = $b['attr_id'];
+      $attr    = lkp("attr", $attr_id, "reverse");
+      $val     = $b['val'];
       $xxx[$bidx] = array("Attribute" => $attr, "Value" => $val);
     }
     $T['BooleanFilters'] = $xxx;
+  }
+  $B = db_get_rows("cat_attr_val_test", 
+    " test_id = $test_id and is_on = true ");
+  if ( $B ) { 
+    $bidx = 0;
+    unset($xxx);
+    foreach ( $B as $b ) { 
+      $attr_id = $b['attr_id'];
+      $attr    = lkp("attr", $attr_id, "reverse");
+      $val     = $b['val'];
+      $xxx[$bidx] = array("Attribute" => $attr, "Value" => $val);
+    }
+    $T['CategoricalFilters'] = $xxx;
   }
   //--- categorical attributes as filters
   //--- numerical attributes as filters
