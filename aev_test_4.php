@@ -17,6 +17,7 @@ $T = db_get_test($id);
 require_once "processor/display_logic_aev_test.php";
 $config = config_html($TestType);
 $fo_tests =  find_tests_to_follow($Channel);
+var_dump($GLOBALS['state']); exit;
 $nF = count($fo_tests);
 
 //print("<pre>".print_r($T,true)."</pre>");
