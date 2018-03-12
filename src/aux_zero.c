@@ -26,8 +26,8 @@ zero_test(
   ptr_test->seed = 0;
 
   for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
-    free_if_non_null(ptr_test->variants->custom_data);
-    free_if_non_null(ptr_test->variants->url);
+    free_if_non_null((ptr_test->variants[v].custom_data));
+    free_if_non_null((ptr_test->variants[v].url));
   }
   free_if_non_null(ptr_test->variants);
   ptr_test->num_variants = 0;
@@ -54,5 +54,5 @@ shutdown_curl(
   if ( g_ss_curl_hdrs != NULL ) { 
     curl_slist_free_all(g_ss_curl_hdrs); g_ss_curl_hdrs = NULL;
   }
-  curl_global_cleanup();  
+  curl_global_cleanup();   // TODO P4 Check that this is ok at startup 
 }

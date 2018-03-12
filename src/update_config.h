@@ -1,4 +1,4 @@
 extern int
-upload_config(
+update_config(
     void
     );

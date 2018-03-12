@@ -29,6 +29,10 @@ function load_globals()
   make_lkp("device");
   make_lkp("attr");
   make_lkp("attr_type");
+  make_lkp("cat_attr_val");
 }
-//load_globals();
+/*
+load_globals();
+var_dump($GLOBALS['cat_attr_val']);
+ */
 ?>

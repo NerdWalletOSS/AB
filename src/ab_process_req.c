@@ -16,9 +16,6 @@
 #include "list_tests.h"
 #include "ping_server.h"
 #include "router.h"
-#include "set_percentages.h"
-#include "set_dev_spec_perc.h"
-#include "stop_test.h"
 #include "test_info.h"
 #include "zero_globals.h"
 #include "ua_to_device.h"
@@ -58,11 +55,6 @@ ab_process_req(
       status = l_chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
-    case DeleteTest :  /* done by Lua */
-      status = l_del_test(body); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
       status = diagnostics(); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
@@ -70,6 +62,10 @@ ab_process_req(
       //--------------------------------------------------------
     case DumpLog : /* done by C */
       status = dump_log(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case GetConfig : /* done by Lua */
+      status = l_gett_config(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetVariant :  /* done by C */
@@ -99,6 +95,10 @@ ab_process_req(
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
       status = l_list_tests(body); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case LoadConfig : /* done by Lua */
+      status = l_load_config(body); cBYE(status);
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
@@ -150,17 +150,6 @@ ab_process_req(
       //--------------------------------------------------------
     case Router : /* done by C */
       status = router(args); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case SetPercentages :  // done by Lua 
-      status = l_set_percentages(body);  
-      cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
-      //--------------------------------------------------------
-    case StopTest :  /* done by Lua */
-      status = l_stop_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
     case TestInfo : /* done by Lua */

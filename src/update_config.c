@@ -4,14 +4,16 @@
 #include "zero_globals.h"
 #include "init.h"
 #include "update_config.h"
+#include "load_device.h"
+#include "load_ua_to_dev_map.h"
 
 int
-upload_config(
+update_config(
     void
     )
 {
   int status = 0;
-  // sz_g_log_q
+  // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
     g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 
@@ -87,7 +89,12 @@ upload_config(
   // uuid_len, Nothing to do 
 
   // dev_file
-  free_if_non_null(g_devices);  g_n_devices = 0;
+  free_if_non_null(g_devices);  g_n_devices = 0; g_other_id = 0;
+  if ( *g_cfg.dev_file != '\0' ) { 
+    status = load_device(g_cfg.dev_file, &g_devices, &g_n_devices, 
+        &g_other_id); 
+    cBYE(status);
+  }
   // ua_to_dev_map_file
   if ( ( g_ua_to_dev_map != NULL ) && ( g_n_ua_to_dev_map != 0 ) ) {
     munmap(g_ua_to_dev_map, g_n_ua_to_dev_map);

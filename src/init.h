@@ -2,11 +2,6 @@ extern int
 init(
     void
     );
-extern int 
-set_seed(
-    const char *str,
-    uint64_t *ptr_seed
-    );
 extern size_t 
 WriteMemoryCallback(
     void *contents, 

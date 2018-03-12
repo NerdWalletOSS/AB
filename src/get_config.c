@@ -1,11 +1,10 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "chk_db_conn.h"
+#include "get_config.h"
 
 int 
-l_chk_db_conn(
-    void
+l_get_config(
     )
 {
   int status = 0;

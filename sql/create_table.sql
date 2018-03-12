@@ -298,8 +298,10 @@ CREATE TABLE cat_attr_val_test (
   api_id int(8) not null, 
   request_webapp_id int(8) not null, 
   test_id int(8) not null,
+  attr_id int(8) not null, -- redundant but what the heck
   cat_attr_val_id int(8) not null,
   is_on  boolean not null default false,
+  CONSTRAINT fk_cavt_attr_id FOREIGN KEY (attr_id) REFERENCES attr(id),
   CONSTRAINT fk_cavt_test_id FOREIGN KEY (test_id) REFERENCES test(id),
   CONSTRAINT fk_cavt_cat_attr_val_id FOREIGN KEY (cat_attr_val_id) REFERENCES cat_attr_val(id),
   CONSTRAINT fk_c_api_id FOREIGN KEY (api_id) REFERENCES api(id),

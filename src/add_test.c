@@ -9,7 +9,7 @@ l_add_test(
     const char *args
     )
 {
-  static int entry_position[0];
+  static int entry_position[1];
   // cdata[0]=5;
   // printf("original value: %d\n", cdata[0]);
   int status = 0;

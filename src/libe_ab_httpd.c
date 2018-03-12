@@ -22,6 +22,8 @@
 #include "zero_globals.h"
 #include "hard_code_config.h"
 #include "post_from_log_q.h"
+#include "load_config.h"
+#include "update_config.h"
 #include "init.h"
 #include "ab_process_req.h"
 #include "get_ua_to_device_id.h"
@@ -150,6 +152,7 @@ main(
     if ( argc != 2 ) { go_BYE(-1); }
     status = l_load_config(argv[1]); cBYE(status);
   }
+  status = update_config(); cBYE(status);
   status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_cfg.sz_log_q > 0 ) { 
