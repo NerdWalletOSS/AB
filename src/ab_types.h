@@ -38,8 +38,8 @@ typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
   char name[AB_MAX_LEN_VARIANT_NAME+1];
-  const char * url; // AB_MAX_LEN_VARIANT_URL+1
-  const char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
+  char * url; // AB_MAX_LEN_VARIANT_URL+1
+  char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
@@ -100,8 +100,10 @@ typedef struct _cftype {
   char default_url[AB_MAX_LEN_REDIRECT_URL+1]; 
 
   int uuid_len; 
+  uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
   char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char dev_file[AB_MAX_LEN_FILE_NAME+1]; 
 
   uint32_t num_devices;
   char *devices[AB_MAX_LEN_DEVICE+1];

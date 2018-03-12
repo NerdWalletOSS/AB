@@ -113,7 +113,7 @@ int alt_get_variant(
   uint64_t curr_time = RDTSC();
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
-  uint32_t variant_idx;
+  uint32_t variant_idx, variant_id;
 
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
   memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
@@ -149,14 +149,15 @@ int alt_get_variant(
   //----------------------------------
   if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
     variant_idx = g_tests[test_idx].final_variant_idx[g_device_idx];
+    variant_id  = g_tests[test_idx].final_variant_id[g_device_idx];
   }
   else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
     variant_idx = g_tests[test_idx].variant_per_bin[g_device_idx][bin];
+    variant_id  = 0; // TODO FIX P0
   }
   else {
     go_BYE(-1);
   }
-  uint32_t variant_id  = g_tests[test_idx].final_variant_id;
   char *url = g_tests[test_idx].variants[variant_idx].url;
   char *var_name = g_tests[test_idx].variants[variant_idx].name;
   //----------------------------------

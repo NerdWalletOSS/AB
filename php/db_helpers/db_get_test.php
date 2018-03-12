@@ -77,11 +77,25 @@ function db_get_test(
       $attr_id = $b['attr_id'];
       $attr    = lkp("attr", $attr_id, "reverse");
       $val     = $b['val'];
-      $xxx[$bidx] = array("Attribute" => $attr, "Value" => $val);
+      $xxx[$bidx++] = array("Attribute" => $attr, "Value" => $val);
     }
     $T['CategoricalFilters'] = $xxx;
   }
   //--- categorical attributes as filters
+  $CAV = db_get_rows("cat_attr_val_test", 
+    " test_id = $test_id and is_on = false ");
+  if ( $CAV ) { 
+    $cavidx = 0;
+    unset($xxx);
+    foreach ( $CAV as $cav ) { 
+      $attr_id = $cav['attr_id'];
+      $attr    = lkp("attr", $attr_id, "reverse");
+      $cat_attr_val_id = $cav['cat_attr_val_id'];
+      $val     = lkp("cat_attr_val", $cat_attr_val_id, "reverse");
+      $xxx[$cavidx++] = array("Attribute" => $attr, "Value" => $val);
+    }
+    $T['CategoricalFilters'] = $xxx;
+  }
   //--- numerical attributes as filters
   // -------------------------------
 

@@ -28,95 +28,11 @@ WriteMemoryCallback(
   return realsize;
 }
 
-int 
-set_seed(
-    const char *str,
-    uint64_t *ptr_seed
-    )
-{
-  int status = 0;
-  uint64_t seed = 0;
-  for ( unsigned int i = 0; i < strlen(str); i++ ) { 
-    char c = str[i];
-    unsigned int x;
-    if ( ( c >= 'a' )  && ( c <='z' ) ) { 
-      x = 10 + ( c - 'a' );
-    }
-    else if ( ( c >= '0' )  && ( c <='9' ) ) { 
-      x = c - '0';
-    }
-    else {
-      go_BYE(-1); 
-    }
-    seed |= x;
-    seed *= 36;
-  }
-  *ptr_seed = seed;
-BYE:
-  return status;
-}
-
 int
 init()
 {
   int status = 0;
-  if ( g_cfg.sz_log_q > 0 ) { 
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 
-    return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)));
-    g_n_log_q = 0;
-  }
-
   //---------------------------------------------------
-  CURLcode res;
-    res = curl_global_init(CURL_GLOBAL_DEFAULT);
-    if ( res != CURLE_OK) {
-      fprintf(stderr, "curl_global_init() failed: %s\n",
-          curl_easy_strerror(res));
-      go_BYE(-1); 
-    }
-
-  // Following for statsd
-  if ( ( *g_cfg.statsd.server == '\0' ) || ( g_cfg.statsd.port <= 0 ) ) {
-    fprintf(stderr, "WARNING! Not logging to statsd \n");
-  }
-  else {
-    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
-    if ( g_statsd_link == NULL ) { go_BYE(-1); }
-    // NOTE: Currently settin sample rate to 1.0 hard coded.
-    // Change this if it becomes a performance problem
-  }
-  // Following for curl for logging GetVariant 
-  if ( ( *g_cfg.logger.server == '\0' ) || ( *g_cfg.logger.url == '\0' ) ||
-      ( ( g_cfg.logger.port <= 1 )  || ( g_cfg.logger.port >= 65535 ) ) ) {
-    fprintf(stderr, "WARNING! /GetVariant NOT being logged\n");
-  }
-  else {
-    status = setup_curl("POST", NULL, g_cfg.logger.server, 
-        g_cfg.logger.port, g_cfg.logger.url, g_cfg.logger.health_url, 
-        AB_LOGGER_TIMEOUT_MS, &g_ch, &g_curl_hdrs);
-    cBYE(status);
-  }
-  // Following for curl  for Session Service
-  if ( ( *g_cfg.ss.server == '\0' ) || ( *g_cfg.ss.url == '\0' ) ||
-      ( ( g_cfg.ss.port <= 1 )  || ( g_cfg.ss.port >= 65535 ) ) ) {
-    fprintf(stderr, "WARNING! SessionService not in use\n");
-  }
-  else {
-    /* The get_or_create endpoint averages around 25ms response, with 
-     * a 95th percentile of 30ms. The plain get endpoint would be 
-     * expected to be faster -- Andrew Hollenbach */
-    status = setup_curl("GET", g_ss_response, g_cfg.ss.server, 
-        g_cfg.ss.port, g_cfg.ss.url, g_cfg.ss.health_url, 
-        AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
-    cBYE(status);
-  }
-
-  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
-    status = load_ua_to_dev_map(g_cfg.ua_to_dev_map_file, 
-        &g_ua_to_dev_map, &g_n_ua_to_dev_map, &g_num_ua_to_dev_map);
-    cBYE(status);
-  }
   // For Lua
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  

@@ -5,6 +5,7 @@
 
 int 
 l_chk_db_conn(
+    void
     )
 {
   int status = 0;

@@ -228,10 +228,12 @@ function test_basic(
       $A = db_get_rows("attr", "attr_type_id = $cat_attr_id");
       if ( !empty($A) ) { 
         foreach ( $A as $a ) { 
+          $attr_id = $a['id'];
           $CV = db_get_rows("cat_attr_val", "attr_id = $cat_attr_id");
           foreach ( $CV as $cv ) { 
             $X5['cat_attr_val_id'] = $cv['id'];
             $X5['test_id'] = $test_id;
+            $X5['attr_id'] = $attr_id;
             insert_row("cat_attr_val_test", $X5);
           }
         }

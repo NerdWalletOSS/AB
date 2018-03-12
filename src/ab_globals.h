@@ -64,7 +64,8 @@ EXTERN pthread_mutex_t g_mutex; // For C
 EXTERN uint32_t g_device_idx; // For C: for device specific routing URL Router
 EXTERN DEV_REC_TYPE *g_devices; // Set by Lua 
 EXTERN uint32_t g_n_devices; // Set by Lua 
-EXTERN uint32_t g_other_idx; // Set by Lua used for user-agents that do not match
+EXTERN uint32_t g_other_id; // Set by Lua used for user-agents that do not match
+EXTERN uint32_t g_other_idx; // Same as above but idx equivalent
 
 EXTERN char g_ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; // Set by Lua
 EXTERN uint64_t *g_ua_to_dev_map; // Set by C
