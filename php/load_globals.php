@@ -15,6 +15,7 @@ function make_lkp($tbl)
   }
   $GLOBALS[$tbl] = $X;
   $GLOBALS["reverse_" . $tbl] = $reverse_X;
+  // print("<br> Created $tbl with " . count($R) . " rows <br\n");
 }
 //------------------------------------------
 function load_globals()

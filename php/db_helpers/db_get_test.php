@@ -55,6 +55,7 @@ function db_get_test(
     $T['DeviceCrossVariant'] = $xxx;
   }
   //--- boolean attributes as filters
+/*
   $B = db_get_rows("bool_attr_test", " test_id = $test_id ");
   if ( !$B ) { 
     $bidx = 0;
@@ -67,6 +68,7 @@ function db_get_test(
     }
     $T['BooleanFilters'] = $xxx;
   }
+*/
   //--- categorical attributes as filters
   //--- numerical attributes as filters
   // -------------------------------
