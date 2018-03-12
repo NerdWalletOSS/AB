@@ -12,7 +12,6 @@ typedef enum _ab_req_type {
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
-  DeleteTest, // Write &  Lua
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
   GetVariant, // Read &  C
@@ -26,9 +25,6 @@ typedef enum _ab_req_type {
   Reload, // Write &  Lua 
   Restart, // Read &  C 
   Router, // Read &  C
-  SetPercentages, // Write &  Lua
-  SetDevSpecPerc, // Write &  Lua
-  StopTest, // Write &  Lua
   TestInfo, // Read &  Lua
   UAToDevice, // Read &  C
   ZeroCounters // Write &  C
