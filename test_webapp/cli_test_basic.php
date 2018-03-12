@@ -6,6 +6,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers");
 
 require_once 'rs_assert.php';
 require_once 'test_basic.php';
+print("c;i starts \n");
 require_once 'db_get_test.php';
 require_once 'set_state.php';
 require_once 'add_addnl_var_info.php';

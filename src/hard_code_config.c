@@ -26,5 +26,8 @@ hard_code_config(void)
 
   strcpy(g_cfg.default_url, "localhost:8000/index.html");
   g_cfg.uuid_len = 8;
+  g_cfg.xy_guid = 1;
+
   strcpy(g_cfg.ua_to_dev_map_file,  "opt/ab/ua_to_dev.bin");
+  strcpy(g_cfg.dev_file,  "opt/ab/device.csv");
 }

@@ -55,7 +55,7 @@ function db_get_test(
     $T['DeviceCrossVariant'] = $xxx;
   }
   //--- boolean attributes as filters
-  /*$B = db_get_rows("bool_attr_test", " test_id = $test_id ");
+  $B = db_get_rows("bool_attr_test", " test_id = $test_id ");
   if ( !$B ) { 
     $bidx = 0;
     unset($xxx);
@@ -66,17 +66,16 @@ function db_get_test(
       $xxx[$bidx] = array("Attribute" => $attr, "Value" => $val);
     }
     $T['BooleanFilters'] = $xxx;
-  }*/
+  }
   //--- categorical attributes as filters
   //--- numerical attributes as filters
-  // TODO 
   // -------------------------------
 
   return $T;
 }
-/*
+
 $x = db_get_test(1);
 $y = json_encode($x);
 print($y);
- */
+
 ?>
