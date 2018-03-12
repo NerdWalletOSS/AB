@@ -13,7 +13,6 @@ require_once 'get_json_element.php';
 require_once 'db_get_row.php';
 require_once 'mod_row.php';
 require_once 'chk_test_basic.php';
-  print("test_basic_starts\n"); exit;
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
