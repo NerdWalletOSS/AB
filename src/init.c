@@ -5,6 +5,7 @@
 #include "zero_globals.h"
 #include "init.h"
 #include "ping_server.h"
+#include "load_ua_to_dev_map.h"
 
 #include "get_variant.h"
 
@@ -108,6 +109,12 @@ init()
     status = setup_curl("GET", g_ss_response, g_cfg.ss.server, 
         g_cfg.ss.port, g_cfg.ss.url, g_cfg.ss.health_url, 
         AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
+    cBYE(status);
+  }
+
+  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
+    status = load_ua_to_dev_map(g_cfg.ua_to_dev_map_file, 
+        &g_ua_to_dev_map, &g_n_ua_to_dev_map, &g_num_ua_to_dev_map);
     cBYE(status);
   }
   // For Lua

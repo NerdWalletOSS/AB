@@ -68,7 +68,7 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
 
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
-	cd ../ && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
+	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
 	make -C ../mysql-connector-c-6.1.6-src
 		 -
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so

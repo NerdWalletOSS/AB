@@ -29,6 +29,8 @@
 
 #define AB_NUM_BINS             1000 
 
+#define NUM_SERVICES 4
+
 #define TEST_STATE_DRAFT        1 
 #define TEST_STATE_DORMANT      2 
 #define TEST_STATE_STARTED      3 

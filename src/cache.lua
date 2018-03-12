@@ -3,22 +3,48 @@
 -- collected in case memory pressure increased
 
 local cache = {}
-c_store = {}
-function cache.put(key, value)
-  c_store[key]= value
+local c_store, c_weak_store
+
+local function init()
+  c_store = {}
+  c_weak_store = {}
+  setmetatable(c_weak_store, { __mode = 'v' })
+end
+
+function cache.put(key, value, weak)
+  if weak ~= true then weak = false end
+  
+  if weak == false then
+    c_store[key]= value
+  else
+    c_weak_store[key]= {value}
+  end
+  return true
 end
 
 function cache.get(key)
-   return c_store[key]
- end
+  local value = c_store[key]
+  if value == nil then
+    local val = c_weak_store[key]
+    if val ~= nil then 
+      return val[0]
+      else
+      return nil
+    end
+  else
+    return value
+  end
+end
 
 function cache.delete(key)
-    c_store[key] = nil
- end
+  c_store[key] = nil
+  c_weak_store[key] = nil
+end
 
 
 function cache.purge()
-  c_store = {}
+  init()
 end
 
+init()
 return cache

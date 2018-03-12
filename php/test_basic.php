@@ -103,6 +103,8 @@ function test_basic(
   $X2['api_id']       = $api_id;
   $X3['request_webapp_id']  = $request_webapp_id;
   $X3['api_id']       = $api_id;
+  $X4['request_webapp_id']  = $request_webapp_id;
+  $X4['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
     $action = "updated";
     $state = get_json_element($inJ, 'State');
@@ -203,6 +205,18 @@ function test_basic(
           $X3['variant_id'] = $variant_ids[$i];
           $X3['percentage'] = $variant_percs[$i];
           $variant_id = insert_row("device_x_variant", $X3);
+        }
+      }
+      //------------------------------------------
+      //--- Insert into bool_attr_test table
+      $bool_attr_id = lkp("attr_type", "boolean");
+      rs_assert($bool_attr_id);
+      $A = db_get_rows("attr", "attr_type_id = $bool_attr_id");
+      if ( !empty($A) ) { 
+        foreach ( $A as $a ) { 
+          $X4['attr_id'] = $a['id'];
+          $X4['test_id'] = $test_id;
+          insert_row("bool_attr_test", $X4);
         }
       }
       //------------------------------------------

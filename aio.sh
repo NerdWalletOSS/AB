@@ -26,6 +26,7 @@ buildall(){
 }
 
 build(){
+  rm -rf bin
 	mkdir bin
 	cd ./curl-7.51.0/
 	./configure
@@ -37,6 +38,7 @@ build(){
 	cp ab_httpd ../bin
 	find ./ -name "*.so*" -exec cp {} ../bin/libs \;
 	find ./ -name "*.lua" -exec cp {} ../bin \;
+  cd ../
   set +e
 }
 
@@ -49,7 +51,7 @@ do
 		p)
 			# echo "-f was triggered, Parameter: $OPTARG" >&2
 			build
-			tar -cvzf bin.tar.gz ./bin
+      tar -cvzf bin.tar.gz ./bin
 			exit 0
       ;;
     b)

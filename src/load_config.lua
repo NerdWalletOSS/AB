@@ -4,13 +4,6 @@ local consts = require 'ab_consts'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local sql = require 'sql'
-local function file_load(filename)
-  assert(type(filename) == "string", "Filename must be a string to load confgs")
-  local file = assertx(io.open(filename, "r"), "Unable to find file ", filename)
-  local conf = file:read('*a')
-  file:close()
-  return conf
-end
 
 local function get_value_from_bool(x)
   if x then
@@ -50,7 +43,7 @@ local function update_config(c_struct, config)
     assertx(#url > 0 and #url <= consts.AB_MAX_LEN_URL, "url length  must be in the valid range", url)
     ffi.copy(c_struct.url, url)
   end
-  
+
   if config.HEALTH_URL ~= nil then
     local health_url = config.HEALTH_URL.VALUE
     is_updated = is_modified(ffi.string(c_struct.health_url), health_url, is_updated)
@@ -159,6 +152,7 @@ local function update_rts_configs(g_conf, config)
   return is_updated
 end
 
+
 local load_cfg = {}
 
 function load_cfg.load_config(conf_str, g_conf, has_changed)
@@ -176,10 +170,13 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
+  cache.put("config", conf_str)
 end
 
-function load_cfg.load_config_from_file(conf_str, g_conf, has_changed, file_path)
-  local conf = file_load(file_path)
+function load_cfg.load_config_from_file(g_conf, has_changed, file_path)
+  local file = assert(io.open(file_path, 'r'), "Invalid filename given")
+  local conf_str = file:read('*a')
+  file:close()
   return load_cfg.load_config(conf_str, g_conf, has_changed)
 end
 

@@ -1,6 +1,7 @@
 {
   "TestType": "XYTest",
   "Channel": "facebook",
+  "BinType": "anonymous",
   "description": "some bogus description",
   "Creator": "joe",
   "name": "T1",
