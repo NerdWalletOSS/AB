@@ -64,6 +64,10 @@ ab_process_req(
       status = dump_log(args); cBYE(status);
       break;
       //--------------------------------------------------------
+    case GetConfig : /* done by Lua */
+      status = l_gett_config(); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case GetVariant :  /* done by C */
     case GetVariants :  /* done by C */
       status = route_get_variant(req_type, args);  cBYE(status);
@@ -91,6 +95,10 @@ ab_process_req(
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
       status = l_list_tests(body); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case LoadConfig : /* done by Lua */
+      status = l_load_config(body); cBYE(status);
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */

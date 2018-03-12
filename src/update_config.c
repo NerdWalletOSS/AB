@@ -13,7 +13,7 @@ update_config(
     )
 {
   int status = 0;
-  // sz_g_log_q
+  // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
     g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 

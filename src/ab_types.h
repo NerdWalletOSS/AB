@@ -14,12 +14,14 @@ typedef enum _ab_req_type {
   CheckDBConnectivity, // Config &  Lua
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
+  GetConfig, // Read &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
   Halt, // Read &  C
   HealthCheck, // Read &  C
   Ignore, // Read &  C
   ListTests, // Read &  Lua
+  LoadConfig, // Write &  Lua
   PingLogServer, // Read &  C
   PingSessionServer, // Read &  C
   Reload, // Write &  Lua 
