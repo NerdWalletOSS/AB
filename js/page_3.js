@@ -5,12 +5,7 @@ $(document).ready(function() {
       type: "POST",
       url: "processor/page_3_processor.php",
       data: $(this).serialize(),
-      //dataType: "json",//set to JSON
       error: function(response, textStatus, XHR) {
-        //console.log(response);
-        //console.log(textStatus);
-        //console.log(XHR);
-        //console.log(response.getAllResponseHeaders());
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
