@@ -64,22 +64,9 @@ function db_get_test(
       $attr_id = $b['attr_id'];
       $attr    = lkp("attr", $attr_id, "reverse");
       $val     = $b['val'];
-      $xxx[$bidx] = array("Attribute" => $attr, "Value" => $val);
-    }
-    $T['BooleanFilters'] = $xxx;
-  }
-  $B = db_get_rows("cat_attr_val_test", 
-    " test_id = $test_id and is_on = true ");
-  if ( $B ) { 
-    $bidx = 0;
-    unset($xxx);
-    foreach ( $B as $b ) { 
-      $attr_id = $b['attr_id'];
-      $attr    = lkp("attr", $attr_id, "reverse");
-      $val     = $b['val'];
       $xxx[$bidx++] = array("Attribute" => $attr, "Value" => $val);
     }
-    $T['CategoricalFilters'] = $xxx;
+    $T['BooleanFilters'] = $xxx;
   }
   //--- categorical attributes as filters
   $CAV = db_get_rows("cat_attr_val_test", 
@@ -97,6 +84,7 @@ function db_get_test(
     $T['CategoricalFilters'] = $xxx;
   }
   //--- numerical attributes as filters
+  // TODO when we implement this feature. Not needed for now.
   // -------------------------------
 
   return $T;

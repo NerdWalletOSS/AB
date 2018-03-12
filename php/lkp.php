@@ -28,6 +28,7 @@ function lkp(
   }
   rs_assert(isset($GLOBALS[$tbl][$val]));
   $x = $GLOBALS[$tbl][$val];
+  // echo "<br> =ZZ= <br> \n"; var_dump($GLOBALS['state']); echo "<br> =WW= <br> \n"; 
   return $x;
 }
 ?>

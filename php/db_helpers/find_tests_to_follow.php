@@ -8,13 +8,16 @@ function find_tests_to_follow(
 )
 {
   rs_assert($channel);
-  $channel_id  = lkp("channel", "$channel");
+  $channel_id  = lkp("channel", $channel);
   rs_assert($channel_id);
   $archived_id = lkp("state", "archived");
   $R1 = db_get_rows("test", 
     " state_id = $archived_id and channel_id = $channel_id ");
-  rs_assert($R1, "No tests to follow");
+  if ( empty($R1) ) { 
+    return null; // rs_assert($R1, "No tests to follow");
+  }
   $eligible_to_follow = array(); $eidx = 0;
+
   foreach ( $R1 as $r ) { 
     $tid = $r['id'];
     $x = db_get_row("test", "pred_id", $tid);
@@ -26,6 +29,7 @@ function find_tests_to_follow(
     }
   }
   if ( $eidx == 0 ) { $eligible_to_follow = null; }
+  var_dump( $eligible_to_follow);
   return $eligible_to_follow;
 }
 /*
