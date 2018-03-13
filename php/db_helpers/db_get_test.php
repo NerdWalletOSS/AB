@@ -70,7 +70,7 @@ function db_get_test(
   }
   //--- categorical attributes as filters
   $CAV = db_get_rows("cat_attr_val_test", 
-    " test_id = $test_id and is_on = false ");
+    " test_id = $test_id and is_on = true ");
   if ( $CAV ) { 
     $cavidx = 0;
     unset($xxx);

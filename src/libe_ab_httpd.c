@@ -55,7 +55,7 @@ generic_handler(
     )
 {
   int status = 0;
-  g_t_start = RDTSC();
+  uint64_t t_start = RDTSC();
   struct event_base *base = (struct event_base *)arg;
   char api[AB_MAX_LEN_API_NAME+1]; 
   char args[AB_MAX_LEN_ARGS+1];
@@ -77,6 +77,8 @@ generic_handler(
   if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
+  status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
+  cBYE(status);
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
 
@@ -119,15 +121,15 @@ BYE:
   }
   evbuffer_free(opbuf);
   //--- Log time seen by clients
-  // TODO Improve statsd logging
   if ( ( req_type == GetVariant )  || ( req_type == GetVariants ) ) {
     uint64_t t_stop = RDTSC();
-    if ( t_stop > g_t_start ) { 
-      uint64_t t_delta = t_stop - g_t_start;
+    if ( t_stop > t_start ) { 
+      uint64_t t_delta = t_stop - t_start;
       if ( g_statsd_link != NULL ) { 
-        statsd_timing(g_statsd_link, "nw.metrics.ab.request_time", 
-            t_delta);
-        statsd_inc(g_statsd_link, "nw.metrics.ab.get_variant_ctr", 1); 
+        char *key1 = (char *)"nw.metrics.ab.get_variant_time";
+        statsd_timing(g_statsd_link, key1, t_delta);
+        char *key2 = (char *)"nw.metrics.ab.get_variant_ctr";
+        statsd_inc(g_statsd_link, key2, 1);
       }
     }
   }

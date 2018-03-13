@@ -17,6 +17,9 @@
 #define AB_MAX_LEN_PAYLOAD  1024-1 // for POST to logger
 #define AB_MAX_LEN_RESULT   1048576-1
 
+#define AB_MAX_LEN_HDR_KEY 63
+#define AB_MAX_LEN_HDR_VAL 127
+
 #define AB_MAX_LEN_SS_RESPONSE 2047
 
 #define AB_MIN_NUM_VARIANTS 2 // includes control as 1 of them

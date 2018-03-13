@@ -18,7 +18,8 @@ free_globals(
     g_statsd_link = NULL;
   }
 
-  free_if_non_null(g_log_q);
+  free_if_non_null(g_log_q); g_n_log_q = 0; 
+  g_q_rd_idx = 0; g_q_wr_idx = 0;
 
   free_if_non_null(g_uuid);
  
@@ -100,6 +101,8 @@ zero_globals(
   g_ss_ch        = NULL;
   g_ss_curl_hdrs = NULL;
 
+  memset(g_nw_x_caller_client_id, '\0', AB_MAX_LEN_HDR_VAL+1);
+  memset(g_nw_x_cookie_id, '\0', AB_MAX_LEN_HDR_VAL+1);
   memset(g_redirect_url, '\0', AB_MAX_LEN_REDIRECT_URL+1);
   memset(g_err, '\0', AB_ERR_MSG_LEN+1);
   memset(g_buf, '\0', AB_ERR_MSG_LEN+1);

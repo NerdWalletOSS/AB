@@ -65,7 +65,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
-      status = l_gett_config(); cBYE(status);
+      status = l_get_config(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetVariant :  /* done by C */
