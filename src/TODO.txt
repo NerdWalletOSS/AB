@@ -11,9 +11,11 @@
 
 [INDRAJEET] journaling triggers
 
+[INDRAJEET] database permissions
+
 [INDRAJEET] ALL deployment stuff
 
-[RAMESH] 
+[RAMESH]  FOLLOWING IN PROGRESS
 
 \subsection{Feature requests from Robby}
 \be
