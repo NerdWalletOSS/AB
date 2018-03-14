@@ -106,7 +106,8 @@ classify_ua(
   int mid, lb = 0, ub = nX; bool found = false;
   while ( !found ) { 
     mid = (lb + ub) / 2;
-    uint64_t this_hash = X[mid].hash;
+    UA_REC_TYPE *x1 = &(X[mid]);
+    uint64_t this_hash = ((uint64_t *)x1)[0];
     if ( this_hash == hash1 ) {
       found = true; 
       *ptr_os_id = X[mid].os_id;

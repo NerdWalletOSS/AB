@@ -5,6 +5,7 @@
 
 int 
 l_get_config(
+    void
     )
 {
   int status = 0;

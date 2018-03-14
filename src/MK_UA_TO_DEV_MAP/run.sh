@@ -13,6 +13,12 @@ opfile=_xx
 rm -f $opfile
 mapfile=rs_tmp_user_agent000
 test -f $mapfile
-valgrind --leak-check=full ./a.out $mapfile $opfile
+VG="valgrind --leak-check=full --show-leak-kinds=all"
+VG=""
+$VG ./a.out $mapfile $opfile
 cp $opfile /opt/ab/ua_to_dev.bin
+cp browser.csv /opt/ab/
+cp device_type.csv /opt/ab/
+cp justin_cat.csv /opt/ab/
+cp os.csv /opt/ab/
 echo "Successfully completed $0 in $PWD"

@@ -19,7 +19,7 @@ route_get_variant(
   int test_type = -1;
 
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
-  for ( char *cptr = args; *cptr != '\0'; cptr++ ) { 
+  for ( const char *cptr = args; *cptr != '\0'; cptr++ ) { 
     if ( !g_valid_chars_in_ab_args[(uint8_t)*cptr] ) { 
       g_log_bad_ab_args++; go_BYE(-1);
     }

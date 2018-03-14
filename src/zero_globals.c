@@ -44,6 +44,9 @@ zero_globals(
 {
   int status = 0;
 
+  if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
+    go_BYE(-1);
+  }
   //------------------------------
   g_cfg.port        = 0; 
   g_cfg.verbose     = false;

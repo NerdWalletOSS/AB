@@ -7,6 +7,7 @@
 #include "ab_globals.h"
 #include "router.h"
 #include "auxil.h"
+#include "load_lkp.h"
 #include "alt_get_variant.h"
 
 int 

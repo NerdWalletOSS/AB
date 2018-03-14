@@ -77,7 +77,8 @@ typedef struct _lkp_rec_type {
 } LKP_REC_TYPE;
 
 typedef struct _ua_rec_type{
-  uint64_t hash;
+  uint32_t top_hash;
+  uint32_t bot_hash;
   uint8_t device_type_id;
   uint8_t os_id;
   uint8_t browser_id;
@@ -117,6 +118,14 @@ typedef struct _cftype {
   uint32_t n_justin_cat;
   LKP_REC_TYPE *justin_cat;
 } CFG_TYPE;
+
+typedef struct _justin_map_rec_type { 
+  char justin_cat[AB_MAX_LEN_LKP_NAME+1];
+  char device[AB_MAX_LEN_LKP_NAME+1];
+  char device_type[AB_MAX_LEN_LKP_NAME+1];
+  char os[AB_MAX_LEN_LKP_NAME+1];
+  char browser[AB_MAX_LEN_LKP_NAME+1];
+} JUSTIN_MAP_REC_TYPE;
 
 #endif
 

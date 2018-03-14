@@ -13,17 +13,10 @@
 #include "spooky_hash.h"
 
 //-------------------------------------------------------
-#define MAX_LEN_NAME 31
+#define MAX_LEN_NAME AB_MAX_LEN_LKP_NAME
 #define MAX_LEN_USER_AGENT 511
 #define MAXLINE 2047
 //-------------------------------------------------------
-typedef struct _justin_map_rec_type { 
-  char justin_cat[MAX_LEN_NAME+1];
-  char device[MAX_LEN_NAME+1];
-  char device_type[MAX_LEN_NAME+1];
-  char os[MAX_LEN_NAME+1];
-  char browser[MAX_LEN_NAME+1];
-} JUSTIN_MAP_REC_TYPE;
 
 //<hdr>
 static int 
@@ -232,7 +225,7 @@ main(
     if ( nw != 1 ) { go_BYE(-1); }
     nw = fwrite(&browser_id, sizeof(uint8_t), 1, ofp);
     if ( nw != 1 ) { go_BYE(-1); }
-    nw = fwrite(&justin_cat, sizeof(uint8_t), 1, ofp);
+    nw = fwrite(&justin_cat_id, sizeof(uint8_t), 1, ofp);
     if ( nw != 1 ) { go_BYE(-1); }
     n_good_user_agent++;
   }
@@ -242,6 +235,7 @@ main(
   status = rs_mmap(output_file, &X, &nX, 1); cBYE(status);
   uint32_t rec_size = (4*sizeof(uint8_t)) + sizeof(uint64_t);
   uint32_t n_ua = nX / rec_size;
+  if ( n_ua != n_good_user_agent ) { go_BYE(-1); }
   if ( ( n_ua * rec_size ) != nX ) { go_BYE(-1); }
   // Note trick below. rec_sizeis 16 but we use UI8_srt_compare
   // and compare only first 8 bytes

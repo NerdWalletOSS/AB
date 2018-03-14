@@ -9,7 +9,6 @@
 #include "add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-#include "del_test.h"
 #include "diagnostics.h"
 #include "dump_log.h"
 #include "route_get_variant.h"
@@ -17,6 +16,8 @@
 #include "ping_server.h"
 #include "router.h"
 #include "test_info.h"
+#include "get_config.h"
+#include "load_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
 
