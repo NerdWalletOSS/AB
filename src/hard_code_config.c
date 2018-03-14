@@ -29,5 +29,8 @@ hard_code_config(void)
   g_cfg.xy_guid = 1;
 
   strcpy(g_cfg.ua_to_dev_map_file,  "opt/ab/ua_to_dev.bin");
-  strcpy(g_cfg.dev_file,  "opt/ab/device.csv");
+  strcpy(g_cfg.justin_cat_file,  "opt/ab/justin_cat.csv");
+  strcpy(g_cfg.os_file,  "opt/ab/os.csv");
+  strcpy(g_cfg.browser_file,  "opt/ab/browser_file.csv");
+  strcpy(g_cfg.device_type_file,  "opt/ab/device_type.csv");
 }

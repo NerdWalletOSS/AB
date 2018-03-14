@@ -25,10 +25,13 @@ free_globals(
  
   shutdown_curl(); // for g_ch and g_ss_ch
 
-  free_if_non_null(g_devices);  g_n_devices = 0;
+  free_if_non_null(g_justin_cat_lkp);  g_n_justin_cat_lkp = 0;
+  free_if_non_null(g_os_lkp);  g_n_os_lkp = 0;
+  free_if_non_null(g_browser_lkp);  g_n_justin_cat_lkp = 0;
+  free_if_non_null(g_device_type_lkp);  g_n_device_type_lkp = 0;
 
-  if ( ( g_ua_to_dev_map != NULL ) && ( g_n_ua_to_dev_map != 0 ) ) {
-    munmap(g_ua_to_dev_map, g_n_ua_to_dev_map);
+  if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
+    munmap(g_classify_ua_map, g_len_classify_ua_file);
   }
   
   if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
@@ -67,6 +70,8 @@ zero_globals(
   memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
   g_xy_guid = 0;
 
+  memset(g_cfg.ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+
   g_ss_response = NULL;
   g_sz_ss_response = AB_MAX_LEN_SS_RESPONSE+1;;
   g_ss_response = malloc(g_sz_ss_response); // some initial start
@@ -101,8 +106,10 @@ zero_globals(
   g_ss_ch        = NULL;
   g_ss_curl_hdrs = NULL;
 
+#ifdef NW_SPECIFIC
   memset(g_nw_x_caller_client_id, '\0', AB_MAX_LEN_HDR_VAL+1);
   memset(g_nw_x_cookie_id, '\0', AB_MAX_LEN_HDR_VAL+1);
+#endif
   memset(g_redirect_url, '\0', AB_MAX_LEN_REDIRECT_URL+1);
   memset(g_err, '\0', AB_ERR_MSG_LEN+1);
   memset(g_buf, '\0', AB_ERR_MSG_LEN+1);
@@ -112,16 +119,17 @@ zero_globals(
 
   // g_con, g_mutex, .... 
 
-  g_devices    = NULL;
-  g_n_devices  = 0;
-  g_device_idx = 0;
-  g_other_idx  = 0;
+  g_justin_cat_lkp  = NULL; g_n_justin_cat_lkp  = 0;
+  g_os_lkp          = NULL; g_n_os_lkp          = 0;
+  g_browser_lkp     = NULL; g_n_browser_lkp     = 0;
+  g_device_type_lkp = NULL; g_n_device_type_lkp = 0;
 
-  memset(g_ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  g_devices = NULL;  g_n_devices = 0;
-  g_ua_to_dev_map = NULL;  
-  g_n_ua_to_dev_map = 0;
-  g_num_ua_to_dev_map = 0;
+  g_device_idx = 0;
+
+  g_classify_ua_map = NULL;  
+  g_len_classify_ua_file = 0;
+  g_num_classify_ua_map = 0;
+
 
   // TODO Check with Braad that this is good
   const char *url_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
@@ -135,6 +143,12 @@ zero_globals(
   memset(g_valid_chars_in_ua, '\0', 256);
   for ( char *cptr = (char *)ua_str; *cptr != '\0'; cptr++ ) {
     g_valid_chars_in_ua[(uint8_t)(*cptr)] = true;
+  }
+
+  const char *arg_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=";
+  memset(g_valid_chars_in_ab_args, '\0', 256);
+  for ( char *cptr = (char *)arg_str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
   }
 
   g_L = NULL;
@@ -159,6 +173,7 @@ zero_log()
 
   g_log_no_user_agent  = 0;
   g_log_bad_user_agent = 0;
+  g_log_bad_ab_args    = 0;
 
   g_log_ss_calls      = 0;
   g_log_ss_bad_code   = 0;

@@ -751,3 +751,38 @@ set_tracer(
   memset(tracer, '\0', n+1);
   // TODO TO BE IMPLEMENTED 
 }
+int
+check_remove_eoln(
+    char *line
+    )
+{
+  int status = 0;
+  for ( char *cptr = line; *cptr != '\0'; cptr++ ) {
+    if ( *cptr == '\n' ) {
+      if ( *(cptr+1) != '\0' )  { go_BYE(-1); }
+      *cptr = '\0';
+    }
+  }
+BYE:
+  return status;
+}
+//-------------------------------------------------------
+int
+strip_dquotes(
+    char *X
+    ) 
+{
+  int status = 0;
+
+  if ( X[0] == '"' ) { 
+    int len = strlen(X);
+    if ( X[len-1] != '"' ) { go_BYE(-1); } // ending dquote 
+    for ( int k = 0; k < len-1; k++ ) { 
+      X[k] = X[k+1];
+    }
+    X[len-1] = '\0';
+    X[len-2] = '\0';
+  }
+BYE:
+  return status;
+}

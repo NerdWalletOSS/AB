@@ -40,8 +40,9 @@ dump_log(
   int n = AB_MAX_LEN_RESULT;
   write_log(g_rslt, &ridx, n, "StartTime", g_log_start_time);
 
-  write_log(g_rslt, &ridx, n, "NoUserAgent", g_log_no_user_agent);
+  write_log(g_rslt, &ridx, n, "NoUserAgent",  g_log_no_user_agent);
   write_log(g_rslt, &ridx, n, "BadUserAgent", g_log_bad_user_agent);
+  write_log(g_rslt, &ridx, n, "BadABArgs",    g_log_bad_ab_args);
 
 
   write_log(g_rslt, &ridx, n, "SessionServiceCalls", g_log_ss_calls);

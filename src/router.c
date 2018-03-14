@@ -41,13 +41,13 @@ router(
     fprintf(stderr, "Bad input to router [%s] \n", args);
     WHEREAMI; 
   }
-  char buf[64];
-  memset(buf, '\0', 64);
+  char buf[128];
+  memset(buf, '\0', 128);
+  const char *justin_cat = lkp_id_to_name(g_justin_cat_lkp, 
+      g_n_justin_cat_lkp, g_justin_cat_id);
+  if ( justin_cat == NULL ) { justin_cat = "Unknown"; }
 
-  sprintf(buf,"&DeviceID=%d", g_devices[g_device_idx].id);
-  strcat(g_redirect_url, buf);
-
-  sprintf(buf,"&Device=%s", g_devices[g_device_idx].name);
+  sprintf(buf,"&DeviceID=%d&Device=%s", g_justin_cat_id, justin_cat);
   strcat(g_redirect_url, buf);
 
   // Notice that you cannot afford to return a status of -1

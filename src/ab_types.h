@@ -71,10 +71,18 @@ typedef struct _payload_type {
   uint32_t variant_id;
 } PAYLOAD_TYPE;
 
-typedef struct _dev_rec_type { 
+typedef struct _lkp_rec_type { 
   uint32_t id;
-  char name[AB_MAX_LEN_DEVICE+1];
-} DEV_REC_TYPE;
+  char name[AB_MAX_LEN_LKP_NAME+1];
+} LKP_REC_TYPE;
+
+typedef struct _ua_rec_type{
+  uint64_t hash;
+  uint8_t device_type_id;
+  uint8_t os_id;
+  uint8_t browser_id;
+  uint8_t justin_cat_id;
+} UA_REC_TYPE;
 
 typedef struct _service_type {
   uint16_t  port; 
@@ -101,10 +109,13 @@ typedef struct _cftype {
   uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
   char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; 
-  char dev_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char justin_cat_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char os_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char browser_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
 
-  uint32_t num_devices;
-  char *devices[AB_MAX_LEN_DEVICE+1];
+  uint32_t n_justin_cat;
+  LKP_REC_TYPE *justin_cat;
 } CFG_TYPE;
 
 #endif

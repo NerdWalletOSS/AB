@@ -9,17 +9,24 @@
 #include "macros.h"
 #include "auxil.h"
 #include "mmap.h"
-#include "load_device.h"
+#include "load_lkp.h"
 #include "spooky_hash.h"
 
-extern int 
-UI8_srt_compare(
-    const void *ii, 
-    const void *jj
-    );
 //-------------------------------------------------------
+#define MAX_LEN_NAME 31
+#define MAX_LEN_USER_AGENT 511
+#define MAXLINE 2047
+//-------------------------------------------------------
+typedef struct _justin_map_rec_type { 
+  char justin_cat[MAX_LEN_NAME+1];
+  char device[MAX_LEN_NAME+1];
+  char device_type[MAX_LEN_NAME+1];
+  char os[MAX_LEN_NAME+1];
+  char browser[MAX_LEN_NAME+1];
+} JUSTIN_MAP_REC_TYPE;
+
 //<hdr>
-int 
+static int 
 UI8_srt_compare(
     const void *ii, 
     const void *jj
@@ -37,61 +44,30 @@ UI8_srt_compare(
     return (-1);
   }
 }
-
-typedef struct _dev_map_rec_type { 
-  char justin_cat[32];
-  char device[32];
-  char device_type[32];
-  char os_type[32];
-  char browser_type[32];
-} DEV_MAP_REC_TYPE;
-#define MAXLINE 2047
-int
-main(
-    int argc,
-    char **argv
+//------------------------------------------------------
+static int
+load_map(
+    const char *justin_map_file, 
+    JUSTIN_MAP_REC_TYPE **ptr_justin_map, 
+    int *ptr_n_justin_map
     )
 {
   int status = 0;
-  FILE *afp = NULL; FILE *ofp = NULL; FILE *dmfp = NULL;
-  DEV_REC_TYPE *devices = NULL; uint32_t n_devices = 0;
-  spooky_state g_spooky_state;
+  FILE *dmfp = NULL;
+  JUSTIN_MAP_REC_TYPE *justin_map = NULL;
+  int n_justin_map = 0;
 
-  uint64_t g_seed1 = 961748941; // large prime number
-  uint64_t g_seed2 = 982451653; // some other large primenumber
-  spooky_init(&g_spooky_state, g_seed1, g_seed2);
-  char line[MAXLINE+1];
-  char *X = NULL; size_t nX = 0;
-  char device[AB_MAX_LEN_DEVICE+1];
-  DEV_MAP_REC_TYPE *dev_map = NULL; int n_dev_map = 0;
-  int bufsz = 32;
-  uint32_t other_id = -1;
-  char buf[bufsz]; 
-  char ua[AB_MAX_LEN_USER_AGENT+1];
-  char alnum_ua[AB_MAX_LEN_USER_AGENT+1];
+  dmfp = fopen(justin_map_file, "r");
+  return_if_fopen_failed(dmfp, justin_map_file, "r");
 
-  if ( argc != 5 ) { go_BYE(-1); }
-  
-  char *dev_file     = argv[1]; 
-  char *dev_map_file = argv[2]; 
-  char *agent_file   = argv[3]; 
-  char *output_file  = argv[4]; 
-  dmfp = fopen(dev_map_file, "r");
-  return_if_fopen_failed(dmfp, dev_map_file, "r");
-  afp = fopen(agent_file, "r");
-  return_if_fopen_failed(afp, agent_file, "r");
-  ofp = fopen(output_file, "wb");
-  return_if_fopen_failed(ofp, output_file, "wb");
-  /* read devices */
-  status = load_device(dev_file, &devices, &n_devices, &other_id); 
-  cBYE(status);
-  // read device map 
-  status = num_lines(dev_map_file, &n_dev_map); cBYE(status);
-  if ( n_dev_map == 0 ) { go_BYE(-1); }
-  dev_map = malloc(n_dev_map * sizeof(DEV_REC_TYPE));
-  return_if_malloc_failed(dev_map);
-  for ( int i = 0; i < n_dev_map; i++ ) { 
-    memset(line, '\0', MAXLINE);
+  status = num_lines(justin_map_file, &n_justin_map); cBYE(status);
+  if ( n_justin_map == 0 ) { go_BYE(-1); }
+  justin_map = malloc(n_justin_map * sizeof(JUSTIN_MAP_REC_TYPE));
+  return_if_malloc_failed(justin_map);
+  for ( int i = 0; i < n_justin_map; i++ ) { 
+    char buf[MAX_LEN_NAME+1]; int bufsz = MAX_LEN_NAME;
+    char line[MAXLINE+1];
+    memset(line, '\0', MAXLINE+1);
     char *cptr = fgets(line, MAXLINE, dmfp); 
     if ( cptr == NULL ) {  break; }
     strtolower(line);
@@ -100,39 +76,97 @@ main(
       line[strlen(line)-1] = '\0';
     }
     status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(dev_map[i].justin_cat, buf); 
+    strcpy(justin_map[i].justin_cat, buf); 
     status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(dev_map[i].device, buf); 
+    strcpy(justin_map[i].device, buf); 
     status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(dev_map[i].device_type, buf); 
+    strcpy(justin_map[i].device_type, buf); 
     status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(dev_map[i].os_type, buf); 
+    strcpy(justin_map[i].os, buf); 
     status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(dev_map[i].browser_type, buf); 
+    strcpy(justin_map[i].browser, buf); 
   }
-  // device_id must be 1, 2, 3, ...
-  for ( unsigned int i = 0; i < (unsigned int)n_devices; i++ ) { 
-    bool found = true;
-    if ( devices[i].device_id == (i+1) ) { found = true; break; } 
-    if ( !found ) { go_BYE(-1); }
-  }
-  /* read user agent  */
-  for ( int i = 0; ; i++ ) {
-    char device_type[bufsz];
-    char os_type[bufsz];
-    char browser_type[bufsz];
-    char justin_cat[bufsz];
+  *ptr_justin_map = justin_map;
+  *ptr_n_justin_map = n_justin_map;
+BYE:
+  return status;
+}
 
-    memset(device, '\0', AB_MAX_LEN_DEVICE+1);
-    memset(device_type, '\0', bufsz);
-    memset(os_type, '\0', bufsz);
-    memset(browser_type, '\0', bufsz);
-    memset(ua, '\0', AB_MAX_LEN_USER_AGENT+1);
-    memset(justin_cat, '\0', bufsz);
+int
+main(
+    int argc,
+    char **argv
+    )
+{
+  int status = 0;
+  FILE *afp = NULL; FILE *ofp = NULL; FILE *dmfp = NULL;
+  spooky_state g_spooky_state;
+
+  uint64_t g_seed1 = 961748941; // large prime number
+  uint64_t g_seed2 = 982451653; // some other large primenumber
+  spooky_init(&g_spooky_state, g_seed1, g_seed2);
+  char *X = NULL; size_t nX = 0;
+  JUSTIN_MAP_REC_TYPE *justin_map = NULL; int n_justin_map = 0;
+  LKP_REC_TYPE *justin_cat_lkp = NULL; int n_justin_cat_lkp = 0;
+  LKP_REC_TYPE *os_lkp = NULL; int n_os_lkp = 0;
+  LKP_REC_TYPE *browser_lkp = NULL; int n_browser_lkp = 0;
+  LKP_REC_TYPE *device_lkp = NULL; int n_device_lkp = 0;
+  LKP_REC_TYPE *device_type_lkp = NULL; int n_device_type_lkp = 0;
+
+  if ( argc != 3 ) { go_BYE(-1); }
+  
+  char *agent_file   = argv[1]; 
+  char *output_file  = argv[2]; 
+
+  const char *justin_cat_file = "justin_cat.csv";
+  const char *justin_map_file = "justin_map.csv";
+  const char *os_file         = "os.csv";
+  const char *browser_file    = "browser.csv";
+  const char *device_file     = "device.csv"; 
+  const char *device_type_file= "device_type.csv"; 
+
+  afp = fopen(agent_file, "r");
+  return_if_fopen_failed(afp, agent_file, "r");
+  ofp = fopen(output_file, "wb");
+  return_if_fopen_failed(ofp, output_file, "wb");
+  /* read justin categories */
+  status = load_lkp(justin_cat_file, &justin_cat_lkp, &n_justin_cat_lkp);
+  cBYE(status);
+  status = load_lkp(os_file, &os_lkp, &n_os_lkp);
+  cBYE(status);
+  status = load_lkp(browser_file, &browser_lkp, &n_browser_lkp);
+  cBYE(status);
+  status = load_lkp(device_file, &device_lkp, &n_device_lkp);
+  cBYE(status);
+  status = load_lkp(device_type_file, &device_type_lkp, &n_device_type_lkp);
+  cBYE(status);
+  // read mapping between other lkps and justin category
+  status = load_map(justin_map_file, &justin_map, &n_justin_map);
+  cBYE(status);
+  /* read user agent  */
+  int n_bad_user_agent = 0, n_good_user_agent = 0;
+  for ( int i = 0; ; i++ ) {
+    int nw;
+    char line[MAXLINE+1];
+    char ua[MAX_LEN_USER_AGENT+1];
+    char alnum_ua[MAX_LEN_USER_AGENT+1];
+    char device[MAX_LEN_NAME+1];
+    char device_type[MAX_LEN_NAME+1];
+    char os[MAX_LEN_NAME+1];
+    char browser[MAX_LEN_NAME+1];
+    char justin_cat[MAX_LEN_NAME+1];
+
+    memset(line, '\0', MAXLINE+1);
+    memset(ua, '\0', MAX_LEN_USER_AGENT+1);
+    memset(alnum_ua, '\0', MAX_LEN_USER_AGENT+1);
+    memset(device, '\0', MAX_LEN_NAME+1);
+    memset(device_type, '\0', MAX_LEN_NAME+1);
+    memset(os, '\0', MAX_LEN_NAME+1);
+    memset(browser, '\0', MAX_LEN_NAME+1);
+    memset(justin_cat, '\0', MAX_LEN_NAME+1);
+
 
     if ( feof(afp) ) { break; }
-    memset(device,'\0', AB_MAX_LEN_DEVICE+1);
-    memset(line, '\0', MAXLINE);
     char *cptr = fgets(line, MAXLINE, afp); 
     if ( cptr == NULL ) {  break; }
     // TODO Put better code when to skip header if ( i == 0 ) { continue; } // skip header
@@ -142,51 +176,45 @@ main(
       go_BYE(-1); 
     }
     line[len-1] = '\0';
-    cptr = line;
-    status = read_to_chars(&cptr, ",\n", device, AB_MAX_LEN_DEVICE);cBYE(status);
+    cptr = line; int bufsz = MAX_LEN_NAME;
+    status = read_to_chars(&cptr, ",\n", device, bufsz);cBYE(status);
     status = read_to_chars(&cptr, ",\n", device_type, bufsz);cBYE(status);
-    status = read_to_chars(&cptr, ",\n", os_type, bufsz);cBYE(status);
-    status = read_to_chars(&cptr, ",\n", browser_type, bufsz);cBYE(status);
-    status = read_to_chars(&cptr, "\n", ua, AB_MAX_LEN_USER_AGENT);cBYE(status);
-    if ( ua[0] == '"' ) {
-      int ualen = strlen(ua);
-      for ( int k = 0; k < ualen-1; k++ ) { 
-        ua[k] = ua[k+1];
-      }
-      ua[ualen-1] = '\0';
-      ua[ualen-2] = '\0';
+    status = read_to_chars(&cptr, ",\n", os, bufsz);cBYE(status);
+    status = read_to_chars(&cptr, ",\n", browser, bufsz);cBYE(status);
+    status = read_to_chars(&cptr, "\n", ua, MAX_LEN_USER_AGENT);
+    if ( status < 0 ) { 
+      printf("bad user agent on Line %d\n", i+1); 
+      n_bad_user_agent++;
+      continue;
     }
-    /*
-    if ( strcasecmp(ua, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36") == 0 ) { 
-      printf("hello world\n");
-    }
-    */
-
+    cBYE(status);
+    status = strip_dquotes(ua); cBYE(status);
     
     // Get Justin's category 
-    for ( int j = 0; j < n_dev_map; j++ ) { 
-      if ( strcasecmp(dev_map[j].device, device) != 0 ) { continue; }
-      if ( strcasecmp(dev_map[j].device_type, device_type) != 0 ) { continue; }
-      if ( strcasecmp(dev_map[j].os_type, os_type) != 0 ) { continue; }
-      if ( strcasecmp(dev_map[j].browser_type, browser_type) != 0 ) { continue; }
+    for ( int j = 0; j < n_justin_map; j++ ) { 
+      if ( strcasecmp(justin_map[j].device, device) != 0 ) { continue; }
+      if ( strcasecmp(justin_map[j].device_type, device_type) != 0 ) { continue; }
+      if ( strcasecmp(justin_map[j].os, os) != 0 ) { continue; }
+      if ( strcasecmp(justin_map[j].browser, browser) != 0 ) { continue; }
       // If you reach here, you have a match
-      strcpy(justin_cat, dev_map[j].justin_cat);
+      strcpy(justin_cat, justin_map[j].justin_cat);
       break;
     }
     if ( *justin_cat == '\0' ) { 
-      go_BYE(-1); }
-    // Get device_id
-    int device_id = -1;
-    for ( uint32_t j = 0; j < n_devices; j++ ) {
-      if ( strcasecmp(devices[j].device, justin_cat) == 0 ) { 
-        device_id = devices[j].device_id;
-      }
+      fprintf(stderr, "ERR: Update justin_map.csv\n"); go_BYE(-1); 
     }
-    if ( device_id <= 0 ) { 
-      go_BYE(-1); 
-    }
+    uint8_t justin_cat_id;
+    status = lkp_name_to_id(justin_cat_lkp, n_justin_cat_lkp, 
+        justin_cat, &justin_cat_id); cBYE(status);
+    uint8_t os_id;
+    status = lkp_name_to_id(os_lkp, n_os_lkp, os, &os_id); cBYE(status);
+    uint8_t browser_id;
+    status = lkp_name_to_id(browser_lkp, n_browser_lkp, 
+        browser, &browser_id); cBYE(status);
+    uint8_t device_type_id;
+    status = lkp_name_to_id(device_type_lkp, n_device_type_lkp, 
+        device_type, &device_type_id); cBYE(status);
     // reduce user agent to alphanumeric characters, lower case
-    memset(alnum_ua, '\0', AB_MAX_LEN_USER_AGENT+1);
     int idx = 0;
     for ( char *xptr = ua; *xptr != '\0'; xptr++ ) { 
       if ( isalnum(*xptr) ) {
@@ -194,45 +222,40 @@ main(
       }
     }
     int len_alnum_ua = idx;
-    
-    // fprintf(stderr, "%s,%s\n", device,ua);
-    uint64_t hash1 = 0, hash2 = 0, hash3 = 0;
+    uint64_t hash1 = 0, hash2 = 0;
     spooky_hash128(alnum_ua, len_alnum_ua, &hash1, &hash2);
-    uint64_t mask = 15;
-    mask = ~mask;
-    hash2 = hash1 & mask;
-    hash3 = hash2 | device_id;
-    fwrite(&hash3, sizeof(uint64_t), 1, ofp);
-    char temp[1024];
-    strcpy(temp, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-    for ( char *xptr = temp; *xptr != '\0'; xptr++ ) { 
-      *xptr = tolower(*xptr);
-    }
-    if ( strcmp(ua, temp) == 0 ) { 
-      fprintf(stderr, "hash1 = %llu\n", hash1);
-      fprintf(stderr, "hash2 = %llu\n", hash2);
-      fprintf(stderr, "hash3 = %llu\n", hash3);
-      fprintf(stderr, "len_alnum_ua = %d\n", len_alnum_ua);
-      fprintf(stderr, "alnum_ua = %s\n", alnum_ua);
-    }
-    /*
-    if ( i < 10  ) { 
-      fprintf(stderr, "%llu,%s\n", (unsigned long long) hash1, ua);
-    }
-    */
-
+    nw = fwrite(&hash1, sizeof(uint64_t), 1, ofp);
+    if ( nw != 1 ) { go_BYE(-1); }
+    nw = fwrite(&device_type_id, sizeof(uint8_t), 1, ofp);
+    if ( nw != 1 ) { go_BYE(-1); }
+    nw = fwrite(&os_id, sizeof(uint8_t), 1, ofp);
+    if ( nw != 1 ) { go_BYE(-1); }
+    nw = fwrite(&browser_id, sizeof(uint8_t), 1, ofp);
+    if ( nw != 1 ) { go_BYE(-1); }
+    nw = fwrite(&justin_cat, sizeof(uint8_t), 1, ofp);
+    if ( nw != 1 ) { go_BYE(-1); }
+    n_good_user_agent++;
   }
   fclose_if_non_null(ofp);
+  printf("number of bad  user agents = %d \n", n_bad_user_agent);
+  printf("number of good user agents = %d \n", n_good_user_agent);
   status = rs_mmap(output_file, &X, &nX, 1); cBYE(status);
-  int n_ua = nX / sizeof(uint64_t);
-  if ( ( n_ua * sizeof(uint64_t) ) != nX ) { go_BYE(-1); }
-  qsort(X, n_ua, sizeof(uint64_t), UI8_srt_compare);
+  uint32_t rec_size = (4*sizeof(uint8_t)) + sizeof(uint64_t);
+  uint32_t n_ua = nX / rec_size;
+  if ( ( n_ua * rec_size ) != nX ) { go_BYE(-1); }
+  // Note trick below. rec_sizeis 16 but we use UI8_srt_compare
+  // and compare only first 8 bytes
+  qsort(X, n_ua, rec_size, UI8_srt_compare);
   munmap(X, nX);
 
 BYE:
-  free_if_non_null(devices);
   fclose_if_non_null(afp);
   fclose_if_non_null(ofp);
-  fclose_if_non_null(dmfp);
+  free_if_non_null(justin_map);
+  free_if_non_null(justin_cat_lkp);
+  free_if_non_null(os_lkp);
+  free_if_non_null(browser_lkp);
+  free_if_non_null(device_lkp);
+  free_if_non_null(device_type_lkp);
   return status;
 }

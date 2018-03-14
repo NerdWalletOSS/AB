@@ -6,12 +6,13 @@ gcc -g -DLOCAL_DEPLOY ${WARN} process_user_agents.c \
   -I../../statsd-c-client-master/ \
   -I../../curl-7.51.0/include/ \
   ../spooky_hash.c  \
-  ../load_device.c  \
+  ../load_lkp.c  \
   ../auxil.c \
   ../mmap.c 
 opfile=_xx
 rm -f $opfile
 mapfile=rs_tmp_user_agent000
-./a.out device.csv device_mapping.csv $mapfile $opfile
+test -f $mapfile
+valgrind --leak-check=full ./a.out $mapfile $opfile
 cp $opfile /opt/ab/ua_to_dev.bin
 echo "Successfully completed $0 in $PWD"

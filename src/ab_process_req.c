@@ -18,7 +18,7 @@
 #include "router.h"
 #include "test_info.h"
 #include "zero_globals.h"
-#include "ua_to_device.h"
+#include "classify_ua.h"
 
 // START FUNC DECL
 int 
@@ -157,7 +157,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case UAToDevice : /* done by C */
-      status = ua_to_device(args, g_rslt,  AB_MAX_LEN_RESULT); cBYE(status);
+      status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */
