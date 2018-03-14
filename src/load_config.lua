@@ -54,8 +54,9 @@ local function update_config(c_struct, config)
   return is_updated
 end
 
-local function db_connect(config)
-  local mysql = config.MYSQL
+local load_cfg = {}
+
+function load_cfg.db_connect(mysql)
   assert(mysql ~= nil and type(mysql) == "table", "Config must be a table for mysql ")
   local host = mysql.SERVER.VALUE
   assert(host ~= nil and type(host) == "string" and #host > 0 , "Mysql entry must have a valid hostname")
@@ -72,7 +73,7 @@ local function db_connect(config)
 end
 
 local function load_db_data(g_conf, config, is_updated)
-  local conn = db_connect(config)
+  local conn = load_cfg.db_connect(config.MYSQL)
   -- TODO execute the sql
   local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
   table.sort(res, function(a,b) return a.id < b.id end)
@@ -153,8 +154,6 @@ local function update_rts_configs(g_conf, config)
 end
 
 
-local load_cfg = {}
-
 function load_cfg.load_config(conf_str, g_conf, has_changed)
   local config = json.decode(conf_str)
 
@@ -170,7 +169,7 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
-  cache.put("config", conf_str)
+  cache.put("config", config)
 end
 
 function load_cfg.load_config_from_file(g_conf, has_changed, file_path)

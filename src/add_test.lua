@@ -108,7 +108,7 @@ function AddTests.add(test_str, g_tests, c_index)
     end
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
-    tests[test_data.id] = test_str
+    tests[test_data.id] = test_data
     cache.put("tests", tests)
   end
 end
