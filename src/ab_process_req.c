@@ -56,6 +56,10 @@ ab_process_req(
       status = l_chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
+    case ClassifyUA : /* done by C */
+      status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
       status = diagnostics(); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
@@ -155,10 +159,6 @@ ab_process_req(
       //--------------------------------------------------------
     case TestInfo : /* done by Lua */
       status = l_test_info(args); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case UAToDevice : /* done by C */
-      status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

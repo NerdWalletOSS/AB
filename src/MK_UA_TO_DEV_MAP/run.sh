@@ -21,4 +21,6 @@ cp browser.csv /opt/ab/
 cp device_type.csv /opt/ab/
 cp justin_cat.csv /opt/ab/
 cp os.csv /opt/ab/
+cp referer_class.csv /opt/ab/
+cp dt_feature_member.csv /opt/ab/dt_feature.csv
 echo "Successfully completed $0 in $PWD"

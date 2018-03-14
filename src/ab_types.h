@@ -12,6 +12,7 @@ typedef enum _ab_req_type {
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
+  ClassifyUA, // Read &  C
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
   GetConfig, // Read &  Lua
@@ -28,7 +29,6 @@ typedef enum _ab_req_type {
   Restart, // Read &  C 
   Router, // Read &  C
   TestInfo, // Read &  Lua
-  UAToDevice, // Read &  C
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
@@ -109,14 +109,19 @@ typedef struct _cftype {
   int uuid_len; 
   uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
+  // START: For classifying user agent 
   char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; 
   char justin_cat_file[AB_MAX_LEN_FILE_NAME+1]; 
   char os_file[AB_MAX_LEN_FILE_NAME+1]; 
   char browser_file[AB_MAX_LEN_FILE_NAME+1]; 
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
-
-  uint32_t n_justin_cat;
-  LKP_REC_TYPE *justin_cat;
+  // STOP: For classifying user agent 
+  // START: For ML 
+  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; 
+  // STOP: For ML 
 } CFG_TYPE;
 
 typedef struct _justin_map_rec_type { 

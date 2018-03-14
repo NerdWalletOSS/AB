@@ -16,6 +16,9 @@ get_req_type(
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
     return CheckDBConnectivity;
   }
+  else if (strcasecmp(api, "ClassifyUA") == 0) {
+    return ClassifyUA;
+  }
   else if (strcasecmp(api, "Diagnostics") == 0) {
     return Diagnostics;
   }
@@ -63,9 +66,6 @@ get_req_type(
   }
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
-  }
-  else if (strcasecmp(api, "UAToDevice") == 0) {
-    return UAToDevice;
   }
   else if (strcasecmp(api, "ZeroCounters") == 0) {
     return ZeroCounters;

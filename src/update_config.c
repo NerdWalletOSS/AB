@@ -124,6 +124,15 @@ update_config(
     cBYE(status);
   }
   //--------------------------------------------------------
+  // referer_class file 
+  free_if_non_null(g_referer_class_lkp);  
+  g_n_referer_class_lkp = 0; 
+  if ( *g_cfg.referer_class_file != '\0' ) { 
+    status = load_lkp(g_cfg.referer_class_file, &g_referer_class_lkp, 
+        &g_n_referer_class_lkp);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
   // ua_to_dev_map_file
   if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
     munmap(g_classify_ua_map, g_len_classify_ua_file);
