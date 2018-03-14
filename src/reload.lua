@@ -8,7 +8,7 @@ local json = require 'json'
 local AddTest = require 'add_test'
 local reload = {}
 function reload.get_tests_from_db()
-  local tests = {}
+  local tests_ret = {}
   local configs = cache.get('config').AB.MYSQL
   local conn = load_config.db_connect(configs)
   local states = conn:query('select * from state;')
@@ -43,12 +43,17 @@ function reload.get_tests_from_db()
     tmp[v.id] = v.name
   end
   bin_types = tmp
-
   tmp={}
   local query_str = string.format('select * from test where state_id in (%s)', table.concat(valid_ids, ","))
   local tests = conn:query(query_str)
   for _,test in pairs(tests) do
     local test_json = {}
+    -- test_json.name = test.name
+    -- test_json.id = test.id
+    -- test_json.seed = test.seed
+    -- test_json.is_dev_specific = test.is_dev_specific
+    -- test_json.external_id = test.external_id
+    test_json = test
     test_json.Creator = creators[test.creator_id]
     test_json.TestType = test_types[test.test_type_id]
     test_json.BinType = bin_types[test.bin_type_id]
@@ -64,23 +69,22 @@ function reload.get_tests_from_db()
     test_json.Variants = variants_arr
     -- TODO ask about cat_attr_val_test
     -- TODO ask about bool_attr_test
-
     query = string.format('select * from device_x_variant where test_id=%s;', test.id)
     local devxvar = conn:query(query)
     if #devxvar > 0 then
       local devices = cache.get('devices')
       local dev_arr = {}
       for k,v in pairs(devices) do
-        query = string.format('select * from device_x_variant where test_id=%s and device_id=%s', test.id, k)
+        query = string.format('select * from device_x_variant where test_id=%s and device_id=%s;', test.id, k)
         dev_arr[#dev_arr + 1] = conn:query(query)
       end
       test_json.DeviceCrossVariant = dev_arr
     end
     -- TODO here is where we send this to add test
     local str = json.encode(test_json)
-    tests[#tests + 1] = str
+    tests_ret[#tests_ret + 1] = str
   end
-  return tests
+  return tests_ret
 end
 
 function reload.reload(g_tests, c_index)

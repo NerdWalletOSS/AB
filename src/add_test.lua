@@ -28,8 +28,17 @@ end
 
 local states = create_state_table(consts)
 
-function AddTests.get_test(g_tests, test_name, c_index)
-  local name_hash = spooky_hash.spooky_hash64(test_name, #test_name, g_seed1)
+local function match(c_test, test_data, name_hash)
+  if c_test.name_hash == 0 then
+    return true
+  elseif c_test.name_hash == name_hash and c_test.id == tonumber(test_data.id) and ffi.string(c_test.name) == test_data.name then
+    return true
+  end
+end
+
+function AddTests.get_test(g_tests, test_data, c_index)
+  -- dbg()
+  local name_hash = spooky_hash.spooky_hash64(test_data.name, #test_data.name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
   c_index = ffi.cast("int*", c_index)
@@ -39,11 +48,11 @@ function AddTests.get_test(g_tests, test_name, c_index)
   repeat
     test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
     position = position + 1
-    if position == consts.AB_MAX_NUM_TESTS or test.name_hash == 0 or test.name_hash == name_hash then
+    if position == consts.AB_MAX_NUM_TESTS or  match(test, test_data, name_hash) then
       stop = true
     end
   until stop == true
-  if test.name_hash == 0 or test.name_hash == name_hash then
+  if match(test, test_data, name_hash) then
     test.name_hash = name_hash
     -- print(position -1)
     c_index[0] = position -1
@@ -55,11 +64,11 @@ function AddTests.get_test(g_tests, test_name, c_index)
     repeat
       test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
       position = position + 1
-      if position == original_position or test.name_hash == 0 or test.name_hash == name_hash then
+      if position == original_position or match(test, test_data, name_hash)then
         stop = true
       end
     until stop == true
-    if test.name_hash == 0 or test.name_hash == name_hash then
+    if match(test, test_data, name_hash) then
       test.name_hash = name_hash
       -- print(position -1)
       c_index[0] = position - 1
@@ -80,7 +89,7 @@ function AddTests.add(test_str, g_tests, c_index)
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
-  local c_test = AddTests.get_test(g_tests, test_data.name, c_index)
+  local c_test = AddTests.get_test(g_tests, test_data, c_index)
   assert(c_test ~= nil, "Position not found to insert")
   if test_data.State:lower() == "archived" then
     -- delete the test

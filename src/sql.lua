@@ -1,5 +1,6 @@
 -- Taken from https://github.com/kengonakajima/luajit-mysql/blob/master/luajit-mysql.lua
 -- and modified
+-- local dbg = require 'debugger'
 local ffi = require("ffi")
 local table = require("table")
 local string = require("string")
@@ -125,6 +126,7 @@ local mysql_query = function( self, qstr )
   self:log("mysql_query:", qstr)
   ret = ffi.C.mysql_query( self.conn, qstr )
   if ret ~= 0 then
+    dbg()
     error( "fatal:" .. ffi.string(ffi.C.mysql_error(self.mysql)))
   end
   local res = ffi.C.mysql_store_result(self.mysql)

@@ -26,14 +26,14 @@ local config = {
   -- (exclude overrules include, do not include
   -- the .lua extension)
   ['include'] = {
-    '../src/tests',
+    '../src/add_test',
     '../src/sql',
+    '../src/reload',
     '../src/spooky_hash',
     '../src/load_config',
     '../src/bin*',
     '../src/cache',
-    '../src/ab_*'
-
+    '../src/ab_*',
   },
   -- busted uses exclude so thats the way we will go too
   -- Patterns for files to exclude when reporting
