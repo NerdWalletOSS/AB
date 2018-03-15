@@ -34,6 +34,11 @@ free_globals(
 
   if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
     munmap(g_classify_ua_map, g_len_classify_ua_file);
+    g_num_classify_ua_map = 0;
+  }
+  if ( ( g_dt_map != NULL ) && ( g_len_dt_file != 0 ) ) {
+    munmap(g_dt_map, g_len_dt_file);
+    g_num_dt_map = 0;
   }
   
   if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
@@ -80,8 +85,15 @@ zero_globals(
   memset(g_cfg.os_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.browser_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+
+  memset(g_cfg.avg_fico_per_zip_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.avg_zill_per_zip_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.referer_class_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+
   memset(g_cfg.dt_feature_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.dt_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+
+  memset(g_cfg.mmdb_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   g_ss_response = NULL;
   g_sz_ss_response = AB_MAX_LEN_SS_RESPONSE+1;;
@@ -173,7 +185,6 @@ zero_globals(
     fprintf(stderr, "calling initialization failed: %s\n", lua_tostring(g_L, -1));
     go_BYE(-1);
   }
-
   zero_log();
 BYE:
   return status;

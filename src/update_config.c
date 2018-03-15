@@ -6,6 +6,7 @@
 #include "update_config.h"
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
+#include "load_dt.h"
 
 int
 update_config(
@@ -140,6 +141,16 @@ update_config(
   if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
     status = load_classify_ua_map(g_cfg.ua_to_dev_map_file, 
         &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
+  // dt_file
+  if ( ( g_dt_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
+    munmap(g_dt_map, g_len_classify_ua_file);
+  }
+  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
+    status = load_dt(g_cfg.ua_to_dev_map_file, 
+        &g_dt_map, &g_len_classify_ua_file, &g_num_dt_map);
     cBYE(status);
   }
 

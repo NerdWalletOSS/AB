@@ -26,7 +26,10 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : test_dt
+SO_SRCS := $(filter-out main.c, $(CSRCS))
+SO_COBJS = $(SOCSRCS:.c=.o)
+
+all : test_dt dt.so
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
@@ -40,9 +43,13 @@ test_dt : $(COBJS) $(XOBJS)
 	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) -o test_dt  \
 	-lm  -lpthread -ldl  -lgomp
 
+dt.so : $(SO_COBJS) 
+	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o dt.so \
+	-lm  -lpthread -ldl  -lgomp
+
 clean:
 	rm -r -f test_dt $(COBJS) 
 	echo "ALL CLEAN"
 
 qclean :
-	rm -r -f ab_httpd $(COBJS) *.o _*
+	rm -r -f dt.so test_dt $(COBJS) *.o _*

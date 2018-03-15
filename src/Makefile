@@ -7,7 +7,9 @@ INCS= -I. \
 	-I../statsd-c-client-master/ \
 	-I../luajit-2.0.5/src/ \
 	-I../curl-7.51.0/include/ \
-	-I../curl-7.51.0/include/curl/ 
+	-I../curl-7.51.0/include/curl/ \
+	-I../dt_interpreter/src/ 
+
 
 
 DBGFLAGS= 
@@ -47,6 +49,9 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
+../dt_interpreter/src/dt.so :
+	make -C ../dt_interpreter/src/
+
 ../curl-7.51.0/lib/.libs/libcurl.so : 
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
@@ -79,12 +84,14 @@ ab_httpd : $(COBJS) \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
+	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
 	./libs/libmysqlclient.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
+	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
 	-lm  -lpthread -ldl 
 
