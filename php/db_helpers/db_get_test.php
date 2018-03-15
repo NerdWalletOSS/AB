@@ -47,7 +47,7 @@ function db_get_test(
   $DV = db_get_rows("device_x_variant", "test_id = $test_id ");
   if ( !is_null($DV) ) {
     $D  = $GLOBALS['device'];
-    $xxx = array(count($D));
+    unset($xxx);
     foreach ( $D as $k => $v ) { 
       $xxx[$k] = db_get_rows("device_x_variant", 
           "test_id = $test_id and device_id = $v " );

@@ -55,6 +55,8 @@ function set_state(
   rs_assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   $X1['updater_id'] = $updater_id;
+  $X1['request_webapp_id']  = $request_webapp_id;
+  $X1['api_id']       = $api_id;
   switch ( $new_state ) {
   case "dormant" : 
     rs_assert($old_state == "draft");
@@ -65,13 +67,20 @@ function set_state(
     $X1['state_id'] = lkp("state", "started");
     break;
   case "terminated" : 
-    $winner  = get_json_element($inJ, 'Winner'); 
+    $winner  = trim(get_json_element($inJ, 'Winner'));
     rs_assert($winner, "Need to provide winner to terminate test");
     $X1['state_id'] = lkp("state", "terminated");
-    $v = db_get_row("variant", "name", trim($winner), " and test_id = $test_id ");
+    $v = db_get_row("variant", "name", $winner, " and test_id = $test_id ");
     rs_assert($v);
+    $losers = db_get_rows("variant", 
+      "test_id = $test_id and name != '$winner' ");
+    rs_assert($losers);
     $winner_id = $v['id'];
     $X2['is_final'] = 1;
+    $X2['percentage'] = 100;
+    $X2['request_webapp_id']  = $request_webapp_id;
+    $X2['api_id']       = $api_id;
+
 
     break;
   case "archived" : 
@@ -88,6 +97,13 @@ function set_state(
     db_set_row("test", $test_id, $X1);
     if ( isset($X2) ) { 
       db_set_row("variant", $winner_id, $X2);
+      $X3['percentage'] = 0;
+      $X3['request_webapp_id']  = $request_webapp_id;
+      $X3['api_id']     = $api_id;
+      foreach ( $losers as $l ) {
+        $loser_id = $l['id'];
+        db_set_row("variant", $loser_id, $X3); 
+      }
     }
     $dbh->commit();
   } catch ( PDOException $ex ) {
