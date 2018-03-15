@@ -4,8 +4,8 @@
 #include "zero_globals.h"
 #include "init.h"
 #include "update_config.h"
-#include "load_device.h"
-#include "load_ua_to_dev_map.h"
+#include "load_lkp.h"
+#include "load_classify_ua_map.h"
 
 int
 update_config(
@@ -88,20 +88,58 @@ update_config(
   // xy_guid, Nothing to do 
   // uuid_len, Nothing to do 
 
-  // dev_file
-  free_if_non_null(g_devices);  g_n_devices = 0; g_other_id = 0;
-  if ( *g_cfg.dev_file != '\0' ) { 
-    status = load_device(g_cfg.dev_file, &g_devices, &g_n_devices, 
-        &g_other_id); 
+  // justin cat file 
+  free_if_non_null(g_justin_cat_lkp);  
+  g_n_justin_cat_lkp = 0; 
+  if ( *g_cfg.justin_cat_file != '\0' ) { 
+    status = load_lkp(g_cfg.justin_cat_file, &g_justin_cat_lkp, 
+        &g_n_justin_cat_lkp);
     cBYE(status);
   }
+  //--------------------------------------------------------
+  // os file 
+  free_if_non_null(g_os_lkp);  
+  g_n_os_lkp = 0; 
+  if ( *g_cfg.os_file != '\0' ) { 
+    status = load_lkp(g_cfg.os_file, &g_os_lkp, 
+        &g_n_os_lkp);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
+  // browser file 
+  free_if_non_null(g_browser_lkp);  
+  g_n_browser_lkp = 0; 
+  if ( *g_cfg.browser_file != '\0' ) { 
+    status = load_lkp(g_cfg.browser_file, &g_browser_lkp, 
+        &g_n_browser_lkp);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
+  // device_type file 
+  free_if_non_null(g_device_type_lkp);  
+  g_n_device_type_lkp = 0; 
+  if ( *g_cfg.device_type_file != '\0' ) { 
+    status = load_lkp(g_cfg.device_type_file, &g_device_type_lkp, 
+        &g_n_device_type_lkp);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
+  // referer_class file 
+  free_if_non_null(g_referer_class_lkp);  
+  g_n_referer_class_lkp = 0; 
+  if ( *g_cfg.referer_class_file != '\0' ) { 
+    status = load_lkp(g_cfg.referer_class_file, &g_referer_class_lkp, 
+        &g_n_referer_class_lkp);
+    cBYE(status);
+  }
+  //--------------------------------------------------------
   // ua_to_dev_map_file
-  if ( ( g_ua_to_dev_map != NULL ) && ( g_n_ua_to_dev_map != 0 ) ) {
-    munmap(g_ua_to_dev_map, g_n_ua_to_dev_map);
+  if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
+    munmap(g_classify_ua_map, g_len_classify_ua_file);
   }
   if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
-    status = load_ua_to_dev_map(g_cfg.ua_to_dev_map_file, 
-        &g_ua_to_dev_map, &g_n_ua_to_dev_map, &g_num_ua_to_dev_map);
+    status = load_classify_ua_map(g_cfg.ua_to_dev_map_file, 
+        &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map);
     cBYE(status);
   }
 

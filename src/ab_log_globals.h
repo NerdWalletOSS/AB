@@ -12,6 +12,8 @@ EXTERN uint64_t g_log_no_user_agent;
 /*C number of times no user agent was extracted */
 EXTERN uint64_t g_log_bad_user_agent;
 /*C number of times user agent was not matched to known device */
+EXTERN uint64_t g_log_bad_ab_args;
+/*C number of times bad arguments to GetVariant(s) */
 
 EXTERN uint64_t g_log_ss_calls;
 /*C number of calls to session service */

@@ -46,25 +46,18 @@ post_from_log_q(
     memset(g_curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
     make_curl_payload(lcl_payload, g_curl_payload);
     curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
-    // START: Some NW specific stuff
+#ifdef NW_SPECIFIC
     struct curl_slist *chunk = NULL;
     if ( *g_nw_x_caller_client_id == '\0' ) { 
-       /* Add a header with "blank" contents to the right of the colon. 
-        * Note that we're then using a semicolon in the string we 
-        * pass to curl! */ 
-      // chunk = curl_slist_append(chunk, "X-silly-header;");
       chunk = curl_slist_append(chunk, "X-Caller-Client-ID;");
     }
     else {
-      /* Add a custom header */ 
-      // chunk = curl_slist_append(chunk, "Another: yes");
       char buf[AB_MAX_LEN_HDR_KEY+1+AB_MAX_LEN_HDR_VAL+1+8];
       sprintf(buf, "X-Caller-Client-ID: %s", g_nw_x_caller_client_id);
       chunk = curl_slist_append(chunk, buf);
     }
-    /* set our custom set of headers */ 
-    // res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
     curl_res = curl_easy_setopt(g_ch, CURLOPT_HTTPHEADER, chunk);
+#endif
     g_log_posts++;
     int retry_count = 0;
     bool post_succeeded = false;

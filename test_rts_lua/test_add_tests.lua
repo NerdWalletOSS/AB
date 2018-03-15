@@ -1,6 +1,6 @@
 package.path=package.path .. ";./../src/?.lua"
 local assertx = require 'assertx'
--- local dbg = require 'debugger'
+local dbg = require 'debugger'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local consts = require 'ab_consts'
@@ -121,6 +121,24 @@ describe('AddTest framework', function()
         empty_g_tests()
       end)
 
+      it("should allow updates to a test", function()
+        local j_table = json.decode(valid_json)
+        local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
+        assert(status == true, res)
+        local old_index = c_index[0]
+        local old_testtype = g_tests[c_index[0]].test_type
+        j_table.TestType = "XYTest"
+        local j_str = json.encode(j_table)
+        
+        status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+        assert(status == true, res)
+        assert(c_index[0] == old_index, "Indices for update must be the same. Expected", old_index, " got ", c_index[0] )
+
+        assert(old_testtype ~= g_tests[c_index[0]].test_type, "Test type should have changed")
+
+        cleanup(g_tests, c_index)
+
+      end)
       describe("for c_to_v_ok_v_to_c_ok_v_to_v_not_ok", function()
         it("should have a control type", function()
           local j_table = json.decode(valid_json)

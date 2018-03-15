@@ -1,4 +1,4 @@
-justin_class,device,device_type,os_type,browser_type,count
+justin_cat,device,device_type,os_type,browser_type,count
 Other,Mobile,Other,Other,Safari,7
 Other,Mobile,PC,Linux,Safari,1
 Tablet_iOS,Tablet,iPad,Mac,Safari,3
@@ -127,3 +127,4 @@ Other,Mobile,PC,Windows,Other,485
 Mobile_iOS,Mobile,iPad,iOS,Safari,201
 Other,Tablet,Tablet,Linux,Chrome,18
 Mobile_iOS,Mobile,iPhone,Mac,Safari,4
+Other,Desktop,PC,Linux,IE,39276

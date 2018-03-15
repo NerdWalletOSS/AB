@@ -3,7 +3,7 @@
 
 [RAMESH]  statsd metrics 
 
-[RAMESH] set tracer
+WIP [RAMESH] set tracer
 
 [INDRAJEET] All config variables should be read by Lua and then Lua calls C to set them
 
@@ -14,6 +14,11 @@
 [INDRAJEET] database permissions
 
 [INDRAJEET] ALL deployment stuff
+
+
+[RAMESH] Use logger to verify that headers are coming across correctly
+
+[INDRAJEET] Update fake session service to check headers
 
 [RAMESH]  FOLLOWING IN PROGRESS
 
@@ -31,7 +36,7 @@ include it as callerClientID on any ServiceCallHeaders in events you emit.
 with all outbound calls you make.
 \ee
 
-[INDRAJEET] verify thatwe are firing events properly
+[INDRAJEET] verify that we are firing events properly
 
 The updated schema is now in stage. You can view the final schema here:
 https://github.com/NerdWallet/schemas/pull/222/files

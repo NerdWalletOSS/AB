@@ -3,7 +3,7 @@ select case when device = 'Desktop' then 'Desktop'
             when device = 'Mobile' and device_type in ('iPad','iPhone') then 'Mobile_iOS'
             when device = 'Tablet' and os_type = 'Android' then 'Tablet_Android'
             when device = 'Tablet' and device_type in ('iPad','iPhone') then 'Tablet_iOS'
-            else 'Other' end justin_class, *
+            else 'Other' end justin_cat, *
             
 from (
     select 
