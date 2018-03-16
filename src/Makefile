@@ -8,7 +8,8 @@ INCS= -I. \
 	-I../luajit-2.0.5/src/ \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
-	-I../dt_interpreter/src/ 
+	-I../dt_interpreter/src/  \
+	-I../libmaxminddb-1.3.2/include/
 
 
 
@@ -93,7 +94,9 @@ ab_httpd : $(COBJS) \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
-	-lm  -lpthread -ldl 
+	-lm  -lpthread -ldl  -lmaxminddb
+
+	#TODO INDRAJEET TO FIX ABOVE REPLACE lmaxminddb
 
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(INCS) -shared -fPIC -o libspooky_hash.so

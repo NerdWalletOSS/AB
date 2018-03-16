@@ -41,6 +41,7 @@ free_globals(
     g_num_dt_map = 0;
   }
   
+  if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
   if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
 }
 
@@ -176,6 +177,7 @@ zero_globals(
     g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
   }
 
+  g_mmdb_in_use = false;
   g_L = NULL;
   // For Lua
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }

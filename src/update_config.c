@@ -153,6 +153,17 @@ update_config(
         &g_dt_map, &g_len_classify_ua_file, &g_num_dt_map);
     cBYE(status);
   }
+  if ( g_mmdb_in_use ) { 
+    MMDB_close(&g_mmdb);
+    g_mmdb_in_use = false;
+  }
+  if ( *g_cfg.mmdb_file != '\0' ) { 
+    status = MMDB_open(g_cfg.mmdb_file, 0, &g_mmdb); 
+    if ( status != MMDB_SUCCESS ) { go_BYE(-1); }
+    if ( status == MMDB_IO_ERROR ) { go_BYE(-1); }
+    // FIX 2nd parameter TODO P1
+    g_mmdb_in_use = true;
+  }
 
 BYE:
   return status;

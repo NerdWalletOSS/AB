@@ -12,3 +12,4 @@
 #include "macros.h"
 #include "dt_types.h"
 #include "ab_types.h"
+#include "maxminddb.h"
