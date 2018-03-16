@@ -1,6 +1,6 @@
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return
 INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
@@ -94,9 +94,8 @@ ab_httpd : $(COBJS) \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
-	-lm  -lpthread -ldl  -lmaxminddb
-
-	#TODO INDRAJEET TO FIX ABOVE REPLACE lmaxminddb
+	../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so \
+	-lm  -lpthread -ldl  
 
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(INCS) -shared -fPIC -o libspooky_hash.so

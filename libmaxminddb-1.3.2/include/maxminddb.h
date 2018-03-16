@@ -123,7 +123,7 @@ typedef struct MMDB_entry_data_s {
 #endif
         bool boolean;
         float float_value;
-    } stuff_needs_a_name; // CHANGE RAMESH
+    }; // gcc wants this to have a name
     /* This is a 0 if a given entry cannot be found. This can only happen
      * when a call to MMDB_(v)get_value() asks for hash keys or array
      * indices that don't exist. */

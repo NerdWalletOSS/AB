@@ -136,5 +136,13 @@ typedef struct _justin_map_rec_type {
   char browser[AB_MAX_LEN_LKP_NAME+1];
 } JUSTIN_MAP_REC_TYPE;
 
+typedef struct _maxmind_rec_type { 
+  char postal_code[AB_MAX_LEN_POSTAL_CODE+1]; // "postal", "code"
+  char time_zone[AB_MAX_LEN_TIME_ZONE+1]; // "location", "time_zone"
+  char country[4]; // "country", "iso_code"
+  char state[AB_MAX_LEN_STATE+1]; // "subdivisions", "names", "en"
+  char city[AB_MAX_LEN_CITY+1]; // "city", "names", "en"
+} MAXMIND_REC_TYPE;
+
 #endif
 

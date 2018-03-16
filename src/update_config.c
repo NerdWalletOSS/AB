@@ -8,6 +8,9 @@
 #include "load_classify_ua_map.h"
 #include "load_dt.h"
 
+#include "maxminddb.h"
+extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+
 int
 update_config(
     void

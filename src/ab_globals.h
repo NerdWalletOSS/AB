@@ -105,7 +105,7 @@ EXTERN int g_n_justin_cat_lkp;
 EXTERN char g_valid_chars_in_ua[256]; // Set by C
 EXTERN char g_valid_chars_in_ab_args[256]; // Set by C
 
-EXTERN MMDB_s g_mmdb; EXTERN bool g_mmdb_in_use;
+EXTERN MAXMIND_REC_TYPE g_maxmind;
 //------------------------ For Lua
 EXTERN lua_State *g_L; // Set by C
 

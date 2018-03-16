@@ -4,7 +4,10 @@
 #include "classify_ip.h"
 #include "load_lkp.h"
 
+#include "maxminddb.h"
+extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 
+#undef USE_SAMPLE
 //<hdr>
 int
 ext_classify_ip(
@@ -16,7 +19,9 @@ ext_classify_ip(
 {
   int status = 0;
   char ip_address[AB_MAX_LEN_IP_ADDRESS+1];
+#ifdef USE_SAMPLE
   MMDB_entry_data_list_s *entry_data_list = NULL;
+#endif
 
   if ( ( X == NULL ) && ( nX == 0 ) ) { go_BYE(-1); }
   memset(ip_address, '\0', AB_MAX_LEN_IP_ADDRESS+1);
@@ -27,7 +32,7 @@ ext_classify_ip(
   int gai_error, mmdb_error;
   MMDB_lookup_result_s result =
     MMDB_lookup_string(&g_mmdb, ip_address, &gai_error, &mmdb_error);
-
+  //--- START error checking
   if ( gai_error != 0 ) {
     fprintf(stderr, "\n  Error from getaddrinfo for %s - %s\n\n",
         ip_address, gai_strerror(gai_error));
@@ -39,54 +44,96 @@ ext_classify_ip(
         MMDB_strerror(mmdb_error));
     go_BYE(-1);
   }
-  if ( result.found_entry ) {
-    status = MMDB_get_entry_data_list(&result.entry, &entry_data_list);
-    if ( status != MMDB_SUCCESS ) { 
-      fprintf( stderr, "Got an error looking up the entry data - %s\n",
-          MMDB_strerror(status));
-      go_BYE(-1);
-    }
-    if ( entry_data_list != NULL ) {
-      // MMDB_dump_entry_data_list(stdout, entry_data_list, 2);
-      // MMDB_entry_data_s entry_data = entry_data_list->entry_data;
-      struct addrinfo *address = NULL;
-      int err2;
-
-      MMDB_lookup_result_s r2 = MMDB_lookup_sockaddr(
-          &g_mmdb, address->ai_addr, &err2);
-      /*
-      status = MMDB_get_value(&result.entry, &entry_data,
-      "city", NULL);
-      if ( entry_data.has_data ) {
-        switch ( entry_data.type ) {
-          case MMDB_DATA_TYPE_UTF8_STRING : printf("string\n"); break; 
-          case MMDB_DATA_TYPE_DOUBLE : printf("double\n"); break; 
-          case MMDB_DATA_TYPE_BYTES : printf("bytes\n"); break; 
-          case MMDB_DATA_TYPE_UINT16 : printf("int16\n"); break; 
-          case MMDB_DATA_TYPE_UINT32 : printf("int32\n"); break; 
-          case MMDB_DATA_TYPE_MAP : printf("map\n"); break; 
-          case MMDB_DATA_TYPE_INT32 : printf("int32\n"); break; 
-          case MMDB_DATA_TYPE_UINT64 : printf("int64\n"); break; 
-          case MMDB_DATA_TYPE_UINT128 : printf("int128\n"); break; 
-          case MMDB_DATA_TYPE_ARRAY : printf("array\n"); break; 
-          case MMDB_DATA_TYPE_BOOLEAN : printf("bool\n"); break; 
-          case MMDB_DATA_TYPE_FLOAT : printf("float\n"); break; 
-          default : go_BYE(-1); break; 
-        }
-      }
-      */
-      if ( status != MMDB_SUCCESS ) { go_BYE(-1); }
-    }
-  } 
-  else {
-    fprintf(stderr, "\n  No entry for this IP address (%s) was found\n\n",
-        ip_address);
-    strncpy(X, "{ \"status\":\"error\", \"message\":\"no entry found\"} \n", nX); 
-    // TODO P0
+  //--- STOP error checking
+#ifdef USE_SAMPLE
+  if ( !result.found_entry) { go_BYE(-1);  }
+  status = MMDB_get_entry_data_list(&result.entry,
+      &entry_data_list);
+  if (MMDB_SUCCESS != status) { go_BYE(-1); }
+  if (NULL != entry_data_list) {
+      MMDB_dump_entry_data_list(stdout, entry_data_list, 2);
   }
+  MMDB_free_entry_data_list(entry_data_list); entry_data_list = NULL;
+#endif
+  //--- STOP STUFF THAT WORKS 
+  MMDB_entry_data_s entry_data;
+  memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
+  // extract postal code
+  status = MMDB_get_value(&result.entry, &entry_data,
+      "postal", "code", NULL);
+  if ( ( status != MMDB_SUCCESS) || 
+       (!entry_data.has_data) || 
+       ( entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) ) {
+    // Nothing to do 
+  }
+  else {
+    int len = min(entry_data.data_size, AB_MAX_LEN_POSTAL_CODE);
+    strncpy(g_maxmind.postal_code, entry_data.utf8_string, len);
+  }
+  // extract time_zone
+  status = MMDB_get_value(&result.entry, &entry_data,
+      "location", "time_zone", NULL);
+  if ( ( status != MMDB_SUCCESS) || 
+       (!entry_data.has_data) || 
+       ( entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) ) {
+    // Nothing to do 
+  }
+  else {
+    int len = min(entry_data.data_size, AB_MAX_LEN_TIME_ZONE);
+    strncpy(g_maxmind.time_zone, entry_data.utf8_string, len);
+  }
+  // extract country
+  status = MMDB_get_value(&result.entry, &entry_data,
+      "country", "iso_code", NULL);
+  if ( ( status != MMDB_SUCCESS) || 
+       (!entry_data.has_data) || 
+       ( entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) ) {
+    // Nothing to do 
+  }
+  else {
+    int len = min(entry_data.data_size, AB_MAX_LEN_COUNTRY);
+    strncpy(g_maxmind.country, entry_data.utf8_string, len);
+  }
+  // extract state
+  status = MMDB_get_value(&result.entry, &entry_data,
+      "subdivision", "names", "en", NULL);
+  if ( ( status != MMDB_SUCCESS) || 
+       (!entry_data.has_data) || 
+       ( entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) ) {
+    // Nothing to do 
+  }
+  else {
+    int len = min(entry_data.data_size, AB_MAX_LEN_STATE);
+    strncpy(g_maxmind.state, entry_data.utf8_string, len);
+  }
+  // extract city
+  status = MMDB_get_value(&result.entry, &entry_data,
+      "city", "names", "en", NULL);
+  if ( ( status != MMDB_SUCCESS) || 
+       (!entry_data.has_data) || 
+       ( entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) ) {
+    // Nothing to do 
+  }
+  else {
+    int len = min(entry_data.data_size, AB_MAX_LEN_CITY);
+    strncpy(g_maxmind.city, entry_data.utf8_string, len);
+  }
+  snprintf(X, nX, "{ \"PostalCode\" : \"%s\", \
+                    \"TimeZone\" : \"%s\", \
+                    \"Country\" : \"%s\", \
+                    \"State\" : \"%s\", \
+                    \"City\" : \"%s\" } ",
+                    g_maxmind.postal_code,
+                    g_maxmind.time_zone,
+                    g_maxmind.country,
+                    g_maxmind.state,
+                    g_maxmind.city
+      );
 BYE:
+#ifdef USE_SAMPLE
   if ( entry_data_list != NULL ) { 
     MMDB_free_entry_data_list(entry_data_list);
   }
+#endif
   return status;
 }

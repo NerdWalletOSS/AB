@@ -3,6 +3,8 @@
 #include "zero_globals.h"
 #include "aux_zero.h"
 #include "auxil.h"
+#include "maxminddb.h"
+extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 
 //<hdr>
 void
@@ -178,6 +180,7 @@ zero_globals(
   }
 
   g_mmdb_in_use = false;
+  memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
   g_L = NULL;
   // For Lua
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
