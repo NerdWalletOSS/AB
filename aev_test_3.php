@@ -36,10 +36,10 @@ $config = config_html($TestType);
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="7">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
-    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: 
+		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
+    <td colspan="2">Is Device Specific: 
 <?php if ( $mode == "View" ) 
   { ?>
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
