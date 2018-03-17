@@ -15,8 +15,6 @@ if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 $T = db_get_test($id);
 require_once "processor/display_logic_aev_test.php";
 $config = config_html($TestType);
-
-
 //print("<pre>".print_r($T,true)."</pre>");
 ?>
 
@@ -44,10 +42,10 @@ $config = config_html($TestType);
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is Device Specific: 
 <?php if ( $mode == "View" ) 
   { ?>
-<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
 <input type="checkbox" name="is_dev_specific" value="1"  
-<?php if (isset($T['is_device_specific']) && ( $T['is_device_specific'] == "1")) { echo "checked"; } else { // Do Nothing
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked"; } else { // Do Nothing
 } 
 ?>
 >

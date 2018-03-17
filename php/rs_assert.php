@@ -31,7 +31,7 @@ function rs_assert(
       header("Error-Code: " . $code);
       http_response_code($code);
 
-      ob_flush();
+      //ob_flush();
     }
     exit(1);
   }

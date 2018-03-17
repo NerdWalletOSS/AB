@@ -46,11 +46,10 @@ $result = db_get_rows("test", "pred_id != ''");
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td >Test ID: <?php echo $id; ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
-    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Channel: <?php echo $Channel; ?> <input type='hidden' name='Channel' value='<?php echo $Channel; ?>'>
-  </td>
+		<td >Test ID: <?php echo $id; ?></td>
+		<td>Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+    <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
+    <td>Channel: <?php echo $Channel; ?> <input type='hidden' name='Channel' value='<?php echo $Channel; ?>'></td>
 	</tr>
 <tr>
 <td>
@@ -91,7 +90,9 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 </tr>
 <?php } ?>
 <tr>
-<td colspan='3'>  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
+<td > <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<td></td>
+<td >  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
 </tr>
   </tbody>
   </table>
