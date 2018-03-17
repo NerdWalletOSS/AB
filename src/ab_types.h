@@ -12,6 +12,7 @@ typedef enum _ab_req_type {
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
+  ClassifyUA, // Read &  C
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
   GetConfig, // Read &  Lua
@@ -28,7 +29,6 @@ typedef enum _ab_req_type {
   Restart, // Read &  C 
   Router, // Read &  C
   TestInfo, // Read &  Lua
-  UAToDevice, // Read &  C
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
@@ -71,10 +71,19 @@ typedef struct _payload_type {
   uint32_t variant_id;
 } PAYLOAD_TYPE;
 
-typedef struct _dev_rec_type { 
+typedef struct _lkp_rec_type { 
   uint32_t id;
-  char name[AB_MAX_LEN_DEVICE+1];
-} DEV_REC_TYPE;
+  char name[AB_MAX_LEN_LKP_NAME+1];
+} LKP_REC_TYPE;
+
+typedef struct _ua_rec_type{
+  uint32_t top_hash;
+  uint32_t bot_hash;
+  uint8_t device_type_id;
+  uint8_t os_id;
+  uint8_t browser_id;
+  uint8_t justin_cat_id;
+} UA_REC_TYPE;
 
 typedef struct _service_type {
   uint16_t  port; 
@@ -100,12 +109,28 @@ typedef struct _cftype {
   int uuid_len; 
   uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
+  // START: For classifying user agent 
   char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1]; 
-  char dev_file[AB_MAX_LEN_FILE_NAME+1]; 
-
-  uint32_t num_devices;
-  char *devices[AB_MAX_LEN_DEVICE+1];
+  char justin_cat_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char os_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char browser_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
+  // STOP: For classifying user agent 
+  // START: For ML 
+  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; 
+  // STOP: For ML 
 } CFG_TYPE;
+
+typedef struct _justin_map_rec_type { 
+  char justin_cat[AB_MAX_LEN_LKP_NAME+1];
+  char device[AB_MAX_LEN_LKP_NAME+1];
+  char device_type[AB_MAX_LEN_LKP_NAME+1];
+  char os[AB_MAX_LEN_LKP_NAME+1];
+  char browser[AB_MAX_LEN_LKP_NAME+1];
+} JUSTIN_MAP_REC_TYPE;
 
 #endif
 

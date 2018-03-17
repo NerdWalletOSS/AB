@@ -2,21 +2,27 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "url.h"
-#include "ua_to_device.h"
-#include "get_ua_to_device_id.h"
+#include "classify_ua.h"
+#include "get_and_classify_ua.h"
 
 int 
-get_ua_to_device_id(
+get_and_classify_ua(
     struct evhttp_request *req,
-    uint32_t *ptr_device_idx
+    uint32_t *ptr_device_type_id,
+    uint32_t *ptr_os_id,
+    uint32_t *ptr_browser_id,
+    uint32_t *ptr_justin_cat_id
     )
 {
   int status = 0;
 
   char user_agent[AB_MAX_LEN_USER_AGENT+1];
   memset(user_agent, '\0', AB_MAX_LEN_USER_AGENT+1);
-  uint32_t device_id = 0;
-  uint32_t device_idx;
+  *ptr_device_type_id = 0;
+  *ptr_os_id          = 0;
+  *ptr_browser_id     = 0;
+  *ptr_justin_cat_id  = 0;
+
   struct evkeyvalq *headers = NULL;
   struct evkeyval  *header = NULL;
   headers = evhttp_request_get_input_headers (req);
@@ -34,34 +40,18 @@ get_ua_to_device_id(
     char *decoded_ua = NULL;
     status = url_decode(user_agent, &decoded_ua);
     if ( status < 0 ) { free_if_non_null(decoded_ua); go_BYE(-1); }
-    status = get_device_id(decoded_ua, &device_id, 
-        g_ua_to_dev_map, g_num_ua_to_dev_map);
-    if ( device_id == 0 ) { g_log_bad_user_agent++; }
+    status = classify_ua(decoded_ua, 
+        g_classify_ua_map, g_num_classify_ua_map,
+        ptr_device_type_id, ptr_os_id,
+        ptr_browser_id, ptr_justin_cat_id);
+    if ( *ptr_justin_cat_id == 0 ) { g_log_bad_user_agent++; }
     free_if_non_null(decoded_ua); 
     // Don't have this be a catastrophic failure
-    if ( status < 0 ) { 
-      WHEREAMI; status = 0; device_idx = g_other_idx; 
-    }
-    else {
-      bool found = true;
-      for ( uint32_t i = 0; i < g_n_devices; i++ ) { 
-        if ( g_devices[i].id == device_id ) {
-          found = true; device_idx = i; break;
-        }
-      }
-      if ( !found ) { 
-        device_idx = g_other_idx; 
-      }
-    }
+    if ( status < 0 ) { WHEREAMI; status = 0; }
   }
   else {
     g_log_no_user_agent++; // TODO Log error
-    device_idx = g_other_idx; 
-  }
-  if ( device_idx == UINT_MAX ) { 
-    device_idx = g_other_idx;  // TODO Log error 
   }
 BYE:
-  *ptr_device_idx = device_idx;
   return status;
 }

@@ -1,0 +1,6 @@
+Make sure that SDK does not send anything in args other than 
+1) alphanumeric
+2) underscore
+3) &
+4) =
+

@@ -26,10 +26,10 @@
 #include "update_config.h"
 #include "init.h"
 #include "ab_process_req.h"
-#include "get_ua_to_device_id.h"
 #include "get_req_type.h"
 #include "get_body.h"
 #include "extract_api_args.h"
+#include "get_nw_hdrs.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -75,10 +75,12 @@ generic_handler(
   // STOP:  NW Specific 
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
-  status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
+  // TODO P0 WHY? status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
+#ifdef NW_SPECIFIC
   status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
   cBYE(status);
+#endif
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
 

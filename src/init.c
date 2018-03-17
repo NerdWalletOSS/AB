@@ -5,9 +5,7 @@
 #include "zero_globals.h"
 #include "init.h"
 #include "ping_server.h"
-#include "load_ua_to_dev_map.h"
 
-#include "get_variant.h"
 
 size_t 
 WriteMemoryCallback(

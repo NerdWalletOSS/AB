@@ -1,6 +1,3 @@
 Desktop,1
-Mobile_Android,3
-Mobile_iOS,2
-Other,6,Must have an entry called Other to catch unmatched user-agents
-Tablet_Android,5
-Tablet_iOS,4
+Mobile,2
+Tablet,3
