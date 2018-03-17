@@ -23,6 +23,22 @@ $(document).ready(function() {
         break;
     }
   }
+  function mode(state_id) {
+    switch ( state_id ) {
+    case "1" : 
+    case "2" : 
+    case "3" : 
+       return "Edit";
+      break;
+    case "4" : 
+    case "5" : 
+       return "View";
+      break;
+    default : 
+      // HANDLE ERROR PROPERLY TODO
+      break;
+    }
+  }
   $('#jsTestTable').DataTable({
     "order": [
       [0, "asc"]
@@ -61,8 +77,12 @@ $(document).ready(function() {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</td>";
             TableRow += "<td>" + value['name'] + "</td>";
+            if (value['state_id'] < 5) {
             TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
-            TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=" + value['id'] + "'>Edit/View,</a></td>";
+						} else {
+						TableRow += "<td><strong>No Action</strong></td>";
+						}
+            TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + mode(value['state_id']) + "</a></td>";
             TableRow += "</tr>";
             $(table).append(TableRow);
           });
