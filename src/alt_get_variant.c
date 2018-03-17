@@ -136,8 +136,8 @@ int alt_get_variant(
     char buf[16]; memset(buf, '\0', 16); 
     status = extract_name_value(args, "Device=", '&', buf, 16);
     if ( *buf != '\0' ) { 
-      for ( unsigned int j = 0; j < g_n_devices; j++ ) { 
-        if ( strcmp(g_devices[j].name, buf) == 0 ) { 
+      for ( unsigned int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
+        if ( strcmp(g_justin_cat_lkp[j].name, buf) == 0 ) { 
           g_device_idx = j; break;
         }
       }

@@ -9,7 +9,6 @@
 #include "add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-#include "del_test.h"
 #include "diagnostics.h"
 #include "dump_log.h"
 #include "route_get_variant.h"
@@ -17,8 +16,10 @@
 #include "ping_server.h"
 #include "router.h"
 #include "test_info.h"
+#include "get_config.h"
+#include "load_config.h"
 #include "zero_globals.h"
-#include "ua_to_device.h"
+#include "classify_ua.h"
 
 // START FUNC DECL
 int 
@@ -53,6 +54,10 @@ ab_process_req(
       //--------------------------------------------------------
     case CheckDBConnectivity : /* done by Lua */
       status = l_chk_db_conn(); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case ClassifyUA : /* done by C */
+      status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
@@ -154,10 +159,6 @@ ab_process_req(
       //--------------------------------------------------------
     case TestInfo : /* done by Lua */
       status = l_test_info(args); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case UAToDevice : /* done by C */
-      status = ua_to_device(args, g_rslt,  AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

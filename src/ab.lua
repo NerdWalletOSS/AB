@@ -4,6 +4,8 @@ local json = require "json"
 local tests = require 'add_test'
 local load_config = require 'load_config'
 local cache = require 'cache'
+local reload_tests = require 'reload'
+
 function add(...)
   tests.add(...)
 end
@@ -18,6 +20,10 @@ end
 
 function get_config()
   return cache.get('config')
+end
+
+function reload(...)
+  return reload_tests.reload(...)
 end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)

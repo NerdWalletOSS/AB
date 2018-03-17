@@ -163,3 +163,11 @@ extern void
       char *tracer,
       size_t n
       );
+extern int
+check_remove_eoln(
+    char *line
+    );
+extern  int
+strip_dquotes(
+    char *X
+    ) ;
