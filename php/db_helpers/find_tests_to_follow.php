@@ -29,7 +29,6 @@ function find_tests_to_follow(
     }
   }
   if ( $eidx == 0 ) { $eligible_to_follow = null; }
-  // var_dump( $eligible_to_follow);
   return $eligible_to_follow;
 }
 /*
