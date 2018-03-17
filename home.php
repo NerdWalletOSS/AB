@@ -28,12 +28,12 @@ if (isset($TestType))
 	}
 ?>
 <!-- PAGE SPECIFIC FILE CALLS -->
-<link href="css/dataTables.min.css" rel="stylesheet">
-<script src="js/dataTables.min.js"></script>
-<script src="js/filter_test.js"></script>
+  <link href="css/dataTables.min.css" rel="stylesheet">
+  <script src="js/dataTables.min.js"></script>
+  <script src="js/filter_test.js"></script>
 </head>
 <body>
-<!-- -- STANDARD HEADER INFORMATION -->
+<!-- STANDARD HEADER INFORMATION -->
 <?php
 require_once "common/navbar.php";
  ?>

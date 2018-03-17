@@ -1,9 +1,4 @@
 <?php require_once "common/header.php"; ?>
-<!-- PAGE SPECIFIC FILE CALLS -->
-<link href="css/dataTables.min.css" rel="stylesheet">
-<script src="js/dataTables.min.js"></script>
-<script src="js/page_4.js"></script>
-<?php require_once "common/navbar.php"; ?>
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
@@ -24,6 +19,15 @@ $fo_tests =  find_tests_to_follow($Channel);
 $nF = count($fo_tests);
 $result = db_get_rows("test", "pred_id != ''");
 ?>
+<!-- PAGE SPECIFIC FILE CALLS -->
+  <link href="css/dataTables.min.css" rel="stylesheet">
+  <script src="js/dataTables.min.js"></script>
+  <script src="js/page_4.js"></script>
+</head>
+<body>
+<?php require_once "common/navbar.php"; ?>
+
+
 
   <div class="container theme-showcase" role="main">
   <div class="row">
@@ -86,20 +90,25 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 </td>
 </tr>
 <?php } ?>
-
-</td>
 <tr>
-<td>
-
-</td>
+<td colspan='3'>  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
 </tr>
-<tr>
-<td align="center">
-<strong>Follow On Test Reference Table</strong>
-</td>
-</tr>
-<tr>
-<td>
+  </tbody>
+  </table>
+</div>
+</div>
+</div>
+</div>
+
+
+  <div class="row">
+  <div class="col-xs-12">
+  <div class="panel panel-primary">
+  <div class="panel-heading">
+  <h3 class="panel-title">Follow On Test Reference Table</h3>
+  </div>
+  <div class="panel-body">
+
 <table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></thead><tfoot> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></tfoot>
   <tbody id="TableData">
 <?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { 
@@ -107,17 +116,13 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id'].":".$result[$i]['name']."</td>";
   $tf = db_get_row("test", "id", $result[$i]['pred_id']);
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['id'].":".$tf['name']."</td>"; 
+  echo "</tr>";
 } ?>
-
   </tbody>
   </table>
-</td>
-</tr>
-<tr>
-<td colspan='3'>  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
-</tr>
+
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
- </table>
+
 
 </div>
 </div>
