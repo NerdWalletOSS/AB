@@ -33,7 +33,7 @@ function action_state($state_id) {
   </thead>-->
 <table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th></tr></tfoot>
   <tbody id="TableData">
-<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { //bootstrap_state_color($result[$i]['state_id'], $color, $state);
+<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>"; 

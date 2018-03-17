@@ -1,4 +1,9 @@
 $(document).ready(function() {
+  $('#FollowOn').DataTable({
+    "order": [
+      [0, "asc"]
+    ]
+  });
   $("#error").css('display', 'none', 'important');
   $('#follow_on').submit(function() {
     $.ajax({

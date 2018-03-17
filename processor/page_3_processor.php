@@ -13,7 +13,7 @@ require_once "db_get_rows.php";
 
 ob_start();
 if ( !$_POST ) {
-  echo '{ "InsertTest" : "ERROR", "Message" : "No paylaod" }'; exit;
+  echo '{ "Set Device Specific Variant" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
 $test_id = $_POST['TestID'];
 // SETTING NEW VALUES OF DEVICE X VARIANT
@@ -29,12 +29,8 @@ for ( $i = 0; $i < $nV; $i++ ) {
     $T['DeviceCrossVariant'][$this_device[$j]['name']][$i]['percentage'] = $_POST[$this_device[$j]["name"].'_'.$i];
   }
 }
-
 //-------------------------------------
-// Call to Add/Edit Additional Variant Information
-//print("<pre>".print_r($T,true)."</pre>");
-//var_dump(json_encode($T));
-//exit();
+// Call to Set Device Specific Variant
 $rslt =  set_device_specific_variant(json_encode($T));
 header("TestID: ".$rslt["TestID"]);
 ob_clean();
