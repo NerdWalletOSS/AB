@@ -4,6 +4,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
 require_once 'dbconn.php';
 require_once 'insert_row.php'; // NO PROBLEM
+require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'mod_row.php';

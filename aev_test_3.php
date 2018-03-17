@@ -59,10 +59,10 @@ $config = config_html($TestType);
 <tr>
 <td>Variants\Devices</td>
 <?php 
-$device    = db_get_rows('device');
-$nD = count($device);
+$all_device    = db_get_rows('device');
+$nD = count($all_device);
 for ( $i = 0; $i < $nD; $i++ ) { 
-  echo "<td>".$device[$i]['name']."</td>";
+  echo "<td>".$all_device[$i]['name']."</td>";
 } ?>
 </tr>
 <?php for ( $i = 0; $i < $n_var; $i++ ) { 
@@ -70,10 +70,10 @@ for ( $i = 0; $i < $nD; $i++ ) {
   echo "<td>".$T['Variants'][$i]['name']."</td>";
     for ( $j = 0; $j < $nD; $j++ ) {
       if($mode == "View") {
-        echo "<td>".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."</td>";
+        echo "<td>".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."</td>";
       }
       elseif (($mode == "Edit")) {
-        echo "<td><input type='text' maxlength='3' size='3' name='".$device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$device[$j]['name']][$i]['percentage']."'></td>";
+        echo "<td><input type='text' maxlength='3' size='3' name='".$all_device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."'></td>";
        } 
         else { // Do Nothing
        }
