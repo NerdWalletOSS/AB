@@ -13,7 +13,7 @@ ob_start();
 if ( !$_POST ) {
   echo '{ "Follow On" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
-$test_id = $_POST['TestID'];
+$tid = $_POST['TestID'];
 $tid_to_follow = $_POST['tid_to_follow'];
 //-------------------------------------
 // Set Follow On

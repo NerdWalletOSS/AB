@@ -55,7 +55,7 @@ if (($T['State'] == "draft") && ( $nF == 0 ) ){
     echo "<form  id='follow_on' method='post'>";
     echo "<input type='hidden' name='TestID' value='".$id."'>";
 ?>
-  Select test to follow: &nbsp;&nbsp;<select name='TID_to_follow'>
+  Select test to follow: &nbsp;&nbsp;<select name='tid_to_follow'>
 <?php 
 for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   echo "<option value='".$fo_tests[$fidx]['id']."'"; 
