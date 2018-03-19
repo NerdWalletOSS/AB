@@ -1,5 +1,7 @@
 <?php
 require_once "dbconn.php";
+require_once "rs_assert.php";
+require_once "db_num_rows.php";
 
 function mod_cell(
   $tbl,
@@ -10,6 +12,8 @@ function mod_cell(
 {
   $dbh = dbconn();
   if ( !$dbh ) { go_BYE(""); }
+  $nR = db_num_rows($tbl, $where_clause);
+  rs_assert($nR == 1 );
 
   $sql  = "update $tbl set $field = :$field ";
   $sql .= " where $where_clause ";
@@ -19,6 +23,6 @@ function mod_cell(
   return true;
 }
 /*
-mod_cell("variant", "description", "ABC", " description is NULL ");
+mod_cell("test", "description", NULL, " id = 1 ");
  */
 ?>
