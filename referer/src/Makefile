@@ -26,10 +26,10 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-SO_SRCS := $(filter-out main.c, $(CSRCS))
-SO_COBJS = $(SOCSRCS:.c=.o)
+SO_CSRCS := $(filter-out main.c, $(CSRCS))
+SO_COBJS = $(SO_CSRCS:.c=.o)
 
-all : test_dt dt.so
+all : referer.so
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
@@ -39,12 +39,8 @@ XOBJS = mmap.o
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-test_dt : $(COBJS) $(XOBJS) 
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) -o test_dt  \
-	-lm  -lpthread -ldl  -lgomp
-
-dt.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o dt.so \
+referer.so : $(SO_COBJS) 
+	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o referer.so \
 	-lm  -lpthread -ldl  -lgomp
 
 clean:
@@ -52,4 +48,4 @@ clean:
 	echo "ALL CLEAN"
 
 qclean :
-	rm -r -f dt.so test_dt $(COBJS) *.o _*
+	rm -r -f referer.so $(COBJS) *.o _*
