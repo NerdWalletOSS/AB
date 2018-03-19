@@ -166,8 +166,9 @@ else
 ?>
 <td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
 <?php } ?>
+  <?php if(($mode == "Edit") || ($mode == "View")) { ?>
 <td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
-
+<?php } ?>
 </tr>
   </tbody>
   </table>

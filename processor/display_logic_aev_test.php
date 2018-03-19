@@ -44,6 +44,7 @@ require_once "lkp.php";
   ## -- Mode = Add
   if ( $mode == "Add" ) {
     $readonly = "";
+    $Ureadonly = "";
     $TestName = "";
     # -- Check if number of variants are set.
     if (isset($_GET['num_var'])) {$num_var = $_GET['num_var'];} 

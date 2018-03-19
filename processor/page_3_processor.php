@@ -16,11 +16,11 @@ if ( !$_POST ) {
   echo '{ "Set Device Specific Variant" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
 $test_id = $_POST['TestID'];
+$T = db_get_test($test_id);
 // SETTING NEW VALUES OF DEVICE X VARIANT
 if (isset($_POST['is_dev_specific'])) {
   $T['is_dev_specific'] = $_POST['is_dev_specific'];
 }
-$T = db_get_test($test_id);
 $nV = count($T['Variants']);
 $this_device    = db_get_rows('device');
 $nD = count($this_device);
