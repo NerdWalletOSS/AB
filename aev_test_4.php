@@ -41,6 +41,7 @@ $result = db_get_rows("test", "pred_id != ''");
   <?php require_once "common/error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
+  <form  id='follow_on' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -52,30 +53,32 @@ $result = db_get_rows("test", "pred_id != ''");
     <td>Channel: <?php echo $Channel; ?> <input type='hidden' name='Channel' value='<?php echo $Channel; ?>'></td>
 	</tr>
 <tr>
-<td>
+<td colspan ='3'>
 <?php 
 if (($T['State'] == "draft") && ( $nF == 0 ) ){
   echo "<strong><font color='red'>No Test to Follow</font></strong>";
 } elseif (($T['State'] == "draft") && ( $nF != 0 ) ) {
-    echo "<form  id='follow_on' method='post'>";
     echo "<input type='hidden' name='TestID' value='".$id."'>";
+  $already_following = db_get_row("test", "id", $id);
+  if ($already_following['pred_id'] != "") {
+  $fT = db_get_row("test", "id", $already_following['pred_id']);
+  echo "<strong>This Test is already following a Test with ID ".$fT['id']." and Test Name ".$fT['name']."</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
+  }
 ?>
+
 Select test to follow: &nbsp;&nbsp;
 <select name='tid_to_follow'>
+<option value='0'>None</option>
+} ?>
 <?php 
 for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   echo "<option value='".$fo_tests[$fidx]['id']."'"; 
-  echo ">".$fo_tests[$fidx]['name']."</option>";
+  echo ">".$fo_tests[$fidx]['id']." : ".$fo_tests[$fidx]['name']."</option>";
 } ?>
-</select> &nbsp;&nbsp;&nbsp;&nbsp;
+</select>
+
+</td>
 <?php
-  echo "<button class='btn btn-sm btn-success btn-block' type='submit' id='follow_on'>Set Follow On</button>";
-  echo "</form>";
-  echo "</td>";
-  echo "</tr>";
-  echo "<tr>";
-  echo "<td>  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>";
-  echo "</tr>";
 
 } elseif(($T['State'] != "draft") && ($T['pred_id'] == "")) {
     echo "<strong>Not following anybody</strong>";
@@ -86,16 +89,18 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   else {
   // Do Nothing;
 ?>
-</td>
 </tr>
 <?php } ?>
 <tr>
 <td > <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
-<td></td>
-<td >  <a href='home.php'><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
+<?php if (($T['State'] == "draft") && ( $nF != 0 ) ) { ?>
+<td><button class='btn btn-lg btn-success btn-block' type='submit' id='follow_on'>Set Follow On</button></td>
+<?php } ?>
+<td >  <a onclick="location.href='home.php'"><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
 </tr>
   </tbody>
   </table>
+</form>
 </div>
 </div>
 </div>
@@ -110,13 +115,15 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   </div>
   <div class="panel-body">
 
-<table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></thead><tfoot> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></tfoot>
+<table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></thead><tfoot> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></tfoot>
   <tbody id="TableData">
 <?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { 
   echo "<tr>";
-  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id'].":".$result[$i]['name']."</td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>";
   $tf = db_get_row("test", "id", $result[$i]['pred_id']);
-  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['id'].":".$tf['name']."</td>"; 
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['id']."</td>"; 
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['name']."</td>"; 
   echo "</tr>";
 } ?>
   </tbody>

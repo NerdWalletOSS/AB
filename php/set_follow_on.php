@@ -8,6 +8,7 @@ require_once 'get_time_usec.php'; // NO PROBLEM
 require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'mod_row.php';
+require_once 'mod_cell.php'; // UTPAL: Added this line
 require_once 'find_tests_to_follow.php';
 
 function set_follow_on(
