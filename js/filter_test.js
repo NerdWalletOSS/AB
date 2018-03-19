@@ -69,20 +69,19 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th><th>Edit/view</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
           $.each(jsonData, function(index, value) {
             var TableRow = "<tr>";
-            TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</td>";
-            TableRow += "<td>" + value['name'] + "</td>";
+            TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
+            TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
             if (value['state_id'] < 5) {
             TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></td>";
 						} else {
 						TableRow += "<td><strong>No Action</strong></td>";
 						}
-            TableRow += "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + mode(value['state_id']) + "</a></td>";
             TableRow += "</tr>";
             $(table).append(TableRow);
           });

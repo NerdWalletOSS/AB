@@ -110,13 +110,15 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
   </div>
   <div class="panel-body">
 
-<table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></thead><tfoot> <tr><th>ID : Name</th><th>Following&nbsp;&nbsp; ID: Name</th> </tr></tfoot>
+<table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></thead><tfoot> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></tfoot>
   <tbody id="TableData">
 <?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { 
   echo "<tr>";
-  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id'].":".$result[$i]['name']."</td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>";
   $tf = db_get_row("test", "id", $result[$i]['pred_id']);
-  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['id'].":".$tf['name']."</td>"; 
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['id']."</td>"; 
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$tf['name']."</td>"; 
   echo "</tr>";
 } ?>
   </tbody>
