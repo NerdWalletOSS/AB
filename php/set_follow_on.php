@@ -35,28 +35,34 @@ function set_follow_on(
   $test_name = $T1['name'];
   $external_id = $T1['external_id'];
 
-  $T2 = db_get_row("test", "id", $tid_to_follow);
-  rs_assert($T2);
-  $name_to_follow = $T2['name'];
-  $external_id_to_follow = $T2['external_id'];
-
   $state_id = $T1['state_id'];
   $state = lkp("state", $state_id, "reverse");
   rs_assert($state == "draft", "Can set follow on only in draft state");
-  $channel_id = $T1['channel_id'];
-  rs_assert($channel_id, "Can set follow on only for test in channel");
-  $channel = lkp("channel", $channel_id, "reverse");
-  rs_assert($channel);
-  $F = find_tests_to_follow($channel);
-  $found = false;
-  foreach ( $F as $f ) { 
-    if ( $f['id'] == $tid_to_follow ) { $found = true; break; }
-  }
-  rs_assert($found, "Not a valid test to follow");
 
-  $X['pred_id'] = $tid_to_follow;
-  $X['external_id'] = $external_id_to_follow;
-  mod_row("test", $X, " where id = $tid");
+  if ( $tid_to_follow == 0 ) { 
+    mod_cell("test", "pred_id", NULL, "id = $tid ");
+  }
+  else {
+    $T2 = db_get_row("test", "id", $tid_to_follow);
+    rs_assert($T2);
+    $name_to_follow = $T2['name'];
+    $external_id_to_follow = $T2['external_id'];
+
+    $channel_id = $T1['channel_id'];
+    rs_assert($channel_id, "Can set follow on only for test in channel");
+    $channel = lkp("channel", $channel_id, "reverse");
+    rs_assert($channel);
+    $F = find_tests_to_follow($channel);
+    $found = false;
+    foreach ( $F as $f ) { 
+      if ( $f['id'] == $tid_to_follow ) { $found = true; break; }
+    }
+    rs_assert($found, "Not a valid test to follow");
+
+    $X['pred_id'] = $tid_to_follow;
+    $X['external_id'] = $external_id_to_follow;
+    mod_row("test", $X, " where id = $tid");
+  }
   //------------------------------------------
   $http_code = 200;
   $outJ["status_code"] = $Y['status_code'] = $http_code;
