@@ -1,6 +1,7 @@
 # sudo apt-get install texlive-full # one time 
 touch .meta
 eval ` ../tools/setenv `
+rm -f *.pdf
 # make -f ../tools/docdir.mk template.pdf
 make -f ../tools/docdir.mk ab_ui.pdf
 lua get_logger_fields.lua > _logger_fields.tex

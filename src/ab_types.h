@@ -12,9 +12,11 @@ typedef enum _ab_req_type {
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
+  ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
+  EvalDT, // Read & C
   GetConfig, // Read &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
@@ -121,7 +123,9 @@ typedef struct _cftype {
   char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
   char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
   char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For ML 
+  char mmdb_file[AB_MAX_LEN_FILE_NAME+1];  // For MaxMind
 } CFG_TYPE;
 
 typedef struct _justin_map_rec_type { 
@@ -131,6 +135,14 @@ typedef struct _justin_map_rec_type {
   char os[AB_MAX_LEN_LKP_NAME+1];
   char browser[AB_MAX_LEN_LKP_NAME+1];
 } JUSTIN_MAP_REC_TYPE;
+
+typedef struct _maxmind_rec_type { 
+  char postal_code[AB_MAX_LEN_POSTAL_CODE+1]; // "postal", "code"
+  char time_zone[AB_MAX_LEN_TIME_ZONE+1]; // "location", "time_zone"
+  char country[4]; // "country", "iso_code"
+  char state[AB_MAX_LEN_STATE+1]; // "subdivisions", "names", "en"
+  char city[AB_MAX_LEN_CITY+1]; // "city", "names", "en"
+} MAXMIND_REC_TYPE;
 
 #endif
 

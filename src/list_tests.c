@@ -15,6 +15,14 @@ l_list_tests(
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
+
+  status = lua_pcall(g_L, 0, 1, 0);
+  if (status != 0) {
+    fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
+    lua_pop(g_L, 1);
+  }
+
   char* tests = (char *)lua_tostring(g_L, 1);
   if (AB_MAX_LEN_RESULT < strlen(tests)) {
     sprintf(g_err, "{\"error\": Length of list tests is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",

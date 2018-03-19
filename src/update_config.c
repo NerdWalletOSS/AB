@@ -6,6 +6,10 @@
 #include "update_config.h"
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
+#include "load_dt.h"
+
+#include "maxminddb.h"
+extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 
 int
 update_config(
@@ -141,6 +145,27 @@ update_config(
     status = load_classify_ua_map(g_cfg.ua_to_dev_map_file, 
         &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map);
     cBYE(status);
+  }
+  //--------------------------------------------------------
+  // dt_file
+  if ( ( g_dt_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
+    munmap(g_dt_map, g_len_classify_ua_file);
+  }
+  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
+    status = load_dt(g_cfg.ua_to_dev_map_file, 
+        &g_dt_map, &g_len_classify_ua_file, &g_num_dt_map);
+    cBYE(status);
+  }
+  if ( g_mmdb_in_use ) { 
+    MMDB_close(&g_mmdb);
+    g_mmdb_in_use = false;
+  }
+  if ( *g_cfg.mmdb_file != '\0' ) { 
+    status = MMDB_open(g_cfg.mmdb_file, 0, &g_mmdb); 
+    if ( status != MMDB_SUCCESS ) { go_BYE(-1); }
+    if ( status == MMDB_IO_ERROR ) { go_BYE(-1); }
+    // FIX 2nd parameter TODO P1
+    g_mmdb_in_use = true;
   }
 
 BYE:

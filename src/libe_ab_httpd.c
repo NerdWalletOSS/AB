@@ -42,6 +42,11 @@
 #include <event2/buffer.h>
 #include <event2/keyvalq_struct.h>
 
+// These two lines should be in globals but there is this 
+// unnamed struct in maxmind that throws off a gcc warning
+#include "maxminddb.h"
+MMDB_s g_mmdb; bool g_mmdb_in_use;
+
 extern void 
 generic_handler(
     struct evhttp_request *req, 

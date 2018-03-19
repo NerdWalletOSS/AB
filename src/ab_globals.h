@@ -7,6 +7,7 @@
 #include "unistd.h"
 #include "spooky_hash.h"
 #include "statsd-client.h"
+#include "ab_incs.h"
 #include <curl/curl.h>
 #include <semaphore.h>
 #include <lua.h>
@@ -76,6 +77,10 @@ EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
 
+EXTERN DT_REC_TYPE *g_dt_map; // Set by C
+EXTERN size_t g_len_dt_file; // Set by C
+EXTERN uint32_t g_num_dt_map; // Set by C
+
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
 EXTERN int g_n_justin_cat_lkp; 
 
@@ -99,6 +104,8 @@ EXTERN LKP_REC_TYPE *g_justin_cat_lkp;
 EXTERN int g_n_justin_cat_lkp; 
 EXTERN char g_valid_chars_in_ua[256]; // Set by C
 EXTERN char g_valid_chars_in_ab_args[256]; // Set by C
+
+EXTERN MAXMIND_REC_TYPE g_maxmind;
 //------------------------ For Lua
 EXTERN lua_State *g_L; // Set by C
 

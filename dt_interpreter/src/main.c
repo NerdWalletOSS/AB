@@ -48,11 +48,14 @@ main(
   int status = 0;
   char *random_forest_file_name = NULL;
   char *test_data_file_name     = NULL;
+  char *output_file_name     = NULL;
   float *invals = NULL;
   FILE *fp = NULL;
-  if ( argc != 3 ) { go_BYE(-1); }
+  FILE *ofp = NULL;
+  if ( argc != 4 ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   test_data_file_name     = argv[2];
+  output_file_name        = argv[3];
 
   g_num_compares = 0;
 
@@ -70,7 +73,7 @@ main(
   char line [MAXLINE+1];
   int lno = 0;
   uint64_t sum1 = 0, sum2 = 0;
-  int n_iters = 1000; int n_trials = 0;
+  int n_iters = 1; int n_trials = 0;
   for ( int iters = 0; iters < n_iters; iters++ ) {
     bool is_hdr = true;
     for ( lno = 0; !feof(fp); lno++) { 
@@ -122,8 +125,13 @@ main(
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
   printf("Total time (1, 2) = %llu %llu \n", sum1, sum2);
   printf("COMPLETED\n");
+  ofp = fopen(output_file_name, "wb");
+  return_if_fopen_failed(ofp, output_file_name, "wb");
+  fwrite(dt, sizeof(DT_REC_TYPE), n_dt, ofp);
+
   
 BYE:
+  fclose_if_non_null(ofp);
   fclose_if_non_null(fp);
   free_if_non_null(dt);
   free_if_non_null(rf);

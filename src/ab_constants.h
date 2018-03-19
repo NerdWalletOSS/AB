@@ -73,4 +73,11 @@
     /* The get_or_create endpoint averages around 25ms response, with 
      * a 95th percentile of 30ms. The plain get endpoint would be 
      * expected to be faster -- Andrew Hollenbach */
+
+#define AB_MAX_LEN_IP_ADDRESS 31
+#define AB_MAX_LEN_POSTAL_CODE 7
+#define AB_MAX_LEN_TIME_ZONE   63
+#define AB_MAX_LEN_COUNTRY    3
+#define AB_MAX_LEN_STATE      31
+#define AB_MAX_LEN_CITY       31
 #endif

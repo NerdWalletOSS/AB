@@ -16,6 +16,9 @@ get_req_type(
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
     return CheckDBConnectivity;
   }
+  else if (strcasecmp(api, "ClassifyIP") == 0) {
+    return ClassifyIP;
+  }
   else if (strcasecmp(api, "ClassifyUA") == 0) {
     return ClassifyUA;
   }
@@ -24,6 +27,9 @@ get_req_type(
   }
   else if (strcasecmp(api, "DumpLog") == 0) {
     return DumpLog;
+  }
+  else if (strcasecmp(api, "EvalDT") == 0) {
+    return EvalDT;
   }
   else if (strcasecmp(api, "GetConfig") == 0) {
     return GetConfig;

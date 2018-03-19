@@ -21,10 +21,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "ab_constants.h"
-#include "ab_types.h"
+#include "ab_incs.h"
 #include "ab_globals.h"
-#include "macros.h"
 #include "auxil.h"
 #include "mmap.h"
 

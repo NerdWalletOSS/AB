@@ -56,6 +56,10 @@ ab_process_req(
       status = l_chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
+    case ClassifyIP : /* done by C */
+      status = ext_classify_ip(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case ClassifyUA : /* done by C */
       status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
