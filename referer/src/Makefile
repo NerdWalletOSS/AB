@@ -1,6 +1,6 @@
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+WARN= -g -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
 # Uncomment following to use openmp. Also, you need
 # export LD_LIBRARY_PATH="/usr/local/lib64:$LD_LIBRARY_PATH"
 # else you will get 
