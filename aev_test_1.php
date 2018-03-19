@@ -102,7 +102,7 @@ for ( $i = 0; $i < $nC; $i++ ) {
   <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' 
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
-  <input type='url' name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" <?php echo $readonly; ?> required>
+  <input type='url' name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" <?php echo $Ureadonly; ?> required>
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
@@ -142,7 +142,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input type='hidden' name='Creator' value='<?php echo $User; ?>'>
 <?php } else { ?>
 <input type='hidden' name='Updater' value='<?php echo $User; ?>'>
-<input type='hidden' name='State' value='<?php echo $state; ?>'>
+<input type='hidden' name='State' value='<?php echo $this_state; ?>'>
 <?php } ?>
 <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
 <input type='hidden' name='BinType' value='<?php if (isset($BinType)) { echo $BinType;} ?>'>

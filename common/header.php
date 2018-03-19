@@ -11,9 +11,6 @@ if ((!isset($_SESSION['User'])) || (!isset($_SESSION['TestType'])))
 		header('Location: index.php?error=Login Please!');
 		return false;
 	}
-else
-	{ /* Do Nothing */
-	}
 
 // -- PARSE SESSION VARIABLES
 if (isset($_SESSION['User']))
