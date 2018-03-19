@@ -12,6 +12,43 @@ require_once 'add_addnl_var_info.php';
 require_once 'find_tests_to_follow.php';
 require_once 'set_follow_on.php';
 
+function archive($test_id) {
+  // archive the test
+  $X = db_get_test($test_id);
+  $X['NewState'] = "archived";
+  $X['Updater'] = $X['Creator'];
+  $str_inJ = json_encode($X);
+  $outJ = set_state($str_inJ);
+}
+
+function terminate($test_id) {
+  // terminate the test
+  $X = db_get_test($test_id);
+  $X['NewState'] = "terminated";
+  $X['Winner'] = $X['Variants'][1]['name'];
+  $X['Updater'] = $X['Creator'];
+  $str_inJ = json_encode($X);
+  $outJ = set_state($str_inJ);
+}
+
+function start($test_id) {
+  // start the test
+  $X = db_get_test($test_id);
+  $X['NewState'] = "started";
+  $X['Updater'] = $X['Creator'];
+  $str_inJ = json_encode($X);
+  $outJ = set_state($str_inJ);
+}
+
+function publish($test_id) {
+  // Publish the test
+  $X = db_get_test($test_id);
+  $X['NewState'] = "dormant";
+  $X['Updater'] = $X['Creator'];
+  $str_inJ = json_encode($X);
+  $outJ = set_state($str_inJ);
+}
+
 if ( $argc != 2 ) { echo "Expected 3 arguments. Got $argc"; exit(1); }
 
 $infile = $argv[1];
@@ -27,12 +64,7 @@ $X['description'] = "New Description";
 $X['Updater'] = $X['Creator'];
 $str_inJ = json_encode($X);
 $outJ = test_basic($str_inJ);
-// Publish the test
-$X = db_get_test($test_id);
-$X['NewState'] = "dormant";
-$X['Updater'] = $X['Creator'];
-$str_inJ = json_encode($X);
-$outJ = set_state($str_inJ);
+publish($test_id);
 // Update the custom data and description
 $X = db_get_test($test_id);
 $X['Updater'] = $X['Creator'];
@@ -55,25 +87,8 @@ foreach ( $V as $v ) {
   $vidx++;
 }
 $outJ = test_basic(json_encode($X));
-// start the test
-$X = db_get_test($test_id);
-$X['NewState'] = "started";
-$X['Updater'] = $X['Creator'];
-$str_inJ = json_encode($X);
-$outJ = set_state($str_inJ);
-// terminate the test
-$X = db_get_test($test_id);
-$X['NewState'] = "terminated";
-$X['Winner'] = $X['Variants'][1]['name'];
-$X['Updater'] = $X['Creator'];
-$str_inJ = json_encode($X);
-$outJ = set_state($str_inJ);
-// archive the test
-$X = db_get_test($test_id);
-$X['NewState'] = "archived";
-$X['Updater'] = $X['Creator'];
-$str_inJ = json_encode($X);
-$outJ = set_state($str_inJ);
+terminate($test_id);
+archive($test_id);
 // create new test with same name 
 $str_inJ = file_get_contents($infile);
 $outJ = test_basic($str_inJ);
@@ -83,5 +98,28 @@ $Channel = $X['Channel'];
 $F = find_tests_to_follow($Channel);
 $tid_to_follow = $F[0]['id'];
 set_follow_on($test_id, $tid_to_follow);
+//-- Create T2 and archive it 
+$str_inJ = file_get_contents($infile);
+$T = json_decode($str_inJ);
+$T->{'name'} = 'T2';
+$outJ = test_basic(json_encode($T));
+$test_id = $outJ['TestID'];
+publish($test_id);
+start($test_id);
+terminate($test_id);
+archive($test_id);
+//-- Create T3  and publish it 
+$str_inJ = file_get_contents($infile);
+$T = json_decode($str_inJ);
+$T->{'name'} = 'T3';
+$outJ = test_basic(json_encode($T));
+$test_id = $outJ['TestID'];
+publish($test_id);
+//-- Create T4  and leave it dormant 
+$str_inJ = file_get_contents($infile);
+$T = json_decode($str_inJ);
+$T->{'name'} = 'T4';
+$outJ = test_basic(json_encode($T));
+$test_id = $outJ['TestID'];
 echo "COMPLETED";
 ?>
