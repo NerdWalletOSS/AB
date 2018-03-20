@@ -1,13 +1,14 @@
 local cmem   = require 'libcmem' ; 
 local Scalar = require 'libsclr' ; 
 local Q = require 'Q';
-os.execute("rm -f /home/subramon/local/Q/data/_*bin")
+os.execute("rm -f /home/subramon/local/Q/data/temp1/_*bin")
 dofile('load.lua')
 -- package.loaded['helpers'] = nil;  
 H = require 'helpers'
 mint, maxt = H.get_min_max(T_eee, "time")
-local difft = maxt - mint
-assert(difft > Scalar.new(60*60*24, "F4")) -- at least one day of data 
+local expt_time = maxt - mint
+-- experiment should have run for at least one day of data 
+assert(expt_time > Scalar.new(60*60*24, "F4")) 
 -- how much longer after EE can click happen in order to be counted
 local time_to_impact = Scalar.new(60*60*24, "F4")
 --============================

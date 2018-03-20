@@ -30,7 +30,7 @@ input = ffi.cast("STR_REC_TYPE *", input)
 local sz = 4096
 input[0].X = ffi.C.malloc(sz)
 ffi.C.memset(input[0].X, 0, sz)
-local instr = "/junk/avx/def+"
+local instr = '"https://www.nerdwallet.com/investing/best-stock-broker-comparison/embed?brokerIds=31,2,35,19"'
 ffi.C.strcpy(input[0].X, instr)
 input[0].nX = ffi.C.strlen(instr)
 
@@ -41,9 +41,9 @@ output[0].nX = 0
 
 libh.strip_url(input[0], output);
 local outstr = ffi.string(output.X, output.nX)
-assert(outstr == "junk/avx/def")
+assert(outstr == "https://www.nerdwallet.com/investing/best-stock-broker-comparison/embed?brokerIds=31,2,35,19")
 
-print("I AM HERE")
+
 -- Now do it for a file
 local in_file_name = "./strip/url_strip_input.txt"
 local out_file_name = "./strip/url_strip_output.txt"

@@ -1,5 +1,4 @@
 local Q    = require 'Q'
-local save = require 'Q/UTILS/lua/save'; 
 require 'Q/UTILS/lua/strict'
 
 local datadir = "./data/"
@@ -14,8 +13,7 @@ T_clk = Q.load_csv(datadir .. "clicks_1609.txt", M, optargs)
 
 for k, v in pairs(T_eee) do v:persist() end 
 for k, v in pairs(T_clk) do v:persist() end 
-local save = require 'Q/UTILS/lua/save'; 
-save("meta_ab_1.lua")
+Q.save("/home/subramon/local/Q/meta/temp1.meta.lua")
 --[[
 local mint = Q.min(T_eee.time):eval()
 local maxt = Q.max(T_eee.time):eval()

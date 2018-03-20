@@ -1,27 +1,3 @@
-/*
-======
-Function 1: _url_strip
-Strips the URL of certain trash characters
-
-Input: url (string, char*)
-
-Output: url (string, char*)
-
-Processes:
-0. special_chars := '/.-()\'\" +[*?&'
-1. url := url after stripping any number of chars in special_chars from the front and rear.
-XX not needed 2. tok := strtok(url, delim='/')
-3. trash := starting from end, work backwards until you hit a slash
-4a. If trash (which is a string) is all digits and has a length of 13 (i.e. a 13-digit number):
-        - remove the last 13 chars from url, i.e. remove trash
-        - strip special_chars from the front and rear. (i.e same step as 1)
-        - return that final product
-4b. Else:
-        - return url
-
-======
-
-*/
 #include "rfr_incs.h"
 #include "rfr_aux.h"
 #include "strip_url.h"
