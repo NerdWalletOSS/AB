@@ -6,10 +6,13 @@
 #include "update_config.h"
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
-#include "load_dt.h"
 
+#include "load_dt.h"
 #include "maxminddb.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+extern DT_REC_TYPE *g_dt_map; 
+extern size_t g_len_dt_file; 
+extern uint32_t g_num_dt_map; 
 
 int
 update_config(

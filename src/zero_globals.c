@@ -4,7 +4,11 @@
 #include "aux_zero.h"
 #include "auxil.h"
 #include "maxminddb.h"
+#include "dt_types.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+extern DT_REC_TYPE *g_dt_map; 
+extern size_t g_len_dt_file; 
+extern uint32_t g_num_dt_map; 
 
 //<hdr>
 void

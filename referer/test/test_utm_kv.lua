@@ -14,36 +14,28 @@ function include(filename)
 end
 
 
-include("../src/rfr_types.h")
-include("../src/strip_url.h")
-local libh = ffi.load("../src/strip_url.so")
+include("../src/utm_types.h")
+include("../src/utm_kv.h")
+local libh = ffi.load("../src/utm_kv.so")
 ffi.cdef("void *malloc(size_t size);")
 ffi.cdef("void free(void *);")
 ffi.cdef("void *memset(void *s, int c, size_t n);")
 ffi.cdef("char *strcpy(char *dest, const char *src);")
 ffi.cdef(" size_t strlen(const char *s);")
 
--- local input = ffi.C.malloc(ffi.sizeof("STR_REC_TYPE"))
-local input = ffi.C.malloc(ffi.sizeof("double"))
-input = ffi.cast("STR_REC_TYPE *", input)
+local instr = [[
+https://www.nerdwallet.com/l/banking/best-cd-rates?nw_campaign_id=150845972646889300&utm_source=goog&utm_medium=cpc&utm_campaign=bk_mktg_paid_121417_beta_CDs&utm_term=%2Bcd&utm_content=ta&mktg_hline=7517&mktg_body=1699&mktg_place=5&gclid=Cj0KCQiAzMDTBRDDARIsABX4AWzrC8Y_TgM6-tfQomcrrVrI21SFPj946phFQQtsJX_8l3xiIwBPpZEaAgCPEALw_wcB&gclsrc=aw.ds&VariantID=3334&GUID=110043&DeviceID=0
+]]
 
-local sz = 4096
-input[0].X = ffi.C.malloc(sz)
-ffi.C.memset(input[0].X, 0, sz)
-local instr = '"https://www.nerdwallet.com/investing/best-stock-broker-comparison/embed?brokerIds=31,2,35,19"'
-ffi.C.strcpy(input[0].X, instr)
-input[0].nX = ffi.C.strlen(instr)
+output = ffi.cast("UTM_REC_TYPE *", ffi.C.malloc(ffi.sizeof("UTM_REC_TYPE")))
 
-output = ffi.cast("STR_REC_TYPE *", ffi.C.malloc(ffi.sizeof("STR_REC_TYPE")))
-
-output[0].X = nil
-output[0].nX = 0
-
-libh.strip_url(input[0], output);
-local outstr = ffi.string(output.X, output.nX)
-assert(outstr == "https://www.nerdwallet.com/investing/best-stock-broker-comparison/embed?brokerIds=31,2,35,19")
+libh.utm_kv(instr, output);
+assert(ffi.string(output.medium) == "cpc")
+assert(ffi.string(output.source) == "goog")
+assert(ffi.string(output.campaign) == "bk_mktg_paid_121417_beta_cds")
 
 
+assert(nil, "PREMATURE")
 -- Now do it for a file
 local in_file_name = "./strip/url_strip_input.txt"
 local out_file_name = "./strip/url_strip_output.txt"

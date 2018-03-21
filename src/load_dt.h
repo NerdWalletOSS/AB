@@ -1,3 +1,4 @@
+#include "dt_types.h"
 extern int
 load_dt(
     char *filename,

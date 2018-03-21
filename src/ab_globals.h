@@ -77,9 +77,6 @@ EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
 
-EXTERN DT_REC_TYPE *g_dt_map; // Set by C
-EXTERN size_t g_len_dt_file; // Set by C
-EXTERN uint32_t g_num_dt_map; // Set by C
 
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
 EXTERN int g_n_justin_cat_lkp; 

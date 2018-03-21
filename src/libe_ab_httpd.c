@@ -45,7 +45,12 @@
 // These two lines should be in globals but there is this 
 // unnamed struct in maxmind that throws off a gcc warning
 #include "maxminddb.h"
+#include "dt_types.h"
 MMDB_s g_mmdb; bool g_mmdb_in_use;
+
+DT_REC_TYPE *g_dt_map; // Set by C
+size_t g_len_dt_file; // Set by C
+uint32_t g_num_dt_map; // Set by C
 
 extern void 
 generic_handler(

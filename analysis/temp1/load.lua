@@ -13,7 +13,7 @@ T_clk = Q.load_csv(datadir .. "clicks_1609.txt", M, optargs)
 
 for k, v in pairs(T_eee) do v:persist() end 
 for k, v in pairs(T_clk) do v:persist() end 
-Q.save("/home/subramon/local/Q/meta/temp1.meta.lua")
+Q.save()
 --[[
 local mint = Q.min(T_eee.time):eval()
 local maxt = Q.max(T_eee.time):eval()

@@ -28,7 +28,7 @@ COBJS = $(CSRCS:.c=.o)
 SO_CSRCS := $(filter-out main.c, $(CSRCS))
 SO_COBJS = $(SO_CSRCS:.c=.o)
 
-all : utm_kv.so utm_kv
+all : utm_kv.so utm_kv strip_url.so
 
 url.o :
 	$(CC) -c -o $@ ../../src/url.c $(CFLAGS)  $(INCS)
@@ -41,17 +41,17 @@ XOBJS = mmap.o url.o
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-utm_kv.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o utm_kv.so \
-	-lm  -lpthread -ldl  
+strip_url.so : rfr_aux.o strip_url.o
+	$(CC) -shared $(CFLAGS) rfr_aux.o strip_url.o -o strip_url.so \
+	-lm  -ldl  
 
-utm_kv.so : $(COBJS)  $(XOBJS)
-	$(CC) $(CFLAGS) $(XOBJS) $(COBJS) -o utm_kv \
-	-lm  -lpthread -ldl  
+utm_kv.so : utm_kv.o url.o
+	$(CC) -shared $(CFLAGS) url.o utm_kv.o  -o utm_kv.so \
+	-lm  -ldl  
 
-clean:
-	rm -r -f test_dt $(COBJS) 
-	echo "ALL CLEAN"
+utm_kv : main.o utm_kv.o url.o
+	$(CC) $(CFLAGS) utm_kv.o main.o url.o -o utm_kv \
+	-lm  -ldl  
 
-qclean :
-	rm -r -f utm_kv utm_kv.so $(COBJS) *.o _*
+clean :
+	rm -r -f utm_kv utm_kv.so *.o _* *.so
