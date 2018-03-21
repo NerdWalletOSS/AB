@@ -14,7 +14,6 @@ DBGFLAGS=
 DBGFLAGS= -g -DDEBUG
 
 OPTFLAGS= -O4
-OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
@@ -29,23 +28,30 @@ COBJS = $(CSRCS:.c=.o)
 SO_CSRCS := $(filter-out main.c, $(CSRCS))
 SO_COBJS = $(SO_CSRCS:.c=.o)
 
-all : referer.so
+all : utm_kv.so utm_kv
+
+url.o :
+	$(CC) -c -o $@ ../../src/url.c $(CFLAGS)  $(INCS)
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
 
-XOBJS = mmap.o
+XOBJS = mmap.o url.o
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-referer.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o referer.so \
-	-lm  -lpthread -ldl  -lgomp
+utm_kv.so : $(SO_COBJS) 
+	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o utm_kv.so \
+	-lm  -lpthread -ldl  
+
+utm_kv.so : $(COBJS)  $(XOBJS)
+	$(CC) $(CFLAGS) $(XOBJS) $(COBJS) -o utm_kv \
+	-lm  -lpthread -ldl  
 
 clean:
 	rm -r -f test_dt $(COBJS) 
 	echo "ALL CLEAN"
 
 qclean :
-	rm -r -f referer.so $(COBJS) *.o _*
+	rm -r -f utm_kv utm_kv.so $(COBJS) *.o _*
