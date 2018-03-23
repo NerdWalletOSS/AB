@@ -784,3 +784,46 @@ strip_dquotes(
 BYE:
   return status;
 }
+
+#include "yuarel.h"
+int 
+get_host(
+    char *in,
+    char *out,
+    int n_out
+    )
+{
+  int status = 0;
+  struct yuarel url;
+  if ( in == NULL ) { go_BYE(-1); }
+  if ( out == NULL ) { go_BYE(-1); }
+  if ( n_out == 0 ) { go_BYE(-1); }
+  memset(out, '\0', n_out=1); // NOTICE THE +1. Caller should take care
+  status = yuarel_parse(&url, in); cBYE(status);
+  strncpy(out, url.host, n_out);
+
+BYE:
+  return status;
+}
+
+#include "regdom.h"
+int 
+get_domain(
+    const char *in,
+    char *out,
+    int n_out
+    )
+{
+  int status = 0;
+  void *tree = NULL;
+  char *result = NULL;
+  tree = loadTldTree();
+
+  result = getRegisteredDomain(in, tree);
+  memset(out, '\0', n_out+1); // NOTICE THE +1. Caller should take care
+  if ( result == NULL ) { go_BYE(-1); }
+  strncpy(out, result, n_out);
+BYE:
+  if ( tree != NULL ) { freeTldTree(tree); tree = NULL; }
+  return status;
+}

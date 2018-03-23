@@ -18,6 +18,7 @@ typedef enum _ab_req_type {
   DumpLog, // Read &  C
   EvalDT, // Read & C
   GetConfig, // Read &  Lua
+  GetHost, // Debugging &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
   Halt, // Read &  C
@@ -25,6 +26,7 @@ typedef enum _ab_req_type {
   Ignore, // Read &  C
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
+  MakeFeatureVector, // Read &  Lua
   PingLogServer, // Read &  C
   PingSessionServer, // Read &  C
   Reload, // Write &  Lua 
@@ -126,7 +128,6 @@ typedef struct _cftype {
   // START: For decision tree
   char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua 
   char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
-  int  dt_n_features;
   // STOP : For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1];  // For MaxMind
 } CFG_TYPE;

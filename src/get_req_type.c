@@ -34,6 +34,9 @@ get_req_type(
   else if (strcasecmp(api, "GetConfig") == 0) {
     return GetConfig;
   }
+  else if (strcasecmp(api, "GetHost") == 0) {
+    return GetHost;
+  }
   else if (strcasecmp(api, "GetVariant") == 0) {
     return GetVariant;
   }
@@ -54,6 +57,9 @@ get_req_type(
   }
   else if (strcasecmp(api, "LoadConfig") == 0) {
     return LoadConfig;
+  }
+  else if (strcasecmp(api, "MakeFeatureVector") == 0) {
+    return MakeFeatureVector;
   }
   else if (strcasecmp(api, "PingLogServer") == 0) {
     return PingLogServer;
