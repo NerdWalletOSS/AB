@@ -9,7 +9,9 @@ INCS= -I. \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 	-I../dt_interpreter/src/  \
-	-I../libmaxminddb-1.3.2/include/
+	-I../libmaxminddb-1.3.2/include/ \
+	-I../registered-domain-libs/C/ \
+	-I../libyuarel/
 
 
 
@@ -80,6 +82,11 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
 
+../libyuarel/yuarel.o : ../libyuarel/yuarel.c ../libyuarel/yuarel.h
+	make -C ../libyuarel/
+
+../registered-domain-libs/C/regdom.o : 
+	make -C ../registered-domain-libs/C/
 
 ab_httpd : $(COBJS) \
 	./libs/libstatsdclient.so \
@@ -87,10 +94,14 @@ ab_httpd : $(COBJS) \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
+	../libyuarel/yuarel.o \
+	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
+	../libyuarel/yuarel.o \
+	../registered-domain-libs/C/regdom.o \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \

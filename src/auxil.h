@@ -171,3 +171,15 @@ extern  int
 strip_dquotes(
     char *X
     ) ;
+extern int 
+get_host(
+    char *in,
+    char *out,
+    int n_out
+    );
+extern int 
+get_domain(
+    const char *in,
+    char *out,
+    int n_out
+    );

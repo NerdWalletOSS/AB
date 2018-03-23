@@ -161,13 +161,9 @@ update_config(
   }
 
   free_if_non_null(g_dt_feature_vector); 
-  g_n_dt_feature_vector = 0;
-  if  ( *g_cfg.dt_feature_file != '\0' ) { 
-    int itemp;
-    status = num_lines(g_cfg.dt_feature_file, &itemp); cBYE(status);
-    if ( itemp < 1 ) { go_BYE(-1); }
-    g_dt_feature_vector = malloc(itemp * sizeof(float));
-    g_n_dt_feature_vector = itemp;
+  // TODO INDRAJEET g_n_dt_feature_vector = l_get_num_features(...); 
+  if  ( g_n_dt_feature_vector > 0 ) { 
+    g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
   }
 
   if ( g_mmdb_in_use ) { 

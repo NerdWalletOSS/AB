@@ -20,6 +20,8 @@
 #include "load_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
+#include "make_feature_vector.h"
+#include "ext_get_host.h"
 
 // START FUNC DECL
 int 
@@ -77,6 +79,10 @@ ab_process_req(
       status = l_get_config(); cBYE(status);
       break;
       //--------------------------------------------------------
+    case GetHost : /* done by Lua */
+      status = ext_get_host(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case GetVariant :  /* done by C */
     case GetVariants :  /* done by C */
       status = route_get_variant(req_type, args);  cBYE(status);
@@ -108,6 +114,11 @@ ab_process_req(
       //--------------------------------------------------------
     case LoadConfig : /* done by Lua */
       status = l_load_config(body); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case MakeFeatureVector : /* done by Lua */
+      status = l_make_feature_vector(body, g_rslt, AB_MAX_LEN_RESULT); 
+      cBYE(status);
       break;
       //--------------------------------------------------------
     case PingLogServer : /* done by C */
