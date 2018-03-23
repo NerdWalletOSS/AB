@@ -23,7 +23,7 @@ LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DNW_SPECIFIC
 
 # set one of following 
 CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
-# CFLAGS= $(LFLAGS) 
+CFLAGS= $(LFLAGS) 
 
 CC= clang
 CC= gcc

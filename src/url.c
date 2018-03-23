@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <string.h>
-#include "macros.h"
-#include "ab_constants.h"
-#include "ab_types.h"
-#include "ab_globals.h"
+#include "ab_incs.h"
 #include "auxil.h"
 #include "url.h"
 

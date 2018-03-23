@@ -38,8 +38,8 @@ hard_code_config(void)
   strcpy(g_cfg.avg_zill_per_zip_file, "/opt/avg_zill_per_zip.lua");
   strcpy(g_cfg.referer_class_file,  "/opt/ab/referer_class.csv");
 
-  strcpy(g_cfg.dt_feature_file,  "/opt/ab/dt_feature.csv");
-  strcpy(g_cfg.dt_file,  "/opt/ab/dt.bin");
+  // strcpy(g_cfg.dt_feature_file,  "/opt/ab/dt_feature.csv");
+  // strcpy(g_cfg.dt_file,  "/opt/ab/dt.bin");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 }

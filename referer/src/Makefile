@@ -1,6 +1,6 @@
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+WARN= -g -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
 # Uncomment following to use openmp. Also, you need
 # export LD_LIBRARY_PATH="/usr/local/lib64:$LD_LIBRARY_PATH"
 # else you will get 
@@ -14,7 +14,6 @@ DBGFLAGS=
 DBGFLAGS= -g -DDEBUG
 
 OPTFLAGS= -O4
-OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
@@ -26,30 +25,33 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-SO_SRCS := $(filter-out main.c, $(CSRCS))
-SO_COBJS = $(SOCSRCS:.c=.o)
+SO_CSRCS := $(filter-out main.c, $(CSRCS))
+SO_COBJS = $(SO_CSRCS:.c=.o)
 
-all : test_dt dt.so
+all : utm_kv.so utm_kv strip_url.so
+
+url.o :
+	$(CC) -c -o $@ ../../src/url.c $(CFLAGS)  $(INCS)
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
 
-XOBJS = mmap.o
+XOBJS = mmap.o url.o
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-test_dt : $(COBJS) $(XOBJS) 
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) -o test_dt  \
-	-lm  -lpthread -ldl  -lgomp
+strip_url.so : rfr_aux.o strip_url.o
+	$(CC) -shared $(CFLAGS) rfr_aux.o strip_url.o -o strip_url.so \
+	-lm  -ldl  
 
-dt.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o dt.so \
-	-lm  -lpthread -ldl  -lgomp
+utm_kv.so : utm_kv.o url.o
+	$(CC) -shared $(CFLAGS) url.o utm_kv.o  -o utm_kv.so \
+	-lm  -ldl  
 
-clean:
-	rm -r -f test_dt $(COBJS) 
-	echo "ALL CLEAN"
+utm_kv : main.o utm_kv.o url.o
+	$(CC) $(CFLAGS) utm_kv.o main.o url.o -o utm_kv \
+	-lm  -ldl  
 
-qclean :
-	rm -r -f dt.so test_dt $(COBJS) *.o _*
+clean :
+	rm -r -f utm_kv utm_kv.so *.o _* *.so

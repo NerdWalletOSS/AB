@@ -1,3 +1,4 @@
+#include <stdlib.h>
 extern char 
 from_hex(
     char ch
