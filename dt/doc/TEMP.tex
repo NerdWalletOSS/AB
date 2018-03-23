@@ -1,0 +1,183 @@
+% -*- latex -*-
+
+\documentclass[12pt]{report}
+
+\input{e-unibus-common}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Report title page
+% \newcommand{\ReportAuthor}{The LinkedIn Documentation Team}
+\newcommand{\ReportAuthor}{Ramesh}
+\newcommand{\reportauthor}[1]{\renewcommand{\ReportAuthor}{#1}}
+\newcommand{\reporttitle}[1]{\renewcommand{\ReportTitle}{#1}}
+
+\newcommand{\reporttitlepage}[1]{
+  \begin{titlepage}
+    {\noindent \raggedright\normalsize\sffamily \ReportAuthor}\par\vfill
+    {\noindent \raggedright\Huge\sffamily \rule{\textwidth}{1pt}\\[5pt]#1\\[5pt]\rule{\textwidth}{1pt}}\par\vfill
+    {\noindent \raggedright\normalsize\sffamily Version \docversion\hfill{}\docpublishingdate}\par\vfill
+  \end{titlepage}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\startreport}[1]
+{
+  \begin{document}
+  \reporttitlepage{#1}
+  \tableofcontents
+  \specialchapter{#1}
+}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+\startreport{Decision Trees in Q}
+\reportauthor{Ramesh Subramonian}
+
+\section{Introduction}
+
+\subsection{Notations}
+
+\bi
+\item Let \(F = \{f_i\}\) be a table of F4 vectors, representing the features.
+\item Let \(g\) be a B1 vector, representing the outcome which we wish to
+predict
+\ei
+
+A decision tree is a Lua table where each element identifies
+\be
+\item a feature
+\item a threshold, the default comparison is always \(\leq\).
+\item a left decision tree
+\item a right decision tree
+\ee
+
+\begin{invariant}
+\(forall f \in F, f:length() = g:length()\)
+\end{invariant}
+
+\begin{figure}
+\centering
+\fbox{
+\begin{minipage}{35cm}
+\begin{tabbing} \hspace*{0.25in} \=  \hspace*{0.25in} \=
+                \hspace*{0.25in} \=  \hspace*{0.25in} \= \kill
+Let \(\alpha\) be minimum benefit required to continue branching \\ 
+Initialize, \(T = \{\}\) \\
+\(F, g\) as described above \\
+{\bf function } DT(T, F, g) \+ \ \\
+  \(n_P, n = Q.sum(g) \) \\
+  {\bf forall} \(f \in F:~ s(f), b(f) = \mathrm{Benefit}(f, g, n_N, n_P)\) \\ 
+  Let \(f'\) be feature with maximum benefit \\
+  {\bf if} benefit \(\geq \alpha\) {\bf then } \+  \\
+    \(x = Q.vsgt(f', s(f'))\) \\
+    \(n_R, n  = Q.sum(x) \) \\
+    \(F_L = F_R = \{\}\) \\
+    {\bf forall} \(f \in F\) {\bf do} \+ \\
+      \(Q.reorder(f, x)\) \\ 
+      \(F_L = F_L \cup Q.vector(f, 0, n_L)\) \\
+      \(F_R = F_L \cup Q.vector(f, n_L, n)\) \- \\
+    {\bf endfor} \\
+    T.feature = \(f'\) \\
+    T.threshold = \(b(f')\) \\
+    T.left = \(\{\}\) \\ 
+    T.right = \(\{\}\) \\ 
+    \(DT(F_L, g_L, T_L)\) \\ 
+    \(DT(F_R, g_R, T_R)\) \- \\ 
+  {\bf endif} \- \\
+{\bf end} 
+\end{tabbing}
+\end{minipage}
+}
+\label{dt_pseudo_code}
+\caption{Decision Tree algorithm}
+\end{figure}
+
+\begin{figure}
+\centering
+\fbox{
+\begin{minipage}{15cm}
+\begin{tabbing} \hspace*{0.25in} \=  \hspace*{0.25in} \= 
+                \hspace*{0.25in} \=  \hspace*{0.25in} \= \kill
+{\bf function } \(\mathrm{Benefit}(f, g, n_N, n_P)\) \+  \\
+  \(p_{max} = -\infty\) \\ 
+  \(b_{opt} = \bot\) \\ 
+  \(f', g' = \mathrm{Q.reorder}(f, g)\) \\
+  counter = {}; counter[0] = 0; counter[1] = 0 \\
+  idx = 0 \\ 
+  n = f:length() \\ 
+  REPEAT: \+ \\ 
+  b = f[idx] \\
+  counter[g[idx]]++ \\
+  {\bf for } ( j = idx; \(j < n\); j++ ) {\bf do} \+ \\
+    {\bf if } \(f_j \neq b\) {\bf then } \+ \\ 
+      {\bf break} \- \\ 
+    {\bf endif} \\ 
+    counter[g[j]]++ \- \\
+  {\bf endfor} \\ 
+  \(p = \mathrm{WeightedBenefit}(counter[0], counter[1], n_N,n_P)\) \\
+  {\bf if } \(p > p_{max}\) {\bf then } \+ \\ 
+    \(p_{max} = p \)  \\
+    \(b_{bot} = b \) \- \\
+  {\bf endif} \\ 
+  idx = j \\
+  {\bf goto} REPEAT \- \\ 
+  DONE \- \\
+{\bf end} 
+\end{tabbing}
+\end{minipage}
+}
+\label{compute_benefit_numeric}
+\caption{Benefit Computation (numeric attributes)}
+\end{figure}
+%%-------------------------------------------
+\begin{figure}
+\centering
+\fbox{
+\begin{minipage}{15cm}
+\begin{tabbing} \hspace*{0.25in} \=  \hspace*{0.25in} \= \kill
+{\bf function } \(\mathrm{WeightedBenefit}(n_N^L, n_P^L, n_N, n_P)\) \+  \\
+  \(n_N^R = n_N - n_N^L\) \\
+  \(n_P^R = n_P - n_P^L\) \\
+  \(n_R = n_N^R  + n_P^R\) \\ 
+  \(n_L = n_N^L  + n_P^L\) \\ 
+  {\bf return} \( \frac{n_L}{n} \times XXX + \frac{n_R}{n} \times YYY \) \- \\
+{\bf end} 
+\end{tabbing}
+\end{minipage}
+}
+\label{compute_weighted_benefit}
+\caption{Weighted Benefit Computation}
+\end{figure}
+%%-------------------------------------------
+\begin{figure}
+\centering
+\fbox{
+\begin{minipage}{15cm}
+\begin{tabbing} \hspace*{0.25in} \=  \hspace*{0.25in} \= \kill
+{\bf function } \(\mathrm{Benefit}(f, g, n_N, n_P)\) \+ 
+
+{\bf end} 
+\end{tabbing}
+\end{minipage}
+}
+\label{compute_benefit_boolean}
+\caption{Benefit Computation (boolean attributes)}
+\end{figure}
+%%-------------------------------------------
+
+\begin{figure}
+\centering
+\fbox{
+\begin{minipage}{15cm}
+\begin{tabbing} \hspace*{0.25in} \=  \hspace*{0.25in} \= \kill
+{\bf function } \(\mathrm{Benefit}(f, g, n_N, n_P)\) \+ 
+
+{\bf end} 
+\end{tabbing}
+\end{minipage}
+}
+\label{compute_benefit_categorical}
+\caption{Benefit Computation (categorical attributes)}
+\end{figure}
+\end{document}

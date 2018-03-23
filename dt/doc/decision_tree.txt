@@ -1,0 +1,19 @@
+Calculate odds, based on npos/nneg in entire data set
+1) For numeric attributes or ordered categorical
+sort X. 
+start with brk = -infty, npos = nneg = 0
+keep moving brk upwards, updating npos, nneg as you go.
+For each new brk, calculate payout
+
+2) For boolean attributes
+break into true and false and 
+
+3) For categorical cattributes
+select all n choose 2 combinations and compute npos, nneg
+
+
+=====================================
+Now divide data set using brk with highest payout
+Go back to top for each of 2 data sets created.
+Don't investigate a data set with too few entries
+=====
