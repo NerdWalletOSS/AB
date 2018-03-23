@@ -21,11 +21,11 @@ function archive($test_id) {
   $outJ = set_state($str_inJ);
 }
 
-function terminate($test_id) {
+function terminate($test_id, $winner_idx = 0) {
   // terminate the test
   $X = db_get_test($test_id);
   $X['NewState'] = "terminated";
-  $X['Winner'] = $X['Variants'][1]['name'];
+  $X['Winner'] = $X['Variants'][$winner_idx]['name'];
   $X['Updater'] = $X['Creator'];
   $str_inJ = json_encode($X);
   $outJ = set_state($str_inJ);

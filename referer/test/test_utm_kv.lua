@@ -1,7 +1,6 @@
 local ffi = require 'ffi'
 local plpath = require 'pl.path'
 local plfile = require 'pl.file'
-local stringio = require 'pl.stringio'
 
 function include(filename)
   assert(plpath.isfile(filename), "File not found " .. filename)
@@ -35,33 +34,60 @@ assert(ffi.string(output.source) == "goog")
 assert(ffi.string(output.campaign) == "bk_mktg_paid_121417_beta_cds")
 
 
-assert(nil, "PREMATURE")
 -- Now do it for a file
-local in_file_name = "./strip/url_strip_input.txt"
-local out_file_name = "./strip/url_strip_output.txt"
+local in_file_name = "./strip/url_strip_output.txt"
+local out_s = "/home/subramon/utm_source_out.txt"
+local out_c = "/home/subramon/utm_campaign_out.txt"
+local out_m = "/home/subramon/utm_medium_out.txt"
+
 assert(plpath.isfile(in_file_name))
-assert(plpath.isfile(out_file_name))
-local ifh = io.open(in_file_name, "r")
-local ofh = io.open(out_file_name, "r")
+assert(plpath.isfile(out_s))
+assert(plpath.isfile(out_c))
+assert(plpath.isfile(out_m))
+
+local ifh = assert(io.open(in_file_name, "r"))
+local sfh = assert(io.open(out_s, "r"))
+local mfh = assert(io.open(out_m, "r"))
+local cfh = assert(io.open(out_c, "r"))
 local num_errors = 0
-for i = 1, 1000000000 do 
+local num_lines = 0
+while true do 
   instr = ifh:read()
   if ( not instr ) then 
     print("Read lines " .. i)
     break
   end
-  ffi.C.strcpy(input[0].X, instr)
-  input[0].nX = ffi.C.strlen(instr)
   --=================================
-  libh.strip_url(input[0], output);
-  local outstr = ffi.string(output.X, output.nX)
-  local expected_outstr = ofh:read()
-  if ( outstr ~= expected_outstr ) then 
-    print("input ", instr)
-    print("actual ", outstr)
-    print("expected ", expected_outstr)
+  libh.utm_kv(instr, output);
+  local exp_sstr = sfh:read()
+  local exp_mstr = mfh:read()
+  local exp_cstr = cfh:read()
+  if ( exp_sstr == '""' ) then exp_sstr = ffi.NULL end 
+  if ( exp_mstr == '""' ) then exp_mstr = ffi.NULL end 
+  if ( exp_cstr == '""' ) then exp_cstr = ffi.NULL end 
+
+  -- print(exp_sstr, exp_mstr, exp_cstr)
+  local sstr = ffi.NULL
+  local mstr = ffi.NULL
+  local cstr = ffi.NULL
+  if ( output[0].source ~= ffi.NULL ) then sstr= ffi.string(output.source) end 
+  if ( output[0].medium ~= ffi.NULL ) then mstr = ffi.string(output.medium) end 
+  if ( output[0].campaign ~= ffi.NULL ) then cstr = ffi.string(output.campaign) end
+  if ( sstr ~= exp_sstr ) then 
+    print("AA", sstr, exp_sstr) 
     num_errors = num_errors + 1
   end
-  -- assert(outstr == expected_outstr, "Failure at line " .. i)
+  if ( mstr ~= exp_mstr ) then 
+    print("Line: " .. num_lines .. "{" .. mstr .. "}" .. "[" .. exp_mstr .. "]") 
+    num_errors = num_errors + 1
+  end
+  if ( cstr ~= exp_cstr ) then 
+    print("Line: " .. num_lines .. "{" .. cstr .. "}" .. "[" .. exp_cstr .. "]") 
+    num_errors = num_errors + 1
+  end
+  num_lines = num_lines + 1
+  if ( num_errors >= 10 ) then break end 
+  -- if ( num_lines == 100 ) then break end 
 end -- iterate over all lines
 print("num_errors = ", num_errors)
+print("num_lines  = ", num_lines)

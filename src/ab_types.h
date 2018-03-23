@@ -119,12 +119,15 @@ typedef struct _cftype {
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For classifying user agent 
   // START: For ML 
-  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
-  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
+  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
   char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
-  char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; 
-  char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For ML 
+  // START: For decision tree
+  char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua 
+  char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
+  int  dt_n_features;
+  // STOP : For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1];  // For MaxMind
 } CFG_TYPE;
 

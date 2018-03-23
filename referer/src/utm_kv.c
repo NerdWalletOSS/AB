@@ -46,6 +46,7 @@ utm_kv(
   ptr_out->campaign = NULL;
 
   for ( int i = 0; i < NUM_NEEDLES; i++ ) {
+    outbuf = NULL;
     char *needle = needles[i];
     char *val = strstr(instr, needle);
     char *start = NULL, *cptr = NULL;
@@ -69,7 +70,7 @@ utm_kv(
       }
     }
     else { 
-      printf("11\n"); WHEREAMI; 
+      // printf("11\n"); WHEREAMI; 
     }
     if ( outbuf != NULL ) { 
       if ( strcmp(needle, "utm_medium=") == 0 ) { 
@@ -82,7 +83,7 @@ utm_kv(
         ptr_out->campaign = outbuf;
       }
       else {
-        printf("22\n"); WHEREAMI; 
+        // printf("22\n"); WHEREAMI; 
         go_BYE(-1);
       }
     }

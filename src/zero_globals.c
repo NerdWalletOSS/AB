@@ -36,7 +36,6 @@ free_globals(
   free_if_non_null(g_browser_lkp);  g_n_justin_cat_lkp = 0;
   free_if_non_null(g_device_type_lkp);  g_n_device_type_lkp = 0;
   free_if_non_null(g_referer_class_lkp);  g_n_referer_class_lkp = 0;
-  free_if_non_null(g_dt_feature_lkp);  g_n_dt_feature_lkp = 0;
 
   if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
     munmap(g_classify_ua_map, g_len_classify_ua_file);
@@ -154,7 +153,6 @@ zero_globals(
   g_browser_lkp     = NULL; g_n_browser_lkp     = 0;
   g_device_type_lkp = NULL; g_n_device_type_lkp = 0;
   g_referer_class_lkp  = NULL; g_n_referer_class_lkp  = 0;
-  g_dt_feature_lkp  = NULL; g_n_dt_feature_lkp  = 0;
 
   g_device_idx = 0;
 
@@ -162,6 +160,8 @@ zero_globals(
   g_len_classify_ua_file = 0;
   g_num_classify_ua_map = 0;
 
+  g_dt_feature_vector = NULL;
+  g_n_dt_feature_vector = 0;
 
   // TODO Check with Braad that this is good
   const char *url_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";

@@ -152,13 +152,24 @@ update_config(
   //--------------------------------------------------------
   // dt_file
   if ( ( g_dt_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
-    munmap(g_dt_map, g_len_classify_ua_file);
+    munmap(g_dt_map, g_len_dt_file);
   }
-  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
-    status = load_dt(g_cfg.ua_to_dev_map_file, 
-        &g_dt_map, &g_len_classify_ua_file, &g_num_dt_map);
+  if ( *g_cfg.dt_file != '\0' ) { 
+    status = load_dt(g_cfg.dt_file, 
+        &g_dt_map, &g_len_dt_file, &g_num_dt_map);
     cBYE(status);
   }
+
+  free_if_non_null(g_dt_feature_vector); 
+  g_n_dt_feature_vector = 0;
+  if  ( *g_cfg.dt_feature_file != '\0' ) { 
+    int itemp;
+    status = num_lines(g_cfg.dt_feature_file, &itemp); cBYE(status);
+    if ( itemp < 1 ) { go_BYE(-1); }
+    g_dt_feature_vector = malloc(itemp * sizeof(float));
+    g_n_dt_feature_vector = itemp;
+  }
+
   if ( g_mmdb_in_use ) { 
     MMDB_close(&g_mmdb);
     g_mmdb_in_use = false;

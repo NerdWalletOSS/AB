@@ -93,8 +93,8 @@ EXTERN int g_n_device_type_lkp;
 EXTERN LKP_REC_TYPE *g_referer_class_lkp; 
 EXTERN int g_n_referer_class_lkp; 
 
-EXTERN LKP_REC_TYPE *g_dt_feature_lkp; 
-EXTERN int g_n_dt_feature_lkp; 
+EXTERN float *g_dt_feature_vector; 
+EXTERN int g_n_dt_feature_vector  ; 
 
 EXTERN char g_valid_chars_in_url[256]; // Set by C
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 

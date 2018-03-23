@@ -1,7 +1,6 @@
 local ffi = require 'ffi'
 local plpath = require 'pl.path'
 local plfile = require 'pl.file'
-local stringio = require 'pl.stringio'
 
 function include(filename)
   assert(plpath.isfile(filename), "File not found " .. filename)
@@ -52,7 +51,7 @@ assert(plpath.isfile(out_file_name))
 local ifh = io.open(in_file_name, "r")
 local ofh = io.open(out_file_name, "r")
 local num_errors = 0
-for i = 1, 1000000000 do 
+while true do 
   instr = ifh:read()
   if ( not instr ) then 
     print("Read lines " .. i)
