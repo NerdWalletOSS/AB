@@ -63,12 +63,12 @@ function load_cfg.db_connect(mysql)
   local user = mysql.USER.VALUE
   assert(user ~= nil and type(user) == "string"and #user > 0 , "Mysql entry must have a valid username")
   local pass = mysql.PASSWORD.VALUE
-  assert(pass ~= nil and type(pass) == "string"and #pass > 0 , "Mysql entry must have a valid password")
+  assert(pass ~= nil and type(pass) == "string", "Mysql entry must have a valid password")
   local port = tonumber(mysql.PORT.VALUE)
   assert(port ~= nil and port >= 0 and port < 2^16, "Mysql entry must have a valid port")
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
-  local conn = sql:connect(host, user, pass, db, port)
+ print(host, user, pass, db, port); local conn = sql:connect(host, user, pass, db, port)
   return conn
 end
 

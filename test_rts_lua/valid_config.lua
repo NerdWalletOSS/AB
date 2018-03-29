@@ -51,7 +51,7 @@ return [=[{
       },
       "PASSWORD": {
         "COMMENT": "Password for user for MySQL server",
-        "VALUE": "toor"
+        "VALUE": ""
       },
       "SERVER": {
         "COMMENT": "Name of MySQL server that back-ends the WebApp",
