@@ -1,4 +1,5 @@
 local luatz = require 'luatz.init'
+local assertx = require 'assertx'
 local MAX_TS = 2147483648
 local NY_2018 = 1514764800
 
@@ -19,19 +20,17 @@ local function time_to_vars(t, tz)
 	-- 
 	]]
 	local status, tz_value = pcall(luatz.get_tz, tz) -- tz_value is a table
-	assert(status, 'Invalid time zone string: ' .. tz .. ' is not a valid time zone string.')
+	assertx(status, 'Invalid time zone string: ', tz, ' is not a valid time zone string.')
 	if type(t) == 'string' then
 		if not tonumber(t) then
 			local status, tt = pcall(luatz.parse.rfc_3339, t) -- tt is a table
-			assert(status and tt, 'Invalid time string: ' .. t .. ' is not a valid time string.')
+			assertx(status and tt, 'Invalid time string: ', t, ' is not a valid time string.')
 			t = tt:timestamp() -- t is a timestamp, i.e. number
 		else
 			t = tonumber(t) -- if it was a '122342324' string
 		end
 	end
-	if t > MAX_TS or t < 0 then
-		error('Timestamp ' .. t .. ' is not in range:  [' .. 0 .. ', ' .. MAX_TS .. ']')
-	end
+	assertx(t <= MAX_TS and t >= 0, 'Timestamp ', t, ' is not in range:  [', 0, ', ', MAX_TS, ']')
 	-- now, factor in the time zone diff
 	local local_t = tz_value:localise(t) -- local_t is a timestamp
 	local local_tt = luatz.timetable.new_from_timestamp(local_t) -- local_tt is a table
