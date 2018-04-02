@@ -11,7 +11,8 @@ INCS= -I. \
 	-I../dt_interpreter/src/  \
 	-I../libmaxminddb-1.3.2/include/ \
 	-I../registered-domain-libs/C/ \
-	-I../libyuarel/
+	-I../libyuarel/ \
+	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
 
@@ -33,7 +34,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua
+all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua ../dt_interpreter/src/dt.so
 
 ./libs:
 	mkdir libs
@@ -87,6 +88,9 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 
 ../registered-domain-libs/C/regdom.o : 
 	make -C ../registered-domain-libs/C/
+
+../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so:
+	cd ../ && rm -rf libmaxminddb-1.3.2 && tar -xvzf libmaxminddb-1.3.2.tar.gz && cd libmaxminddb-1.3.2/ && ./configure && make	
 
 ab_httpd : $(COBJS) \
 	./libs/libstatsdclient.so \
