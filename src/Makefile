@@ -53,7 +53,7 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so :
+../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
 ../curl-7.51.0/lib/.libs/libcurl.so : 
