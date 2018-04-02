@@ -1,15 +1,16 @@
 local cache = require 'cache'
 
-local function get_referrer_type_cd(utm_med, utm_src, utm_camp, host, domain)
-	local domain = string.gmatch(domain, '(.-)%.')() -- gets back the first referrer
-	--[[
-	local status, isn, mvc, rd_sm, rd_search = pcall(dofile, DICTS) -- keys should be the items itself
-	assert(status, 'Encoding Rules file: ' .. DICTS .. ' not valid Lua file.')
-	]]--
-	local isn = cache.get("isn")
-	local mvc = cache.get("mvc")
-	local rd_sm = cache.get("rd_sm")
-	local rd_search = cache.get("rd_search")
+local function get_referrer_type_cd(args)
+	local utm_med = args['utm_med'] or ''
+	local utm_src = args['utm_src'] or ''
+	local utm_camp = args['utm_camp'] or ''
+	local host = args['host'] or ''
+	local domain = args['domain'] or ''
+	domain = string.gmatch(domain, '(.-)%.')() -- gets back the first referrer
+	local isn = assert(cache.get("isn"), "Cache missing isn.")
+	local mvc = assert(cache.get("mvc"), "Cache missing mvc.")
+	local rd_sm = assert(cache.get("rd_sm"), "Cache missing rd_sm.")
+	local rd_search = assert(cache.get("rd_search"), "Cache missing rd_search.")
 	local ext_dw_referral_sk = 0
 	if isn[domain] ~= nil then
 		ext_dw_referral_sk = 2
@@ -20,14 +21,10 @@ local function get_referrer_type_cd(utm_med, utm_src, utm_camp, host, domain)
 	elseif rd_search[host] ~= nil then
 		ext_dw_referral_sk = 3
 	end
-	--[[
-	print('Host: '..tostring(host))
-	print('Domain is '..tostring(domain))
-	print('Ext_dw_referral_sk is '..tostring(ext_dw_referral_sk))
-	]]--
+
+	local mvd_vendor_nm = nil -- for reasons unknown, if I remove this line, 50% of outputs don't match my original
+	local mvc_chnl_nm = nil -- for reasons unknown, if I remove this line as well 50% of outputs don't match my original
 	mvc_value = mvc[utm_src]
-	local mvd_vendor_nm = nil
-	local mvc_chnl_nm = nil
 	if mvc_value ~= nil then
 		mvd_vendor_nm = mvc_value['vendor_nm']
 		mvc_chnl_nm = mvc_value[utm_med]

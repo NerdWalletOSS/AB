@@ -1,4 +1,5 @@
 local cache = require 'cache'
+local assertx = require 'assertx'
 
 local function one_hot_encoding(feature_table)
 	--[[
@@ -19,11 +20,10 @@ local function one_hot_encoding(feature_table)
 	]]--
 	local config = cache.get("dt_feature")
 	assert(config ~= nil, 'Model name: dt_feature.lua not valid.')
-	assert(type(config) == 'table', 'Model name: dt_feature.lua does not return Lua table.')
 	local output = {}
 	-- checking to make sure all inputs are present
 	for var, _ in pairs(config) do
-		assert(feature_table[var] ~= nil, 'Feature ' ..tostring(var).. ' present in model not found in payload.')
+		assertx(feature_table[var] ~= nil, 'Feature ', var, ' present in model not found in payload.')
 	end
 	for var, raw_value in pairs(feature_table) do
 		local index = nil
@@ -41,7 +41,7 @@ local function one_hot_encoding(feature_table)
 					final_value = 0
 				end
 			else
-				assert(tonumber(raw_value) or type(raw_value) == 'number', 'Value of var '..var..' is not a number: '..tostring(raw_value))
+				assertx(tonumber(raw_value) or type(raw_value) == 'number', 'Value of var ', var, ' is not a number: ', tostring(raw_value))
 				if type(raw_value) ~= 'number' then
 					raw_value = tonumber(raw_value)
 				end

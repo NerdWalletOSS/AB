@@ -10,7 +10,7 @@ l_set_dt_feature_vector(
     )
 {
   int status = 0;
-  lua_getglobal(g_L, "set_dt_feature_vector"); // what is g_L?
+  lua_getglobal(g_L, "set_dt_feature_vector");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function set_dt_feature_vector does not exist in lua's global space\n");
     lua_pop(g_L, 1);
@@ -25,7 +25,6 @@ l_set_dt_feature_vector(
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
-  // to Indrajeet: must I do more about the stack?
 BYE:
   return status;
 }

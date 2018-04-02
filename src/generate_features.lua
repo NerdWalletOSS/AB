@@ -1,13 +1,11 @@
 local postal_cd_to_vars = require 'postal_cd_to_vars'
 local time_to_vars = require 'time_to_vars'
 local get_referrer_type_cd = require 'get_referrer_type_cd'
+local assertx = require 'assertx'
 
 local function generate_features(feature_table)
-	assert(feature_table['country'] == 'US', 'Country of origin is ' .. tostring(feature_table['country']) .. ', not "US".')
-	local rtc = get_referrer_type_cd(
-		feature_table['utm_med'], feature_table['utm_src'], 
-		feature_table['utm_camp'], feature_table['host'], 
-		feature_table['domain'])
+	assertx(feature_table['country'] == 'US', 'Country of origin is ', tostring(feature_table['country']), ', not "US".')
+	local rtc = get_referrer_type_cd(feature_table)
 	local pc = postal_cd_to_vars(feature_table['postal_cd'])
 	local t = time_to_vars(feature_table['timestamp'],
 		feature_table['timezone'])

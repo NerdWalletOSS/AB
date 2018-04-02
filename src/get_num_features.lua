@@ -19,7 +19,6 @@ end
 local function get_num_features()
 	local config = cache.get("dt_feature")
 	assert(config ~= nil, 'dt_feature.lua not valid.')
-	assert(type(config) == 'table', 'dt_feature.lua does not return Lua table.')
 	return get_nested_length(config)
 end
 

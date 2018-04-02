@@ -3,6 +3,7 @@ local generate_features = require 'generate_features'
 local one_hot_encoding = require 'one_hot_encoding'
 local get_num_features = require 'get_num_features'
 local ffi = require 'ffi'
+local assertx = require 'assertx'
 
 function fake_set_dt_feature_vector(str_feature_vector)
 	local feature_table = json.decode(str_feature_vector)
@@ -21,7 +22,7 @@ function fake_set_dt_feature_vector(str_feature_vector)
 	end
 	-- fill feature vector
 	for k, v in pairs(ohe) do
-		assert(n_features >= k, 'Index of ' ..tostring(k).. ' too big for g_dt_feature_vector, which has max ' ..tostring(n_features).. ' entries.')
+		assertx(n_features >= k, 'Index of ', tostring(k), ' too big for g_dt_feature_vector, which has max ', tostring(n_features), ' entries.')
 		feature_vector[k - 1] = v
 	end
 	-- verify feature_vector
@@ -49,7 +50,7 @@ local function set_dt_feature_vector(str_feature_vector, feature_vector)
 	feature_vector = ffi.cast("float*", feature_vector)
 	ffi.fill(feature_vector, ffi.sizeof("float") * n_features) -- equivalent to C's memset
 	for k, v in pairs(ohe) do
-		assert(n_features >= k, 'Index of ' ..tostring(k).. ' too big for g_dt_feature_vector, which has max ' ..tostring(n_features).. ' entries.')
+		assertx(n_features >= k, 'Index of ', tostring(k), ' too big for g_dt_feature_vector, which has max ', tostring(n_features), ' entries.')
 		feature_vector[k - 1] = v
 	end
 end
