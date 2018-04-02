@@ -30,7 +30,7 @@ local function get_referrer_type_cd(args)
 		mvc_chnl_nm = mvc_value[utm_med]
 	end
 	
-	mvd_c = mvd_vendor_nm or domain or 'other'
+	mvd_c = mvd_vendor_nm or domain
 	mvd_c_check = {['twitter']=1, ['facebook']=2, ['t']=3, ['linkedin']=4, ['lnkd']=5, ['pinterest']=6}
 	if mvd_c_check[mvd_c] or mvc_chnl_nm == 'social' or ext_dw_referral_sk == 1 then
 		referral_type_cd = 'Social Media'
