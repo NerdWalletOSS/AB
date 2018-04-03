@@ -18,6 +18,7 @@ typedef enum _ab_req_type {
   DumpLog, // Read &  C
   EvalDT, // Read & C
   GetConfig, // Read &  Lua
+  GetDomain, // Debugging &  Lua
   GetHost, // Debugging &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
@@ -121,9 +122,9 @@ typedef struct _cftype {
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For classifying user agent 
   // START: For ML 
-  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
+  char postal_cd_features[AB_MAX_LEN_FILE_NAME+1]; // For Lua
   char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
-  char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
+  char referer_class_file[AB_MAX_LEN_FILE_NAME+1];  // For Lua 
   // STOP: For ML 
   // START: For decision tree
   char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua 
