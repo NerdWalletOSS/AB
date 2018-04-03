@@ -121,6 +121,19 @@ local function update_rts_configs(g_conf, config)
   end
   --=============================================
 
+  if ( ( config.DT_FEATURE_FILE ) and 
+       ( config.DT_FEATURE_FILE ~= "" ) ) then 
+    assert(plpath.isfile(config.DT_FEATURE_FILE))
+    g_dt_feature = dofile(config.DT_FEATURE_FILE)
+  end
+  --=============================================
+
+  if ( ( config.REFERER_CLASS_FILE ) and 
+       ( config.REFERER_CLASS_FILE ~= "" ) ) then 
+    assert(plpath.isfile(config.REFERER_CLASS_FILE))
+    g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search = dofile(config.REFERER_CLASS_FILE)
+  end
+  --=============================================
 
   local verbose = -1
   if config.VERBOSE.VALUE:lower() == "false" then
