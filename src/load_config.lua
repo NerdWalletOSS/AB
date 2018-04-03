@@ -113,6 +113,15 @@ local function update_rts_configs(g_conf, config)
   is_updated = is_modified(g_conf[0].port, port, is_updated)
   g_conf[0].port = port
 
+  --=============================================
+  if ( ( config.POSTAL_CD_FEATURES ) and 
+       ( config.POSTAL_CD_FEATURES ~= "" ) ) then 
+    assert(plpath.isfile(config.POSTAL_CD_FEATURES))
+    g_postal_cd_features = dofile(config.POSTAL_CD_FEATURES)
+  end
+  --=============================================
+
+
   local verbose = -1
   if config.VERBOSE.VALUE:lower() == "false" then
     is_updated = is_modified(get_value_from_bool(g_conf[0].verbose), consts.FALSE, is_updated)

@@ -135,10 +135,6 @@ return [=[{
       "COMMENT" : " XXXX ",
       "VALUE"  : "/opt/ab/postal_cd_features.lua"
     },
-    "POSTAL_CD_FEATURES" : { 
-      "COMMENT" : " XXXX ",
-      "VALUE"  : "/opt/ab/postal_cd_features.lua"
-    },
     "REFERER_CLASS_FILE" : { 
       "COMMENT" : " XXXX ",
       "VALUE"  : "/opt/ab/referer_class_file.lua"
