@@ -130,6 +130,11 @@ typedef struct _cftype {
   char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP : For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1];  // For MaxMind
+  // TEMP additions TODO Ramesh please look
+  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1];
+  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1];
+
+
 } CFG_TYPE;
 
 typedef struct _justin_map_rec_type { 
