@@ -1,8 +1,10 @@
+package.path = package.path .. ';../src/?.lua'
+local table_dt_feature = dofile('../config/dt_feature.lua')
+local cache = require 'cache'
+cache.put("table_dt_feature", table_dt_feature)
+
 describe("Testing get_num_features", function()
-    package.path = package.path .. ';../src/?.lua'
-    local table_dt_feature = dofile('../config/dt_feature.lua')
-    local cache = require 'cache'
-    cache.put("table_dt_feature", table_dt_feature)
+    
 
     local get_num_features = require 'get_num_features'
     it("should get you correct numbers under visitor model (hardcoded)", function()

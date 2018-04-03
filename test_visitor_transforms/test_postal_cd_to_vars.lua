@@ -1,20 +1,20 @@
-describe("Testing postal_cd_to_vars", function()
-	package.path = package.path .. ';../src/?.lua'
-	local postal_cd_to_vars = require 'postal_cd_to_vars'
-	local table_postal_cd_features = dofile('../config/postal_cd_features.lua')
-	local cache = require 'cache'
-	cache.put("table_postal_cd_features", table_postal_cd_features)
-	local good_postal_codes = {}
-	for k, _ in pairs(table_postal_cd_features) do 
-		good_postal_codes[#good_postal_codes+1] = k 
+package.path = package.path .. ';../src/?.lua'
+local postal_cd_to_vars = require 'postal_cd_to_vars'
+local table_postal_cd_features = dofile('../config/postal_cd_features.lua')
+local cache = require 'cache'
+cache.put("table_postal_cd_features", table_postal_cd_features)
+local good_postal_codes = {}
+for k, _ in pairs(table_postal_cd_features) do 
+	good_postal_codes[#good_postal_codes+1] = k 
+end
+local bad_postal_codes = {}
+for i=1,100000 do
+	if table_postal_cd_features[i] == nil then
+	bad_postal_codes[#bad_postal_codes+1] = i
 	end
-	local bad_postal_codes = {}
-	for i=1,100000 do
-		if table_postal_cd_features[i] == nil then
-		bad_postal_codes[#bad_postal_codes+1] = i
-		end
-	end
+end
 
+describe("Testing postal_cd_to_vars", function()
 
 	it("should be able to give out valid outputs to 100 good randomly generated inputs (postal code as numeric)", function()
 		for i=1,1000 do
