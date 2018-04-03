@@ -1,2 +1,0 @@
-zipcode,zillow_score
-integer,float

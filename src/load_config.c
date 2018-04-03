@@ -13,7 +13,7 @@ l_load_config(
   memset(has_changed, 0, NUM_SERVICES);
   lua_getglobal(g_L, "load_config");
   if ( !lua_isfunction(g_L, -1)) {
-    fprintf(stderr, "Function add does not exist in lua's global space\n");
+    fprintf(stderr, "Function load_config does not exist in lua's global space\n");
   lua_pop(g_L, 1);
     go_BYE(-1);
   }

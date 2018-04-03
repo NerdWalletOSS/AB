@@ -35,8 +35,7 @@ hard_code_config(void)
   strcpy(g_cfg.device_type_file,  "/opt/ab/device_type.csv");
 
   strcpy(g_cfg.postal_cd_features,  "/opt/postal_cd_features.lua");
-  strcpy(g_cfg.avg_zill_per_zip_file, "/opt/avg_zill_per_zip.lua");
-  strcpy(g_cfg.referer_class_file,  "/opt/ab/referer_class.lua");
+  strcpy(g_cfg.referer_class_file,  "/opt/ab/referer_class_file.lua");
 
   strcpy(g_cfg.dt_feature_file,  "/opt/ab/dt_feature.lua");
   // strcpy(g_cfg.dt_file,  "/opt/ab/dt.bin");

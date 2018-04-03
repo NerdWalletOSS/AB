@@ -123,7 +123,6 @@ typedef struct _cftype {
   // STOP: For classifying user agent 
   // START: For ML 
   char postal_cd_features[AB_MAX_LEN_FILE_NAME+1]; // For Lua
-  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
   char referer_class_file[AB_MAX_LEN_FILE_NAME+1];  // For Lua 
   // STOP: For ML 
   // START: For decision tree
