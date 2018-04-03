@@ -29,6 +29,8 @@ WriteMemoryCallback(
 int
 init()
 {
+  return 0;
+  // TODO DEPRECATE FUNCTION
   int status = 0;
   //---------------------------------------------------
   // For Lua

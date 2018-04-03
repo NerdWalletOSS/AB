@@ -159,6 +159,12 @@ main(
   struct event_base *base;
   //--------------------------------------------
   status = zero_globals(); cBYE(status); /* Done only on startup */
+  // START: For Lua
+  g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
+  luaL_openlibs(g_L);  
+  status = luaL_loadfile(g_L, "ab.lua"); cBYE(status);
+  status = lua_pcall(g_L, 0, 0, 0); cBYE(status);
+  // STOP: For Lua 
   if ( argc == 1 )  { 
     hard_code_config(); // only for testing 
   }
@@ -167,7 +173,6 @@ main(
     status = l_load_config(argv[1]); cBYE(status);
   }
   status = update_config(); cBYE(status);
-  status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	

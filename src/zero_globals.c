@@ -92,8 +92,7 @@ zero_globals(
   memset(g_cfg.browser_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
-  memset(g_cfg.avg_fico_per_zip_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.avg_zill_per_zip_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.postal_cd_features, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.referer_class_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   memset(g_cfg.dt_feature_file, '\0', AB_MAX_LEN_FILE_NAME+1);
