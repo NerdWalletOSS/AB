@@ -68,7 +68,7 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
+$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
