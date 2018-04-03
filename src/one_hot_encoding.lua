@@ -18,17 +18,15 @@ local function one_hot_encoding(feature_table)
 	2. This will suddenly fail if any of the non-categorical variables are not numeric.
 	3. If there is a value within the categorical variables that do not exist in ENCODING_RULES, none of the values will be encoded.
 	]]--
-	local config = cache.get("dt_feature")
-	assert(config ~= nil, 'Model name: dt_feature.lua not valid.')
+	local table_dt_feature = cache.get("table_dt_feature")
 	local output = {}
 	-- checking to make sure all inputs are present
-	for var, _ in pairs(config) do
+	for var, _ in pairs(table_dt_feature) do
 		assertx(feature_table[var] ~= nil, 'Feature ', var, ' present in model not found in payload.')
 	end
 	for var, raw_value in pairs(feature_table) do
 		local index = nil
-		--print('here is var '..var..' with value '..tostring(raw_value))
-		local cat_encoding_rules = config[var]
+		local cat_encoding_rules = table_dt_feature[var]
 		if type(cat_encoding_rules) == 'table' then
 			index = cat_encoding_rules[raw_value]
 			final_value = 1
@@ -49,7 +47,6 @@ local function one_hot_encoding(feature_table)
 			end
 		end
 		if index then -- special case when the categorical value is missing from the options
-			--print(index, final_value)
 			output[index] = final_value
 		end
 	end

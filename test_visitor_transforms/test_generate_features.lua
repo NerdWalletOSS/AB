@@ -4,13 +4,13 @@ describe("Testing generate_features", function()
     local cache = require 'cache'
     local json = require 'json'
     local test_data = 'generate_features_data.json'
-    local isn, mvc, rd_sm, rd_search = dofile('../config/referrer_class_file.lua')
-    local postal_cd_features = dofile('../config/postal_cd_features.lua')
-    cache.put("postal_cd_features", postal_cd_features)
-    cache.put("isn", isn)
-    cache.put("mvc", mvc)
-    cache.put("rd_sm", rd_sm)
-    cache.put("rd_search", rd_search)
+    local table_isn, table_mvc, table_rd_sm, table_rd_search = dofile('../config/referrer_class_file.lua')
+    local table_postal_cd_features = dofile('../config/postal_cd_features.lua')
+    cache.put("table_postal_cd_features", table_postal_cd_features)
+    cache.put("table_isn", table_isn)
+    cache.put("table_mvc", table_mvc)
+    cache.put("table_rd_sm", table_rd_sm)
+    cache.put("table_rd_search", table_rd_search)
 
     it("should be able to return the correct generate_features for 1000 entries.", function()
         local lines = {}

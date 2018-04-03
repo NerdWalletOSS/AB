@@ -6,25 +6,25 @@ local function get_referrer_type_cd(args)
 	local utm_camp = args['utm_camp'] or ''
 	local host = args['host'] or ''
 	local domain = args['domain'] or ''
-	domain = string.gmatch(domain, '(.-)%.')() -- gets back the first referrer
-	local isn = assert(cache.get("isn"), "Cache missing isn.")
-	local mvc = assert(cache.get("mvc"), "Cache missing mvc.")
-	local rd_sm = assert(cache.get("rd_sm"), "Cache missing rd_sm.")
-	local rd_search = assert(cache.get("rd_search"), "Cache missing rd_search.")
+	domain = string.gmatch(domain, '(.-)%.')() -- gets back the first host, e.g. google.com -> google
+	local table_isn = assert(cache.get("table_isn"), "Cache missing table_isn.")
+	local table_mvc = assert(cache.get("table_mvc"), "Cache missing table_mvc.")
+	local table_rd_sm = assert(cache.get("table_rd_sm"), "Cache missing table_rd_sm.")
+	local table_rd_search = assert(cache.get("table_rd_search"), "Cache missing table_rd_search.")
 	local ext_dw_referral_sk = 0
-	if isn[domain] ~= nil then
+	if table_isn[domain] ~= nil then
 		ext_dw_referral_sk = 2
 	elseif domain == nil or domain == '' then
 		ext_dw_referral_sk = 0
-	elseif rd_sm[host] ~= nil then
+	elseif table_rd_sm[host] ~= nil then
 		ext_dw_referral_sk = 1
-	elseif rd_search[host] ~= nil then
+	elseif table_rd_search[host] ~= nil then
 		ext_dw_referral_sk = 3
 	end
 
 	local mvd_vendor_nm = nil -- for reasons unknown, if I remove this line, 50% of outputs don't match my original
 	local mvc_chnl_nm = nil -- for reasons unknown, if I remove this line as well 50% of outputs don't match my original
-	mvc_value = mvc[utm_src]
+	mvc_value = table_mvc[utm_src]
 	if mvc_value ~= nil then
 		mvd_vendor_nm = mvc_value['vendor_nm']
 		mvc_chnl_nm = mvc_value[utm_med]

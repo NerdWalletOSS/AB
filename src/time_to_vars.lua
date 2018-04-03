@@ -20,7 +20,7 @@ local function time_to_vars(t, tz)
 	-- 
 	]]
 	local status, tz_value = pcall(luatz.get_tz, tz) -- tz_value is a table
-	assertx(status, 'Invalid time zone string: ', tz, ' is not a valid time zone string.')
+	assertx(status, 'Invalid time zone string: ', tz, ' is not a valid time zone string. Error: ', tz_value)
 	if type(t) == 'string' then
 		if not tonumber(t) then
 			local status, tt = pcall(luatz.parse.rfc_3339, t) -- tt is a table

@@ -4,11 +4,11 @@ describe("Testing get_referrer_type_cd", function()
     local cache = require 'cache'
     local json = require 'json'
     local test_data = 'rtc_data.json'
-    local isn, mvc, rd_sm, rd_search = dofile('../config/referrer_class_file.lua')
-    cache.put("isn", isn)
-    cache.put("mvc", mvc)
-    cache.put("rd_sm", rd_sm)
-    cache.put("rd_search", rd_search)
+    local table_isn, table_mvc, table_rd_sm, table_rd_search = dofile('../config/referrer_class_file.lua')
+    cache.put("table_isn", table_isn)
+    cache.put("table_mvc", table_mvc)
+    cache.put("table_rd_sm", table_rd_sm)
+    cache.put("table_rd_search", table_rd_search)
 
     it("should be able to return the correct referrer_type_cd for 1 million entries.", function()
         local lines = {}

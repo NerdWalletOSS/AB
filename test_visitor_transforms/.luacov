@@ -1,0 +1,54 @@
+local pldir = require 'pl.dir'
+local usr_local_table = pldir.getfiles('/usr/local/', "./*")
+--- Global configuration file. Copy, customize and store in your
+-- project folder as '.luacov' for project specific configuration
+-- @class module
+-- @name luacov.defaults
+local config = {
+  -- default filename to load for config options if not provided
+  -- only has effect in 'luacov.defaults.lua'
+  ['configfile'] = '.luacov',
+
+  -- filename to store stats collected
+  ['statsfile'] = 'luacov.stats.out',
+
+  -- filename to store report
+  ['reportfile'] = 'luacov.report.out',
+
+  -- Run reporter on completion? (won't work for ticks)
+  -- runreport = true,
+
+  -- Delete stats file after reporting?
+  -- deletestats = true,
+
+  -- Patterns for files to include when reporting
+  -- all will be included if nothing is listed
+  -- (exclude overrules include, do not include
+  -- the .lua extension)
+  ['include'] = {
+    '../src/time_to_vars',
+    '../src/postal_cd_to_vars',
+    '../src/get_referrer_typ_cd',
+    '../src/one_hot_encoding',
+    '../src/generate_features',
+    '../src/get_num_features'
+  },
+  -- busted uses exclude so thats the way we will go too
+  -- Patterns for files to exclude when reporting
+  -- all will be included if nothing is listed
+  -- (exclude overrules include, do not include
+  -- the .lua extension)
+  ['exclude'] = {
+   '/usr/local/*',
+   './../src/src/json',
+   './../src/debugger',
+  },
+
+
+}
+
+for k,v in ipairs(usr_local_table) do
+  config.exclude[#config.exclude + 1] = v
+end
+
+return config

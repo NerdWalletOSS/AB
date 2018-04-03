@@ -35,6 +35,17 @@ describe("Testing time to vars", function()
         end
     end)
 
+    it("should be able to deal with rfc 3339 strings.", function()
+        assert.are.same(time_to_vars("2018-01-01T23:03:00", 'America/New_York'), {
+            ["day_of_wk"]=0, 
+            ["year"]=2018,
+            ["is_late_at_night"]=false,
+            ["local_hour"]=18,
+            ["utc_offset"]='-5.0',
+            ["month"]=1,
+            ["is_working"]=true})
+    end)
+
     it("should fail when timestamp is too small", function()
         assert.is_false(pcall(time_to_vars, '-0.1', 'America/New_York'))
     end)
