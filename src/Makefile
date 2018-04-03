@@ -92,6 +92,9 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src
 ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so:
 	cd ../ && rm -rf libmaxminddb-1.3.2 && tar -xvzf libmaxminddb-1.3.2.tar.gz && cd libmaxminddb-1.3.2/ && ./configure && make	
 
+./libs/libmaxminddb.so: ./libs ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+	cp ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ./libs/libmaxminddb.so
+
 ab_httpd : $(COBJS) \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
@@ -100,7 +103,8 @@ ab_httpd : $(COBJS) \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
 	../registered-domain-libs/C/regdom.o \
-	./libs/libmysqlclient.so
+	./libs/libmysqlclient.so \
+	./libs/libmaxminddb.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
@@ -109,7 +113,7 @@ ab_httpd : $(COBJS) \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
-	../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so \
+	./libs/libmaxminddb.so \
 	-lm  -lpthread -ldl  
 
 libspooky_hash.so:
