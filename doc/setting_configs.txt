@@ -4,10 +4,20 @@ If you want a new config variable, this what you need to do
 2) In zero_globals(), make sure to initialize it
 3) In update_config(), make sure to use it e.g., 
 g_sz_log_q is the config variable used to malloc g_log_q
-4) Altenatively, in XXX.lua make sure to use it e.g., 
-XXXXX
-5) In hard_code_config(), make sure to set it to a valid value 
+6) In hard_code_config(), make sure to set it to a valid value 
 for local testing to proceed easily 
-6) In load_config.lua, do XXXXX
-7) In zero_globals(), make sure to tear down anything you created in
-updatec_config()
+7) In zero_globals(), make sure you initialize anything that 
+could be affected by configs e.g., g_log_q = NULL; 
+8) In free_globals(), make sure to tear down anything you created in
+update_config()
+==== Now, there are config variables that only Lua cares about.
+==== In this case, do the following
+
+4) Update AB/test_rts/valid_config.lua. 
+This is equivalent to hard_code_config.c
+As an example, 
+    "REFERER_CLASS_FILE" : { 
+      "COMMENT" : " XXXX ",
+      "VALUE"  : "/opt/ab/referer_class_file.lua"
+    },
+5) In AB/src/load_config.lua make sure to use it e.g., 
