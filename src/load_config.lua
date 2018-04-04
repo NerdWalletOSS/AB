@@ -131,7 +131,8 @@ local function update_rts_configs(g_conf, config)
   if ( ( config.REFERER_CLASS_FILE ) and 
        ( config.REFERER_CLASS_FILE ~= "" ) ) then 
     assert(plpath.isfile(config.REFERER_CLASS_FILE))
-    g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search = dofile(config.REFERER_CLASS_FILE)
+    g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search = 
+      dofile(config.REFERER_CLASS_FILE)
   end
   --=============================================
 

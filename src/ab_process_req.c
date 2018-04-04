@@ -150,8 +150,8 @@ ab_process_req(
       // common to restart and reload
       free_globals();
       status = zero_globals();  cBYE(status);
-      // Note; We do NOT do zero_conf()
-      status = init(); cBYE(status);
+      status = init_lua(); cBYE(status);
+      status = update_config(); cBYE(status);
       if ( g_cfg.sz_log_q > 0 ) { 
         pthread_mutex_init(&g_mutex, NULL);	
         pthread_cond_init(&g_condc, NULL);

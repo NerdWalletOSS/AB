@@ -2,7 +2,7 @@ local csv = require "csv"
 local json = require "json"
 -- local ffi = require 'ffi' 
 local tests = require 'add_test'
-local load_config = require 'load_config'
+local load_cfg = require 'load_config'
 local cache = require 'cache'
 local reload_tests = require 'reload'
 
@@ -20,7 +20,7 @@ function make_feature_vector(...)
 end
 
 function load_config(...)
-  load_config.load_config_from_file(...)
+  load_cfg.load_config_from_file(...)
 end
 
 function list_tests()
