@@ -1,0 +1,89 @@
+cd $HOME
+-- download php-7.1.11.tar.bz2
+-- download httpd-2.4.29.tar.bz2
+-- download apr-1.6.3.tar.bz2
+-- download apr-util-1.6.1.tar.bz2
+
+sudo apt-get install libpcre3-dev
+sudo apt-get install libssl-dev
+sudo apt-get install bzip2
+sudo apt-get install libexpat1-dev
+sudo apt-get install libxml2-dev
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libmysqlclient-dev
+
+bunzip2 httpd-2.4.29.tar.bz2 
+tar -xvf httpd-2.4.29.tar 
+cd httpd-2.4.29/
+
+bunzip2 apr-util-1.6.1.tar.bz2 
+tar -xvf apr-util-1.6.1.tar 
+
+bunzip2 apr-1.6.3.tar.bz2 
+tar -xvf apr-1.6.3.tar 
+
+cd httpd-2.4.29/
+mv ../apr-util-1.6.1 ./srclib/apr-util
+mv ../apr-1.6.3      ./srclib/apr
+
+options=" --enable-so \
+--prefix=$HOME/local/ \
+--with-included-apr \
+--with-libxml2 \
+--enable-proxy \
+--enable-lua \
+--enable-curl \
+--enable-headers \
+--enable-cache \
+--enable-ssl"
+./configure $options
+
+--=================================
+bunzip2 php-7.1.11.tar.bz2 
+tar -xvf php-7.1.11.tar 
+cd php-7.1.11//
+
+
+options=" --prefix=$HOME/local/ \
+--with-apxs2=$HOME/local/bin/apxs \
+--with-libdir=lib64 \
+--with-pdo-mysql \
+--with-zlib \
+--with-openssl \
+--enable-pcntl \
+--with-curl \
+--enable-mbstring "
+./configure $options
+
+libtool --finish ./libs
+#-====================================
+Modifications to httpd.conf
+1. Set port to 8080 or something that is user accessible
+2. Make sure that you have a line like 
+LoadModule php7_module        modules/libphp7.so
+
+3. Add the following otherwise PHP file will be echoed not interpreted
+<FilesMatch "\.php$">
+SetHandler application/x-httpd-php
+php_value upload_max_filesize 32M
+php_value post_max_size 64M
+</FilesMatch>
+
+4. You may get error
+Failed to lookup provider 'shm' for 'slotmem': is mod_slotmem_shm loaded
+Uncomment LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+
+#-====================================
+Miscellaneous Notes
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
