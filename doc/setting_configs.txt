@@ -1,0 +1,11 @@
+If you want a new config variable, this what you need to do 
+
+1) In ab_types.h, add it to the CFG_TYPE struct
+2) In zero_globals(), make sure to initialize it
+3) In upload_configs(), make sure to use it e.g., 
+g_sz_log_q is the config variable used to malloc g_log_q
+4) Altenatively, in XXX.lua make sure to use it e.g., 
+XXXXX
+5) In hard_code_config(), make sure to set it to a valid value 
+for local testing to proceed easily 
+6) In load_config.lua, do XXXXX
