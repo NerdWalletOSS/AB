@@ -1,4 +1,4 @@
-local cache = require 'cache'
+--local cache = require 'cache'
 
 local function get_nested_length(table)
 	--[[
@@ -17,9 +17,8 @@ local function get_nested_length(table)
 end
 
 local function get_num_features()
-	local config = cache.get("table_dt_feature")
-	assert(config ~= nil, 'dt_feature.lua not valid.')
-	return get_nested_length(config)
+	assert(g_dt_feature, 'g_dt_feature not loaded.')
+	return get_nested_length(g_dt_feature)
 end
 
 return get_num_features
