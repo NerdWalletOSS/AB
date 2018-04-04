@@ -19,6 +19,11 @@ function make_feature_vector(...)
   return xxx(...)
 end
 
+local xxx = require 'get_num_features'
+function get_num_features(...)
+  return xxx(...)
+end
+
 function load_config(...)
   load_cfg.load_config_from_file(...)
 end

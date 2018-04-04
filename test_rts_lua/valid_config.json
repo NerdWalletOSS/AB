@@ -94,7 +94,7 @@
 
     "PORT": {
       "COMMENT": "Port on which A/B server will run",
-      "VALUE": "800"
+      "VALUE": "8000"
     },
     "RELOAD_ON_STARTUP": {
       "COMMENT": "If true then Reload occurs when server comes up",
@@ -109,7 +109,7 @@
       "VALUE": "false"
     },
     "UA_TO_DEV_MAP_FILE": {
-      "VALUE": "\"./ua_to_dev.bin\""
+      "VALUE": "/opt/ab/ua_to_dev.bin"
     },
     "UDP_NODE": {
       "COMMENT": "Only for local testing",

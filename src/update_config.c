@@ -6,6 +6,7 @@
 #include "update_config.h"
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
+#include "l_get_num_features.h"
 
 #include "load_dt.h"
 #include "maxminddb.h"
@@ -152,7 +153,7 @@ update_config(
   }
 
   free_if_non_null(g_dt_feature_vector); 
-  // TODO INDRAJEET g_n_dt_feature_vector = l_get_num_features(...); 
+  status = l_get_num_features(&g_n_dt_feature_vector );  cBYE(status);
   if  ( g_n_dt_feature_vector > 0 ) { 
     g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
   }

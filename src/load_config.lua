@@ -125,23 +125,23 @@ local function update_rts_configs(g_conf, config)
 	--=============================================
 	if ( ( config.POSTAL_CD_FEATURES ) and
 		( config.POSTAL_CD_FEATURES ~= "" ) ) then
-		assert(file_exists(config.POSTAL_CD_FEATURES))
-		g_postal_cd_features = dofile(config.POSTAL_CD_FEATURES)
+		assert(file_exists(config.POSTAL_CD_FEATURES.VALUE))
+		g_postal_cd_features = dofile(config.POSTAL_CD_FEATURES.VALUE)
 	end
 	--=============================================
 
 	if ( ( config.DT_FEATURE_FILE ) and
 		( config.DT_FEATURE_FILE ~= "" ) ) then
-		assert(file_exists(config.DT_FEATURE_FILE))
-		g_dt_feature = dofile(config.DT_FEATURE_FILE)
+		assert(file_exists(config.DT_FEATURE_FILE.VALUE))
+		g_dt_feature = dofile(config.DT_FEATURE_FILE.VALUE)
 	end
 	--=============================================
 
 	if ( ( config.REFERER_CLASS_FILE ) and
 		( config.REFERER_CLASS_FILE ~= "" ) ) then
-		assert(file_exists(config.REFERER_CLASS_FILE))
+		assert(file_exists(config.REFERER_CLASS_FILE.VALUE))
 		g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search =
-		dofile(config.REFERER_CLASS_FILE)
+		dofile(config.REFERER_CLASS_FILE.VALUE)
 	end
 	--=============================================
 
@@ -181,7 +181,7 @@ local function update_rts_configs(g_conf, config)
 	is_updated = is_modified(ffi.string(g_conf[0].ua_to_dev_map_file), ua_dev_file, is_updated)
 	ffi.copy(g_conf[0].ua_to_dev_map_file, ua_dev_file)
 
-	is_updated = load_db_data(g_conf, config, is_updated)
+	-- is_updated = load_db_data(g_conf, config, is_updated)
 	return is_updated
 end
 

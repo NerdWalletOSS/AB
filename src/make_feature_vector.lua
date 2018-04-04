@@ -43,7 +43,8 @@ local function make_feature_vector(
   -- does the conversions
   local out_features = assert(generate_features(in_features))
   if ( is_debug ) then 
-    out_buf = assert(json.encode(out_features))
+    local x = assert(json.encode(out_features))
+    ffi.copy(out_buf, x)
     -- TODO P2 we need to make sure we do not overflow the buffer
   end
   local ohe = one_hot_encoding(out_features)
