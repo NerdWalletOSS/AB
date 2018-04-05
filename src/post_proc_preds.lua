@@ -3,7 +3,7 @@ local assertx = require 'assertx'
 local cache = require 'cache'
 local get_n_cards = require 'get_n_cards'
 
-local function return_output(
+local function post_proc_preds(
   opvec, -- feature vector, now a float* of n_opvec length
   n_opvec, -- number of elements in feature vector. should be 21
   out_buf, -- output buffer for debugging 
@@ -32,4 +32,4 @@ local function return_output(
   ffi.copy(out_buf, x)
 end
 
-return return_output
+return post_proc_preds
