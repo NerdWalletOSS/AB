@@ -19,7 +19,7 @@ clean(){
 }
 
 buildall(){
-  sudo apt-get install gcc python python-pip -y
+  sudo apt-get install gcc python python-pip cmake -y
   sudo pip install pystatsd
   clean
   set -e
