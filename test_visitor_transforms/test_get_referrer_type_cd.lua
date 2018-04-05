@@ -4,7 +4,7 @@ local cache = require 'cache'
 local json = require 'json'
 local test_data = 'rtc_data.json'
 --_G.g_table_isn, _G.g_table_mvc, _G.g_table_rd_sm, _G.g_table_rd_search = assert(dofile('../config/referrer_class_file.lua'))
-local status, referer_class_tables = pcall(dofile, '../config/referer_class_file.lua')
+local status, referer_class_tables = pcall(dofile, '/opt/ab/referer_class_file.lua')
 assert(status, 'loading referrer_class_file failed')
 assert(referer_class_tables, 'loading referer_class_tables failed')
 assert(referer_class_tables["isn"], 'loading g_table_isn failed')

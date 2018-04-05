@@ -2,7 +2,7 @@ package.path = package.path .. ';../src/?.lua'
 local postal_cd_to_vars = require 'postal_cd_to_vars'
 --_G.g_postal_cd_features = assert(dofile('../config/postal_cd_features.lua'))
 local cache = require 'cache'
-local status, g_postal_cd_features = pcall(dofile, '../config/postal_cd_features.lua')
+local status, g_postal_cd_features = pcall(dofile, '/opt/ab/postal_cd_features.lua')
 assert(status, 'Dofile for postal_cd_features failed')
 assert(g_postal_cd_features, 'g_postal_cd_features not loaded')
 cache.put("g_postal_cd_features", g_postal_cd_features)
