@@ -38,7 +38,7 @@ build(){
   make
   cp ab_httpd ../bin
   find ../ -name "*.so*" -exec cp {} ../bin/libs \;
-  find ./ -name "*.lua" -exec cp {} ../bin \;
+  find ./ -name "*.lua" -exec cp --parents {} ../bin \;
   cd ../
   set +e
 }
