@@ -96,6 +96,8 @@ EXTERN int g_n_referer_class_lkp;
 EXTERN float *g_dt_feature_vector; 
 EXTERN int g_n_dt_feature_vector  ;  // Set by Lua after reading configs
 // TODO INDRAJEET ABOVE
+EXTERN int g_n_cards;
+// ADDED BY LUMPY
 
 EXTERN char g_valid_chars_in_url[256]; // Set by C
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
