@@ -1,4 +1,4 @@
---local cache = require 'cache'
+local cache = require 'cache'
 
 local function get_referrer_type_cd(args)
 	local utm_med = args['utm_med'] or ''
@@ -7,15 +7,20 @@ local function get_referrer_type_cd(args)
 	local host = args['host'] or ''
 	local domain = args['domain'] or ''
 	domain = string.gmatch(domain, '(.-)%.')() -- gets back the first host, e.g. google.com -> google
-	--[[local table_isn = assert(cache.get("table_isn"), "Cache missing table_isn.")
-	local table_mvc = assert(cache.get("table_mvc"), "Cache missing table_mvc.")
-	local table_rd_sm = assert(cache.get("table_rd_sm"), "Cache missing table_rd_sm.")
-	local table_rd_search = assert(cache.get("table_rd_search"), "Cache missing table_rd_search.")
-	]]--
+	local g_table_isn = assert(cache.get("g_table_isn"),
+		"Cache missing g_table_isn.")
+	local g_table_mvc = assert(cache.get("g_table_mvc"),
+		"Cache missing g_table_mvc.")
+	local g_table_rd_sm = assert(cache.get("g_table_rd_sm"),
+		"Cache missing g_table_rd_sm.")
+	local g_table_rd_search = assert(cache.get("g_table_rd_search"),
+		"Cache missing g_table_rd_search.")
+	--[[
 	assert(g_table_isn, "g_table_isn not loaded.")
 	assert(g_table_mvc, "g_table_mvc not loaded.")
 	assert(g_table_rd_sm, "g_table_rd_sm not loaded.")
 	assert(g_table_rd_search, "g_table_rd_search not loaded.")
+	]]--
 	local ext_dw_referral_sk = 0
 	if g_table_isn[domain] ~= nil then
 		ext_dw_referral_sk = 2

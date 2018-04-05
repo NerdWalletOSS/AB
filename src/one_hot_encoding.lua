@@ -1,4 +1,5 @@
 local assertx = require 'assertx'
+local cache = require 'cache'
 
 local function one_hot_encoding(feature_table)
 	--[[
@@ -17,7 +18,8 @@ local function one_hot_encoding(feature_table)
 	2. This will suddenly fail if any of the non-categorical variables are not numeric.
 	3. If there is a value within the categorical variables that do not exist in ENCODING_RULES, none of the values will be encoded.
 	]]--
-	assert(g_dt_feature, "g_dt_feature not loaded.")
+	local g_dt_feature = assert(cache.get("g_dt_feature"),
+		"g_dt_feature not loaded.")
 	--local table_dt_feature = cache.get("table_dt_feature")
 	local output = {}
 	-- checking to make sure all inputs are present

@@ -126,22 +126,40 @@ local function update_rts_configs(g_conf, config)
 	if ( ( config.POSTAL_CD_FEATURES ) and
 		( config.POSTAL_CD_FEATURES ~= "" ) ) then
 		assert(file_exists(config.POSTAL_CD_FEATURES.VALUE))
-		g_postal_cd_features = dofile(config.POSTAL_CD_FEATURES.VALUE)
+		local status, g_postal_cd_features = pcall(dofile, config.POSTAL_CD_FEATURES.VALUE)
+		assert(status, 'POSTAL_CD_FEATURES loading failed.')
+		cache.put("g_postal_cd_features", g_postal_cd_features)
 	end
 	--=============================================
 
 	if ( ( config.DT_FEATURE_FILE ) and
 		( config.DT_FEATURE_FILE ~= "" ) ) then
 		assert(file_exists(config.DT_FEATURE_FILE.VALUE))
-		g_dt_feature = dofile(config.DT_FEATURE_FILE.VALUE)
+		local status, g_dt_feature = pcall(dofile, config.DT_FEATURE_FILE.VALUE)
+		assert(status, 'DT_FEATURE_FILE loading failed.')
+		cache.put("g_dt_feature", g_dt_feature)
 	end
 	--=============================================
 
 	if ( ( config.REFERER_CLASS_FILE ) and
 		( config.REFERER_CLASS_FILE ~= "" ) ) then
 		assert(file_exists(config.REFERER_CLASS_FILE.VALUE))
-		g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search =
-		dofile(config.REFERER_CLASS_FILE.VALUE)
+		local status, g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search =
+		pcall(dofile, config.REFERER_CLASS_FILE.VALUE)
+		assert(status, 'REFERER_CLASS_FILE loading failed.')
+		cache.put("g_table_isn", g_table_isn)
+		cache.put("g_table_mvc", g_table_mvc)
+		cache.put("g_table_rd_sm", g_table_rd_sm)
+		cache.put("g_table_rd_search", g_table_rd_search)
+	end
+	--=============================================
+
+	if ( ( config.CCID_MAPPING ) and
+		( config.CCID_MAPPING ~= "" ) ) then
+		assert(file_exists(config.CCID_MAPPING.VALUE))
+		local status, g_ccid_mapping = pcall(dofile, config.CCID_MAPPING.VALUE)
+		assert(status, 'CCID_MAPPING loading failed.')
+		cache.put("g_ccid_mapping", g_ccid_mapping)
 	end
 	--=============================================
 

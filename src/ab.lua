@@ -24,6 +24,16 @@ function get_num_features(...)
   return xxx(...)
 end
 
+local xxx = require 'get_n_cards'
+function get_n_cards(...)
+  return xxx(...)
+end
+
+local xxx = require 'post_proc_preds'
+function post_proc_preds(...)
+  return xxx(...)
+end
+
 function load_config(...)
   load_cfg.load_config_from_file(...)
 end

@@ -143,6 +143,10 @@ return [=[{
       "COMMENT" : " XXXX ",
       "VALUE"  : "/opt/ab/dt_feature.lua"
     },
+    "CCID_MAPPING" : { 
+      "COMMENT" : " XXXX ",
+      "VALUE"  : "/opt/ab/ccid_mapping.lua"
+    },
   }
 }
 ]=]

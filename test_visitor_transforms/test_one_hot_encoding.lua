@@ -1,9 +1,13 @@
 package.path = package.path .. ';../src/?.lua'
 local one_hot_encoding = require 'one_hot_encoding'
---local cache = require 'cache'
+local cache = require 'cache'
 local json = require 'json'
 local test_data = 'ohe_data.json'
-_G.g_dt_feature = assert(dofile('../config/dt_feature.lua'))
+local status, g_dt_feature = pcall(dofile, '../config/dt_feature.lua')
+assert(status, 'Dofile for g_dt_feature failed')
+assert(g_dt_feature, 'g_dt_feature not loaded')
+cache.put("g_dt_feature", g_dt_feature)
+--_G.g_dt_feature = assert(dofile('../config/dt_feature.lua'))
 
 
 describe("Testing one_hot_encoding", function()

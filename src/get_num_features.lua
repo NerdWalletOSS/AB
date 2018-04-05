@@ -1,4 +1,4 @@
---local cache = require 'cache'
+local cache = require 'cache'
 
 local function get_nested_length(table)
   --[[
@@ -17,7 +17,8 @@ local function get_nested_length(table)
 end
 
 local function get_num_features()
-  assert(g_dt_feature, 'g_dt_feature not loaded.')
+  local g_dt_feature = assert(cache.get("g_dt_feature"),
+    'g_dt_feature not in cache.')
   return get_nested_length(g_dt_feature)
 end
 
