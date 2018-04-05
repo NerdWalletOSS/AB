@@ -4,6 +4,7 @@ local consts = require 'ab_consts'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local sql = require 'sql'
+-- local dbg = require 'debugger'
 
 local function file_exists(name)
 	local f=io.open(name,"r")
@@ -77,41 +78,21 @@ function load_cfg.db_connect(mysql)
 	assert(port ~= nil and port >= 0 and port < 2^16, "Mysql entry must have a valid port")
 	local db = mysql.DATABASE.VALUE
 	assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
-	print(host, user, pass, db, port); local conn = sql:connect(host, user, pass, db, port)
-	return conn
+	-- print(host, user, pass, db, port)
+  local conn = sql:connect(host, user, pass, db, port)
+  return conn
 end
 
 local function load_db_data(g_conf, config, is_updated)
-	local conn = load_cfg.db_connect(config.MYSQL)
+  local conn = load_cfg.db_connect(config.MYSQL)
 	-- TODO execute the sql
 	local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
 	table.sort(res, function(a,b) return a.id < b.id end)
-	is_updated = is_modified(g_conf[0].num_devices, #res, is_updated)
-	local orig_size = g_conf[0].num_devices
-	g_conf[0].num_devices = #res
-	local len = consts.AB_MAX_LEN_DEVICE + 1
-	local cast_type = string.format("char *(&)[%s]", len)
-	local c_type = string.format("char[%s]", len)
-	local array = ffi.cast(cast_type, ffi.gc(ffi.C.malloc(ffi.sizeof("char*")*#res), ffi.C.free))
-	ffi.fill(array, ffi.sizeof("char*")*#res)
-	for index=0,#res-1 do
-		local entry = ffi.cast("char*", ffi.gc(ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
-		array[index] = entry
-	end
-	local devs = {}
+		local devs = {}
 	for index, entry in ipairs(res) do
-		local dev_name = entry.name
-		assertx(dev_name ~= nil and #dev_name < len and #dev_name > 0, "Must have a valid device name got", dev_name)
-		ffi.copy(array[index-1], dev_name)
-		if g_conf[0].devices ~= 0 and index < orig_size and is_updated == consts.FALSE then
-			if orig_size == #res then
-				is_updated = is_modified(dev_name, ffi.string(g_conf[0].devices[index-1]), is_updated)
-			end
-		end
-		devs[entry.id] = entry.name
+			devs[entry.id] = entry.name
 	end
 	cache.put("devices", devs)
-	g_conf[0].devices = array
 	return is_updated
 end
 
@@ -199,7 +180,7 @@ local function update_rts_configs(g_conf, config)
 	is_updated = is_modified(ffi.string(g_conf[0].ua_to_dev_map_file), ua_dev_file, is_updated)
 	ffi.copy(g_conf[0].ua_to_dev_map_file, ua_dev_file)
 
-	-- is_updated = load_db_data(g_conf, config, is_updated)
+	is_updated = load_db_data(g_conf, config, is_updated)
 	return is_updated
 end
 
@@ -214,12 +195,13 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
 	-- pos 1 = logger
 	-- pos 2 = ss
 	-- pos 3 = statsd
-	has_changed = ffi.cast("unsigned char*", has_changed)
+  has_changed = ffi.cast("unsigned char*", has_changed)
 	has_changed[0] = update_rts_configs(g_conf, config.AB)
 	has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
 	has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
 	has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
 	cache.put("config", config)
+  -- dbg()
 end
 
 function load_cfg.load_config_from_file(g_conf, has_changed, file_path)

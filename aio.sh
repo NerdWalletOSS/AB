@@ -19,7 +19,7 @@ clean(){
 }
 
 buildall(){
-  sudo apt-get install gcc python python-pip -y
+  sudo apt-get install gcc python python-pip cmake -y
   sudo pip install pystatsd
   clean
   set -e
@@ -38,7 +38,7 @@ build(){
   make
   cp ab_httpd ../bin
   find ../ -name "*.so*" -exec cp {} ../bin/libs \;
-  find ./ -name "*.lua" -exec cp {} ../bin \;
+  find ./ -name "*.lua" -exec cp --parents {} ../bin \;
   cd ../
   set +e
 }
