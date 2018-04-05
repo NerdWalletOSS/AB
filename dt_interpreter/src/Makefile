@@ -7,7 +7,11 @@ WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-proto
 # else you will get 
 # ./test_dt: /usr/lib/x86_64-linux-gnu/libgomp.so.1: version `GOMP_4.0' not
 # found (required by ./test_dt)
-INCS= -I. -I../../src/
+INCS= -I. \
+	-I../../src/  \
+	-I../../curl-7.51.0/include/ \
+	-I../../curl-7.51.0/include/curl/ \
+
 
 
 DBGFLAGS= 
@@ -17,7 +21,7 @@ OPTFLAGS= -O4
 OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= 
 
-LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
+LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY -DMINI
 CFLAGS= $(LFLAGS) 
 
 CC= clang
