@@ -2,7 +2,7 @@ package.path = package.path .. ';../src/?.lua'
 --local table_dt_feature = dofile('../config/dt_feature.lua')
 --_G.g_dt_feature = assert(dofile('../config/dt_feature.lua'))
 local cache = require 'cache'
-local status, g_dt_feature = pcall(dofile, '/opt/ab/dt_feature.lua')
+local status, g_dt_feature = pcall(dofile, '../config/dt_feature.lua')
 assert(status, 'loading dt_feature.lua failed')
 assert(g_dt_feature, 'loading dt_feature failed')
 cache.put("g_dt_feature", g_dt_feature)

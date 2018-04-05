@@ -125,13 +125,17 @@ local function update_rts_configs(g_conf, config)
 	if ( ( config.REFERER_CLASS_FILE ) and
 		( config.REFERER_CLASS_FILE ~= "" ) ) then
 		assert(file_exists(config.REFERER_CLASS_FILE.VALUE))
-		local status, g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search =
-		pcall(dofile, config.REFERER_CLASS_FILE.VALUE)
-		assert(status, 'REFERER_CLASS_FILE loading failed.')
-		cache.put("g_table_isn", g_table_isn)
-		cache.put("g_table_mvc", g_table_mvc)
-		cache.put("g_table_rd_sm", g_table_rd_sm)
-		cache.put("g_table_rd_search", g_table_rd_search)
+		local status, referer_class_tables = pcall(dofile, config.REFERER_CLASS_FILE.VALUE)
+		assert(status, 'REFERER_CLASS_FILE loading failed')
+		assert(referer_class_tables, 'loading referer_class_tables failed')
+		assert(referer_class_tables["isn"], 'loading g_table_isn failed')
+		assert(referer_class_tables["mvc"], 'loading g_table_mvc failed')
+		assert(referer_class_tables["rd_sm"], 'loading g_table_rd_sm failed')
+		assert(referer_class_tables["rd_search"], 'loading g_table_rd_search failed')
+		cache.put("g_table_isn", referer_class_tables["isn"])
+		cache.put("g_table_mvc", referer_class_tables["mvc"])
+		cache.put("g_table_rd_sm", referer_class_tables["rd_sm"])
+		cache.put("g_table_rd_search", referer_class_tables["rd_search"])
 	end
 	--=============================================
 

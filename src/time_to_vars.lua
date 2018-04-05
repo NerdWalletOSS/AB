@@ -35,7 +35,7 @@ local function time_to_vars(t, tz)
 	local local_t = tz_value:localise(t) -- local_t is a timestamp
 	local local_tt = luatz.timetable.new_from_timestamp(local_t) -- local_tt is a table
 	local utc_offset = tz_value:find_current(NY_2018).gmtoff / 3600 
-	if utc_offset == math.floor(utc_offset) then
+	if utc_offset == math.floor(utc_offset) and string.sub(tostring(utc_offset), -2) ~= '.0' then -- if it's an int, and not int.0
 		utc_offset = tostring(utc_offset) .. '.0'
 	else
 		utc_offset = tostring(utc_offset)
