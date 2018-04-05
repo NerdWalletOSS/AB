@@ -35,6 +35,11 @@ local function time_to_vars(t, tz)
 	local local_t = tz_value:localise(t) -- local_t is a timestamp
 	local local_tt = luatz.timetable.new_from_timestamp(local_t) -- local_tt is a table
 	local utc_offset = tz_value:find_current(NY_2018).gmtoff / 3600 
+	if utc_offset == math.floor(utc_offset) then
+		utc_offset = tostring(utc_offset) .. '.0'
+	else
+		utc_offset = tostring(utc_offset)
+	end
 	-- that time stamp represents time at new year 2018 GMT. 
 	-- that step gets the winter offset of relevant time zone, therefore
 	-- tz_off is a (most likely negative) number, ideally either of

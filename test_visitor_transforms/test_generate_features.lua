@@ -5,10 +5,10 @@ local json = require 'json'
 local test_data = 'generate_features_data.json'
 --_G.g_table_isn, _G.g_table_mvc, _G.g_table_rd_sm, _G.g_table_rd_search = assert(dofile('../config/referrer_class_file.lua'))
 --_G.g_postal_cd_features = assert(dofile('../config/postal_cd_features.lua'))
-local status, g_postal_cd_features = pcall(dofile, '../config/postal_cd_features.lua')
+local status, g_postal_cd_features = pcall(dofile, '/opt/ab/postal_cd_features.lua')
 assert(status, "loading postal_cd_features.lua failed")
 assert(g_postal_cd_features, "loading g_postal_cd_features failed")
-local status, g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search = pcall(dofile, '../config/referrer_class_file.lua')
+local status, g_table_isn, g_table_mvc, g_table_rd_sm, g_table_rd_search = pcall(dofile, '/opt/ab/referer_class_file.lua')
 assert(status, "loading referrer_class_file.lua failed")
 assert(g_table_isn, "loading g_table_isn failed")
 assert(g_table_mvc, "loading g_table_mvc failed")

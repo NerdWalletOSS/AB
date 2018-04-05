@@ -1,6 +1,6 @@
 package.path = package.path .. ';../src/?.lua'
 local cache = require 'cache'
-local status, g_ccid_mapping = pcall(dofile, '../config/ccid_mapping.lua')
+local status, g_ccid_mapping = pcall(dofile, '/opt/ab/ccid_mapping.lua')
 assert(status, 'loading ccid_mapping.lua failed')
 assert(g_ccid_mapping, 'loading g_ccid_mapping failed')
 cache.put("g_ccid_mapping", g_ccid_mapping)
