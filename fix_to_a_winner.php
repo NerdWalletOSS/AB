@@ -57,7 +57,7 @@ $config = config_html($TestType);
  <input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 <input type='hidden' name='Updater' value='<?php echo $User; ?>'>
 <tr>
-<td><button class="btn btn-lg btn-danger btn-block"  type="submit" id="fix_to_a_winner">Fix to a winner</button></td>
+<td><button class="btn btn-lg btn-danger btn-block" data-toggle="confirmation" data-title="Are you sure?"  type="submit" id="fix_to_a_winner">Fix to a winner</button></td>
   </form>
 <td>  <a href="home.php"><button class="btn btn-lg btn-warning btn-block" >Cancel</button></a></td>
 </tr>
@@ -75,5 +75,6 @@ $config = config_html($TestType);
 
 
 <!-- /container -->
+<script src="js/bootstrap-confirmation.js"></script>
 <!-- FOOTER -->
 <?php require_once "common/footer.php"; ?>

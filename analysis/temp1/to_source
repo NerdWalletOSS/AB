@@ -1,0 +1,2 @@
+export Q_DATA_DIR=$HOME/local/Q/data/temp1
+export Q_METADATA_FILE=$HOME/local/Q/meta/temp1.meta.lua

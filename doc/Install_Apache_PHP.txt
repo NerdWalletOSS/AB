@@ -31,12 +31,14 @@ options=" --enable-so \
 --with-included-apr \
 --with-libxml2 \
 --enable-proxy \
---enable-lua \
 --enable-curl \
 --enable-headers \
 --enable-cache \
 --enable-ssl"
-./configure $options
+# should we have this in options? ./configure $options
+--enable-lua \
+make
+make install
 
 --=================================
 bunzip2 php-7.1.11.tar.bz2 
@@ -54,6 +56,8 @@ options=" --prefix=$HOME/local/ \
 --with-curl \
 --enable-mbstring "
 ./configure $options
+make
+make install
 
 libtool --finish ./libs
 #-====================================
