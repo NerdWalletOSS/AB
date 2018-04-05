@@ -198,5 +198,6 @@ $('.prop').keyup(function () {
 });
 });
 </script>
+
 <!-- FOOTER -->
 <?php require_once "common/footer.php"; ?>

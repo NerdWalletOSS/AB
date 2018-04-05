@@ -31,7 +31,7 @@ function action_state($state_id) {
   if ($result[$i]['state_id'] == 3) {
 echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button type='button' class='btn btn-primary btn-xs'>".action_state($result[$i]['state_id'])."</button></td>";
   } else {
-  echo "<td><a href='processor/set_state_processor.php?TestID=".$result[$i]['id']."&state_id=".$result[$i]['state_id']."'><button type='button' class='btn btn-primary btn-xs'>".action_state($result[$i]['state_id'])."</button></td>";
+  echo "<td><a href='processor/set_state_processor.php?TestID=".$result[$i]['id']."&state_id=".$result[$i]['state_id']."'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>".action_state($result[$i]['state_id'])."</button></td>";
   }
 } ?>
 
