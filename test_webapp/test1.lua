@@ -17,17 +17,17 @@ local function snarf_body (str)
   body = str
 end
 --============================
+-- START: Stuff common to all tests in this suite
+  url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+-- STOP: Stuff common to all tests in this suite
 local tests = {}
 tests.t1 = function (
   just_pr
   )
-  if ( just_pr ) then 
-    print(description)
-    return
-  end
   description = "A basic test "
-  url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+  if ( just_pr ) then print(description) return end
 
+  os.execute("cd ../sql/; bash reset_db.sh; cd - ")
   T = {}
   T.name = "T1"
 
@@ -45,7 +45,7 @@ tests.t1 = function (
   Variants[#Variants+1] = v
   --==============
   T.Variants = Variants
-  c = cURL.easy{
+  local c = cURL.easy{
     url        = url,
     post       = true,
     postfields = JSON:encode(T),
@@ -64,7 +64,31 @@ tests.t1 = function (
   end
   assert(test_id > 0)
   print("Test t1 succeeded")
+  return T, c
+end
+tests.t2 = function (
+  just_pr
+  )
+  description = "Cannot create 2 tests with same name"
+  if ( just_pr ) then print(description) return end
+
+  os.execute("cd ../sql/; bash reset_db.sh; cd - ")
+  local T, c = tests.t1()
+  hdrs = {} -- IMPORTANT: Needs to be reset because set in t1()
+  body = "" -- IMPORTANT: Needs to be reset because set in t1()
+  local x = c:perform()
+  local error_code
+  for k, v in ipairs(hdrs) do 
+    local needle = 'Error%-Code:' -- REMEMBER TO ESCAPE THE HYPHEN
+    if ( string.find(v, needle) == 1 ) then 
+      error_code = assert(string.gsub(v, needle, ""))
+      error_code = assert(tonumber(error_code))
+    end
+  end
+  assert(error_code == 400)
+  print("Test t2 succeeded")
   return true
 end
 tests.t1() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
+tests.t2() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
 return tests
