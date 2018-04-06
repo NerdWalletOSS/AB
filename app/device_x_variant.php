@@ -6,7 +6,7 @@
   </div>
   <div class="panel-body">
   <!-- AJAX ERROR DIV START -->
-  <?php require_once "common/error_div.php"; ?>
+  <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
   <form class="form-signin" id='device_x_variant' method='post'>
