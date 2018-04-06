@@ -3,7 +3,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "./rts/");
 require_once 'dbconn.php';
 require_once 'insert_row.php'; // NO PROBLEM
 require_once 'make_seed.php'; // NO PROBLEM
@@ -74,7 +74,7 @@ function test_basic(
   $state     = get_json_element($inJ, 'State');
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
-  $test_dscr = get_json_element($inJ, 'description'); 
+  $test_dscr = get_json_element($inJ, 'description', false);
   $variants  = get_json_element($inJ, 'Variants');
   $bin_type  = get_json_element($inJ, 'BinType');
   $state     = get_json_element($inJ, 'State');
