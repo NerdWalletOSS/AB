@@ -1,17 +1,17 @@
-<?php require_once "common/header.php"; ?>
-<script src="js/add_addln_var_info.js"></script>
-<?php require_once "common/navbar.php"; ?>
-<?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+<?php 
+// -- SET PATH
+require_once "set_path.php";
 
-require_once "processor/config_html.php";
+// -- CALL REQUIRED FILES
+require_once "header.php"; ?>
+<script src="js/add_addln_var_info.js"></script>
+<?php 
+require_once "navbar.php";
+require_once "config_html.php";
 
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-require_once "processor/display_logic_aev_test.php";
+require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
 ?>
 
@@ -86,7 +86,7 @@ $config = config_html($TestType);
             </div>
             <div class="modal-body">
   <!-- AJAX ERROR DIV START -->
-  <?php require_once "common/error_div.php"; ?>
+  <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
                 <div class="fetched-data">
 <form id='addVI' type='post'>
@@ -126,4 +126,4 @@ $config = config_html($TestType);
 
 <!-- /container -->
 <!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>

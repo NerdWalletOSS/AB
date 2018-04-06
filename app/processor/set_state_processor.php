@@ -1,10 +1,10 @@
 <?php session_start();
 # -- PARSE SESSION VARIABLES
 if (isset($_SESSION['User'])) { $User = $_SESSION['User'];}
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 
 require_once 'set_state.php';
 require_once 'db_get_test.php';

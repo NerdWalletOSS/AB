@@ -1,8 +1,7 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+// -- SET PATH
+require_once "set_path.php";
+// -- CALL REQUIRED FILES
 require_once "dbconn.php";
 require_once "db_get_row.php";
 

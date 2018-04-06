@@ -1,11 +1,10 @@
-<?php require_once "common/header.php"; ?>
-<?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+<?php 
+// -- SET PATH
+require_once "set_path.php";
 
-require_once "processor/config_html.php";
+// -- CALL REQUIRED FILES
+require_once "header.php";
+require_once "config_html.php";
 require_once "db_get_rows.php";
 require_once "db_get_test.php";
 require_once "find_tests_to_follow.php";
@@ -13,7 +12,7 @@ require_once "find_tests_to_follow.php";
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 $T = db_get_test($id);
 
-require_once "processor/display_logic_aev_test.php";
+require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
 $fo_tests =  find_tests_to_follow($Channel);
 $nF = count($fo_tests);
@@ -25,7 +24,7 @@ $result = db_get_rows("test", "pred_id != ''");
   <script src="js/page_4.js"></script>
 </head>
 <body>
-<?php require_once "common/navbar.php"; ?>
+<?php require_once "navbar.php"; ?>
 
 
 
@@ -38,7 +37,7 @@ $result = db_get_rows("test", "pred_id != ''");
   </div>
   <div class="panel-body">
   <!-- AJAX ERROR DIV START -->
-  <?php require_once "common/error_div.php"; ?>
+  <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
   <form  id='follow_on' method='post'>
@@ -141,4 +140,4 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 
 <!-- /container -->
 <!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>
