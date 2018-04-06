@@ -1,16 +1,16 @@
 <?php 
-# -- CHECKIF TEST ID IS SET
-  if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-  require_once "common/header.php"; 
+// -- SET PATH
+require_once "set_path.php";
+
+# -- CHECK IF TEST ID IS SET
+if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+
+// -- STANDARD HEADER INFORMATION
+require_once "header.php"; 
 ?>
 <script src="js/insert_test.js"></script>
-<?php require_once "common/navbar.php"; ?>
-<?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
-
+<?php 
+require_once "navbar.php";
 require_once "processor/display_logic_aev_test.php";
 require_once "processor/config_html.php";
 
@@ -27,7 +27,7 @@ $config = config_html($TestType);
   </div>
   <div class="panel-body">
   <!-- AJAX ERROR DIV START -->
-  <?php require_once "common/error_div.php"; ?>
+  <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
   <form class="form-signin" id='addTest' method='post'>
@@ -200,4 +200,4 @@ $('.prop').keyup(function () {
 </script>
 
 <!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>

@@ -1,12 +1,10 @@
 <?php
-// -- STANDARD HEADER INFORMATION
-require_once "common/header.php";
 
-// -- CALL REQUIRED FILES
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+// -- SET PATH
+require_once "set_path.php";
+
+// -- STANDARD HEADER INFORMATION
+require_once "header.php";
 
 // -- GET TESTS
 require_once "db_get_rows.php";
@@ -35,7 +33,7 @@ if (isset($TestType))
 <body>
 <!-- STANDARD HEADER INFORMATION -->
 <?php
-require_once "common/navbar.php";
+require_once "navbar.php";
  ?>
 <div class="container theme-showcase" role="main"> 
 <div class="row">
@@ -62,7 +60,7 @@ echo $TestType;
 <?php
 if (isset($TestType))
 	{
-		require_once "panel/test_table.php";
+		require_once "test_table.php";
 
 	}
 else
@@ -82,7 +80,7 @@ require_once "choose_num_variants.php";
  ?>
 <!-- FOOTER -->
 <?php
-require_once "common/footer.php";
+require_once "footer.php";
  ?>
 
 

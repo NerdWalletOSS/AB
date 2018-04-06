@@ -1,13 +1,13 @@
-<?php require_once "common/header.php"; ?>
-<script src="js/page_3.js"></script>
-<?php require_once "common/navbar.php"; ?>
-<?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+<?php 
+// -- SET PATH
+require_once "set_path.php";
 
-require_once "processor/config_html.php";
+// -- CALL REQUIRED FILES
+require_once "header.php"; ?>
+<script src="js/page_3.js"></script>
+<?php 
+require_once "navbar.php";
+require_once "config_html.php";
 require_once "db_get_rows.php";
 require_once "db_get_test.php";
 # -- Check if number of TestID are set.
@@ -31,4 +31,4 @@ if ($TestType == "ABTest" ) {
 
 <!-- /container -->
 <!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>

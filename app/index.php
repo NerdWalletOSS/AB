@@ -1,5 +1,7 @@
 <?php session_start(); 
 if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location: home.php');} else { /* Do Nothing */}
+// -- SET PATH
+require_once "set_path.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,4 +57,4 @@ if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location:
 </div>
 <!-- /container -->
 	<!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>
