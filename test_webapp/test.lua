@@ -4,6 +4,9 @@ JSON = (loadfile "JSON.lua")() -- one-time load of the routines
  T.abc = { hello  = "world" }
  T.def = { hello2  = "world2" }
 
+ T.name = "T1"
+ T.TestType = "ABTest"
+
 local cURL = require "cURL"
 local ltn12 = require("ltn12")
 
