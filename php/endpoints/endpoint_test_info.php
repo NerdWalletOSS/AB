@@ -24,5 +24,5 @@ else {
 $test_id = intval($test_id);
 $rslt =  db_get_test($test_id);
 header("TestID: $test_id");
-echo(json_encode($rslt));
+echo "<pre>".json_encode($rslt, JSON_PRETTY_PRINT)."</pre>";
 ?>
