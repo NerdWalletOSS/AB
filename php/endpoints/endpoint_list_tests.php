@@ -45,9 +45,11 @@ if ( empty($R) ) {
   echo "[]";
 }
 else { // TODO Following for loop not working as expected
+$i = 0;
   foreach ( $R as $r ) { 
-    $r['State'] = lkp("state", $r['state_id'], "reverse");
+    $R[$i]['State'] = lkp("state", $r['state_id'], "reverse");
+$i++;
   }
-  echo(json_encode($R));
+  echo "<pre>".json_encode($R, JSON_PRETTY_PRINT)."</pre>";
 }
 ?>
