@@ -51,7 +51,7 @@ return [=[{
       },
       "PASSWORD": {
         "COMMENT": "Password for user for MySQL server",
-        "VALUE": "toor"
+        "VALUE": ""
       },
       "SERVER": {
         "COMMENT": "Name of MySQL server that back-ends the WebApp",
@@ -130,7 +130,19 @@ return [=[{
     "XY_GUID": {
       "COMMENT": "Used for testing.Set to 0 or omit this line in production",
       "VALUE": "1"
-    }
+    },
+    "POSTAL_CD_FEATURES" : { 
+      "COMMENT" : " XXXX ",
+      "VALUE"  : "/opt/ab/postal_cd_features.lua"
+    },
+    "REFERER_CLASS_FILE" : { 
+      "COMMENT" : " XXXX ",
+      "VALUE"  : "/opt/ab/referer_class_file.lua"
+    },
+    "DT_FEATURE_FILE" : { 
+      "COMMENT" : " XXXX ",
+      "VALUE"  : "/opt/ab/dt_feature.lua"
+    },
   }
 }
 ]=]

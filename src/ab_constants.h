@@ -60,6 +60,7 @@
 #define AB_MAX_LEN_USER_AGENT 1024-1
 
 #define AB_MAX_LEN_HOSTNAME 63
+#define AB_MAX_LEN_DOMAIN   63
 
 #define AB_MAX_LEN_TRACER 63
 

@@ -6,7 +6,7 @@ local table = require( "table")
 local string = require( "string")
 
 
-local conn = mysql:connect( "127.0.0.1", "root", "toor", "luajit_mysql_test" )
+local conn = mysql:connect( "127.0.0.1", "root", "", "luajit_mysql_test" )
 
 print("connect:", conn )
 
@@ -72,12 +72,12 @@ assert( row.d == 1.23)
 conn:close()
 
 for i=1,10 do
-   conn = mysql:connect( "127.0.0.1", "root", "toor", "luajit_mysql_test" )
+   conn = mysql:connect( "127.0.0.1", "root", "", "luajit_mysql_test" )
    print("reconnect:", i, conn )
    conn:close()
 end
 
-conn = mysql:connect( "127.0.0.1", "root", "toor", "luajit_mysql_test" )
+conn = mysql:connect( "127.0.0.1", "root", "", "luajit_mysql_test" )
 conn:toggleLog(true)
 
 -- string and escape test
@@ -144,7 +144,7 @@ conn = nil
 collectgarbage()
 assert(t.conn == nil, "SQL connection should be garbage collected")
 print("test finished")
--- local conn = mysql:connect( "127.0.0.1", "root", "toor", "abdb" )
+-- local conn = mysql:connect( "127.0.0.1", "root", "", "abdb" )
 -- res = conn:query('select * from device')
 -- for k,v in ipairs(res) do print(k,"HEYHEYHEY", v.name, v.id) end
 

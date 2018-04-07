@@ -159,6 +159,7 @@ main(
   struct event_base *base;
   //--------------------------------------------
   status = zero_globals(); cBYE(status); /* Done only on startup */
+  status = init_lua(); cBYE(status);
   if ( argc == 1 )  { 
     hard_code_config(); // only for testing 
   }
@@ -167,7 +168,6 @@ main(
     status = l_load_config(argv[1]); cBYE(status);
   }
   status = update_config(); cBYE(status);
-  status = init(); cBYE(status);
   //---------------------------------------------
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	

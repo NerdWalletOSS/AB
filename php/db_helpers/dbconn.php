@@ -62,4 +62,16 @@ function dbconn(
   $X = dbconn();
   var_dump($X);
  */
+
+  /*
+   * I got the following error which got dixed when I used
+   * 127.0.0.1 instead of localhost in dbhost
+atal error: Uncaught PDOException: SQLSTATE[HY000] [2002] No such file or directory in /home/subramon/WORK/OSS/AB/php/db_helpers/dbconn.php:57
+Stack trace:
+#0 /home/subramon/WORK/OSS/AB/php/db_helpers/dbconn.php(57): PDO->__construct('mysql:host=loca...', 'root', '')
+#1 /home/subramon/WORK/OSS/AB/php/db_helpers/dbconn.php(66): dbconn()
+#2 {main}
+  thrown in /home/subramon/WORK/OSS/AB/php/db_helpers/dbconn.php on line 57
+*/
+
 ?>

@@ -18,7 +18,8 @@ l_chk_db_conn(
 
   status = lua_pcall(g_L, 0, 0, 0);
   if (status != 0) {
-    fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
+    WHEREAMI;
+    fprintf(stderr, "calling function check_db_conn failed: %s\n", lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
     go_BYE(-1);
