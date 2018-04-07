@@ -94,11 +94,12 @@ tests.t3 = function (
   description = "Create a number of valid tests "
   if ( just_pr ) then print(description) return end
 
+  local ngood = 0
   for i = 1, 100000 do 
     os.execute("cd ../sql/; bash reset_db.sh; cd - ")
-    local filename = "basic" .. i .. ".lua"
+    local filename = "good_basic" .. i .. ".lua"
     if ( not plpath.isfile(filename) )  then break end 
-    T = dofile("good_basic" .. i .. ".lua")
+    T = dofile(filename)
     hdrs = {} 
     body = "" 
     curl_params.postfields = JSON:encode(T)
@@ -108,9 +109,9 @@ tests.t3 = function (
     assert(test_id > 0)
     local error_code = assert(get_error_code(hdrs))
     assert(error_code == 200)
-    print("Tested " .. filename)
+    ngood = ngood + 1
   end
-  print("Test t3 succeeded")
+  print("Test t3 [" .. ngood .. "] succeeded")
   return true
 end
 --===================================================
@@ -120,11 +121,12 @@ tests.t4 = function (
   description = "Create a number of invalid tests "
   if ( just_pr ) then print(description) return end
 
+  local nbad = 0
   for i = 1, 100000 do 
     os.execute("cd ../sql/; bash reset_db.sh; cd - ")
-    local filename = "basic" .. i .. ".lua"
+    local filename = "bad_basic" .. i .. ".lua"
     if ( not plpath.isfile(filename) )  then break end 
-    T = dofile("bad_basic" .. i .. ".lua")
+    T = dofile(filename)
     hdrs = {} 
     body = "" 
     curl_params.postfields = JSON:encode(T)
@@ -132,9 +134,9 @@ tests.t4 = function (
     x = c:perform()
     local error_code = assert(get_error_code(hdrs))
     assert(error_code == 400)
-    print("Tested " .. filename)
+    nbad = nbad + 1
   end
-  print("Test t4 succeeded")
+  print("Test t4 [" .. nbad .. "] succeeded")
   return true
 end
 --===================================================

@@ -1,7 +1,7 @@
 local function get_test_id(hdrs)
   local test_id 
   for k, v in ipairs(hdrs) do 
-    print(k, v)
+    -- print(k, v)
     if ( string.find(v, "TestID") == 1 ) then 
       test_id = assert(string.gsub(v, "TestID: ", ""))
       test_id = assert(tonumber(test_id))
