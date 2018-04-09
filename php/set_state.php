@@ -36,7 +36,7 @@ function set_state(
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
-  $state_id = $T['state_id'];
+  $state_id = intval($T['state_id']);
   $old_state   = lkp("state", $state_id, "reverse");
   // return if new state is same as current one
   if ( $old_state == $new_state ) { 
@@ -63,7 +63,8 @@ function set_state(
     $X1['state_id'] = lkp("state", "dormant");
     break;
   case "started" : 
-    rs_assert($old_state == "dormant");
+    rs_assert($old_state == "dormant",
+      "can start a test only if prevous state == dormant, not$old_state");
     $X1['state_id'] = lkp("state", "started");
     break;
   case "terminated" : 
