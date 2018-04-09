@@ -9,7 +9,7 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "50",
-    --[[ Missing URL]]--
+    -- ERROR: NO URL specified for XYTest
   },
   {
     name =  "Variant_A",

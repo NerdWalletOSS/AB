@@ -1,4 +1,5 @@
-dofile('common.lua') -- TODO WHY NOT WORKING AS EXPECTED
+-- TODO Move all common stuff into one file 
+require 'strict'
 local JSON = (loadfile "JSON.lua")() -- one-time load of the routines
 local cURL = require "cURL"
 local ltn12 = require("ltn12") -- TODO What is this for?
@@ -6,39 +7,35 @@ local plstr = require 'pl.stringx'
 local plpath = require 'pl.path'
 local get_test_id = require 'get_test_id'
 local get_error_code = require 'get_error_code'
-local function trim1(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
-end
---============================
-hdrs = {}
-local function snarf_headers (str)
-  hdrs[#hdrs+1] = trim1(str)
-end
---============================
-body = ""
-local function snarf_body (str)
-  body = str
-end
+local x = require('get_hdrs')
+local get_hdrs    = x[1]
+local reset_hdrs  = x[2]
+local return_hdrs = x[3]
+local x = require('get_body')
+local get_body    = x[1]
+local reset_body  = x[2]
+local return_body = x[3]
+local get_url = require 'get_url'
+local test_compare = require 'test_compare'
 --============================
 -- START: Stuff common to all tests in this suite
-  url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
-  curl_params = { 
-    url        = url,
-    post       = true,
-    httpheader = { "Content-Type: application/json"; },
-    writefunction  = snarf_body,
-    headerfunction = snarf_headers,
-  }
+curl_params = { 
+  url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php",
+  post       = true,
+  httpheader = { "Content-Type: application/json"; },
+  writefunction  = get_body,
+  headerfunction = get_hdrs,
+}
 -- STOP: Stuff common to all tests in this suite
 local tests = {}
 tests.t1 = function (
   just_pr
   )
-  description = "A basic test "
+  local description = "A basic test "
   if ( just_pr ) then print(description) return end
 
   os.execute("cd ../sql/; bash reset_db.sh; cd - ")
-  T = {}
+  local T = {}
   T.name = "T1"
 
   T.TestType = "XYTest"
@@ -57,13 +54,23 @@ tests.t1 = function (
   T.Variants = Variants
 
   curl_params.postfields = JSON:encode(T)
+  reset_hdrs(); reset_body()
   local c = cURL.easy(curl_params)
   x = c:perform()
+  local body = return_body(); local hdrs = return_hdrs()
+  print("XXXXXX")
+  for k,v in pairs(hdrs) do print(k, v) end 
+  print("XXXXXX")
 
   local test_id = assert(get_test_id(hdrs))
   assert(test_id > 0)
   local error_code = assert(get_error_code(hdrs))
   assert(error_code == 200)
+  -- Check that test info is same as what you sent in
+  local chk_url = "localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
+  local body, hdrs_out = get_url(chk_url)
+  local Tout = assert(JSON:decode(body), chk_url)
+  assert(test_compare(T, Tout))
   print("Test t1 succeeded")
   return T
 end
@@ -100,11 +107,13 @@ tests.t3 = function (
     local filename = "good_basic" .. i .. ".lua"
     if ( not plpath.isfile(filename) )  then break end 
     T = dofile(filename)
+    for k, v in pairs(hdrs) do print(k, v) end 
     hdrs = {} 
     body = "" 
     curl_params.postfields = JSON:encode(T)
     local c = cURL.easy(curl_params)
     x = c:perform()
+    for k, v in pairs(hdrs) do print(k, v) end 
     local test_id = assert(get_test_id(hdrs))
     assert(test_id > 0)
     local error_code = assert(get_error_code(hdrs))
@@ -132,16 +141,20 @@ tests.t4 = function (
     curl_params.postfields = JSON:encode(T)
     local c = cURL.easy(curl_params)
     x = c:perform()
+    for k, v in pairs(hdrs) do print(k, v) end 
     local error_code = assert(get_error_code(hdrs))
-    assert(error_code == 400)
+    assert(error_code == 400, "Failure on " .. filename)
     nbad = nbad + 1
+    print("t4 Succeeded on " .. filename)
   end
   print("Test t4 [" .. nbad .. "] succeeded")
   return true
 end
 --===================================================
 tests.t1() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
-tests.t2() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
-tests.t3() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
-tests.t4() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
+os.execute("sleep 1")
+tests.t1() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
+-- tests.t2() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
+-- tests.t4() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
+-- tests.t3() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
 return tests

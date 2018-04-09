@@ -15,7 +15,9 @@ return
     name =  "Variant_A",
     percentage =  "30",
     url =  "www.yahoo.com"
-    --[[ Duplicate URL]]--
+
+    -- ERROR: URL Not unique for XYTest
+
   },
   {
     name =  "Variant_B",

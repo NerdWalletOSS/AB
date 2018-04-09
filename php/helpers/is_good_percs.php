@@ -13,8 +13,8 @@ function is_good_percs(
   rs_assert(count($P) == count($N));
   rs_assert(count($P) > 0 );
   $nX = count($P);
-  rs_assert($nX >= lkp('configs', "min_num_variants"));
-  rs_assert($nX <= lkp('configs', "max_num_variants"));
+  rs_assert($nX >= lkp('configs', "min_num_variants"), "too few variants specified");
+  rs_assert($nX <= lkp('configs', "max_num_variants"),  "too many variants specified");
   $sum = 0;
   foreach ( $P as $p ) {
     rs_assert(is_numeric($p), "percentage must be a number");
@@ -22,7 +22,8 @@ function is_good_percs(
     rs_assert($p <= 100, "percentage cannot exceed 100");
     $sum += $p;
   }
-  rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ) );
+  rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ),
+    "sum of percentages must add up to 100");
   if ( $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) { 
     $idx = 0;
     $nV = count($P);
