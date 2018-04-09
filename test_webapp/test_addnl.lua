@@ -65,46 +65,73 @@ tests.t1 = function (
   local description = "Create a number of valid tests "
   if ( just_pr ) then print(description) return end
 
-  reset_db()
-  local filename = "good_basic1.lua" 
-  assert(plpath.isfile(filename) )
-  local T = dofile(filename)
-  hdrs = {} ; body = "" 
-  curl_params.postfields = JSON:encode(T)
-  local c = cURL.easy(curl_params)
-  local x = c:perform()
-  local test_id = assert(get_test_id(hdrs))
-  assert(test_id > 0)
-  local error_code = assert(get_error_code(hdrs))
-  assert(error_code == 200)
-  -- Check that test info is same as what you sent in
-  local body_out, hdrs_out = get_url(chk_url .. test_id)
-  local Tout = assert(JSON:decode(body_out))
-  assert(test_compare(T, Tout))
-  c:close()
-  -- set and unset description and custom data
-  -- select arbitrary variant_id to modify
-  local vidx = 2
-  local variant_id = Tout.Variants[vidx]['id']
-  local Variants = Tout.Variants
-  Variants[vidx]['description'] = "Some bogus description 2"
-  T.id = test_id
-  T.name = nil
-  T.Updater = "joe"
-  T.Variants = Variants
-  T.VariantID = variant_id
-  hdrs = {} ; body = "" 
-  addnl_curl_params.postfields = JSON:encode(T)
-  local c = cURL.easy(addnl_curl_params)
-  local x = c:perform()
-  -- for k, v in pairs(hdrs) do print(k, v) end 
-  local error_code = assert(get_error_code(hdrs))
-  assert(error_code == 200)
-  -- Check that test info is same as what you sent in
-  local body_out, hdrs_out = get_url(chk_url .. test_id)
-  local Tout = assert(JSON:decode(body_out))
-  assert(test_compare(T, Tout))
-  print("Test t1 succeeded")
+  local idx = 1
+  local n_good = 0
+  local n_bad = 0
+  local prefixes  = { "good", "bad" }
+  for k, prefix in pairs(prefixes) do
+    print("prefix = ",  prefix)
+    while true do 
+      local filename = prefix .. "_addnl" .. idx .. ".lua"
+      print(filename)
+      if ( not plpath.isfile(filename) ) then idx = 1; break end 
+      reset_db()
+  
+      local init_filename = "good_basic1.lua" 
+      assert(plpath.isfile(init_filename) )
+  
+      local T = dofile(init_filename)
+      hdrs = {} ; body = "" 
+      curl_params.postfields = JSON:encode(T)
+      local c = cURL.easy(curl_params)
+      local x = c:perform()
+      local test_id = assert(get_test_id(hdrs))
+      assert(test_id > 0)
+      local error_code = assert(get_error_code(hdrs))
+      assert(error_code == 200)
+      -- Check that test info is same as what you sent in
+      local body_out, hdrs_out = get_url(chk_url .. test_id)
+      local Tout = assert(JSON:decode(body_out))
+      assert(test_compare(T, Tout))
+      c:close()
+      -- set and unset description and custom data
+      -- select arbitrary variant_id to modify
+      local Variants = Tout.Variants
+      local vidx = math.random(1, #Variants)
+      local variant_id = Tout.Variants[vidx]['id']
+      local V = dofile(filename)
+      Variants[vidx]['description'] = V.description
+      Variants[vidx]['custom_data'] = V.custom_data
+      Variants[vidx]['url'] = V.url
+      T.id = test_id
+      T.name = nil
+      T.Updater = "joe"
+      T.Variants = Variants
+      T.VariantID = variant_id
+      hdrs = {} ; body = "" 
+      addnl_curl_params.postfields = JSON:encode(T)
+      local c = cURL.easy(addnl_curl_params)
+      local x = c:perform()
+      -- for k, v in pairs(hdrs) do print(k, v) end 
+      local error_code = assert(get_error_code(hdrs))
+      if ( prefix == "good" ) then 
+        assert(error_code == 200)
+        -- Check that test info is same as what you sent in
+        local body_out, hdrs_out = get_url(chk_url .. test_id)
+        local Tout = assert(JSON:decode(body_out))
+        assert(test_compare(T, Tout))
+        n_good = n_good + 1
+      elseif ( prefix == "bad" ) then 
+        assert(error_code == 400)
+        n_bad = n_bad + 1
+      else
+        assert(nil, "bad prefix")
+      end
+      print("t1 succeeded on " .. filename)
+      idx = idx + 1
+    end
+  end
+  print("Test t1 [" .. n_good .. ", " .. n_bad .."] succeeded")
   return true
 end
 tests.t1() 
