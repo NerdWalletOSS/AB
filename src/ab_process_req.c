@@ -20,7 +20,7 @@
 #include "load_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
-#include "make_feature_vector.h"
+#include "l_make_feature_vector.h"
 #include "ext_get_host.h"
 
 // START FUNC DECL
@@ -117,7 +117,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case MakeFeatureVector : /* done by Lua */
-      status = l_make_feature_vector(body, g_rslt, AB_MAX_LEN_RESULT); 
+      status = l_make_feature_vector(body, true); 
       cBYE(status);
       break;
       //--------------------------------------------------------
@@ -150,8 +150,8 @@ ab_process_req(
       // common to restart and reload
       free_globals();
       status = zero_globals();  cBYE(status);
-      // Note; We do NOT do zero_conf()
-      status = init(); cBYE(status);
+      status = init_lua(); cBYE(status);
+      status = update_config(); cBYE(status);
       if ( g_cfg.sz_log_q > 0 ) { 
         pthread_mutex_init(&g_mutex, NULL);	
         pthread_cond_init(&g_condc, NULL);

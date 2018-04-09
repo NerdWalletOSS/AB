@@ -34,6 +34,9 @@ get_req_type(
   else if (strcasecmp(api, "GetConfig") == 0) {
     return GetConfig;
   }
+  else if (strcasecmp(api, "GetDomain") == 0) {
+    return GetDomain;
+  }
   else if (strcasecmp(api, "GetHost") == 0) {
     return GetHost;
   }

@@ -4,6 +4,9 @@ JSON = (loadfile "JSON.lua")() -- one-time load of the routines
  T.abc = { hello  = "world" }
  T.def = { hello2  = "world2" }
 
+ T.name = "T1"
+ T.TestType = "ABTest"
+
 local cURL = require "cURL"
 local ltn12 = require("ltn12")
 
@@ -22,7 +25,8 @@ local function snarf_body (str)
 end
 
 c = cURL.easy{
-  url        = "173.255.252.157:8080/_foo.php?gkey=gval",
+  -- test_page.php is checked into this directory
+  url        = "127.0.0.1:8080/test_page.php?gkey=gval",
   post       = true,
 
   postfields = JSON:encode(T),

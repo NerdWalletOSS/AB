@@ -10,7 +10,7 @@ function is_good_percs(
   rs_assert(isset($P));
   rs_assert(is_array($P));
   rs_assert(is_array($N));
-  rs_assert(count($P == count($N)));
+  rs_assert(count($P) == count($N));
   rs_assert(count($P) > 0 );
   $nX = count($P);
   rs_assert($nX >= lkp('configs', "min_num_variants"));

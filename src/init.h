@@ -26,3 +26,7 @@ setup_curl(
     struct curl_slist **ptr_curl_hdrs
     )
   ;
+int
+init_lua(
+        void
+);

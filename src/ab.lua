@@ -2,7 +2,7 @@ local csv = require "csv"
 local json = require "json"
 -- local ffi = require 'ffi' 
 local tests = require 'add_test'
-local load_config = require 'load_config'
+local load_cfg = require 'load_config'
 local cache = require 'cache'
 local reload_tests = require 'reload'
 
@@ -10,8 +10,22 @@ function add(...)
   tests.add(...)
 end
 
+--=== Sample of what you need to do to get a new Lua file in
+--=== for any Lua function that is pcall'ed from C. As an example
+--===  lua_getglobal(g_L, "make_feature_vector");
+--===  if ( !lua_isfunction(g_L, -1)) {
+local xxx = require 'make_feature_vector'
+function make_feature_vector(...)
+  return xxx(...)
+end
+
+local xxx = require 'get_num_features'
+function get_num_features(...)
+  return xxx(...)
+end
+
 function load_config(...)
-  load_config.load_config_from_file(...)
+  load_cfg.load_config_from_file(...)
 end
 
 function list_tests()

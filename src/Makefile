@@ -11,7 +11,8 @@ INCS= -I. \
 	-I../dt_interpreter/src/  \
 	-I../libmaxminddb-1.3.2/include/ \
 	-I../registered-domain-libs/C/ \
-	-I../libyuarel/
+	-I../libyuarel/ \
+	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
 
@@ -33,7 +34,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua
+all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua ../dt_interpreter/src/dt.so
 
 ./libs:
 	mkdir libs
@@ -52,7 +53,7 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so :
+../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
 ../curl-7.51.0/lib/.libs/libcurl.so : 
@@ -67,7 +68,7 @@ ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
+$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
@@ -88,6 +89,12 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
 ../registered-domain-libs/C/regdom.o : 
 	make -C ../registered-domain-libs/C/
 
+../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so:
+	cd ../ && rm -rf libmaxminddb-1.3.2 && tar -xvzf libmaxminddb-1.3.2.tar.gz && cd libmaxminddb-1.3.2/ && ./configure && make	
+
+./libs/libmaxminddb.so: ./libs ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+	cp ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ./libs/libmaxminddb.so
+
 ab_httpd : $(COBJS) \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
@@ -96,7 +103,8 @@ ab_httpd : $(COBJS) \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
 	../registered-domain-libs/C/regdom.o \
-	./libs/libmysqlclient.so
+	./libs/libmysqlclient.so \
+	./libs/libmaxminddb.so
 	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
@@ -105,11 +113,11 @@ ab_httpd : $(COBJS) \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
-	../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so \
+	./libs/libmaxminddb.so \
 	-lm  -lpthread -ldl  
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ab_consts.lua:
 	bash gen_consts.sh

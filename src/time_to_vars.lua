@@ -53,7 +53,7 @@ local function time_to_vars(t, tz)
 		local_hour = local_tt.hour,
 		is_working = is_working,
 		is_late_at_night = is_late_at_night,
-		utc_offset = tostring(utc_offset)
+		utc_offset = tostring(utc_offset) -- this is for ensuring it fits the encoding dict!!
 	}
 end
 

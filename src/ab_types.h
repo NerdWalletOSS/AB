@@ -18,6 +18,7 @@ typedef enum _ab_req_type {
   DumpLog, // Read &  C
   EvalDT, // Read & C
   GetConfig, // Read &  Lua
+  GetDomain, // Debugging &  Lua
   GetHost, // Debugging &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
@@ -40,8 +41,8 @@ typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
   char name[AB_MAX_LEN_VARIANT_NAME+1];
-  char * url; // AB_MAX_LEN_VARIANT_URL+1
-  char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
+  const char * url; // AB_MAX_LEN_VARIANT_URL+1
+  const char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
@@ -120,16 +121,9 @@ typedef struct _cftype {
   char browser_file[AB_MAX_LEN_FILE_NAME+1]; 
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For classifying user agent 
-  // START: For ML 
-  char avg_fico_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
-  char avg_zill_per_zip_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua
-  char referer_class_file[AB_MAX_LEN_FILE_NAME+1]; 
-  // STOP: For ML 
-  // START: For decision tree
-  char dt_feature_file[AB_MAX_LEN_FILE_NAME+1]; // For Lua 
-  char dt_file[AB_MAX_LEN_FILE_NAME+1]; 
-  // STOP : For decision tree
-  char mmdb_file[AB_MAX_LEN_FILE_NAME+1];  // For MaxMind
+  char dt_file[AB_MAX_LEN_FILE_NAME+1];   // For decision tree
+  char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
+
 } CFG_TYPE;
 
 typedef struct _justin_map_rec_type { 

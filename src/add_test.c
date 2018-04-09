@@ -25,6 +25,7 @@ l_add_test(
   lua_pushlightuserdata(g_L, entry_position);
   status = lua_pcall(g_L, 3, 0, 0);
   if (status != 0) {
+    WHEREAMI; 
     fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
