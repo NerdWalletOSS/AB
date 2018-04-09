@@ -13,5 +13,6 @@ if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "No payload" }'; exit;
 }
 $rslt =  add_addnl_var_info($body);
+echo "BOGUS BODY"; // TODO DELETE
 ob_clean();
 ?>

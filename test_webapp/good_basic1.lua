@@ -3,7 +3,7 @@ return
   TestType =  "XYTest",
   Channel =  "facebook",
   BinType =  "anonymous",
-  description =  "some bogus description",
+  description =  "some bogus description 1",
   Creator =  "joe",
   name =  "Test1",
   Variants =  { {
