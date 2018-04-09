@@ -83,7 +83,7 @@ function test_basic(
   if ( !empty($channel) ) {
     $channel_id = lkp("channel", $channel);
   }
-
+ 
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
   $bin_type_id  = lkp("bin_type", $bin_type);
@@ -112,6 +112,7 @@ function test_basic(
     $state = get_json_element($inJ, 'State');
     rs_assert($state != "archived");  // no changes to archived state
     $X1['description']  = $test_dscr;
+    echo "Channel id = ".$channel_id;
     $X1['channel_id']   = $channel_id; // UTPAL: To allow channel editing 
     $X1['updated_at']   = $updated_at;
     $X1['t_update']     = $t_update;

@@ -15,9 +15,10 @@
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
-		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td>Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
+    <td></td>
 	</tr>
 <tr>
 <td>
@@ -58,18 +59,18 @@
 </tr>
 
 <tr>
-<td colspan="2"> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
 <?php 
 if ( $mode == "View" ) 
   {
-    echo "<td colspan='3'>&nbsp;</td>";
+    echo "<td>&nbsp;</td>";
   }
 else
   { 
 ?>
-<td colspan="3"><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
+<td><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
 <?php } ?>
-<td colspan="2"> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->

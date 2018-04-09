@@ -1,17 +1,16 @@
-<?php require_once "common/header.php"; ?>
-<script src="js/fix_to_a_winner.js"></script>
-<?php require_once "common/navbar.php"; ?>
-<?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
-set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
+<?php 
 
-require_once "processor/config_html.php";
+// -- SET PATH
+require_once "set_path.php";
+require_once "header.php"; ?>
+<script src="js/fix_to_a_winner.js"></script>
+<?php 
+require_once "navbar.php"; 
+require_once "config_html.php";
 
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-require_once "processor/display_logic_aev_test.php";
+require_once "display_logic_aev_test.php";
 if (isset($can_fix_to_a_winner )  && ( $can_fix_to_a_winner == "0")) { header('Location: home.php'); return false; }
 $config = config_html($TestType);
 ?>
@@ -77,4 +76,4 @@ $config = config_html($TestType);
 <!-- /container -->
 <script src="js/bootstrap-confirmation.js"></script>
 <!-- FOOTER -->
-<?php require_once "common/footer.php"; ?>
+<?php require_once "footer.php"; ?>

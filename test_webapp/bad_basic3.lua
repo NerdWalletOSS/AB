@@ -16,7 +16,7 @@ return
     name =  "Variant_A",
     percentage =  "101",
     -- ERROR: Percentage out of bounds
-    url =  "www.yahoo.com"
+    url =  "www.gmail.com"
   },
   {
     name =  "Variant_B",
@@ -24,3 +24,4 @@ return
     url =  "www.cnn.com"
   }, }
 }
+--[[Total 100, but individually crosiing boundary condition]]--
