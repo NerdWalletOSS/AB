@@ -22,7 +22,8 @@ function is_good_percs(
     rs_assert($p <= 100, "percentage cannot exceed 100");
     $sum += $p;
   }
-  rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ) );
+  rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ),
+    "sum of percentages must add up to 100");
   if ( $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) { 
     $idx = 0;
     $nV = count($P);
