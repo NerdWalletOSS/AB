@@ -10,6 +10,7 @@ local get_error_code = require 'get_error_code'
 local test_compare = require 'test_compare'
 local get_url = require 'get_url'
 local reset_db = require 'reset_db'
+-- local make_rand_test = require 'XXXXX' TODO 
 
 local suite_description = [[
   These tests verfy that basic addition and modification of a test
@@ -43,8 +44,9 @@ end
 
 --============================
 -- START: Stuff common to all tests in this suite
+url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
 curl_params = { 
-  url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php",
+  url = url,
   post       = true,
   httpheader = { "Content-Type: application/json"; },
   writefunction  = get_body,
@@ -179,6 +181,29 @@ tests.t4 = function (
   print("Test t4 [" .. nbad .. "] succeeded")
   return true
 end
+tests.t5 = function (
+  just_pr
+  )
+  local description = "Make a random test "
+  if ( just_pr ) then print(description) return end
+
+  reset_db()
+  local T = make_rand_test()  -- TODO 
+  local status, body, hdrs = do_curl(url, T, nil, "POST")
+  local test_id = assert(get_test_id(hdrs))
+  assert(test_id > 0)
+  local error_code = assert(get_error_code(hdrs))
+  assert(error_code == 200)
+  -- Check that test info is same as what you sent in
+  local chk_url = "localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
+
+  local body_out, hdrs_out = get_url(chk_url)
+  local Tout = assert(JSON:decode(body_out), chk_url)
+  assert(test_compare(T, Tout))
+  print("Test t5 succeeded")
+  return T
+end
+--===================================================
 --===================================================
 --===================================================
 tests.t1() 
