@@ -14,8 +14,13 @@ $T = db_get_test($id);
 
 require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
-$fo_tests =  find_tests_to_follow($Channel);
-$nF = count($fo_tests);
+if (isset($Channel)) {
+  $fo_tests =  find_tests_to_follow($Channel);
+  $nF = count($fo_tests);
+} else {
+  $Channel = "";
+  $nF = 0;
+}
 $result = db_get_rows("test", "pred_id != ''");
 ?>
 <!-- PAGE SPECIFIC FILE CALLS -->

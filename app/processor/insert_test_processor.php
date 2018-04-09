@@ -19,11 +19,10 @@ $json_input = create_good_json_test($str_inJ);
 if ( !$json_input ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "Bad JSOn" }'; exit;
 }
- //print("<pre>".print_r($json_input,true)."</pre>");
+//print("<pre>".print_r($json_input,true)."</pre>"); exit();
 //-------------------------------------
 // Call to add test
 $rslt =  test_basic($json_input);
-//var_dump($rslt);
 header("TestID: ".$rslt["TestID"]);
 ob_clean();
 

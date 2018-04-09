@@ -11,8 +11,8 @@ require_once "header.php";
 <script src="js/insert_test.js"></script>
 <?php 
 require_once "navbar.php";
-require_once "processor/display_logic_aev_test.php";
-require_once "processor/config_html.php";
+require_once "display_logic_aev_test.php";
+require_once "config_html.php";
 
 # -- CONFIGURE HTML CONSTRAINTS
 $config = config_html($TestType);
