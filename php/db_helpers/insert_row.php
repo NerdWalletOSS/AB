@@ -12,6 +12,9 @@ function insert_row(
   $save_kvs = $kvs;
   foreach ( $kvs as $key => $val ) {
     if ( is_null($val) ) { continue; }
+    if ( $val == "__NULL__" ) { 
+      $val = null;
+    }
     if ( $first ) { 
       $first = false;
     }

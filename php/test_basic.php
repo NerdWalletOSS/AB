@@ -16,6 +16,7 @@ require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
+error_reporting(E_NOTICE);
 
 function test_basic(
   $str_inJ
@@ -83,7 +84,9 @@ function test_basic(
   if ( !empty($channel) ) {
     $channel_id = lkp("channel", $channel);
   }
- 
+  else {
+    $channel_id = "__NULL__";
+  }
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
   $bin_type_id  = lkp("bin_type", $bin_type);
