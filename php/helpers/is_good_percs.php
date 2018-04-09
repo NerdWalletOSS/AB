@@ -13,8 +13,8 @@ function is_good_percs(
   rs_assert(count($P) == count($N));
   rs_assert(count($P) > 0 );
   $nX = count($P);
-  rs_assert($nX >= lkp('configs', "min_num_variants"));
-  rs_assert($nX <= lkp('configs', "max_num_variants"));
+  rs_assert($nX >= lkp('configs', "min_num_variants"), "too few variants specified");
+  rs_assert($nX <= lkp('configs', "max_num_variants"),  "too many variants specified");
   $sum = 0;
   foreach ( $P as $p ) {
     rs_assert(is_numeric($p), "percentage must be a number");
