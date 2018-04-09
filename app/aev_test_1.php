@@ -74,7 +74,7 @@ Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="to
 <?php 
 if ( $mode == "View" ) 
   {
-    echo $Channel;
+    if (isset($Channel)) { echo $Channel;}
   }
 else
   { 
