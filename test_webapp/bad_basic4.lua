@@ -1,6 +1,7 @@
 return 
 {
-  TestType =  "XYTest",
+  TestType =  "YZTest",
+  --[[Non Existant Test Type]]--
   Channel =  "facebook",
   BinType =  "anonymous",
   description =  "some bogus description",
@@ -9,13 +10,12 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "50",
-    url =  "www.yahoo.com"
+    url =  "www.gmail.com"
   },
   {
     name =  "Variant_A",
     percentage =  "30",
     url =  "www.yahoo.com"
-    --[[ Duplicate URL]]--
   },
   {
     name =  "Variant_B",

@@ -5,17 +5,17 @@ return
   BinType =  "anonymous",
   description =  "some bogus description",
   Creator =  "joe",
-  name =  "Test1",
+  name =  "test1",
   Variants =  { {
     name =  "Control",
     percentage =  "50",
-    url =  "www.yahoo.com"
+    url =  "www.gmail.com"
   },
   {
-    name =  "Variant_A",
+    name =  "a1i1ntggeqyrt3dfn83a81rgp472kjqq",
+  --[[Maximum length of variant name should be 31]]--
     percentage =  "30",
     url =  "www.yahoo.com"
-    --[[ Duplicate URL]]--
   },
   {
     name =  "Variant_B",

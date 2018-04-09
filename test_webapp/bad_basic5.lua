@@ -9,16 +9,16 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "50",
-    url =  "www.yahoo.com"
+    url =  "www.gmail.com"
   },
   {
     name =  "Variant_A",
     percentage =  "30",
     url =  "www.yahoo.com"
-    --[[ Duplicate URL]]--
   },
   {
-    name =  "Variant_B",
+    name =  "Variant_A",
+    --[[Duplicate Variant Name]]--
     percentage =  "20",
     url =  "www.cnn.com"
   }, }

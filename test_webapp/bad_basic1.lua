@@ -9,6 +9,7 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "50",
+    --[[ Missing URL]]--
   },
   {
     name =  "Variant_A",
