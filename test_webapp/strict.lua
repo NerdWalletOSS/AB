@@ -38,12 +38,3 @@ mt.__index = function (t, n)
   end
   return rawget(t, n)
 end
-
-
--- This enforces debug = true while testing
-require 'Q/UTILS/lua/q_consts'
-package.loaded['Q/UTILS/lua/q_consts'].debug = true
--- See following example for changing chunk size
--- package.loaded['Q/UTILS/lua/q_consts'].chunk_size = 64
--- However, this is super dangerous so use ite wisely
--- In particular, do not make this call once a vector has been created
