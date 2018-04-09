@@ -43,7 +43,8 @@ function set_state(
     $outJ["status_code"] = 200;
     $outJ["msg_stdout"] = "No change in state for $test_id from $new_state";
     db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
-    http_response_code($http_code);
+    header("Error-Code: 200");
+    http_response_code(200);
     return $outJ;
   }
   //--------------------------------------

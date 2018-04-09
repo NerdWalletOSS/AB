@@ -62,7 +62,7 @@ local tests = {}
 tests.t1 = function (
   just_pr
   )
-  local description = "various set state operations"
+  local description = "Testing set_state when draft"
   if ( just_pr ) then print(description) return end
 
   -- START: Make some test 
@@ -85,7 +85,6 @@ tests.t1 = function (
   assert(tonumber(Tout.state_id) == 1)
   T.id = Tout.id
   T.Updater = "joe"
-  T.NewState = "dormant"
   -- try all the bad things 
   local bad_states = { "started", "terminated" }
   for k, bad_state in pairs(bad_states) do 
@@ -103,7 +102,7 @@ tests.t1 = function (
     assert(test_compare(T, Tout))
   end
   --========= now do the good things
-  local good_states = { "dormant",  "archived" }
+  local good_states = { "draft", "dormant",  "archived" }
   for k, good_state in pairs(good_states) do 
     T.NewState = good_state
     hdrs = {} ; body = "" 
@@ -122,5 +121,72 @@ tests.t1 = function (
   print("Test t1 succeeded")
   return true
 end
+tests.t2 = function (
+  just_pr
+  )
+  local description = "Testing set_state when dormant"
+  if ( just_pr ) then print(description) return end
+
+  -- START: Make some test 
+  reset_db()
+  local init_filename = "good_basic1.lua" 
+  assert(plpath.isfile(init_filename) )
+  local T = dofile(init_filename)
+  hdrs = {} ; body = "" 
+  curl_params.postfields = JSON:encode(T)
+  local c = cURL.easy(curl_params)
+  local x = c:perform()
+  local test_id = assert(get_test_id(hdrs))
+  assert(test_id > 0)
+  local error_code = assert(get_error_code(hdrs))
+  assert(error_code == 200)
+  local body_out, hdrs_out = get_url(chk_url .. test_id)
+  local Tout = assert(JSON:decode(body_out))
+  c:close()
+  -- set state to dormant. Should succeed
+  assert(tonumber(Tout.state_id) == 1)
+  T.id = Tout.id
+  T.Updater = "joe"
+  T.NewState = "dormant"
+  addnl_curl_params.postfields = JSON:encode(T)
+  local c = cURL.easy(addnl_curl_params)
+  local x = c:perform()
+  -- try all the bad things 
+  local bad_states = { "draft", "terminated" }
+  for k, bad_state in pairs(bad_states) do 
+    T.NewState = bad_state
+    hdrs = {} ; body = "" 
+    addnl_curl_params.postfields = JSON:encode(T)
+    local c = cURL.easy(addnl_curl_params)
+    local x = c:perform()
+    -- for k, v in pairs(hdrs) do print(k, v) end 
+    local error_code = assert(get_error_code(hdrs))
+    assert(error_code == 400, "bad_state = " .. bad_state)
+    -- Check that test info is same as what you sent in
+    local body_out, hdrs_out = get_url(chk_url .. test_id)
+    local Tout = assert(JSON:decode(body_out))
+    assert(test_compare(T, Tout))
+  end
+  --========= now do the good things
+  local good_states = { "dormant",  "started", "archived" }
+  for k, good_state in pairs(good_states) do 
+    T.NewState = good_state
+    hdrs = {} ; body = "" 
+    addnl_curl_params.postfields = JSON:encode(T)
+    local c = cURL.easy(addnl_curl_params)
+    local x = c:perform()
+    -- for k, v in pairs(hdrs) do print(k, v) end 
+    local error_code = assert(get_error_code(hdrs))
+    assert(error_code == 200, "good_state = " .. good_state)
+    -- Check that test info is same as what you sent in
+    local body_out, hdrs_out = get_url(chk_url .. test_id)
+    local Tout = assert(JSON:decode(body_out))
+    assert(test_compare(T, Tout))
+  end
+  --=====================
+  print("Test t2 succeeded")
+  return true
+end
 tests.t1() 
+tests.t2() 
 return tests, suite_description
