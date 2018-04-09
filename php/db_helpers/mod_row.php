@@ -13,7 +13,12 @@ function mod_row(
   $first = true;
   $save_kvs = $kvs;
   foreach ( $kvs as $key => $val ) {
-    // SHOULD WORK BUT NEEDS TESTING if ( is_null($val) ) { continue; }
+    if ( is_null($val) ) { 
+      continue; 
+    }
+    if ( $val == "__NULL__" ) { 
+      $val = null;
+    }
     if ( $first ) { 
       $first = false;
     }

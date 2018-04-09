@@ -83,6 +83,9 @@ function test_basic(
   if ( !empty($channel) ) {
     $channel_id = lkp("channel", $channel);
   }
+  else {
+    $channel_id = "__NULL__";
+  }
 
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
