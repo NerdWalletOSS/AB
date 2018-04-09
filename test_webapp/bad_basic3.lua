@@ -9,12 +9,18 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "-1",
+    -- ERROR: Percentage out of bounds
     url =  "www.yahoo.com"
   },
   {
     name =  "Variant_A",
     percentage =  "101",
+<<<<<<< HEAD
     url =  "www.gmail.com"
+=======
+    -- ERROR: Percentage out of bounds
+    url =  "www.yahoo.com"
+>>>>>>> dev
   },
   {
     name =  "Variant_B",
