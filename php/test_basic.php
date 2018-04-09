@@ -16,6 +16,7 @@ require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
+error_reporting(E_NOTICE);
 
 function test_basic(
   $str_inJ

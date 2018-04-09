@@ -7,16 +7,40 @@ local plstr = require 'pl.stringx'
 local plpath = require 'pl.path'
 local get_test_id = require 'get_test_id'
 local get_error_code = require 'get_error_code'
-local x = require('get_hdrs')
-local get_hdrs    = x[1]
-local reset_hdrs  = x[2]
-local return_hdrs = x[3]
-local x = require('get_body')
-local get_body    = x[1]
-local reset_body  = x[2]
-local return_body = x[3]
-local get_url = require 'get_url'
 local test_compare = require 'test_compare'
+local get_url = require 'get_url'
+local reset_db = require 'reset_db'
+
+local suite_description = [[
+  These tests verfy that basic addition and modification of a test
+  as permissible on Screen 1 can be performed. 
+]]
+
+local hdrs = {}
+local function trim1(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+local function get_hdrs (str)
+  hdrs[#hdrs+1] = trim1(str)
+end
+local function reset_hdrs ()
+  hdrs = {}
+  hdrs[1] = "abc"
+end
+local function return_hdrs ()
+  return hdrs
+end
+local body = ""
+local function get_body (str)
+  body = str
+end
+local function reset_body ()
+  body = ""
+end
+local function return_body ()
+  return body
+end
+
 --============================
 -- START: Stuff common to all tests in this suite
 curl_params = { 
@@ -34,7 +58,7 @@ tests.t1 = function (
   local description = "A basic test "
   if ( just_pr ) then print(description) return end
 
-  os.execute("cd ../sql/; bash reset_db.sh; cd - ")
+  reset_db()
   local T = {}
   T.name = "T1"
 
@@ -56,11 +80,13 @@ tests.t1 = function (
   curl_params.postfields = JSON:encode(T)
   reset_hdrs(); reset_body()
   local c = cURL.easy(curl_params)
-  x = c:perform()
+  local x = c:perform()
   local body = return_body(); local hdrs = return_hdrs()
-  print("XXXXXX")
+  --[[
+  print("Start Headers")
   for k,v in pairs(hdrs) do print(k, v) end 
-  print("XXXXXX")
+  print("Stop  Headers")
+  --]]
 
   local test_id = assert(get_test_id(hdrs))
   assert(test_id > 0)
@@ -68,26 +94,29 @@ tests.t1 = function (
   assert(error_code == 200)
   -- Check that test info is same as what you sent in
   local chk_url = "localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
-  local body, hdrs_out = get_url(chk_url)
-  local Tout = assert(JSON:decode(body), chk_url)
+
+  local body_out, hdrs_out = get_url(chk_url)
+  local Tout = assert(JSON:decode(body_out), chk_url)
   assert(test_compare(T, Tout))
+
   print("Test t1 succeeded")
   return T
 end
+--===================================================
 tests.t2 = function (
   just_pr
   )
-  description = "Cannot create 2 tests with same name"
+  local description = "Cannot create 2 tests with same name"
   if ( just_pr ) then print(description) return end
 
-  os.execute("cd ../sql/; bash reset_db.sh; cd - ")
+  reset_db()
   local T = tests.t1()
   hdrs = {} -- IMPORTANT: Needs to be reset because set in t1()
   body = "" -- IMPORTANT: Needs to be reset because set in t1()
 
   curl_params.postfields = JSON:encode(T)
   local c = cURL.easy(curl_params)
-  x = c:perform()
+  local x = c:perform()
 
   local error_code = get_error_code(hdrs)
   assert(error_code == 400)
@@ -98,27 +127,27 @@ end
 tests.t3 = function (
   just_pr
   )
-  description = "Create a number of valid tests "
+  local description = "Create a number of valid tests "
   if ( just_pr ) then print(description) return end
 
   local ngood = 0
-  for i = 1, 100000 do 
-    os.execute("cd ../sql/; bash reset_db.sh; cd - ")
-    local filename = "good_basic" .. i .. ".lua"
+  local idx = 1
+  while true do 
+    reset_db()
+    local filename = "good_basic" .. idx .. ".lua"
     if ( not plpath.isfile(filename) )  then break end 
-    T = dofile(filename)
-    for k, v in pairs(hdrs) do print(k, v) end 
-    hdrs = {} 
-    body = "" 
+    local T = dofile(filename)
+    hdrs = {} ; body = "" 
     curl_params.postfields = JSON:encode(T)
     local c = cURL.easy(curl_params)
-    x = c:perform()
-    for k, v in pairs(hdrs) do print(k, v) end 
+    local x = c:perform()
     local test_id = assert(get_test_id(hdrs))
     assert(test_id > 0)
     local error_code = assert(get_error_code(hdrs))
     assert(error_code == 200)
     ngood = ngood + 1
+    print("t3 Succeeded on " .. filename)
+    idx = idx + 1
   end
   print("Test t3 [" .. ngood .. "] succeeded")
   return true
@@ -127,34 +156,33 @@ end
 tests.t4 = function (
   just_pr
   )
-  description = "Create a number of invalid tests "
+  local description = "Create a number of invalid tests "
   if ( just_pr ) then print(description) return end
 
   local nbad = 0
-  for i = 1, 100000 do 
-    os.execute("cd ../sql/; bash reset_db.sh; cd - ")
-    local filename = "bad_basic" .. i .. ".lua"
+  local idx = 1
+  while true do 
+    reset_db()
+    local filename = "bad_basic" .. idx .. ".lua"
     if ( not plpath.isfile(filename) )  then break end 
-    T = dofile(filename)
-    hdrs = {} 
-    body = "" 
+    local T = dofile(filename)
+    hdrs = {} ; body = "" 
     curl_params.postfields = JSON:encode(T)
     local c = cURL.easy(curl_params)
-    x = c:perform()
-    for k, v in pairs(hdrs) do print(k, v) end 
+    local x = c:perform()
     local error_code = assert(get_error_code(hdrs))
     assert(error_code == 400, "Failure on " .. filename)
     nbad = nbad + 1
     print("t4 Succeeded on " .. filename)
+    idx = idx + 1
   end
   print("Test t4 [" .. nbad .. "] succeeded")
   return true
 end
 --===================================================
-tests.t1() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
-os.execute("sleep 1")
-tests.t1() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
--- tests.t2() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
--- tests.t4() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
--- tests.t3() -- TODO: DELETE ONCE I FIGURE OUT WHY TESTRUNNER NOT WORKING HERE
-return tests
+--===================================================
+tests.t1() 
+tests.t2() 
+tests.t3() 
+tests.t4() 
+return tests, suite_description
