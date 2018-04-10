@@ -1,11 +1,17 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "ab_incs.h"
+#include <stdbool.h>
+#include <time.h>
+#include <sys/mman.h>
+#include <sys/time.h>
 #ifdef CAPTURE_SERVER_ERROR
 #include "ab_globals.h"
 #endif
+#include "macros.h"
 #include "mmap.h"
-#include "auxil.h"
 
 #define MAX_LEN_DIR_NAME 511
 

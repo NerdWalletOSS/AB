@@ -87,7 +87,7 @@ local function load_db_data(g_conf, config, is_updated)
   local conn = load_cfg.db_connect(config.MYSQL)
 	-- TODO execute the sql
 	local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
-	table.sort(res, function(a,b) return a.id < b.id end)
+  table.sort(res, function(a,b) return a.id < b.id end)
 		local devs = {}
 	for index, entry in ipairs(res) do
 			devs[entry.id] = entry.name
@@ -184,6 +184,10 @@ local function update_rts_configs(g_conf, config)
 	is_updated = is_modified(ffi.string(g_conf[0].ua_to_dev_map_file), ua_dev_file, is_updated)
 	ffi.copy(g_conf[0].ua_to_dev_map_file, ua_dev_file)
 
+  local xy_guid = assert(tonumber(config.XY_GUID.VALUE), "Must have a valid xy guid")
+  is_updated = is_modified(g_conf[0].xy_guid, xy_guid, is_updated)
+
+  -- justin cat file os file browser file and device type file pending
 	is_updated = load_db_data(g_conf, config, is_updated)
 	return is_updated
 end

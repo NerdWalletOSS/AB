@@ -36,14 +36,15 @@ function set_state(
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
-  $state_id = $T['state_id'];
+  $state_id = intval($T['state_id']);
   $old_state   = lkp("state", $state_id, "reverse");
   // return if new state is same as current one
   if ( $old_state == $new_state ) { 
     $outJ["status_code"] = 200;
     $outJ["msg_stdout"] = "No change in state for $test_id from $new_state";
     db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
-    http_response_code($http_code);
+    header("Error-Code: 200");
+    http_response_code(200);
     return $outJ;
   }
   //--------------------------------------
@@ -63,7 +64,8 @@ function set_state(
     $X1['state_id'] = lkp("state", "dormant");
     break;
   case "started" : 
-    rs_assert($old_state == "dormant");
+    rs_assert($old_state == "dormant",
+      "can start a test only if prevous state == dormant, not$old_state");
     $X1['state_id'] = lkp("state", "started");
     break;
   case "terminated" : 

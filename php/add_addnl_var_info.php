@@ -36,7 +36,6 @@ function add_addnl_var_info(
   // TODO P4 $updater_id = lkp("admin", $updater);
   $vid = get_json_element($inJ, 'VariantID'); 
 
-
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
   $test_name = $T['name'];
@@ -87,9 +86,11 @@ function add_addnl_var_info(
     }
   }
   // UTPAL END
+  //
 
-  // TODO P3: does description/custom data get set to null or empty string?
-
+  if ( $description == "" ) { $description = "__NULL__"; } // TODO FIX
+  if ( $custom_data == "" ) { $custom_data = "__NULL__"; } // TODO FIX
+  if ( $url         == "" ) { $url         = "__NULL__"; } // TODO FIX
   $X1['description'] = $description;
   $X1['custom_data'] = $custom_data;
   $X1['url']         = $url;
