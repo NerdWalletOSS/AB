@@ -38,10 +38,10 @@ function curl.get(c_url, hdrs, body)
     headerfunction = add_to_hdrs,
   }
   if body ~= nil then
-    request.postfields= JSON.encode(body)
+    request.postfields = JSON.encode(body)
   end
   local curl_handle = cURL.easy(request)
-  result = curl_handle:perform()
+  local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
   local return_code = tonumber(res_hdrs[1]:split(" ")[2])
@@ -56,16 +56,16 @@ function curl.post(c_url, hdrs, body)
   assert(hdrs == nil or type(hdrs) == "table" , "Headers if present should be a table")
   local request = {
     url = c_url,
-    post= true,
+    post = true,
     httpheader = hdrs,
     writefunction = add_to_body,
     headerfunction = add_to_hdrs,
   }
   if body ~= nil then
-    request.postfields= JSON.encode(body)
+    request.postfields = JSON.encode(body)
   end
   local curl_handle = cURL.easy(request)
-  result = curl_handle:perform()
+  local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
   local return_code = tonumber(res_hdrs[1]:split(" ")[2])
