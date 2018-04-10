@@ -18,6 +18,9 @@ if ( !$_POST ) {
 $test_id = $_POST['TestID'];
 $T = db_get_test($test_id);
 // SETTING NEW VALUES OF DEVICE X VARIANT
+if((isset($_POST['is_dev_specific'])) && ( $_POST['is_dev_specific'] == "")) {
+  echo '{ "Set Device Specific Variant" : "ERROR", "Message" : "Device Specific is not set" }'; exit;  
+}
 if (isset($_POST['is_dev_specific'])) {
   $T['is_dev_specific'] = $_POST['is_dev_specific'];
 }
