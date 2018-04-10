@@ -13,7 +13,12 @@ function mod_row(
   $first = true;
   $save_kvs = $kvs;
   foreach ( $kvs as $key => $val ) {
-    // SHOULD WORK BUT NEEDS TESTING if ( is_null($val) ) { continue; }
+    if ( is_null($val) ) { 
+      continue; 
+    }
+    if ( $val == "__NULL__" ) { 
+      $val = null;
+    }
     if ( $first ) { 
       $first = false;
     }
@@ -23,6 +28,7 @@ function mod_row(
     $sql .= " $key = :$key ";
     $X["$key"] = $val;
   }
+  var_dump($X);
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);
   $rslt = $stmt->execute($X); if ( !$rslt ) { 
@@ -33,8 +39,8 @@ function mod_row(
 }
 /*
 $tbl = "variant";
-$X['custom_data'] = "some custom data";
+$X['custom_data'] = "__NULL__";
 $X['description'] = "some description data";
-mod_row($tbl, $X, "where id = 1");
+mod_row($tbl, $X, "where id = 2");
  */
 ?>

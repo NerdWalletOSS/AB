@@ -16,6 +16,7 @@ require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
+error_reporting(E_NOTICE);
 
 function test_basic(
   $str_inJ
@@ -51,9 +52,11 @@ function test_basic(
     $test_id = $inJ->{'id'};
     rs_assert(is_numeric($test_id));
     $test_id = intval($test_id);
-    rs_assert(db_get_row("test", "id", $test_id));
+    $T = db_get_row("test", "id", $test_id);
+    rs_assert($T, "No test with id = $id \n");
     $updater    = get_json_element($inJ, 'Updater');
     $updater_id = lkp("admin", $updater);
+    $is_dev_specific = $T['is_dev_specific'];
   }
   if ( $is_new ) {
     switch ( $test_type ) {
@@ -83,7 +86,9 @@ function test_basic(
   if ( !empty($channel) ) {
     $channel_id = lkp("channel", $channel);
   }
- 
+  else {
+    $channel_id = "__NULL__";
+  }
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
   $bin_type_id  = lkp("bin_type", $bin_type);
@@ -135,7 +140,10 @@ function test_basic(
         }
         if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
           ( $state == "started" ) ) {
-            $X2['percentage']  = $variant_percs[$i];
+            if ( !$is_dev_specific ) { 
+              // can change percentage only if not device specific
+              $X2['percentage']  = $variant_percs[$i];
+            }
             if ( $test_type == "XYTest" ) {
               $X2['url']        = $variant_urls[$i];
             }
@@ -143,14 +151,17 @@ function test_basic(
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
       }
       //--- Update device_x_variant table --------
-      $D = db_get_rows("device");
-      foreach ( $D as $d ) { 
-        $device_id = $d['id'];
-        for ( $i = 0; $i < count($variants); $i++ ) {
-          $variant_id       = $variant_ids[$i];
-          $X3['percentage'] = $variant_percs[$i];
-          mod_row("device_x_variant", $X3, 
-            " where variant_id = $variant_id and device_id = $device_id ");
+      if ( !$is_dev_specific ) { 
+        // can change percentage only if not device specific
+        $D = db_get_rows("device");
+        foreach ( $D as $d ) { 
+          $device_id = $d['id'];
+          for ( $i = 0; $i < count($variants); $i++ ) {
+            $variant_id       = $variant_ids[$i];
+            $X3['percentage'] = $variant_percs[$i];
+            mod_row("device_x_variant", $X3, 
+              " where variant_id = $variant_id and device_id = $device_id ");
+          }
         }
       }
       //------------------------------------------

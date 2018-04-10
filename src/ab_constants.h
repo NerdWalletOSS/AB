@@ -49,7 +49,7 @@
 #define AB_TEST_TYPE_AB 1
 #define AB_TEST_TYPE_XY 2
 
-#define AB_MAX_LEN_UUID     63 // Minimum value is 16
+#define AB_MAX_LEN_UUID     47 // Minimum value is 16
 #define AB_GUID_LENGTH      8 // TO delete and replace by out tracer
 
 #define AB_MAX_LEN_XY_ARGS 1023

@@ -26,7 +26,8 @@ function lkp(
   if (!isset($GLOBALS[$tbl][$val]) ) {
     echo("UNDEFINED $tbl, $val\n");
   }
-  rs_assert(isset($GLOBALS[$tbl][$val]));
+  rs_assert(isset($GLOBALS[$tbl][$val]), 
+    "No value for key [$val] in table [$tbl] ");
   $x = $GLOBALS[$tbl][$val];
   // echo "<br> =ZZ= <br> \n"; var_dump($GLOBALS['state']); echo "<br> =WW= <br> \n"; 
   return $x;
