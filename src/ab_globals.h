@@ -108,5 +108,7 @@ EXTERN char g_valid_chars_in_ab_args[256]; // Set by C
 EXTERN MAXMIND_REC_TYPE g_maxmind;
 //------------------------ For Lua
 EXTERN lua_State *g_L; // Set by C
+EXTERN lua_State *g_L_DT; // Set by C
+
 
 #include "ab_log_globals.h"

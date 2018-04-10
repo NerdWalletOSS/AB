@@ -12,10 +12,10 @@ l_post_proc_preds(
     )
 {
   int status = 0;
-  lua_getglobal(g_L, "post_proc_preds");
-  if ( !lua_isfunction(g_L, -1)) {
+  lua_getglobal(g_L_DT, "post_proc_preds");
+  if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Lua Function post_proc_preds undefined\n");
-    lua_pop(g_L, 1);
+    lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
   lua_pushlightuserdata(g_L, pred_vector);
@@ -24,9 +24,9 @@ l_post_proc_preds(
   lua_pushnumber(g_L, nX);
   status = lua_pcall(g_L, 4, 0, 0);
   if ( status != 0 ) {
-    fprintf(stderr, "calling function post_proc_preds failed: %s\n", lua_tostring(g_L, -1));
-    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-    lua_pop(g_L, 1);
+    fprintf(stderr, "calling function post_proc_preds failed: %s\n", lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
 BYE:

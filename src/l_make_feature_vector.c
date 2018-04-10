@@ -16,23 +16,23 @@ l_make_feature_vector(
     )
 {
   int status = 0;
-  lua_getglobal(g_L, "make_feature_vector");
-  if ( !lua_isfunction(g_L, -1)) {
+  lua_getglobal(g_L_DT, "make_feature_vector");
+  if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Lua Function make_feature_vector undefined\n");
-    lua_pop(g_L, 1);
+    lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
-  lua_pushstring(g_L, body); 
-  lua_pushlightuserdata(g_L, g_dt_feature_vector);
-  lua_pushnumber(g_L, g_n_dt_feature_vector);
-  lua_pushlightuserdata(g_L, g_rslt);
-  lua_pushnumber(g_L, AB_MAX_LEN_RESULT);
-  lua_pushboolean(g_L, is_debug);
-  status = lua_pcall(g_L, 6, 0, 0);
+  lua_pushstring(g_L_DT, body); 
+  lua_pushlightuserdata(g_L_DT, g_dt_feature_vector);
+  lua_pushnumber(g_L_DT, g_n_dt_feature_vector);
+  lua_pushlightuserdata(g_L_DT, g_rslt);
+  lua_pushnumber(g_L_DT, AB_MAX_LEN_RESULT);
+  lua_pushboolean(g_L_DT, is_debug);
+  status = lua_pcall(g_L_DT, 6, 0, 0);
   if ( status != 0 ) {
-    fprintf(stderr, "calling function set_dt_feature_vector failed: %s\n", lua_tostring(g_L, -1));
-    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-    lua_pop(g_L, 1);
+    fprintf(stderr, "calling function set_dt_feature_vector failed: %s\n", lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
 BYE:
