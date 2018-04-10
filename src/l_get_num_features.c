@@ -20,7 +20,7 @@ l_get_num_features(
   }
   status = lua_pcall(g_L_DT, 0, 1, 0);
   if (status != 0) {
-    fprintf(stderr, "calling function get_num_features failed: %s\n", lua_tostring(g_L_DT, -1));
+    fprintf(stderr, "calling function get_num_features in DT failed: %s\n", lua_tostring(g_L_DT, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
     lua_pop(g_L_DT, 1);
     go_BYE(-1);

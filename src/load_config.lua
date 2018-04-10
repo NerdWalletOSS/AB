@@ -147,7 +147,7 @@ function load_cfg.load_transform_features(file_path) -- TODO pending test entrie
   local file = assert(io.open(file_path, 'r'), "Invalid filename given")
   local conf_str = file:read('*a')
   file:close()
-  local config = json.decode(cfg_str)
+  local config = json.decode(conf_str)
   config = config.AB
 
   --=============================================

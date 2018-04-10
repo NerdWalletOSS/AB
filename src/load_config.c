@@ -42,7 +42,6 @@ l_load_config(
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
-  restart_subsystems(has_changed);
 
   // Now to load ML lua transforms
 
@@ -52,7 +51,6 @@ l_load_config(
     lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
-  lua_pushlightuserdata(g_L_DT, &g_cfg);
   lua_pushstring(g_L_DT, file_name); // not pushing string as it causes a copy
   status = lua_pcall(g_L_DT, 1, 0, 0);
   if (status != 0) {
@@ -63,6 +61,7 @@ l_load_config(
     go_BYE(-1);
   }
 
+  restart_subsystems(has_changed);
 BYE:
   return status;
 }
