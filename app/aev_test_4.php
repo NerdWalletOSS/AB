@@ -8,6 +8,12 @@ require_once "config_html.php";
 require_once "db_get_rows.php";
 require_once "db_get_test.php";
 require_once "find_tests_to_follow.php";
+// -- TEST TestID CREDENTIALS
+if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
+	{
+		header('Location: home.php');
+		return false;
+	}
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 $T = db_get_test($id);
