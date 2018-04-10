@@ -39,6 +39,14 @@ function set_device_specific_variant(
   $state = lkp("state", $state_id, "reverse");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
+  if ( !$is_dev_specific ) { // Nothing to do. Quit early
+    $outJ["status_code"] = 200;
+    $outJ["msg_stdout"] = "No change to device specific  info for $tid";
+    db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
+    header("Error-Code: 200");
+    http_response_code(200);
+    return $outJ;
+  }
   // TODO P1 Put updates in transaction
   mod_cell("test", "is_dev_specific", $is_dev_specific, " id = $tid ");
   foreach ( $dxv as $d => $v ) { 
