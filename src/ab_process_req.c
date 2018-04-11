@@ -22,6 +22,7 @@
 #include "classify_ua.h"
 #include "l_make_feature_vector.h"
 #include "ext_get_host.h"
+#include "l_post_proc_preds.h"
 
 // START FUNC DECL
 int 
@@ -130,6 +131,11 @@ ab_process_req(
       ping_server(g_cfg.ss.server, 
           g_cfg.ss.port, 
           g_cfg.ss.health_url, g_rslt);
+      break;
+      //--------------------------------------------------------
+    case PostProcPred : /* done by C */
+      // TODO RAMESH status = l_post_proc_pred(g_pred_vector, g_n_pred_vector, g_rslt, AB_MAX_LEN_RESULT);
+      cBYE(status);
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */

@@ -70,6 +70,9 @@ get_req_type(
   else if (strcasecmp(api, "PingSessionServer") == 0) {
     return PingSessionServer;
   }
+  else if (strcasecmp(api, "PostProcPred") == 0) {
+    return PostProcPred;
+  }
   else if (strcasecmp(api, "Reload") == 0) {
     return Reload;
   }

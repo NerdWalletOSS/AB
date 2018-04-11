@@ -48,7 +48,7 @@ install_apache(){
   RES="`echo $?`"
   if [ $RES -eq 1 ]
   then
-    sudo apt-get install lua apache2 -y
+    sudo apt-get install lua apache2 libapache2-mod-php -y
     cd ../
     sudo ln -s AB/ /var/www/html/AB
     mkdir -p /opt/abadmin/
