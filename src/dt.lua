@@ -6,7 +6,7 @@ end
 
 local make_feature_vec = require 'make_feature_vector'
 function make_feature_vector(...)
-  return make_feat_vec(...)
+  return make_feature_vec(...)
 end
 
 local get_num_feat = require 'get_num_features'
