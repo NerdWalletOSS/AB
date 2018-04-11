@@ -53,18 +53,3 @@ rand_file_name(
 BYE:
   return status;
 }
-// gcc -g rand_file_name.c -I../inc/ -I../gen_inc/
-#undef STAND_ALONE
-#ifdef STAND_ALONE
-int
-main()
-{
-  char X[32];
-  for ( int i = 0; i < 100; i++ ) { 
-    memset(X, '\0', 64);
-    rand_file_name(X, 64);
-    fprintf(stderr, "X = %s \n", X);
-  }
-}
-#endif
-

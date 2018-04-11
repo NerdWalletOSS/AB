@@ -8,7 +8,7 @@ CREATE TABLE api (
   id int(8) not null auto_increment,
   name varchar(32) not null,
   description varchar(128) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS admin; -- config
 CREATE TABLE admin (
   id int(8) not null auto_increment,
   name varchar(32) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS attr_type; -- config
 CREATE TABLE attr_type (
   id int(8) not null auto_increment,
   name varchar(32) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -57,7 +57,7 @@ CREATE TABLE attr (
   name varchar(16) not null,
   description varchar(128),
   attr_type_id int(8) not null, 
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name),
   CONSTRAINT fk_attr_type_id FOREIGN KEY (attr_type_id) REFERENCES attr_type(id)
@@ -73,7 +73,7 @@ CREATE TABLE cat_attr_val (
   name varchar(16) not null,
   attr_id int(8) not null,
   description varchar(128),
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT fk_attr_id FOREIGN KEY (attr_id) REFERENCES attr(id),
   CONSTRAINT uq_name_cat_attr_id UNIQUE (name, attr_id)
@@ -87,7 +87,7 @@ DROP TABLE IF EXISTS channel; -- config
 CREATE TABLE channel (
   id int(8) not null auto_increment,
   name varchar(16) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -113,7 +113,7 @@ DROP TABLE IF EXISTS state; -- config
 CREATE TABLE state (
   id int(8) not null auto_increment,
   name varchar(16) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -128,7 +128,7 @@ DROP TABLE IF EXISTS bin_type; -- config
 CREATE TABLE bin_type (
   id int(8) not null auto_increment,
   name varchar(64) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -143,7 +143,7 @@ DROP TABLE IF EXISTS test_type; -- config
 CREATE TABLE test_type (
   id int(8) not null auto_increment,
   name varchar(16) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -156,7 +156,7 @@ CREATE TABLE device (
   id int(8) not null auto_increment,
   name varchar(16) not null,
   description varchar(127),
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_dev_name UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -173,7 +173,7 @@ CREATE TABLE config (
   id int(8) not null auto_increment,
   name varchar(32) not null,
   value varchar(128) not null,
-  is_del int(2) not null default 0, -- for soft deletes
+  is_del boolean not null default false, -- for soft deletes
   PRIMARY KEY (id),
   CONSTRAINT uq_config UNIQUE (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8;
@@ -276,6 +276,8 @@ CREATE TABLE variant (
   is_final  boolean default false not null,
   url varchar(256),
   custom_data  varchar(2048),
+  is_del boolean not null default false, -- for soft deletes
+  pred_id int(8), -- can be null
 
   created_at datetime not null,
   t_create bigint not null default 0,
@@ -286,7 +288,9 @@ CREATE TABLE variant (
   PRIMARY KEY (id),
   CONSTRAINT chk_perc_lb CHECK (percentage >= 0),
   CONSTRAINT chk_perc_ub CHECK (percentage <= 100),
-  CONSTRAINT uq_name_test_id UNIQUE (name, test_id),
+  -- had to drop following because of is_del
+  -- CONSTRAINT uq_name_test_id UNIQUE (name, test_id),
+  CONSTRAINT fk_v_pred_id FOREIGN KEY (pred_id) REFERENCES variant(id),
   CONSTRAINT fk_v_api_id FOREIGN KEY (api_id) REFERENCES api(id),
   CONSTRAINT fk_v_rq_web_id FOREIGN KEY (request_webapp_id) REFERENCES request_webapp(id),
   CONSTRAINT fk_test_id FOREIGN KEY (test_id) REFERENCES test(id)

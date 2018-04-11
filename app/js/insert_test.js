@@ -1,6 +1,7 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
-  $('#addTest').submit(function() {
+  $('form').submit(function(e) {
+    e.preventDefault();
     $.ajax({
       type: "POST",
       url: "processor/insert_test_processor.php",
@@ -29,5 +30,6 @@ $(document).ready(function() {
       }
     });
     return false;
+
   });
 });

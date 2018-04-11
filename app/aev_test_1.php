@@ -30,10 +30,10 @@ $config = config_html($TestType);
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='addTest' method='post'>
+
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
-
+  <form class="form-signin" id='addTest' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
 	<tr>
@@ -155,7 +155,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
     <td> </td>
   </tr>
 <tr>
-<td><button onclick="location.href = 'home.php'"  class="btn btn-lg btn-primary btn-block" >Cancel</button></td>
+<td><button onclick="window.location.href = 'home.php'"  class="btn btn-lg btn-primary btn-block" >Cancel</button></td>
 <?php 
 if ( $mode == "View" ) 
   {
@@ -164,16 +164,18 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><button class="btn btn-lg btn-success btn-block" type="submit" id="add_test">Next</button></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" id="add_test" value="Next"></td>
+
 <?php } ?>
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
-<td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="window.location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 <?php } ?>
 </tr>
+  </form>
   </tbody>
   </table>
 
-  </form>
+
 
   <!-- ADD/EDIT FORM END  -->
   </div>

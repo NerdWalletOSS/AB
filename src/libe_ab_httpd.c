@@ -48,10 +48,6 @@
 #include "dt_types.h"
 MMDB_s g_mmdb; bool g_mmdb_in_use;
 
-DT_REC_TYPE *g_dt_map; // Set by C
-size_t g_len_dt_file; // Set by C
-uint32_t g_num_dt_map; // Set by C
-
 extern void 
 generic_handler(
     struct evhttp_request *req, 

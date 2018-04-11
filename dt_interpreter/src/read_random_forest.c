@@ -145,7 +145,9 @@ read_random_forest(
          ( dt[i].lchild_idx != -1 ) ) {
       go_BYE(-1); }
   }
-  printf("Fixed %d \n", n_fixed);
+  if ( n_fixed > 0 ) { 
+    printf("Fixed %d \n", n_fixed); go_BYE(-1);
+  }
   //----------------------------------------------------
   // calculate number of random forests
   n_rf = 0;
@@ -198,6 +200,20 @@ read_random_forest(
 BYE:
   mcr_rs_munmap(X, nX);
   for ( uint32_t i = 0; i < nC; i++ ) { free_if_non_null(fldtypes[i]); }
+  if ( nil_files != NULL ) { 
+    for ( uint32_t i = 0; i < nC; i++ ) { 
+    free_if_non_null(nil_files[i]);
+    }
+  }
+  free_if_non_null(nil_files);
+
+  if ( out_files != NULL ) { 
+    for ( uint32_t i = 0; i < nC; i++ ) { 
+    free_if_non_null(out_files[i]);
+    }
+  }
+  free_if_non_null(out_files);
+
   *ptr_dt = dt;
   *ptr_n_dt = n_dt;
   *ptr_rf = rf;
