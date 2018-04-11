@@ -158,7 +158,6 @@ main(
   status = init_lua(); cBYE(status);
   if ( argc == 1 )  { 
     hard_code_config(); // only for testing 
-    l_hard_code_config_lua();
   }
   else {
     if ( argc != 2 ) { go_BYE(-1); }
