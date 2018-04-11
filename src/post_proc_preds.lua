@@ -11,15 +11,14 @@ local function post_proc_preds(
   )
   opvec = ffi.cast("float*", opvec)
   local out_features = {}
-  -- read the g_ccid_mapping
-  local g_ccid_mapping = assert(cache.get('g_ccid_mapping'),
-    'G_CCID_MAPPING missing from cache.')
+  local ccid_mapping = assert(cache.get('ccid_mapping'),
+    'CCID_MAPPING missing from cache.')
   local n_cards = assert(get_n_cards(), 'get_n_cards failed.')
   assertx(n_opvec == n_cards, 'feature vector length is ,',
-    tostring(n_opvec), ', but g_ccid_mapping says length is ', 
+    tostring(n_opvec), ', but ccid_mapping says length is ', 
     tostring(n_cards))
-  for idx, ccid in pairs(g_ccid_mapping) do
-    ccid_n = assert(tonumber(ccid), 'g_ccid_mapping faulty')
+  for idx, ccid in pairs(ccid_mapping) do
+    ccid_n = assert(tonumber(ccid), 'ccid_mapping faulty')
     local pred = assertx(opvec[tonumber(idx)], 'Index ', tostring(idx),
       ' not present in opvec.')
     assertx(0 <= pred and pred <= 1, 'prediction ', tostring(pred), 
