@@ -39,6 +39,20 @@ function test_basic(
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------
+  $state     = get_json_element($inJ, 'State');
+  $test_name = get_json_element($inJ, 'name'); 
+  $test_type = get_json_element($inJ, 'TestType'); 
+  $test_dscr = get_json_element($inJ, 'description', false);
+  $variants  = get_json_element($inJ, 'Variants');
+  // TODO P4 later $bin_type  = get_json_element($inJ, 'BinType', false);
+  $state     = get_json_element($inJ, 'State');
+  $channel   = get_json_element($inJ, 'Channel', false);
+  $channel_id = null;
+  $pred_id    = null;
+  if ( !empty($channel) ) {
+    $channel_id = lkp("channel", $channel);
+  }
+  //-------------------------------------------------
   // Decide whether to update or insert 
   $is_new = is_new_test($inJ);
   if ( $is_new ) { // if insert
@@ -57,7 +71,15 @@ function test_basic(
     $updater    = get_json_element($inJ, 'Updater');
     $updater_id = lkp("admin", $updater);
     $is_dev_specific = $T['is_dev_specific'];
+    // On this page, pred_id cannot be set but it can be broken
+    if ( $channel_id != $T['channel_id'] ) { 
+      $pred_id = "__NULL__";
+    }
   }
+  if ( empty($channel) ) {
+    $channel_id = "__NULL__";
+  }
+  //-------------------------------------------------
   if ( $is_new ) {
     switch ( $test_type ) {
     case "ABTest" :
@@ -72,22 +94,6 @@ function test_basic(
     }
     $inJ->{'State'}   = $state = "draft";
     $inJ->{'BinType'} = $bin_type;
-  }
-
-  $state     = get_json_element($inJ, 'State');
-  $test_name = get_json_element($inJ, 'name'); 
-  $test_type = get_json_element($inJ, 'TestType'); 
-  $test_dscr = get_json_element($inJ, 'description', false);
-  $variants  = get_json_element($inJ, 'Variants');
-  $bin_type  = get_json_element($inJ, 'BinType');
-  $state     = get_json_element($inJ, 'State');
-  $channel   = get_json_element($inJ, 'Channel', false);
-  $channel_id = null;
-  if ( !empty($channel) ) {
-    $channel_id = lkp("channel", $channel);
-  }
-  else {
-    $channel_id = "__NULL__";
   }
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
@@ -113,11 +119,13 @@ function test_basic(
   $X5['request_webapp_id']  = $request_webapp_id;
   $X5['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
+    if ( $pred_id ) { 
+      $X1['pred_id'] == $pred_id;
+    }
     $action = "updated";
     $state = get_json_element($inJ, 'State');
     rs_assert($state != "archived");  // no changes to archived state
     $X1['description']  = $test_dscr;
-    echo "Channel id = ".$channel_id;
     $X1['channel_id']   = $channel_id; // UTPAL: To allow channel editing 
     $X1['updated_at']   = $updated_at;
     $X1['t_update']     = $t_update;
@@ -135,7 +143,8 @@ function test_basic(
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
       for ( $i = 0; $i < count($variants); $i++ ) {
-        if ( ( $state == "draft" ) || ( $state == "dormant" ) ) { 
+        // can change name only in dormant mode 
+        if ( $state == "draft" ) {
           $X2['name']        = $variant_names[$i];
         }
         if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
@@ -146,6 +155,20 @@ function test_basic(
             }
             if ( $test_type == "XYTest" ) {
               $X2['url']        = $variant_urls[$i];
+            }
+            if ( ( $test_type == "XYTest" ) && ( $state == "started" ) ) { 
+              $R = db_get_row("variant", "id", $variant_ids[$i]);
+              $old_url = $R['url'];
+              if ( $old_url != $variant_urls[$i] ) {
+                // We need to create a new variant
+                $variant_ids[$i]  = dup_row("variant", $variant_ids[$i],
+                  array( "is_del" => true, 
+                        "pred_id" => $variant_ids[$i]), null);
+                // Update device_x_variant table???
+                $X6['variant_id'] = $variant_ids[$i];
+                mod_row("device_x_variant", $X6, 
+                 " variant_id = " . $variant_ids[$i]);
+              }
             }
           }
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
