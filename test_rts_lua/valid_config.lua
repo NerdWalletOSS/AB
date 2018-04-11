@@ -132,19 +132,19 @@ return [=[{
       "VALUE": "1"
     },
     "POSTAL_CD_FEATURES" : { 
-      "COMMENT" : " XXXX ",
+      "COMMENT" : "Contains postal code features",
       "VALUE"  : "/opt/ab/postal_cd_features.lua"
     },
     "REFERER_CLASS_FILE" : { 
-      "COMMENT" : " XXXX ",
+      "COMMENT" : "Contains all info required for getting referer",
       "VALUE"  : "/opt/ab/referer_class_file.lua"
     },
     "DT_FEATURE_FILE" : { 
-      "COMMENT" : " XXXX ",
+      "COMMENT" : "Has the mappings to get DT features",
       "VALUE"  : "/opt/ab/dt_feature.lua"
     },
     "CCID_MAPPING" : { 
-      "COMMENT" : " XXXX ",
+      "COMMENT" : "Has the ccid to index mapping",
       "VALUE"  : "/opt/ab/ccid_mapping.lua"
     },
   }
