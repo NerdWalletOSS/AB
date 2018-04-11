@@ -2,12 +2,6 @@
 // -- SET PATH
 require_once "set_path.php";
 
-// -- TEST TestID CREDENTIALS
-if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
-	{
-		header('Location: home.php');
-		return false;
-	}
 # -- CHECK IF TEST ID IS SET
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 

@@ -47,6 +47,7 @@ require_once "lkp.php";
     $Ureadonly = "";
     $TestName = "";
     # -- Check if number of variants are set.
+    if (!isset($_GET['num_var']) || ($_GET['num_var'] == "")) { header('Location: home.php'); return false;} 
     if (isset($_GET['num_var'])) {$num_var = $_GET['num_var'];} 
   }
 

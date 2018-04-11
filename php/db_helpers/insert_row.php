@@ -1,4 +1,5 @@
 <?php
+require_once 'rs_assert.php';
 function insert_row(
   $tbl,
   $kvs

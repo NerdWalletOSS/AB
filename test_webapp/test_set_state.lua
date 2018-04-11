@@ -187,6 +187,8 @@ tests.t2 = function (
   print("Test t2 succeeded")
   return true
 end
+-- TODO In t3, allow to go frpom terminated to started if XYTest and NOT if
+-- ABTest
 tests.t1() 
 tests.t2() 
 return tests, suite_description
