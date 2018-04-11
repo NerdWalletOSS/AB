@@ -39,13 +39,19 @@ function test_basic(
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------
-  $state     = get_json_element($inJ, 'State');
+  $state     = get_json_element($inJ, 'State', false);
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'description', false);
+  if ( empty($test_dscr) || ( $test_dscr == "NULL" ) ) {
+    $test_dscr = "__NULL__"; // TODO FIX
+  }
+  else {
+    rs_assert(strlen($test_dscr) <= lkp('configs', "max_len_test_dscr"));
+  }
+
   $variants  = get_json_element($inJ, 'Variants');
   // TODO P4 later $bin_type  = get_json_element($inJ, 'BinType', false);
-  $state     = get_json_element($inJ, 'State');
   $channel   = get_json_element($inJ, 'Channel', false);
   $channel_id = null;
   $pred_id    = null;

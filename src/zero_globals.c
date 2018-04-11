@@ -52,8 +52,7 @@ free_globals(
   }
 
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
-  if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
-
+  if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
   if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
@@ -192,7 +191,7 @@ zero_globals(
 
   g_mmdb_in_use = false;
   memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
-  g_L = NULL;
+  g_L    =  NULL;
   g_L_DT = NULL;
   g_dt  = NULL; g_n_dt = 0;
   g_rf  = NULL; g_n_rf = 0;
@@ -204,7 +203,7 @@ BYE:
   return status;
 }
 
-  void
+void
 zero_log()
 {
   g_log_start_time  = get_time_usec();
