@@ -158,7 +158,7 @@ update_config(
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
     // TODO DELETE BELOW 
-    for ( int i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = i+1; }
+    for ( int i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = 1.0/(i+2); }
   }
   //--------------------------------------------------------
 

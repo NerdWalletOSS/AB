@@ -133,8 +133,9 @@ ab_process_req(
           g_cfg.ss.health_url, g_rslt);
       break;
       //--------------------------------------------------------
-    case PostProcPred : /* done by C */
-      // TODO RAMESH status = l_post_proc_pred(g_pred_vector, g_n_pred_vector, g_rslt, AB_MAX_LEN_RESULT);
+    case PostProcPreds : /* done by C */
+      status = l_post_proc_preds(g_predictions, g_n_mdl, 
+          g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------

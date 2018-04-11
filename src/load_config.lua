@@ -38,7 +38,7 @@ local function is_present(v_table)
   if v_table == nil then
     return false
   else
-    reeturn true
+    return true
   end
 end
 
