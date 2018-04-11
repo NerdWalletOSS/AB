@@ -17,7 +17,14 @@ void restart_subsystems(char* has_changed) { //TODO declare prototype
     update_config();
   }
 }
-  int
+int
+l_hard_code_config()
+{
+  int status = 0;
+
+}
+
+int
 l_load_config(
     const char *file_name
     )
