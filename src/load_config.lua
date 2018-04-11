@@ -154,18 +154,18 @@ function load_cfg.load_transform_features(file_path) -- TODO pending test entrie
   if ( ( config.POSTAL_CD_FEATURES ) and
     ( config.POSTAL_CD_FEATURES ~= "" ) ) then
     assert(file_exists(config.POSTAL_CD_FEATURES.VALUE))
-    local status, g_postal_cd_features = pcall(dofile, config.POSTAL_CD_FEATURES.VALUE)
+    local status, postal_cd_features = pcall(dofile, config.POSTAL_CD_FEATURES.VALUE)
     assert(status, 'POSTAL_CD_FEATURES loading failed.')
-    cache.put("g_postal_cd_features", g_postal_cd_features)
+    cache.put("postal_cd_features", postal_cd_features)
   end
   --=============================================
 
   if ( ( config.DT_FEATURE_FILE ) and
     ( config.DT_FEATURE_FILE ~= "" ) ) then
     assert(file_exists(config.DT_FEATURE_FILE.VALUE))
-    local status, g_dt_feature = pcall(dofile, config.DT_FEATURE_FILE.VALUE)
+    local status, dt_feature = pcall(dofile, config.DT_FEATURE_FILE.VALUE)
     assert(status, 'DT_FEATURE_FILE loading failed.')
-    cache.put("g_dt_feature", g_dt_feature)
+    cache.put("dt_feature", dt_feature)
   end
   --=============================================
 
@@ -175,23 +175,23 @@ function load_cfg.load_transform_features(file_path) -- TODO pending test entrie
     local status, referer_class_tables = pcall(dofile, config.REFERER_CLASS_FILE.VALUE)
     assert(status, 'REFERER_CLASS_FILE loading failed')
     assert(referer_class_tables, 'loading referer_class_tables failed')
-    assert(referer_class_tables["isn"], 'loading g_table_isn failed')
-    assert(referer_class_tables["mvc"], 'loading g_table_mvc failed')
-    assert(referer_class_tables["rd_sm"], 'loading g_table_rd_sm failed')
-    assert(referer_class_tables["rd_search"], 'loading g_table_rd_search failed')
-    cache.put("g_table_isn", referer_class_tables["isn"])
-    cache.put("g_table_mvc", referer_class_tables["mvc"])
-    cache.put("g_table_rd_sm", referer_class_tables["rd_sm"])
-    cache.put("g_table_rd_search", referer_class_tables["rd_search"])
+    assert(referer_class_tables["isn"], 'loading table_isn failed')
+    assert(referer_class_tables["mvc"], 'loading table_mvc failed')
+    assert(referer_class_tables["rd_sm"], 'loading table_rd_sm failed')
+    assert(referer_class_tables["rd_search"], 'loading table_rd_search failed')
+    cache.put("table_isn", referer_class_tables["isn"])
+    cache.put("table_mvc", referer_class_tables["mvc"])
+    cache.put("table_rd_sm", referer_class_tables["rd_sm"])
+    cache.put("table_rd_search", referer_class_tables["rd_search"])
   end
   --=============================================
 
   if ( ( config.CCID_MAPPING ) and
     ( config.CCID_MAPPING ~= "" ) ) then
     assert(file_exists(config.CCID_MAPPING.VALUE))
-    local status, g_ccid_mapping = pcall(dofile, config.CCID_MAPPING.VALUE)
+    local status, ccid_mapping = pcall(dofile, config.CCID_MAPPING.VALUE)
     assert(status, 'CCID_MAPPING loading failed.')
-    cache.put("g_ccid_mapping", g_ccid_mapping)
+    cache.put("ccid_mapping", ccid_mapping)
   end
   --=============================================
 

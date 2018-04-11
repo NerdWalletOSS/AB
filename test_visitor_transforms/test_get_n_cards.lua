@@ -1,9 +1,9 @@
 package.path = package.path .. ';../src/?.lua'
 local cache = require 'cache'
-local status, g_ccid_mapping = pcall(dofile, '/opt/ab/ccid_mapping.lua')
+local status, ccid_mapping = pcall(dofile, '../config/ccid_mapping.lua')
 assert(status, 'loading ccid_mapping.lua failed')
-assert(g_ccid_mapping, 'loading g_ccid_mapping failed')
-cache.put("g_ccid_mapping", g_ccid_mapping)
+assert(ccid_mapping, 'loading ccid_mapping failed')
+cache.put("ccid_mapping", ccid_mapping)
 
 describe("Testing get_n_cards", function()
     
@@ -13,13 +13,13 @@ describe("Testing get_n_cards", function()
     end)
 
     it("should get you correct numbers for dicts", function()
-        cache.put("g_ccid_mapping", {[0]=4, [4]=9})
+        cache.put("ccid_mapping", {[0]=4, [4]=9})
         assert.are.same(get_n_cards(), 2)
     end)
 
     it("should fail when nothing exists (cos of 0-indexing req)", function()
-        cache.put("g_ccid_mapping", {})
+        cache.put("ccid_mapping", {})
         assert.equal(pcall(get_n_cards), false)
-        cache.put("g_ccid_mapping", g_ccid_mapping)
+        cache.put("ccid_mapping", ccid_mapping)
     end)
 end)
