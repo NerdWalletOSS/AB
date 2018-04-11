@@ -19,12 +19,12 @@ local function post_proc_preds(
     tostring(n_opvec), ', but g_ccid_mapping says length is ', 
     tostring(n_cards))
   for idx, ccid in pairs(g_ccid_mapping) do
-    local ccid = assert(tonumber(ccid), 'g_ccid_mapping faulty')
+    ccid_n = assert(tonumber(ccid), 'g_ccid_mapping faulty')
     local pred = assertx(opvec[tonumber(idx)], 'Index ', tostring(idx),
       ' not present in opvec.')
     assertx(0 <= pred and pred <= 1, 'prediction ', tostring(pred), 
       ' not between 0 and 1 inclusive.')
-    out_features[ccid] = pred
+    out_features[ccid_n] = pred
   end
   local x = assert(json.encode(out_features))
   assertx(#x <= sz_out_buf, 'len of string is ', #x,

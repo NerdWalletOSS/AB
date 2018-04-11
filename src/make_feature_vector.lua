@@ -29,9 +29,6 @@ local function make_feature_vector(
     "C's provided g_n_dt_feature_vector value of ", 
     n_fvec, 
     ", does not match with Lua's value of ", n_features)
-  -- for debugging
-  for k, v in pairs(ohe) do print(k, v) end
-  -- end debugging
   fvec = ffi.cast("float*", fvec)
   ffi.fill(fvec, ffi.sizeof("float") * n_features) -- set to 0
   for k, v in pairs(ohe) do

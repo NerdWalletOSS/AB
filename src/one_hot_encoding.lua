@@ -1,54 +1,76 @@
+--[[
+Read through the config file (dt_feature), which should have
+been saved as a Lua file, and one-hot-encodes it
+using the recipes in it.
+
+dt_feature is structured as a {k: v or {vk: vv}} table,
+i.e. there is one level of nesting for
+categorical variables.
+k is the variable name. Here it is var_nm
+encoding_rule can either be v:
+	v is the index/position (1-indexed) of the non-categorical variable
+OR {vk: vv}:
+	vk is the possible value of the categorical variable
+	vv is the index/position (1-indexed) of the categorical variable for
+	   that particular value (vk).
+
+Therefore:
+1. If feature_table contains key-value pairs that are not
+   in the variable list, this handily skips over it and ignores it.
+2. This will suddenly fail if any of the non-categorical
+   variables are not numeric.
+3. If there is a value within the categorical variables that
+   do not exist in dt_feature, none of the values will be encoded.
+]]--
 local assertx = require 'assertx'
 local cache = require 'cache'
 
 local function one_hot_encoding(feature_table)
 	--[[
-	Read through the config file (ENCODING_RULES), which should have been saved as a Lua file, 
-	and one-hot-encodes it using the recipes in it.
+	This step does
+	1. the checking to make sure all inputs of the model
+	   (hard-coded in dt_feature) are present in the feature table
+	2. the encoding; for each variable, the encoding rule is retrieved.
+	   index refers to the index of the final array (1-indexed)
+     final_value is the value that is to be placed in there:
+       - for categorical (i.e. if encoding_rule is a table) it is 1
+       - for boolean it is either 1 or 0
+       - for numeric it is the value
 
-	ENCODING_RULES is structured as a {k: v or {vk: vv}} table, i.e. there is one level of nesting for
-	categorical variables.
-	k is the variable name.
-	v is the position (1-indexed) of the non-categorical variable
-	vk is the possible value of the categorical variable
-	vv is the position (1-indexed) of the categorical variable
-
-	Therefore:
-	1. If feature_table contains key-value pairs that are not in the variable list, this handily skips over it and ignores it.
-	2. This will suddenly fail if any of the non-categorical variables are not numeric.
-	3. If there is a value within the categorical variables that do not exist in ENCODING_RULES, none of the values will be encoded.
+	  Here:
+	  - var_nm is the variable name
+	  - var_value is the value for that particular variable, e.g. 749 
+	    or 'Tablet'
+	  - final_value is the numeric value after var_value has been processed
+	  - index is the index of the final vector that will be filled up with
+	  	final_value
+  	- not all indices will be touched; those that are not are assumed 0
 	]]--
-	local g_dt_feature = assert(cache.get("g_dt_feature"),
-		"g_dt_feature not loaded.")
-	--local table_dt_feature = cache.get("table_dt_feature")
+	local dt_feature = assert(cache.get("dt_feature"),
+		"dt_feature not loaded.")
 	local output = {}
-	-- checking to make sure all inputs are present
-	for var, _ in pairs(g_dt_feature) do
-		assertx(feature_table[var] ~= nil, 'Feature ', var, ' present in model not found in payload.')
-	end
-	for var, raw_value in pairs(feature_table) do
+	for var_nm, encoding_rule in pairs(dt_feature) do
+		local var_value = feature_table[var_nm]
+		local final_value = nil
+		assertx(var_value ~= nil, 'Feature ', var_nm,
+			' present in model not found in payload.')
 		local index = nil
-		local cat_encoding_rules = g_dt_feature[var]
-		if type(cat_encoding_rules) == 'table' then
-			index = cat_encoding_rules[raw_value]
+		if type(encoding_rule) == 'table' then
+			index = encoding_rule[var_value]
 			final_value = 1
-		elseif type(cat_encoding_rules) == 'number' then
-			index = cat_encoding_rules
-			if type(raw_value) == 'boolean' then
-				if raw_value == true then
-					final_value = 1
-				else
-					final_value = 0
-				end
+		else -- if it's not {vk:vv} then it must be v
+			assert(type(encoding_rule) == 'number',
+				'dt_feature file has values not table nor number.')
+			index = encoding_rule
+			if type(var_value) == 'boolean' then
+				final_value = var_value and 1 or 0
 			else
-				assertx(tonumber(raw_value) or type(raw_value) == 'number', 'Value of var ', var, ' is not a number: ', tostring(raw_value))
-				if type(raw_value) ~= 'number' then
-					raw_value = tonumber(raw_value)
-				end
-				final_value = raw_value
+				assertx(tonumber(var_value), 'Value of var ', var_nm,
+					' is not a number: ', tostring(var_value))
+				final_value = tonumber(var_value)
 			end
 		end
-		if index then -- special case when the categorical value is missing from the options
+		if index then -- case when categorical value is not one of the options
 			output[index] = final_value
 		end
 	end
