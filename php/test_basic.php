@@ -164,8 +164,10 @@ function test_basic(
                 $variant_ids[$i]  = dup_row("variant", $variant_ids[$i],
                   array( "is_del" => true, 
                         "pred_id" => $variant_ids[$i]), null);
-                // TODO P0
-                // What about device_x_variant table???
+                // Update device_x_variant table???
+                $X6['variant_id'] = $variant_ids[$i];
+                mod_row("device_x_variant", $X6, 
+                 " variant_id = " . $variant_ids[$i]);
               }
             }
           }
