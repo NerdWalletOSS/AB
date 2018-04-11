@@ -41,7 +41,7 @@ function curl.get(c_url, hdrs, body)
     request.postfields= JSON.encode(body)
   end
   local curl_handle = cURL.easy(request)
-  result = curl_handle:perform()
+  local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
   local return_code = tonumber(res_hdrs[1]:split(" ")[2])
@@ -65,7 +65,7 @@ function curl.post(c_url, hdrs, body)
     request.postfields= JSON.encode(body)
   end
   local curl_handle = cURL.easy(request)
-  result = curl_handle:perform()
+  local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
   local return_code = tonumber(res_hdrs[1]:split(" ")[2])
