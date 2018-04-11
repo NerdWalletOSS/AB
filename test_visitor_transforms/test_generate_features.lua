@@ -1,16 +1,23 @@
 package.path = package.path .. ';../src/?.lua'
 local generate_features = require 'generate_features'
---local cache = require 'cache'
+local cache = require 'cache'
 local json = require 'json'
 local test_data = 'generate_features_data.json'
-_G.g_table_isn, _G.g_table_mvc, _G.g_table_rd_sm, _G.g_table_rd_search = assert(dofile('../config/referrer_class_file.lua'))
-_G.g_postal_cd_features = assert(dofile('../config/postal_cd_features.lua'))
---[[cache.put("table_postal_cd_features", table_postal_cd_features)
-cache.put("table_isn", table_isn)
-cache.put("table_mvc", table_mvc)
-cache.put("table_rd_sm", table_rd_sm)
-cache.put("table_rd_search", table_rd_search)
-]]--
+local status, postal_cd_features = pcall(dofile, '../config/postal_cd_features.lua')
+assert(status, "loading postal_cd_features.lua failed")
+assert(postal_cd_features, "loading postal_cd_features failed")
+cache.put("postal_cd_features", postal_cd_features)
+local status, referer_class_tables = pcall(dofile, '../config/referer_class_file.lua')
+assert(status, 'loading referrer_class_file failed')
+assert(referer_class_tables, 'loading referer_class_tables failed')
+assert(referer_class_tables["isn"], 'loading table_isn failed')
+assert(referer_class_tables["mvc"], 'loading table_mvc failed')
+assert(referer_class_tables["rd_sm"], 'loading table_rd_sm failed')
+assert(referer_class_tables["rd_search"], 'loading table_rd_search failed')
+cache.put("table_isn", referer_class_tables["isn"])
+cache.put("table_mvc", referer_class_tables["mvc"])
+cache.put("table_rd_sm", referer_class_tables["rd_sm"])
+cache.put("table_rd_search", referer_class_tables["rd_search"])
 
 describe("Testing generate_features", function()
 

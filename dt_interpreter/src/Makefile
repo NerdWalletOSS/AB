@@ -13,7 +13,6 @@ INCS= -I. \
 	-I../../curl-7.51.0/include/curl/ \
 
 
-
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
 
@@ -44,13 +43,13 @@ XOBJS = mmap.o
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
 test_dt : $(COBJS) $(XOBJS) 
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) -o test_dt  \
-	-lm  -lpthread -ldl 
 
-# TODO Put back fopenmp and libgomp
+	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  \
+	-lm  -lpthread -ldl  -lgomp
+
 
 dt.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o dt.so \
+	$(CC) -shared $(CFLAGS) $(SO_COBJS) $(INCS) -o dt.so \
 	-lm  -lpthread -ldl  -lgomp
 
 clean:
