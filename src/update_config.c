@@ -9,6 +9,8 @@
 #include "l_get_num_features.h"
 
 #include "load_dt.h"
+#include "load_rf.h"
+#include "load_mdl.h"
 #include "maxminddb.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 extern DT_REC_TYPE *g_dt_map; 
@@ -142,15 +144,23 @@ update_config(
     cBYE(status);
   }
   //--------------------------------------------------------
-  // dt_file
-  if ( ( g_dt_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
-    munmap(g_dt_map, g_len_dt_file);
-  }
+  // dt, rf, mdl
   if ( *g_cfg.dt_file != '\0' ) { 
-    status = load_dt(g_cfg.dt_file, 
-        &g_dt_map, &g_len_dt_file, &g_num_dt_map);
+    status = load_dt(g_cfg.dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
   }
+  if ( *g_cfg.rf_file != '\0' ) { 
+    status = load_rf(g_cfg.rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
+    cBYE(status);
+  }
+  if ( *g_cfg.mdl_file != '\0' ) { 
+    status = load_mdl(g_cfg.mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
+    cBYE(status);
+    g_predictions = malloc(g_n_mdl * sizeof(float));
+    // TODO DELETE BELOW 
+    for ( int i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = i+1; }
+  }
+  //--------------------------------------------------------
 
   free_if_non_null(g_dt_feature_vector); 
   if  ( g_n_dt_feature_vector > 0 ) { 

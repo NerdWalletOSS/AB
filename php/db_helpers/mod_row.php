@@ -28,12 +28,15 @@ function mod_row(
     $sql .= " $key = :$key ";
     $X["$key"] = $val;
   }
-  var_dump($X);
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);
-  $rslt = $stmt->execute($X); if ( !$rslt ) { 
+  $rslt = $stmt->execute($X); 
+  var_dump($sql);
+  var_dump($X);
+  if ( !$rslt ) { 
+    print("XXXXXXXXXXX\n");
     var_dump($sql); var_dump($X);
-    rs_assert(false, "db_get_rows failed");
+    rs_assert(false, "mod_row failed");
   }
   return true;
 }

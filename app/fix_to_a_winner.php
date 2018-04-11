@@ -8,6 +8,13 @@ require_once "header.php"; ?>
 require_once "navbar.php"; 
 require_once "config_html.php";
 
+// -- TEST TestID CREDENTIALS
+if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
+	{
+		header('Location: home.php');
+		return false;
+	}
+
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 require_once "display_logic_aev_test.php";

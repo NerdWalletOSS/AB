@@ -47,6 +47,39 @@ all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua ../dt_interpreter/src/
 
 ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 
+update_config.c : load_rf.h load_mdl.h load_rf.c load_mdl.c 
+
+load_rf.h : load_dt.h
+	cat load_dt.h | \
+	sed s'/dt_types/XXXX/'g | \
+	sed s'/dt/rf/'g | \
+	sed s'/DT_REC/RF_REC/'g | \
+	sed s'/XXXX/dt_types/'g > load_rf.h
+
+load_rf.c : load_dt.c
+	cat load_dt.c | sed s'/DT_REC/RF_REC/'g | \
+	sed s'/#include "load_dt.h"/#include "load_rf.h"/'g | \
+	sed s'/dt/rf/'g > load_rf.c
+
+load_rf.o : load_rf.c load_rf.h
+	$(CC) -c load_rf.c -o load_rf.o $(CFLAGS) $(INCS)
+
+load_mdl.h : load_dt.h
+	cat load_dt.h | \
+	sed s'/dt_types/XXXX/'g | \
+	sed s'/dt/mdl/'g | \
+	sed s'/DT_REC/MDL_REC/'g | \
+	sed s'/XXXX/dt_types/'g > load_mdl.h
+
+load_mdl.c : load_dt.c
+	cat load_dt.c | sed s'/DT_REC/MDL_REC/'g | \
+	sed s'/#include "load_dt.h"/#include "load_mdl.h"/'g | \
+	sed s'/dt/mdl/'g > load_mdl.c
+
+load_mdl.o : load_mdl.c load_mdl.h
+	$(CC) -c load_mdl.c -o load_mdl.o $(CFLAGS) $(INCS)
+
+
 .c.o : ../curl-7.51.0/lib/.libs/libcurl.so  
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
@@ -95,7 +128,7 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src
 ./libs/libmaxminddb.so: ./libs ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	cp ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ./libs/libmaxminddb.so
 
-ab_httpd : $(COBJS) \
+ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
@@ -105,7 +138,8 @@ ab_httpd : $(COBJS) \
 	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so
-	$(CC) $(CFLAGS) $(COBJS) -o ab_httpd  \
+	$(CC) $(CFLAGS) $(COBJS) \
+	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
@@ -114,7 +148,7 @@ ab_httpd : $(COBJS) \
 	../dt_interpreter/src/dt.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
-	-lm  -lpthread -ldl  
+	-lm  -lpthread -ldl   
 
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
