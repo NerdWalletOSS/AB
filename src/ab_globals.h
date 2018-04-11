@@ -108,3 +108,15 @@ EXTERN MAXMIND_REC_TYPE g_maxmind;
 EXTERN lua_State *g_L; // Set by C
 
 #include "ab_log_globals.h"
+
+#include "dt_types.h"
+EXTERN DT_REC_TYPE *g_dt; /* decision tree */
+EXTERN int g_n_dt;
+EXTERN size_t g_len_dt_file; 
+EXTERN RF_REC_TYPE *g_rf; /* random forest */
+EXTERN int g_n_rf;
+EXTERN size_t g_len_rf_file; 
+EXTERN MDL_REC_TYPE *g_mdl; /* models */
+EXTERN int g_n_mdl;
+EXTERN size_t g_len_mdl_file; 
+EXTERN float *g_predictions; 

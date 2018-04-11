@@ -39,6 +39,22 @@ int n_rf = 0;
 MDL_REC_TYPE *mdl = NULL;
 int n_mdl = 0;
 
+static int
+is_uq(
+    int argc,
+    char **argv
+    )
+{
+  int status = 0;
+  for ( int i = 0; i < argc; i++ ) { 
+    for ( int j = i+1; i < argc; i++ ) { 
+      if ( strcmp(argv[i], argv[j]) == 0 ) { go_BYE(-1);
+      }
+    }
+  }
+BYE:
+  return status;
+}
 int
 main(
     int argc,
@@ -48,14 +64,20 @@ main(
   int status = 0;
   char *random_forest_file_name = NULL;
   char *test_data_file_name     = NULL;
-  char *output_file_name     = NULL;
+  char *dt_file_name     = NULL;
+  char *rf_file_name     = NULL;
+  char *mdl_file_name     = NULL;
   float *invals = NULL;
   FILE *fp = NULL;
   FILE *ofp = NULL;
-  if ( argc != 4 ) { go_BYE(-1); }
+  if ( argc != 6 ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   test_data_file_name     = argv[2];
-  output_file_name        = argv[3];
+  dt_file_name            = argv[3];
+  rf_file_name            = argv[4];
+  mdl_file_name           = argv[5];
+
+  status = is_uq(argv, argc); cBYE(status);
 
   g_num_compares = 0;
 
@@ -125,11 +147,22 @@ main(
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
   printf("Total time (1, 2) = %llu %llu \n", sum1, sum2);
   printf("COMPLETED\n");
-  ofp = fopen(output_file_name, "wb");
-  return_if_fopen_failed(ofp, output_file_name, "wb");
+  //---------------------------------------------------
+  ofp = fopen(dt_file_name, "wb");
+  return_if_fopen_failed(ofp, dt_file_name, "wb");
   fwrite(dt, sizeof(DT_REC_TYPE), n_dt, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(rf_file_name, "wb");
+  return_if_fopen_failed(ofp, rf_file_name, "wb");
+  fwrite(rf, sizeof(RF_REC_TYPE), n_rf, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(mdl_file_name, "wb");
+  return_if_fopen_failed(ofp, mdl_file_name, "wb");
+  fwrite(mdl, sizeof(MDL_REC_TYPE), n_mdl, ofp);
+  fclose_if_non_null(ofp);
 
-  
 BYE:
   fclose_if_non_null(ofp);
   fclose_if_non_null(fp);

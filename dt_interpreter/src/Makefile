@@ -45,7 +45,9 @@ XOBJS = mmap.o
 
 test_dt : $(COBJS) $(XOBJS) 
 	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) -o test_dt  \
-	-lm  -lpthread -ldl  -lgomp
+	-lm  -lpthread -ldl 
+
+# TODO Put back fopenmp and libgomp
 
 dt.so : $(SO_COBJS) 
 	$(CC) -shared $(CFLAGS) $(SO_COBJS) -o dt.so \

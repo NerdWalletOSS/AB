@@ -41,13 +41,19 @@ free_globals(
     munmap(g_classify_ua_map, g_len_classify_ua_file);
     g_num_classify_ua_map = 0;
   }
-  if ( ( g_dt_map != NULL ) && ( g_len_dt_file != 0 ) ) {
-    munmap(g_dt_map, g_len_dt_file);
-    g_num_dt_map = 0;
+  if ( ( g_dt != NULL ) && ( g_len_dt_file > 0 ) ) { 
+    munmap(g_dt, g_len_dt_file); g_n_dt = 0;
+  }
+  if ( ( g_rf != NULL ) && ( g_len_rf_file > 0 ) ) { 
+    munmap(g_rf, g_len_rf_file); g_n_rf = 0;
+  }
+  if ( ( g_mdl != NULL ) && ( g_len_mdl_file > 0 ) ) { 
+    munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
   }
   
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
   if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
+  free_if_non_null(g_predictions); g_n_mdl = 0;
 }
 
 int 
@@ -93,6 +99,9 @@ zero_globals(
   memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   memset(g_cfg.dt_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.rf_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.mdl_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+
   memset(g_cfg.mmdb_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   g_ss_response = NULL;
@@ -180,14 +189,10 @@ zero_globals(
   g_mmdb_in_use = false;
   memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
   g_L = NULL;
-  // For Lua
-  g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
-  luaL_openlibs(g_L);  
-  if ( ( luaL_loadfile(g_L, "ab.lua") ) || 
-      ( lua_pcall(g_L, 0, 0, 0)) )   {
-    fprintf(stderr, "calling initialization failed: %s\n", lua_tostring(g_L, -1));
-    go_BYE(-1);
-  }
+  g_dt  = NULL; g_n_dt = 0;
+  g_rf  = NULL; g_n_rf = 0;
+  g_mdl = NULL; g_n_mdl = 0;
+  g_predictions = NULL;
   zero_log();
 BYE:
   return status;
