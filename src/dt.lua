@@ -4,6 +4,10 @@ function load_config(...)
   load_cfg.load_transform_features(...)
 end
 
+function hard_code(...)
+  load_cfg.hard_code(...)
+end
+
 local make_feature_vec = require 'make_feature_vector'
 function make_feature_vector(...)
   return make_feature_vec(...)

@@ -162,12 +162,29 @@ local function update_rts_configs(g_conf, config)
   return is_updated
 end
 
+function load_cfg.hard_code() 
+  local config = {}
+  config.POSTAL_CD_FEATURES = {}
+  config.REFERER_CLASS_FILE = {}
+  config.DT_FEATURE_FILE = {}
+  config.CCID_MAPPING = {}
+  config.POSTAL_CD_FEATURES.VALUE  = "/opt/ab/postal_cd_features.lua"
+  config.REFERER_CLASS_FILE.VALUE  = "/opt/ab/referer_class_file.lua"
+  config.DT_FEATURE_FILE.VALUE  = "/opt/ab/dt_feature.lua"
+  config.CCID_MAPPING.VALUE  = "/opt/ab/ccid_mapping.lua"
+  exec_config(config)
+end
+
 function load_cfg.load_transform_features(file_path) -- TODO pending test entries
   local file = assert(io.open(file_path, 'r'), "Invalid filename given")
   local conf_str = file:read('*a')
   file:close()
   local config = json.decode(conf_str)
   config = config.AB
+  exec_config(config)
+end
+
+function exec_config(config)
 
   --=============================================
   if ( ( config.POSTAL_CD_FEATURES ) and
@@ -188,6 +205,14 @@ function load_cfg.load_transform_features(file_path) -- TODO pending test entrie
   end
   --=============================================
 
+  if ( ( config.CCID_MAPPING ) and
+    ( config.CCID_MAPPING ~= "" ) ) then
+    assert(file_exists(config.CCID_MAPPING.VALUE))
+    local status, ccid_mapping = pcall(dofile, config.CCID_MAPPING.VALUE)
+    assert(status, 'CCID_MAPPING loading failed.')
+    cache.put("ccid_mapping", ccid_mapping)
+  end
+  --=============================================
   if ( ( config.REFERER_CLASS_FILE ) and
     ( config.REFERER_CLASS_FILE ~= "" ) ) then
     assert(file_exists(config.REFERER_CLASS_FILE.VALUE))
@@ -202,15 +227,6 @@ function load_cfg.load_transform_features(file_path) -- TODO pending test entrie
     cache.put("table_mvc", referer_class_tables["mvc"])
     cache.put("table_rd_sm", referer_class_tables["rd_sm"])
     cache.put("table_rd_search", referer_class_tables["rd_search"])
-  end
-  --=============================================
-
-  if ( ( config.CCID_MAPPING ) and
-    ( config.CCID_MAPPING ~= "" ) ) then
-    assert(file_exists(config.CCID_MAPPING.VALUE))
-    local status, ccid_mapping = pcall(dofile, config.CCID_MAPPING.VALUE)
-    assert(status, 'CCID_MAPPING loading failed.')
-    cache.put("ccid_mapping", ccid_mapping)
   end
   --=============================================
 
