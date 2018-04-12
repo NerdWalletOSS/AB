@@ -1,0 +1,16 @@
+
+FOLLOW ON:
+
+1)Scenario:
+    Action: Test "A" with channel say, facebook follows another test "B" with the same channel
+    Action: Change the channel of test "A" to say, aol.
+    Expected: Now test "B" should not be followed on by A, i.e. The predecesssor should be set to null
+    Observed: Test "A" with different channel aol still follows test "B" with channel facebook
+    ## ToDo: Ramesh Sir
+
+2) Variant percentage should not change on page1 when Device_x_variant is set true 
+    Now we have 2 issues:
+    UI side: When the UI "Skip" button is just a link to another page, why form data is submitted. Interestingly it first navigates to the 2nd page and then submits page 1 form in the backend. I will work on it and fix it. 
+    ## ToDo: Utpal --> IN PROGRESS
+    Code Logic: If we are using CLI, this behavior will always occur as this is code logic. So are we going to allow such behavior or do we intend to change the code flow? 
+    ## ToDo: Ramesh Sir --> DONE

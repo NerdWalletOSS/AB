@@ -69,7 +69,7 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Test URL</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Test URL</th><th>Action</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -77,8 +77,15 @@ $(document).ready(function() {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
+           TableRow += "<td><a href='http://www.nerdwallet.com/ur2?nw_campaign_id=" + value['external_id'] + "'>" + value['external_id'] + "</a></td>";
             if (value['state_id'] < 5) {
-            TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button></td>";
+            TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button>"
+            if (value['state_id'] == 1) {
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
+            } 
+
+"</td>";
+        
 						} else {
 						TableRow += "<td><strong>No Action</strong></td>";
 						}
@@ -90,7 +97,7 @@ $(document).ready(function() {
         var jsonData = eval(response);
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Test URL</th<th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Test URL</th><th>Action</th> </tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
