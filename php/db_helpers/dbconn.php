@@ -1,7 +1,7 @@
 <?php
 require_once 'bye.php';
 function extract_sql_params(
-      $conf_file = "/opt/abadmin/db.json",
+      $conf_file = "/opt/abadmin/db2.json",
       &$dbuser, 
       &$dbpass, 
       &$dbhost, 
@@ -14,7 +14,7 @@ function extract_sql_params(
     $dbuser     = "root";
     $dbpass = '';
     $dbhost = "localhost";
-    $dbname = "abdb";
+    $dbname = "abdb2";
   }
   else {
     $X = json_decode(file_get_contents($conf_file));
@@ -35,7 +35,7 @@ function extract_sql_params(
 }
 
 function dbconn(
-  $conf_file = "/opt/abadmin/db.json"
+  $conf_file = "/opt/abadmin/db2.json"
 )
 {
   if ( !is_file($conf_file) ) { 

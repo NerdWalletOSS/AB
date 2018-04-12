@@ -17,6 +17,7 @@ require_once "lkp.php";
     $TestName    = $rslt['name'];
     $description = $rslt['description'];
     $BinType     = $rslt['BinType'];
+    $external_id = $rslt['external_id'];
     $state_id    = intval($rslt['state_id']);
     $this_state       = lkp("state", $state_id, "reverse");
     if ( $this_state == "started" ) {

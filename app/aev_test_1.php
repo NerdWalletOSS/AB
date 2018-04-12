@@ -42,6 +42,12 @@ $config = config_html($TestType);
 	<tr>
 		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
 	</tr>
+  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+  <tr>
+  <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id='<?php echo $external_id; ?> >
+  http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
+  </tr>
+  <?php } ?>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
@@ -57,7 +63,6 @@ $config = config_html($TestType);
   </tr>
   <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
-
   <tr> 
   <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
   <textarea class="form-control" rows="3" cols="20" name="TestDescription" 
@@ -67,7 +72,7 @@ $config = config_html($TestType);
   </textarea>
   </td>	
   </tr>
-<tr><td>
+<tr><td colspan="3">
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 
 Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>&nbsp;
