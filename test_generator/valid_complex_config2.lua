@@ -175,103 +175,116 @@ return {
           type = "exactly_one",
           values = {"1"}
         },
-      }
-
-    },
-    entry_fields = {
-      id = {
-        type = "number",
-        value = {
-          random = {
-            lower = "0",
-            upper = "214748",
-          }
-        },
-      },
-      api_id = {
-        -- TODO ask Ramesh
-        type = "number",
-        value = {
-          random = {
-            lower = "1",
-            upper = "1",
-          }
-        },
-      },
-      name = {
-        type = "regex",
-        length = {
-          random = {
-            lower = "1",
-            upper = tostring(consts.AB_MAX_LEN_VARIANT_NAME),
-          },
-        },
-        regex = "%w",
-      },
-      request_webapp_id = {
-        -- TODO ask Ramesh
-        type = "number",
-        value = {
-          random = {
-            lower = "2",
-            upper = "2",
-          }
-        },
-      },
-      description = {
-        --TODO Ranesh double check
-        type = "list",
-        values = {"null"}
-      },
-      test_id = {
-        -- TODO ask Ramesh
-        type = "number",
-        value = {
-          random = {
-            lower = "1",
-            upper = "1",
-          }
-        },
-      },
-      percentage = {
-        type = "number",
-        float = true,
-        value = {
-          random = {
-            lower = "0",
-            upper = "100",
-          },
-        },
-      },
-      is_final = {
-        type = "number",
-        value = {
-          random = {
-            lower = "0",
-            upper = "1",
-          },
-        },
       },
       url = {
-        type = "regex",
-        length = {
-          random = {
-            lower = "1",
-            upper = tostring(consts.AB_MAX_LEN_VARIANT_NAME),
+        {
+          type = "exactly_one",
+          values = {
+            "http://localhost:8080/AB/test_webapp/ab_page_1.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_2.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_3.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_4.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_5.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_6.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_7.html",
+            "http://localhost:8080/AB/test_webapp/ab_page_8.html"}
           },
         },
-        regex = "%w",
       },
-      -- "custom_data": null,
-      -- "created_at": "0000-00-00 00:00:00",
-      -- "t_create": "0",
-      -- "updated_at": "2018-02-05 15:35:39",
-      -- "t_update": "151787373913040700"
+      entry_fields = {
+        id = {
+          type = "number",
+          value = {
+            random = {
+              lower = "0",
+              upper = "214748",
+            }
+          },
+        },
+        api_id = {
+          -- TODO ask Ramesh
+          type = "number",
+          value = {
+            random = {
+              lower = "1",
+              upper = "1",
+            }
+          },
+        },
+        name = {
+          type = "regex",
+          length = {
+            random = {
+              lower = "1",
+              upper = tostring(consts.AB_MAX_LEN_VARIANT_NAME),
+            },
+          },
+          regex = "%w",
+        },
+        request_webapp_id = {
+          -- TODO ask Ramesh
+          type = "number",
+          value = {
+            random = {
+              lower = "2",
+              upper = "2",
+            }
+          },
+        },
+        description = {
+          --TODO Ranesh double check
+          type = "list",
+          values = {"null"}
+        },
+        test_id = {
+          -- TODO ask Ramesh
+          type = "number",
+          value = {
+            random = {
+              lower = "1",
+              upper = "1",
+            }
+          },
+        },
+        percentage = {
+          type = "number",
+          float = true,
+          value = {
+            random = {
+              lower = "0",
+              upper = "100",
+            },
+          },
+        },
+        is_final = {
+          type = "number",
+          value = {
+            random = {
+              lower = "0",
+              upper = "1",
+            },
+          },
+        },
+        url = {
+          type = "regex",
+          length = {
+            random = {
+              lower = "1",
+              upper = tostring(consts.AB_MAX_LEN_VARIANT_NAME),
+            },
+          },
+          regex = "%w",
+        },
+        -- "custom_data": null,
+        -- "created_at": "0000-00-00 00:00:00",
+        -- "t_create": "0",
+        -- "updated_at": "2018-02-05 15:35:39",
+        -- "t_update": "151787373913040700"
+      },
     },
-  },
 
 
 
-}
+  }
 
 
