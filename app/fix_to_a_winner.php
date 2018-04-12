@@ -63,7 +63,7 @@ $config = config_html($TestType);
 <?php } ?>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   </td>
-<td><input type="radio" name="options" id="option1" autocomplete="off" name="Winner" value="<?php echo $rslt['Variants'][$i]['name']; ?>"></td>
+<td><label class="btn btn-default active form-check-label"><input type="radio" autocomplete="off" name="Winner" value="<?php echo $rslt['Variants'][$i]['name']; ?>"></label></td>
 </tr>
 <?php } ?>
  <input type='hidden' name='TestID' value='<?php echo $id; ?>'>
