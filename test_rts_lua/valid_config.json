@@ -41,7 +41,7 @@
       },
       "SZ_LOG_Q": {
         "COMMENT": "Size of queue of messages to Log Server.  Provides buffering so that POSTing to Log Server can be done by separate thread and does not slow down",
-        "VALUE": "65536"
+        "VALUE": "1048576"
       }
     },
     "MYSQL": {
