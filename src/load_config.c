@@ -21,8 +21,49 @@ int
 l_hard_code_config()
 {
   int status = 0;
-
+  char my_config[] = '{"AB": {
+      "POSTAL_CD_FEATURES" : {
+        "COMMENT" : "Contains postal code features",
+        "VALUE"  : "/opt/ab/postal_cd_features.lua"
+      },
+      "REFERER_CLASS_FILE" : {
+        "COMMENT" : "Contains all info required for getting referer",
+        "VALUE"  : "/opt/ab/referer_class_file.lua"
+      },
+      "DT_FEATURE_FILE" : {
+        "COMMENT" : "Has the mappings to get DT features",
+        "VALUE"  : "/opt/ab/dt_feature.lua"
+      },
+      "CCID_MAPPING" : {
+        "COMMENT" : "Has the ccid to index mapping",
+        "VALUE"  : "/opt/ab/ccid_mapping.lua"
+      }
+  }'
+  char file_name[] = '/tmp/lumpy.json'
+  FILE *fp = fopen(file_name, "ab");
+  if ( fp != NULL ) {
+    fputs(my_config, fp);
+    fclose(fp);
+  }
+  lua_getglobal(g_L_DT, "load_config");
+  if ( !lua_isfunction(g_L_DT, -1)) {
+    fprintf(stderr, "Function load_config does not exist in DT lua's global space\n");
+    lua_pop(g_L_DT, 1);
+    go_BYE(-1);
+  }
+  lua_pushstring(g_L_DT, file_name); // not pushing string as it causes a copy
+  status = lua_pcall(g_L_DT, 1, 0, 0);
+  if (status != 0) {
+    WHEREAMI;
+    fprintf(stderr, "calling function load_config for DT failed: %s\n", lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1);
+    go_BYE(-1);
+  }
+BYE:
+  return status;
 }
+
 
 int
 l_load_config(
