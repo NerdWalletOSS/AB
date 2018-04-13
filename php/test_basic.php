@@ -73,7 +73,7 @@ function test_basic(
     rs_assert(is_numeric($test_id));
     $test_id = intval($test_id);
     $T = db_get_row("test", "id", $test_id);
-    rs_assert($T, "No test with id = $id \n");
+    rs_assert($T, "No test with id = $test_id \n");
     $updater    = get_json_element($inJ, 'Updater');
     $updater_id = lkp("admin", $updater);
     $is_dev_specific = $T['is_dev_specific'];
@@ -101,6 +101,11 @@ function test_basic(
     $inJ->{'State'}   = $state = "draft";
     $inJ->{'BinType'} = $bin_type;
   }
+  else {
+    $bin_type = get_json_element($inJ, 'bin_type'); 
+  }
+
+  rs_assert($bin_type, "Bin type not set ");
   //-------------------------------------------------
   $test_type_id = lkp("test_type", $test_type);
   $bin_type_id  = lkp("bin_type", $bin_type);

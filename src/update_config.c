@@ -101,10 +101,16 @@ update_config(
   // justin cat file 
   free_if_non_null(g_justin_cat_lkp);  
   g_n_justin_cat_lkp = 0; 
+  g_justin_cat_other_id = -1;
   if ( *g_cfg.justin_cat_file != '\0' ) { 
     status = load_lkp(g_cfg.justin_cat_file, &g_justin_cat_lkp, 
         &g_n_justin_cat_lkp);
     cBYE(status);
+    for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
+      if ( strcasecmp(g_justin_cat_lkp[i].name, "Other") == 0 ) {
+        g_justin_cat_other_id = g_justin_cat_lkp[i].id;
+      }
+    }
   }
   //--------------------------------------------------------
   // os file 
@@ -158,7 +164,7 @@ update_config(
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
     // TODO DELETE BELOW 
-    for ( int i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = 1.0/(i+2); }
+    for ( uint32_t i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = 1.0/(i+2); }
   }
   //--------------------------------------------------------
 

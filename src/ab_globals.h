@@ -66,12 +66,11 @@ EXTERN pthread_t g_con; // For C
 EXTERN pthread_cond_t g_condc, g_condp; // For C
 EXTERN pthread_mutex_t g_mutex; // For C
 
+EXTERN uint32_t g_justin_cat_other_id; 
 EXTERN uint32_t g_justin_cat_id; 
 EXTERN uint32_t g_os_id; 
 EXTERN uint32_t g_browser_id; 
 EXTERN uint32_t g_device_type_id; 
-
-EXTERN uint32_t g_device_idx; // TODO P0 TO DELETE 
 
 EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
@@ -112,12 +111,12 @@ EXTERN lua_State *g_L_DT; // Set by C
 
 #include "dt_types.h"
 EXTERN DT_REC_TYPE *g_dt; /* decision tree [g_n_dt]  */
-EXTERN int g_n_dt;
+EXTERN uint32_t g_n_dt;
 EXTERN size_t g_len_dt_file; 
 EXTERN RF_REC_TYPE *g_rf; /* random forest * [g_n_rf] */
-EXTERN int g_n_rf;
+EXTERN uint32_t g_n_rf;
 EXTERN size_t g_len_rf_file; 
 EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
-EXTERN int g_n_mdl;
+EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */

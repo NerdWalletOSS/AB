@@ -154,13 +154,12 @@ zero_globals(
 
   // g_con, g_mutex, ....
 
+  g_justin_cat_other_id = -1;
   g_justin_cat_lkp  = NULL; g_n_justin_cat_lkp  = 0;
   g_os_lkp          = NULL; g_n_os_lkp          = 0;
   g_browser_lkp     = NULL; g_n_browser_lkp     = 0;
   g_device_type_lkp = NULL; g_n_device_type_lkp = 0;
   g_referer_class_lkp  = NULL; g_n_referer_class_lkp  = 0;
-
-  g_device_idx = 0;
 
   g_classify_ua_map = NULL;
   g_len_classify_ua_file = 0;
