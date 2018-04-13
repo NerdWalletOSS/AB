@@ -9,7 +9,7 @@
 #include "add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-#include "diagnostics.h"
+// TODO PUT BACK #include "diagnostics.h"
 #include "dump_log.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
@@ -68,8 +68,10 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
+      /* TODO PUT BACK 
       status = diagnostics(); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      */
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */

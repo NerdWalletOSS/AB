@@ -95,9 +95,6 @@ EXTERN int g_n_referer_class_lkp;
 
 EXTERN float *g_dt_feature_vector; 
 EXTERN int g_n_dt_feature_vector  ;  // Set by Lua after reading configs
-// TODO INDRAJEET ABOVE
-EXTERN int g_n_cards;
-// ADDED BY LUMPY
 
 EXTERN char g_valid_chars_in_url[256]; // Set by C
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
@@ -114,13 +111,13 @@ EXTERN lua_State *g_L_DT; // Set by C
 #include "ab_log_globals.h"
 
 #include "dt_types.h"
-EXTERN DT_REC_TYPE *g_dt; /* decision tree */
+EXTERN DT_REC_TYPE *g_dt; /* decision tree [g_n_dt]  */
 EXTERN int g_n_dt;
 EXTERN size_t g_len_dt_file; 
-EXTERN RF_REC_TYPE *g_rf; /* random forest */
+EXTERN RF_REC_TYPE *g_rf; /* random forest * [g_n_rf] */
 EXTERN int g_n_rf;
 EXTERN size_t g_len_rf_file; 
-EXTERN MDL_REC_TYPE *g_mdl; /* models */
+EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN int g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
-EXTERN float *g_predictions; 
+EXTERN float *g_predictions;  /* [g_n_mdl] */

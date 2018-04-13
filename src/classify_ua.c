@@ -8,7 +8,33 @@
 #include "ab_types.h"
 #include "auxil.h"
 #include "url.h"
-#include "ab_globals.h"
+#include "spooky_hash.h"
+
+extern UA_REC_TYPE *g_classify_ua_map; // Set by C
+extern uint32_t g_num_classify_ua_map; // Set by C
+
+extern uint32_t g_justin_cat_id; 
+extern uint32_t g_os_id; 
+extern uint32_t g_browser_id; 
+extern uint32_t g_device_type_id; 
+
+extern LKP_REC_TYPE *g_justin_cat_lkp; 
+extern int g_n_justin_cat_lkp; 
+
+extern LKP_REC_TYPE *g_os_lkp; 
+extern int g_n_os_lkp; 
+
+extern LKP_REC_TYPE *g_browser_lkp; 
+extern int g_n_browser_lkp; 
+
+extern LKP_REC_TYPE *g_device_type_lkp; 
+extern int g_n_device_type_lkp; 
+extern char g_valid_chars_in_url[256];
+extern LKP_REC_TYPE *g_justin_cat_lkp;
+extern int g_n_justin_cat_lkp; 
+extern char g_valid_chars_in_ua[256]; 
+extern char g_valid_chars_in_ab_args[256]; 
+
 #include "classify_ua.h"
 #include "load_lkp.h"
 
