@@ -6,8 +6,9 @@ usage(){
   echo "  -b  builds AB and places everything in the bin directory"
   echo "  -o  Same as -b but doesn't install packages build"
   echo "  -c  Cleans out all the binary files"
-  echo "  -p  Builds a tarball in addition to building everything"
+  echo "  -p  Builds tarballs for AB and abadmin in addition to building everything"
   echo "  -t  Builds AB and runs tests"
+  echo "  -x  Builds a tarball of all the php companents for AB admin"
   exit 1 ;
 }
 
@@ -43,6 +44,14 @@ build(){
   set +e
 }
 
+install_mysql(){
+  sudo apt-get update
+  sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password x'
+  sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
+  sudo apt-get -y install mysql-server
+  mysql -uroot -px -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
+}
+
 install_apache(){
   which apache2
   RES="`echo $?`"
@@ -72,7 +81,7 @@ run_lua_tests(){
   fi
 }
 
-while getopts "bochpt" opt;
+while getopts "bochptx" opt;
 do
   case $opt in
     h)
@@ -82,6 +91,7 @@ do
       # echo "-f was triggered, Parameter: $OPTARG" >&2
       build
       tar -cvzf bin.tar.gz ./bin
+      tar -cvzf php.tar.gz php app
       exit 0
       ;;
     b)
@@ -99,8 +109,13 @@ do
     t)
       buildall
       install_apache
+      install_mysql
       run_lua_tests
       echo "All Tests succeeded"
+      exit 0
+      ;;
+    x)
+      tar -cvzf php.tar.gz php app
       exit 0
       ;;
     \?)
