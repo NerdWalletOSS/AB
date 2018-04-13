@@ -76,6 +76,9 @@ EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
 
+EXTERN char g_date[AB_MAX_LEN_DATE+1];  // get date from browser headers
+EXTERN char g_in_tracer[AB_MAX_LEN_TRACER+1];
+EXTERN char g_out_tracer[AB_MAX_LEN_TRACER+1];
 
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
 EXTERN int g_n_justin_cat_lkp; 

@@ -31,6 +31,7 @@
 #include "get_body.h"
 #include "extract_api_args.h"
 #include "get_nw_hdrs.h"
+#include "get_date.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -71,6 +72,8 @@ generic_handler(
   opbuf = evbuffer_new();
   if ( opbuf == NULL) { go_BYE(-1); }
   const char *uri = evhttp_request_uri(req);
+  memset(g_out_tracer, '\0', AB_MAX_LEN_TRACER+1);
+  memset(g_in_tracer, '\0', AB_MAX_LEN_TRACER+1);
 
   //--------------------------------------
   status = extract_api_args(uri, api, AB_MAX_LEN_API_NAME, 
@@ -92,6 +95,12 @@ generic_handler(
     status = get_and_classify_ua(req, &g_device_type_id, &g_os_id, 
         &g_browser_id, &g_justin_cat_id);
     cBYE(status);
+  }
+  if ( ( req_type == Router ) || 
+       ( req_type == GetVariant ) || 
+       ( req_type == GetVariants ) ) {
+    status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
+    status = make_guid(g_date, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
   }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
