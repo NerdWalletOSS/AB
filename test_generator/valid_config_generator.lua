@@ -50,7 +50,7 @@ function gen_table.add_set_entry(j_table, constraints)
     end
     constraints.count = constraints.count - 1
   end
-
+  dbg()
   for k,v in pairs(j_table.entry_fields) do
     if constraints.sum[k] ~= nil then
       -- STRONG ASSUMPTION is that the lower value is 0
@@ -99,9 +99,9 @@ end
 
 function gen_table.get_constraints(j_table)
   local constraints = {}
+  dbg()
   for k,e_set in pairs(j_table.constraints) do
     print("constraint keys", k)
-    dbg()
     for _, v in ipairs(e_set) do
       if v.type == "sum" then
         local sum = constraints.sum or {}
