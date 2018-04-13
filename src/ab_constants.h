@@ -46,6 +46,8 @@
 
 #define AB_MAX_LEN_FILE_NAME 127
 
+#define AB_MAX_LEN_DATE 63
+
 #define AB_TEST_TYPE_AB 1
 #define AB_TEST_TYPE_XY 2
 
@@ -62,7 +64,7 @@
 #define AB_MAX_LEN_HOSTNAME 63
 #define AB_MAX_LEN_DOMAIN   63
 
-#define AB_MAX_LEN_TRACER 63
+#define AB_MAX_LEN_TRACER 31
 
 #define AB_DEFAULT_N_LOG_Q 128
 
@@ -82,3 +84,4 @@
 #define AB_MAX_LEN_STATE      31
 #define AB_MAX_LEN_CITY       31
 #endif
+

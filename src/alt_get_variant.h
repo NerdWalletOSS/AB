@@ -11,10 +11,3 @@ alt_log_decision(
     uint32_t x_var_id,
     const char * const tracer
     );
-extern int
-make_guid(
-    uint64_t seed,
-    uint64_t curr_time,
-    char temp_guid[2*AB_GUID_LENGTH],
-    uint64_t *ptr_rnum // random number 
-    );

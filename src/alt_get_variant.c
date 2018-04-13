@@ -7,47 +7,7 @@
 #include "alt_get_variant.h"
 #include "get_variant.h"
 #include "dump_log.h"
-
-//<hdr>
-int
-make_guid(
-    uint64_t seed,
-    uint64_t curr_time,
-    char temp_guid[2*AB_GUID_LENGTH],
-    uint64_t *ptr_rnum // random number 
-    )
-//<hdr>
-{
-  int status = 0;
-  char valid_chars[62] = {
-    '0', '1', '2', '3', '4', '5', '6','7', '8', '9', 
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-  // START: Get a pseudo-random number
-  uint64_t pseudo_rand_num = spooky_hash64(&curr_time, sizeof(uint64_t), seed);
-  *ptr_rnum = pseudo_rand_num;
-  // STOP: Get a pseudo-random number
-  // START: Make a guid
-  memset(temp_guid, '\0', 2*AB_GUID_LENGTH);
-  if ( g_xy_guid > 0 ) { 
-    /* This is used for testing purposes */
-    sprintf(temp_guid, "%" PRIu64, g_xy_guid++);
-  }
-  else {
-    for ( int i = 0; i < AB_GUID_LENGTH; i++ ) { 
-      int idx = pseudo_rand_num & 0x0000003F; // we want last 6 bits 
-      if ( idx == 63 ) { idx = 0; } // We have only 62 valid characters
-      if ( idx == 62 ) { idx = 1; } // We have only 62 valid characters
-      // TODO: P4: Distribute extra bits better 
-      temp_guid[i] = valid_chars[idx];
-      pseudo_rand_num = pseudo_rand_num >> 6; // shift 6 bits to right
-    }
-  }
-  // STOP: Make a guid --------------------------------
-  return status;
-}
+#include "make_guid.h"
 
 //<hdr>
 static int
@@ -110,7 +70,6 @@ int alt_get_variant(
   int status = 0;
   int test_idx = -1;
   char temp_guid[2*AB_GUID_LENGTH];
-  uint64_t pseudo_rand_num = 0; int bin = 0;
   uint64_t curr_time = RDTSC();
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
@@ -129,13 +88,12 @@ int alt_get_variant(
   get_tracer(args, in_tracer); 
   set_tracer(out_tracer, AB_MAX_LEN_TRACER); 
 
-  make_guid(g_tests[test_idx].seed, curr_time, temp_guid, &pseudo_rand_num); 
   int device_idx;
-  bin = pseudo_rand_num % AB_NUM_BINS;
+  int bin = RDTSC() % AB_NUM_BINS;
   if ( g_tests[test_idx].is_dev_specific ) {
     // TODO P3 Delete later. Following is temporary code to aid debugging
     // We change g_device_idx if (1) GET param Device sent (2) it is valid
-    if ( g_justin_cat_id = 0 ) { 
+    if ( g_justin_cat_id == 0 ) { 
       g_justin_cat_id = g_justin_cat_other_id; 
     }
     device_idx = g_justin_cat_id - 1;
@@ -165,14 +123,14 @@ int alt_get_variant(
   else {
     go_BYE(-1);
   }
-  char *url = g_tests[test_idx].variants[variant_idx].url;
+  const char *url = g_tests[test_idx].variants[variant_idx].url;
   char *var_name = g_tests[test_idx].variants[variant_idx].name;
   //----------------------------------
   sprintf(g_rslt, "{ \"Variant\" : \"%s\", \"GUID\" : \"%s\", \"VariantID\" :  %d, \"URL\" : \"%s\" }",
-      var_name, temp_guid, variant_id, url);
+      var_name, g_out_tracer, variant_id, url);
   // START: Handle fact that question mark should occur only once
   char separator = '?';
-  for ( char *cptr = g_tests[test_idx].variants[variant_idx].url; 
+  for ( const char *cptr = g_tests[test_idx].variants[variant_idx].url; 
       *cptr != '\0'; cptr++ ) { 
     if ( *cptr == '?' ) { separator = '&'; break; }
   }
