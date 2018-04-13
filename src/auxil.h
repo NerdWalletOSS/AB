@@ -145,3 +145,8 @@ extern  int
 strip_dquotes(
     char *X
     ) ;
+extern bool 
+chk_tracer(
+    const char * tracer,
+    size_t max_len
+    );

@@ -18,6 +18,7 @@
 #include "test_info.h"
 #include "get_config.h"
 #include "load_config.h"
+#include "update_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
 #include "l_make_feature_vector.h"

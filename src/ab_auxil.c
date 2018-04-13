@@ -75,25 +75,6 @@ chk_uuid(
 BYE:
   return status;
 }
-
-bool 
-chk_tracer(
-    const char * tracer
-    )
-{
-  if ( *tracer == '\0' ) { return false; }
-  int len = 0;
-  for ( char *cptr = (char *)tracer; *cptr != '\0'; cptr++, len++ ) { 
-    if ( len > AB_MAX_LEN_TRACER ) { return false; }
-    if ( isalnum(*cptr) || ( *cptr == '_' ) || ( *cptr == '-' ) ) {
-      // all is well 
-    }
-    else {
-      return false;
-    }
-  }
-  return true;
-}
 int
 add_to_buf(
     char *in,
@@ -166,7 +147,7 @@ get_tracer(
     g_log_no_tracer++;
   }
   else {
-    if ( !chk_tracer(tracer) ) { 
+    if ( !chk_tracer(tracer, AB_MAX_LEN_TRACER) ) { 
       g_log_bad_tracer++;
     }
   }
@@ -181,7 +162,6 @@ set_tracer(
   memset(tracer, '\0', n+1);
   // TODO TO BE IMPLEMENTED 
 }
-
 
 #include "yuarel.h"
 int 

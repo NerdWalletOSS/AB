@@ -598,3 +598,24 @@ strip_dquotes(
 BYE:
   return status;
 }
+
+bool 
+chk_tracer(
+    const char * tracer,
+    size_t max_len
+    )
+{
+  if ( *tracer == '\0' ) { return false; }
+  size_t len = 0;
+  for ( char *cptr = (char *)tracer; *cptr != '\0'; cptr++, len++ ) { 
+    if ( len > max_len ) { return false; }
+    if ( isalnum(*cptr) || ( *cptr == '_' ) || ( *cptr == '-' ) ) {
+      // all is well 
+    }
+    else {
+      return false;
+    }
+  }
+  return true;
+}
+

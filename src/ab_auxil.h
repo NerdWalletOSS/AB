@@ -7,10 +7,6 @@ chk_uuid(
     char *X,
     int desired_len
     );
-extern bool 
-chk_tracer(
-    const char * tracer
-    );
 extern int
 add_to_buf(
     char *in,
