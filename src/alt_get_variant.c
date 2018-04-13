@@ -1,6 +1,7 @@
 #include "ab_incs.h"
 #include "ab_globals.h"
 #include "auxil.h"
+#include "ab_auxil.h"
 #include "get_test_idx.h"
 #include "add_test.h"
 #include "alt_get_variant.h"
@@ -129,30 +130,36 @@ int alt_get_variant(
   set_tracer(out_tracer, AB_MAX_LEN_TRACER); 
 
   make_guid(g_tests[test_idx].seed, curr_time, temp_guid, &pseudo_rand_num); 
+  int device_idx;
   bin = pseudo_rand_num % AB_NUM_BINS;
   if ( g_tests[test_idx].is_dev_specific ) {
     // TODO P3 Delete later. Following is temporary code to aid debugging
     // We change g_device_idx if (1) GET param Device sent (2) it is valid
+    if ( g_justin_cat_id = 0 ) { 
+      g_justin_cat_id = g_justin_cat_other_id; 
+    }
+    device_idx = g_justin_cat_id - 1;
     char buf[16]; memset(buf, '\0', 16); 
     status = extract_name_value(args, "Device=", '&', buf, 16);
     if ( *buf != '\0' ) { 
-      for ( unsigned int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
+      for ( int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
         if ( strcmp(g_justin_cat_lkp[j].name, buf) == 0 ) { 
-          g_device_idx = j; break;
+          device_idx = j; break;
         }
       }
     }
   }
   else {
-    g_device_idx = 0; 
+    device_idx = 0; 
   }
+  if ( device_idx >= g_n_justin_cat_lkp ) { go_BYE(-1); }
   //----------------------------------
   if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
-    variant_idx = g_tests[test_idx].final_variant_idx[g_device_idx];
-    variant_id  = g_tests[test_idx].final_variant_id[g_device_idx];
+    variant_idx = g_tests[test_idx].final_variant_idx[device_idx];
+    variant_id  = g_tests[test_idx].final_variant_id[device_idx];
   }
   else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
-    variant_idx = g_tests[test_idx].variant_per_bin[g_device_idx][bin];
+    variant_idx = g_tests[test_idx].variant_per_bin[device_idx][bin];
     variant_id  = 0; // TODO FIX P0
   }
   else {

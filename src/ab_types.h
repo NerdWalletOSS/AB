@@ -30,6 +30,7 @@ typedef enum _ab_req_type {
   MakeFeatureVector, // Read &  Lua
   PingLogServer, // Read &  C
   PingSessionServer, // Read &  C
+  PostProcPreds, // Read &  C
   Reload, // Write &  Lua 
   Restart, // Read &  C 
   Router, // Read &  C

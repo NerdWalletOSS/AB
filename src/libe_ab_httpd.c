@@ -21,6 +21,7 @@
 #include "ab_globals.h"
 #include "zero_globals.h"
 #include "hard_code_config.h"
+#include "get_and_classify_ua.h"
 #include "post_from_log_q.h"
 #include "load_config.h"
 #include "update_config.h"
@@ -87,6 +88,11 @@ generic_handler(
   status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
   cBYE(status);
 #endif
+  if ( req_type == Router ) {  
+    status = get_and_classify_ua(req, &g_device_type_id, &g_os_id, 
+        &g_browser_id, &g_justin_cat_id);
+    cBYE(status);
+  }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
 
@@ -158,6 +164,7 @@ main(
   status = init_lua(); cBYE(status);
   if ( argc == 1 )  { 
     hard_code_config(); // only for testing 
+    status = l_hard_code_config(); cBYE(status); // only for testing 
   }
   else {
     if ( argc != 2 ) { go_BYE(-1); }

@@ -62,7 +62,7 @@ BYE:
         sprintf(rslt, "{ \"Ping\" : \"LOG SERVER NOT SET\" }");
       }
       else {
-        sprintf(rslt, "{ \"Ping\" : \"ERROR\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\", \"Time\" : \"%lf\" }", server, port, url, time);
+        sprintf(rslt, "{ \"Ping\" : \"OK\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\", \"Time\" : \"%lf\" }", server, port, url, time);
       }
     }
   }

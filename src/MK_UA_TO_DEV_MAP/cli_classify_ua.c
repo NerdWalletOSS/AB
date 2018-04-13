@@ -1,11 +1,44 @@
-#include "ab_incs.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <sys/mman.h>
+#include "macros.h"
+#include "ab_types.h"
 #include "auxil.h"
 #include "mmap.h"
 #include "load_lkp.h"
 #include "spooky_hash.h"
 #include "load_classify_ua_map.h"
 #include "classify_ua.h"
+#include "mmap.h"
 
+ UA_REC_TYPE *g_classify_ua_map; // Set by C
+ uint32_t g_num_classify_ua_map; // Set by C
+
+ uint32_t g_justin_cat_id; 
+ uint32_t g_os_id; 
+ uint32_t g_browser_id; 
+ uint32_t g_device_type_id; 
+
+ LKP_REC_TYPE *g_justin_cat_lkp; 
+ int g_n_justin_cat_lkp; 
+
+ LKP_REC_TYPE *g_os_lkp; 
+ int g_n_os_lkp; 
+
+ LKP_REC_TYPE *g_browser_lkp; 
+ int g_n_browser_lkp; 
+
+ LKP_REC_TYPE *g_device_type_lkp; 
+ int g_n_device_type_lkp; 
+ char g_valid_chars_in_url[256];
+ LKP_REC_TYPE *g_justin_cat_lkp;
+ int g_n_justin_cat_lkp; 
+ char g_valid_chars_in_ua[256]; 
+ char g_valid_chars_in_ab_args[256]; 
 #define MAX_LEN_NAME AB_MAX_LEN_LKP_NAME
 #define MAXLINE 2047
 int
@@ -28,7 +61,6 @@ main(
   uint32_t n_classify_ua_map = 0;
 
   const char *justin_cat_file = "justin_cat.csv";
-  const char *justin_map_file = "justin_map.csv";
   const char *os_file         = "os.csv";
   const char *browser_file    = "browser.csv";
   const char *device_file     = "device.csv"; 

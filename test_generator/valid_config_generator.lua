@@ -1,5 +1,5 @@
 package.path=package.path .. ";./../src/?.lua"
--- local dbg = require 'debugger'
+local dbg = require 'debugger'
 require 'str'
 math.randomseed(os.time())
 
@@ -17,7 +17,7 @@ function gen_table.get_exactly_one(k, constraints)
   if target ~= nil then
     constraints.exactly_one[k][target] = true
   end
- print("exactly one  constraint: ", k, target)
+  print("exactly one  constraint: ", k, target)
   return target
 end
 
@@ -25,11 +25,11 @@ function gen_table.get_unique(k, v, constraints, init_value)
   local val
   local ex_one = constraints.exactly_one[k] or {}
   local unique = constraints.unique[k]
-  
+
   if init_value ~= nil and unique[init_value] == nil then
     val = init_value
   end
-  
+
   if val == nil then
     repeat
       val = gen_table.get_entry(v)
@@ -42,29 +42,42 @@ end
 
 function gen_table.add_set_entry(j_table, constraints)
   local entry = {}
+  local is_last = false
+  if constraints.count ~= nil then
+    print("count constraint", constraints.count)
+    if constraints.count == 1 then
+      is_last = true
+    end
+    constraints.count = constraints.count - 1
+  end
+  dbg()
   for k,v in pairs(j_table.entry_fields) do
     if constraints.sum[k] ~= nil then
       -- STRONG ASSUMPTION is that the lower value is 0
       assert(v.type == "number", "The sum constraint can only be applied to numbers")
       assert(v.value.random ~= nil, "Sum constraint can only be applied to random")
-      local old_upper = assert(tonumber(v.value.random.upper), "Must be a valid number")
-      v.value.random.upper = constraints.sum[k]
-      local n_v = gen_table.get_entry(v)
-      print("sum constraint: ", k, n_v )
-      local val = assert(tonumber(n_v), "must be  a number")
-      assert(val <= tonumber(constraints.sum[k]))
+      if is_last then
+        entry[k] = constraints.sum[k]
+        constraints.sum[k] = tostring(0)
+      else
+        local old_upper = assert(tonumber(v.value.random.upper), "Must be a valid number")
+        v.value.random.upper = constraints.sum[k]
+        local n_v = gen_table.get_entry(v)
+        print("sum constraint: ", k, n_v )
+        local val = assert(tonumber(n_v), "must be  a number")
+        assert(val <= tonumber(constraints.sum[k]))
 
-      constraints.sum[k] = tostring(tonumber(constraints.sum[k]) - val)
-      entry[k] = n_v
+        constraints.sum[k] = tostring(tonumber(constraints.sum[k]) - val)
+        entry[k] = n_v
+      end
     elseif constraints.exactly_one[k] ~= nil then
       -- Slightly different from unique as in only the listed values should
       -- occire only once, the rest can occur multiple times too
       -- TODO come up with better logic, but for now we take a 50% chance to
       -- come up with the exactly once field
       local val
-      if math.random(2) == 1 then
-        val = gen_table.get_exactly_one(k, constraints)
-      end
+      val = gen_table.get_exactly_one(k, constraints)
+
       if val == nil then
         repeat
           val = gen_table.get_entry(v)
@@ -75,7 +88,6 @@ function gen_table.add_set_entry(j_table, constraints)
       else
         entry[k] = val
       end
-
     elseif constraints.unique[k] ~= nil then
       entry[k] = gen_table.get_unique(k,v, constraints)
     else
@@ -87,7 +99,9 @@ end
 
 function gen_table.get_constraints(j_table)
   local constraints = {}
+  dbg()
   for k,e_set in pairs(j_table.constraints) do
+    print("constraint keys", k)
     for _, v in ipairs(e_set) do
       if v.type == "sum" then
         local sum = constraints.sum or {}
@@ -104,8 +118,13 @@ function gen_table.get_constraints(j_table)
           exactly_one[k][entry] = false
         end
         constraints.exactly_one = exactly_one
+      elseif v.type == "count" then
+        local count = constraints.count or 0
+        count = math.random(
+        tonumber(v.value.random.lower), tonumber(v.value.random.upper))
+        constraints.count = count
+        print(k, v.type, count)
       else
-        print(k, v.type)
         error("Unknown type of constraint")
       end
     end
@@ -126,11 +145,17 @@ end
 function gen_table.add_set(j_table)
   local set = {}
   local constraints = gen_table.get_constraints(j_table)
-
-  repeat
-    set[#set + 1] = gen_table.add_set_entry(j_table, constraints)
-  until gen_table.is_done(constraints) == true
-
+  if constraints.count ~= nil then
+    local count = constraints.count
+    for i=1, count do
+      set[#set + 1] = gen_table.add_set_entry(j_table, constraints)
+    end
+    assert(gen_table.is_done(constraints) == true, "Constraints should have been satisfied unless some constraints clobber each other")
+  else
+    repeat
+      set[#set + 1] = gen_table.add_set_entry(j_table, constraints)
+    until gen_table.is_done(constraints) == true
+  end
   return set
 end
 

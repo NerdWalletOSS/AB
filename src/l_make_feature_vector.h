@@ -1,5 +1,5 @@
 extern int 
 l_make_feature_vector(
-    char *body,
+    const char *body,
     bool is_debug 
     );

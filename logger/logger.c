@@ -1,5 +1,6 @@
 #undef CAPTURE_SERVER_ERROR
 #include "ab_incs.h"
+#include "ab_constants.h"
 #include "auxil.h"
 #include "mmap.h"
 #include <err.h>
@@ -301,13 +302,13 @@ check_payload(
   val = json_object_get(root, "in_tracer_id");
   const char *in_tracer_id = json_string_value(val);
   if ( in_tracer_id != NULL )  { 
-    if ( !chk_tracer(in_tracer_id) ) { go_BYE(-1); }
+    if ( !chk_tracer(in_tracer_id, AB_MAX_LEN_TRACER) ) { go_BYE(-1); }
   }
 
   val = json_object_get(root, "out_tracer_id");
   const char *out_tracer_id = json_string_value(val);
   if ( out_tracer_id != NULL )  { 
-    if ( !chk_tracer(out_tracer_id) ) { go_BYE(-1); }
+    if ( !chk_tracer(out_tracer_id, AB_MAX_LEN_TRACER) ) { go_BYE(-1); }
   }
 
   int32_t tempI4; int64_t tempI8; 

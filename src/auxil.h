@@ -111,11 +111,6 @@ extern int
 strtolower(
     char *X
     );
-extern bool
-chk_is_sequential(
-    uint32_t proportions[AB_MAX_NUM_VARIANTS],
-    int nV
-    );
 extern 
 int
 num_lines(
@@ -134,10 +129,6 @@ extern int
     char *X,
     char *valid_chars
     );
-extern bool
-chk_tracer(
-    const char * tracer
-    );
 extern int
 add_to_buf(
     char *in,
@@ -147,23 +138,6 @@ add_to_buf(
     int *ptr_n_out
     );
 extern int
-mk_json_output(
-    char *api, 
-    char *args, 
-    char *g_err, 
-    char *g_rslt
-    );
-extern void
-  get_tracer(
-      const char *args, 
-      char *in_tracer
-      );
-extern void
-  set_tracer(
-      char *tracer,
-      size_t n
-      );
-extern int
 check_remove_eoln(
     char *line
     );
@@ -171,15 +145,8 @@ extern  int
 strip_dquotes(
     char *X
     ) ;
-extern int 
-get_host(
-    char *in,
-    char *out,
-    int n_out
-    );
-extern int 
-get_domain(
-    const char *in,
-    char *out,
-    int n_out
+extern bool 
+chk_tracer(
+    const char * tracer,
+    size_t max_len
     );

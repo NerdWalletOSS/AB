@@ -7,9 +7,13 @@ INCS= -I. \
 	-I../libevent-2.0.22-stable/include/ \
 	-I../jansson-2.10/src/ \
 	-I../statsd-c-client-master/ \
-	-I../lua-5.1.3/src/ \
 	-I../curl-7.51.0/include/ \
-	-I../curl-7.51.0/include/curl/ 
+	-I../curl-7.51.0/include/curl/ \
+	-I../dt_interpreter/src/  \
+	-I../libmaxminddb-1.3.2/include/ \
+	-I../registered-domain-libs/C/ \
+	-I../libyuarel/ \
+	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
 DBGFLAGS= 
@@ -27,17 +31,7 @@ CFLAGS= $(LFLAGS)
 CC= clang
 CC= gcc
 
-CSRCS := $(wildcard *.c)
-
-fil3   := ab_httpd.c sel_ab_httpd.c logger.c ab_utils.c 
-CSRCS3 := $(filter-out $(fil3), $(CSRCS))
-COBJS3 = $(CSRCS3:.c=.o)
-
-filU   := ab_httpd.c sel_ab_httpd.c libe_ab_httpd.c logger.c  
-USRCS := $(filter-out $(filU), $(CSRCS))
-UOBJS = $(USRCS:.c=.o)
-
-LOGGER_OBJS = logger.o  auxil.o mmap.o
+LOGGER_OBJS = logger.o  ../src/auxil.o ../src/mmap.o 
 LOGGER_INCS = ../src/ab_incs.h
 
 all : ab_logger 
