@@ -101,7 +101,6 @@ generic_handler(
        ( req_type == GetVariants ) ) {
     status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
     status = make_guid(g_date, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
-    fprintf(stderr,"%s\n", g_out_tracer);
   }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------

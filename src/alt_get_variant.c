@@ -69,7 +69,6 @@ int alt_get_variant(
 {
   int status = 0;
   int test_idx = -1;
-  char temp_guid[2*AB_GUID_LENGTH];
   uint64_t curr_time = RDTSC();
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
@@ -79,7 +78,6 @@ int alt_get_variant(
   memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
   memset(in_tracer, '\0', AB_MAX_LEN_TRACER+1);
   memset(out_tracer, '\0', AB_MAX_LEN_TRACER+1);
-  memset(temp_guid, '\0', 2*AB_GUID_LENGTH);
 
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
@@ -143,7 +141,7 @@ int alt_get_variant(
       separator, 
       args, 
       variant_id,
-      temp_guid);
+      g_out_tracer);
   if ( nw >= AB_MAX_LEN_REDIRECT_URL ) { 
     memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
     status = -1;
@@ -151,7 +149,7 @@ int alt_get_variant(
 
   PAYLOAD_TYPE lcl_payload;
   memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
-  strcpy(lcl_payload.uuid, temp_guid);
+  strcpy(lcl_payload.out_tracer, g_out_tracer);
   lcl_payload.time       = curr_time;
   lcl_payload.test_id    = test_id;
   lcl_payload.variant_id = variant_id;

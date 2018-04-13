@@ -29,7 +29,7 @@ router(
     // following helps to detect error 
     // TODO P3: Make sure that g_redirect_url does 
     // not have a question mark in it
-    const char *qparams = "?VariantID=0&GUID=XXXXXXXX&"; 
+    const char *qparams = "?VariantID=0&GUID=XXXXXXXXXXXXXXXX&"; 
     if ( (strlen(qparams) + strlen(g_redirect_url)) 
         < AB_MAX_LEN_REDIRECT_URL ) {
       strcat(g_redirect_url, qparams);

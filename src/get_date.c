@@ -20,7 +20,6 @@ get_date(
   header = headers->tqh_first;
   for (header = headers->tqh_first; header; 
       header = header->next.tqe_next) {
-    fprintf(stderr, "%s\n", header->key);
     if ( strcasecmp(header->key, "Date") == 0 ) { 
       if ( strlen(header->value ) <= sz_date ) { 
         strcpy(date, header->value);
