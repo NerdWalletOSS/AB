@@ -24,7 +24,7 @@ hard_code_config(void)
   g_cfg.sz_log_q = 65536;
   g_cfg.num_post_retries = 1;
 
-  strcpy(g_cfg.default_url, "localhost:8000/index.html");
+  strcpy(g_cfg.default_url, "http://localhost:8000/api/v1/health_check");
   g_cfg.uuid_len = 8;
   g_cfg.xy_guid = 1;
 
@@ -39,4 +39,56 @@ hard_code_config(void)
   strcpy(g_cfg.mdl_file,  "/opt/ab/mdl.bin");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
+}
+
+int
+add_fake_tests(
+    void
+    )
+{
+  int idx = 0;
+  const char *name = "TestAB";
+  VARIANT_REC_TYPE *variants = NULL;
+  uint8_t **vpb = NULL;
+  int nV = 3;
+
+  strcpy(g_tests[idx].name, name);
+  g_tests[idx].id = 1; 
+  g_tests[idx].name_hash = spooky_hash64(name, strlen(name), g_seed1);
+  g_tests[idx].external_id = 1234567890;
+  g_tests[idx].test_type = AB_TEST_TYPE_AB;
+  g_tests[idx].has_filters = false;
+  g_tests[idx].is_dev_specific = false;
+  g_tests[idx].state = TEST_STATE_STARTED;
+  g_tests[idx].seed = 9876543210;
+
+  g_tests[idx].num_variants = nV;
+  variants = malloc(nV * sizeof(VARIANT_REC_TYPE));
+  strcpy(variants[0].name, "Control");
+  strcpy(variants[1].name, "VariantA");
+  strcpy(variants[2].name, "VariantB");
+  variants[0].id = 100;
+  variants[1].id = 200;
+  variants[2].id = 300;
+  variants[0].percentage = 34;
+  variants[1].percentage = 33;
+  variants[2].percentage = 33;
+  for ( int i = 0; i < nV; i++ ) { 
+    variants[i].url = NULL;
+    variants[i].custom_data = NULL;
+  }
+  g_tests[idx].variants = variants;
+
+  // If device specific is not set, we use device_idx = 0
+  g_tests[idx].final_variant_id = NULL;
+  g_tests[idx].final_variant_idx = NULL;
+  vpb = malloc(1 * sizeof(uint8_t *));
+  vpb[0] = malloc(AB_NUM_BINS * sizeof(uint8_t));
+  int vidx = 0;
+  for ( int i = 0; i < AB_NUM_BINS; i++ ) { 
+    vpb[0][i] = vidx++; 
+    if ( vidx == nV ) { vidx = 0; }
+  }
+
+  g_tests[idx].variant_per_bin = vpb;
 }

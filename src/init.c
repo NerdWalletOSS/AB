@@ -85,6 +85,9 @@ setup_curl(
 
   ch = curl_easy_init();
   if ( ch == NULL ) { go_BYE(-1); }
+  // TODO WHY IS SETTING HEADERS NOT WORKING??????
+  // I am getting Content-Type => application/x-www-form-urlencoded
+  // I am getting X-Caller-Client-ID as empty string
   curl_hdrs = curl_slist_append(curl_hdrs, "Content-Type: application/json");
   curl_hdrs = curl_slist_append(curl_hdrs, "X-Caller-Client-ID: ab-runtime-service");
   /*

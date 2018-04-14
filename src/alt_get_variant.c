@@ -3,7 +3,6 @@
 #include "auxil.h"
 #include "ab_auxil.h"
 #include "get_test_idx.h"
-#include "add_test.h"
 #include "alt_get_variant.h"
 #include "get_variant.h"
 #include "dump_log.h"
@@ -89,8 +88,8 @@ int alt_get_variant(
   int device_idx;
   int bin = RDTSC() % AB_NUM_BINS;
   if ( g_tests[test_idx].is_dev_specific ) {
-    // TODO P3 Delete later. Following is temporary code to aid debugging
-    // We change g_device_idx if (1) GET param Device sent (2) it is valid
+    // To aid debugging, we allow over-ride from GET parameters
+    // We change g_justin_cat_id if valid GET param Device sent 
     if ( g_justin_cat_id == 0 ) { 
       g_justin_cat_id = g_justin_cat_other_id; 
     }

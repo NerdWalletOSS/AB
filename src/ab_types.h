@@ -9,6 +9,7 @@
 
 typedef enum _ab_req_type {
   Undefined, // --- & --- 
+  AddFakeTests, 
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
@@ -64,7 +65,7 @@ typedef struct _test_meta_type {
   // If device specific is not set, we use device_idx = 0
   uint32_t *final_variant_id; // [g_num_devices]; 
   uint32_t *final_variant_idx; // [g_num_devices]; 
-  uint8_t *variant_per_bin[AB_NUM_BINS]; // [g_num_devices][AB_NUM_BINS]; 
+  uint8_t **variant_per_bin; // [g_num_devices][AB_NUM_BINS]; 
 
 } TEST_META_TYPE;
 

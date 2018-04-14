@@ -7,7 +7,10 @@ get_req_type(
     const char *api
     )
 {
-  if (strcasecmp(api, "AddTest") == 0) {
+  if (strcasecmp(api, "AddFakeTests") == 0) {
+    return AddFakeTests;
+  }
+  else if (strcasecmp(api, "AddTest") == 0) {
     return AddTest;
   }
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {

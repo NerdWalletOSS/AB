@@ -6,11 +6,12 @@
 #include "init.h"
 #include "post_from_log_q.h"
 
-#include "add_test.h"
+#include "l_add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
 // TODO PUT BACK #include "diagnostics.h"
 #include "dump_log.h"
+#include "hard_code_config.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
 #include "ping_server.h"
@@ -44,6 +45,11 @@ ab_process_req(
   switch ( req_type ) {
     case Undefined : 
       go_BYE(-1);
+      break;
+      //--------------------------------------------------------
+   case AddFakeTests : /* done by Lua */
+      add_fake_tests(); 
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
    case AddTest : /* done by Lua */

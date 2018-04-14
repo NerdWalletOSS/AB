@@ -2,7 +2,6 @@
 #include "ab_globals.h"
 #include "auxil.h"
 #include "get_test_idx.h"
-#include "add_test.h"
 #include "log_decision.h"
 #include "chk_exclude.h"
 #include "get_variant.h"
