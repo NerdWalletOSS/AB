@@ -64,16 +64,17 @@ $result = db_get_rows("test", "pred_id != ''");
 	</tr>
 <tr>
 <td colspan ='3'>
-<?php 
-if (($T['State'] == "draft") && ( $nF == 0 ) ){
-  echo "<strong><font color='red'>No Test to Follow</font></strong>";
-} elseif (($T['State'] == "draft") && ( $nF != 0 ) ) {
-    echo "<input type='hidden' name='TestID' value='".$id."'>";
+<?php
   $already_following = db_get_row("test", "id", $id);
   if ($already_following['pred_id'] != "") {
   $fT = db_get_row("test", "id", $already_following['pred_id']);
   echo "<strong>This Test is already following a Test with ID ".$fT['id']." and Test Name ".$fT['name']."</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
   }
+if (($T['State'] == "draft") && ( $nF == 0 ) ){
+  echo "<strong><font color='red'>No Test to Follow</font></strong>";
+} elseif (($T['State'] == "draft") && ( $nF != 0 ) ) {
+    echo "<input type='hidden' name='TestID' value='".$id."'>";
+
 ?>
 
 Select test to follow: &nbsp;&nbsp;

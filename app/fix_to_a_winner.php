@@ -41,10 +41,6 @@ $config = config_html($TestType);
     Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <?php echo "
-    <a href='processor/set_state_processor.php?TestID=".$id."&state_id=4&action=resurrect'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resurrect</button></a>
-    "; ?>
   </td>
 	</tr>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->

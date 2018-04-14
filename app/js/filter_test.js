@@ -82,8 +82,11 @@ $(document).ready(function() {
             if (value['state_id'] == 1) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
             } 
+            if (value['state_id'] == 4) {
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";
+            } 
 
-"</td>";
+            "</td>";
         
 						} else {
 						TableRow += "<td><strong>No Action</strong></td>";
