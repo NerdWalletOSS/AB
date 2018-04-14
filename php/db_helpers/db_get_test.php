@@ -22,7 +22,7 @@ function db_get_test(
     $T['Channel']  = lkp("channel",   $T['channel_id'],   "reverse");
   }
   //------------------------------------
-  $V = db_get_rows("variant", " test_id = $test_id");
+  $V = db_get_rows("variant", " test_id = $test_id and is_del = false");
 
   $nV = count($V);
   $Variants = array($nV);

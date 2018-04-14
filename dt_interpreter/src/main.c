@@ -96,6 +96,7 @@ main(
   int lno = 0;
   uint64_t sum1 = 0, sum2 = 0;
   int n_iters = 1; int n_trials = 0;
+  n_iters = 0; // TODO TODO TODO DELETE 
   for ( int iters = 0; iters < n_iters; iters++ ) {
     bool is_hdr = true;
     for ( lno = 0; !feof(fp); lno++) { 

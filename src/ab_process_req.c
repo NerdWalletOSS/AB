@@ -9,7 +9,7 @@
 #include "add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-#include "diagnostics.h"
+// TODO PUT BACK #include "diagnostics.h"
 #include "dump_log.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
@@ -18,10 +18,12 @@
 #include "test_info.h"
 #include "get_config.h"
 #include "load_config.h"
+#include "update_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
 #include "l_make_feature_vector.h"
 #include "ext_get_host.h"
+#include "l_post_proc_preds.h"
 
 // START FUNC DECL
 int 
@@ -67,8 +69,10 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
+      /* TODO PUT BACK 
       status = diagnostics(); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      */
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
@@ -130,6 +134,12 @@ ab_process_req(
       ping_server(g_cfg.ss.server, 
           g_cfg.ss.port, 
           g_cfg.ss.health_url, g_rslt);
+      break;
+      //--------------------------------------------------------
+    case PostProcPreds : /* done by C */
+      status = l_post_proc_preds(g_predictions, g_n_mdl, 
+          g_rslt, AB_MAX_LEN_RESULT);
+      cBYE(status);
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */

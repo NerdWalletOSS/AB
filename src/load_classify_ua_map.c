@@ -2,7 +2,6 @@
 #include "mmap.h"
 #include "auxil.h"
 #include "load_classify_ua_map.h"
-#include "ab_globals.h"
 
 int
 load_classify_ua_map(

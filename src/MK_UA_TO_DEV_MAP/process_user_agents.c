@@ -111,8 +111,9 @@ main(
   char *agent_file   = argv[1]; 
   char *output_file  = argv[2]; 
 
-  const char *justin_cat_file = "justin_cat.csv";
   const char *justin_map_file = "justin_map.csv";
+
+  const char *justin_cat_file = "justin_cat.csv";
   const char *os_file         = "os.csv";
   const char *browser_file    = "browser.csv";
   const char *device_file     = "device.csv"; 

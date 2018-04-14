@@ -6,29 +6,29 @@
 #include "maxminddb.h"
 #include "dt_types.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
-extern DT_REC_TYPE *g_dt_map; 
-extern size_t g_len_dt_file; 
-extern uint32_t g_num_dt_map; 
+extern DT_REC_TYPE *g_dt_map;
+extern size_t g_len_dt_file;
+extern uint32_t g_num_dt_map;
 
 //<hdr>
-void
+  void
 free_globals(
     void
     )
-//</hdr>
+  //</hdr>
 {
   free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
 
-  if ( g_statsd_link != NULL ) { 
+  if ( g_statsd_link != NULL ) {
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
 
-  free_if_non_null(g_log_q); g_n_log_q = 0; 
+  free_if_non_null(g_log_q); g_n_log_q = 0;
   g_q_rd_idx = 0; g_q_wr_idx = 0;
 
   free_if_non_null(g_uuid);
- 
+
   shutdown_curl(); // for g_ch and g_ss_ch
 
   free_if_non_null(g_justin_cat_lkp);  g_n_justin_cat_lkp = 0;
@@ -50,13 +50,16 @@ free_globals(
   if ( ( g_mdl != NULL ) && ( g_len_mdl_file > 0 ) ) { 
     munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
   }
-  
+
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
-  if ( g_L != NULL ) { lua_close(g_L); g_L = NULL; }
+  if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
+  if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+
   free_if_non_null(g_predictions); g_n_mdl = 0;
+
 }
 
-int 
+  int
 zero_globals(
     void
     )
@@ -67,15 +70,15 @@ zero_globals(
     go_BYE(-1);
   }
   //------------------------------
-  g_cfg.port        = 0; 
+  g_cfg.port        = 0;
   g_cfg.verbose     = false;
 
-  g_cfg.logger.port    = 0; 
+  g_cfg.logger.port    = 0;
   memset(g_cfg.logger.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
   memset(g_cfg.logger.url, '\0', AB_MAX_LEN_URL+1);
   memset(g_cfg.logger.health_url, '\0', AB_MAX_LEN_URL+1);
 
-  g_cfg.ss.port    = 0; 
+  g_cfg.ss.port    = 0;
   memset(g_cfg.ss.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
   memset(g_cfg.ss.url, '\0', AB_MAX_LEN_URL+1);
   memset(g_cfg.ss.health_url, '\0', AB_MAX_LEN_URL+1);
@@ -86,7 +89,7 @@ zero_globals(
   g_cfg.num_post_retries = 0;
   memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
 
-  g_cfg.uuid_len = AB_MAX_LEN_UUID; // default 
+  g_cfg.uuid_len = AB_MAX_LEN_UUID; // default
   g_uuid = malloc(AB_MAX_LEN_UUID+1);
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
@@ -122,9 +125,9 @@ zero_globals(
   status = gethostname(g_my_name, AB_MAX_LEN_HOSTNAME);
   cBYE(status);
 
-  g_halt = false; 
+  g_halt = false;
 
-  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
+  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
     status = zero_test(i); cBYE(status);
   }
 
@@ -149,17 +152,16 @@ zero_globals(
   memset(g_mrslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
 
-  // g_con, g_mutex, .... 
+  // g_con, g_mutex, ....
 
+  g_justin_cat_other_id = -1;
   g_justin_cat_lkp  = NULL; g_n_justin_cat_lkp  = 0;
   g_os_lkp          = NULL; g_n_os_lkp          = 0;
   g_browser_lkp     = NULL; g_n_browser_lkp     = 0;
   g_device_type_lkp = NULL; g_n_device_type_lkp = 0;
   g_referer_class_lkp  = NULL; g_n_referer_class_lkp  = 0;
 
-  g_device_idx = 0;
-
-  g_classify_ua_map = NULL;  
+  g_classify_ua_map = NULL;
   g_len_classify_ua_file = 0;
   g_num_classify_ua_map = 0;
 
@@ -188,17 +190,19 @@ zero_globals(
 
   g_mmdb_in_use = false;
   memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
-  g_L = NULL;
+  g_L    =  NULL;
+  g_L_DT = NULL;
   g_dt  = NULL; g_n_dt = 0;
   g_rf  = NULL; g_n_rf = 0;
   g_mdl = NULL; g_n_mdl = 0;
   g_predictions = NULL;
+
   zero_log();
 BYE:
   return status;
 }
 
-void 
+void
 zero_log()
 {
   g_log_start_time  = get_time_usec();
@@ -220,19 +224,19 @@ zero_log()
 
   g_log_no_test_name  = 0; // GetVariant
   g_log_no_test_names = 0; // GetVariants
-  g_log_no_uuid       = 0; 
-  g_log_no_test_type  = 0; 
-  g_log_no_tracer     = 0; 
+  g_log_no_uuid       = 0;
+  g_log_no_test_type  = 0;
+  g_log_no_tracer     = 0;
 
   g_log_dropped_posts     = 0;
   g_log_posts             = 0;
   g_log_bad_posts         = 0;
   g_log_failed_posts      = 0;
 
-  g_log_bad_uuid      = 0; 
-  g_log_bad_test_type = 0; 
-  g_log_bad_test_name = 0; 
-  g_log_bad_tracer    = 0; 
+  g_log_bad_uuid      = 0;
+  g_log_bad_test_type = 0;
+  g_log_bad_test_name = 0;
+  g_log_bad_tracer    = 0;
 
   g_log_get_alt_variant_calls = 0;
   g_log_get_variant_calls     = 0;

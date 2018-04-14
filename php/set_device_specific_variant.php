@@ -31,7 +31,7 @@ function set_device_specific_variant(
   rs_assert(is_string($str_inJ), "input not string");
   $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $tid = get_json_element($inJ, 'id'); 
-  $is_dev_specific = get_json_element($inJ, 'is_dev_specific'); 
+  $is_dev_specific = intval(get_json_element($inJ, 'is_dev_specific'));
   $T = db_get_row("test", "id", $tid);
   rs_assert($T);
   $test_name = $T['name'];

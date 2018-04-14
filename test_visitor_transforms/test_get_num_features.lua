@@ -1,11 +1,11 @@
 package.path = package.path .. ';../src/?.lua'
-local table_dt_feature = dofile('../config/dt_feature.lua')
-_G.g_dt_feature = assert(dofile('../config/dt_feature.lua'))
---local cache = require 'cache'
---cache.put("table_dt_feature", table_dt_feature)
+local cache = require 'cache'
+local status, dt_feature = pcall(dofile, '../config/dt_feature.lua')
+assert(status, 'loading dt_feature.lua failed')
+assert(dt_feature, 'loading dt_feature failed')
+cache.put("dt_feature", dt_feature)
 
 describe("Testing get_num_features", function()
-    
 
     local get_num_features = require 'get_num_features'
     it("should get you correct numbers under visitor model (hardcoded)", function()
@@ -13,18 +13,18 @@ describe("Testing get_num_features", function()
     end)
 
     it("should get you correct numbers for non-nested dicts", function()
-        _G.g_dt_feature = {[0]=4, [4]=9}
+        cache.put("dt_feature", {[0]=4, [4]=9})
         assert.are.same(get_num_features(), 2)
     end)
 
     it("should get you correct numbers for nested dicts", function()
-        _G.g_dt_feature = {[1]={[2]={[3]=4, [4]=5}, [5]=6}, [6]=1}
+        cache.put("dt_feature", {[1]={[2]={[3]=4, [4]=5}, [5]=6}, [6]=1})
         assert.are.same(get_num_features(), 4)
     end)
 
     it("should get you correct numbers when nothing exists", function()
-        _G.g_dt_feature = {}
+        cache.put("dt_feature", {})
         assert.are.same(get_num_features(), 0)
-        _G.g_dt_feature = assert(dofile('../config/dt_feature.lua'))
+        cache.put("dt_feature", dt_feature)
     end)
 end)

@@ -1,7 +1,6 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "load_lkp.h"
-#include "ab_globals.h"
 
 #define MAXLINE 1024
 #define MAX_LEN_NAME AB_MAX_LEN_LKP_NAME

@@ -84,11 +84,12 @@ tests.t1 = function (
   local c = cURL.easy(curl_params)
   local x = c:perform()
   local body = return_body(); local hdrs = return_hdrs()
-  --[[
+--[[
   print("Start Headers")
   for k,v in pairs(hdrs) do print(k, v) end 
   print("Stop  Headers")
-  --]]
+  ]]--
+
 
   local test_id = assert(get_test_id(hdrs))
   assert(test_id > 0)
@@ -206,8 +207,8 @@ end
 --===================================================
 --===================================================
 --===================================================
--- tests.t1() 
--- tests.t2() 
--- tests.t3() 
--- tests.t4() 
+tests.t1() 
+tests.t2() 
+tests.t3() 
+tests.t4() 
 return tests, suite_description

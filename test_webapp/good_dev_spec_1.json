@@ -253,7 +253,7 @@
         "name": "T1",
         "id": "1",
         "description": "New Description",
-        "is_dev_specific": "0",
+        "is_dev_specific": "1",
         "has_filters": "0",
         "seed": "5582638522457145545",
         "external_id": "151787373911388600",
