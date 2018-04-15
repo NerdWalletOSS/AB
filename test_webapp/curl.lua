@@ -1,6 +1,6 @@
 -- Only does PST and GET
 
-package.path=package.path .. ";./../src/?.lua;./../test_integration/?.lua"
+package.path=package.path .. ";./../src/?.lua;./../test_integration/?.lua;../test_generator/?.lua"
 -- require 'strict'
 require 'str'
 local JSON = require 'json' -- one-time load of the routines

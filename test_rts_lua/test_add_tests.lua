@@ -129,7 +129,7 @@ describe('AddTest framework', function()
         local old_testtype = g_tests[c_index[0]].test_type
         j_table.TestType = "XYTest"
         local j_str = json.encode(j_table)
-        
+
         status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assert(status == true, res)
         assert(c_index[0] == old_index, "Indices for update must be the same. Expected", old_index, " got ", c_index[0] )
@@ -195,18 +195,71 @@ describe('AddTest framework', function()
         -- TODO check percentages
         -- This is about dev specific routing too:
         describe("should add device specific routes", function()
-          local j_table = json.decode(valid_json2)
-          j_table.is_dev_specific = tostring(consts.TRUE)
-          j_table.BinType = "anonymous"
-          local j_str = json.encode(j_table)
-          local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
-          assertx(status == true, res)
-          local dev_variants = j_table.DeviceCrossVariant
-          table.sort(dev_variants, function(a,b) return a[0].device_id < b[0].device_id end)
-          for index, variant in ipairs(dev_variants) do
-            table.sort(variant, function(a,b) return a.id < b.id end)
-          end
           it("Percentages should match with input", function()
+            local j_table = json.decode(valid_json2)
+            j_table.is_dev_specific = tostring(consts.TRUE)
+            j_table.BinType = "anonymous"
+            local j_str = json.encode(j_table)
+            local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+            assertx(status == true, res)
+            local dev_variants = j_table.DeviceCrossVariant
+            table.sort(dev_variants, function(a,b) return a[0].device_id < b[0].device_id end)
+            for index, variant in ipairs(dev_variants) do
+              table.sort(variant, function(a,b) return a.id < b.id end)
+            end
+            local dev_counts = {}
+            -- Desired counts
+            for dev_name, device_variants in pairs(dev_variants) do
+              local counts = {}
+              for _, entry in ipairs(device_variants) do
+                local variant_id = tonumber(entry.variant_id)
+                local total = counts[variant_id] or 0
+                total = total + tonumber(entry.percentage)
+                counts[variant_id] = total
+              end
+              dev_counts[tonumber(device_variants[1].device_id)] = counts
+            end
+
+            -- Actual counts
+            local size = #j_table.Variants
+            local variant_index_to_id_map = {}
+            for i=0, size -1 do
+              local id = g_tests[c_index[0]].variants[i].id
+              variant_index_to_id_map[i] = id
+            end
+            local bins = g_tests[c_index[0]].variant_per_bin
+            local variants = g_tests[c_index[0]].variants
+            local total = consts.AB_NUM_BINS
+            local actual_counts = {}
+            local num_dev_variants = 0
+            for k,v in pairs(dev_variants) do
+              num_dev_variants = num_dev_variants + 1
+            end
+            for bin_index=0,num_dev_variants -1 do
+              local bin = bins[bin_index]
+              local counts = {}
+              for i=0, total - 1 do
+                local v_id =  variant_index_to_id_map[bin[i]]
+                counts[v_id] = (counts[v_id] or 0) + 1
+              end
+              actual_counts[bin_index + 1] = counts
+            end
+
+
+            -- Compare results
+            for dev_id, counts in pairs(dev_counts) do
+              local actual_count = assertx(actual_counts[dev_id], "must be present", dev_id)
+              for v_id, count in pairs(counts) do
+                local ac_index = v_id
+                local ac = 0
+                if ac_index ~= nil then
+                  ac = (actual_count[v_id] or 0)/10
+                end
+                assertx(tonumber(count) == ac, "Must be the same number, expected ", count, " got ", ac, " for device_id ", dev_id, " variant number ", v_id)
+              end
+            end
+
+
             local bins = g_tests[c_index[0]].variant_per_bin
             local variants = g_tests[c_index[0]].variants
             local total = consts.AB_NUM_BINS

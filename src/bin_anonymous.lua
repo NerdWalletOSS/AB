@@ -7,7 +7,6 @@ local spooky_hash = require 'spooky_hash'
 
 local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 
-  local total = 0
   local num_set = 0
   local total_percentage = 0
   -- In case the bins dont fill up
@@ -16,14 +15,16 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   for index, variant in ipairs(dev_variants) do
     local percent = assert(tonumber(variant.percentage), "Variant must have a valid percentage")
     local total_bins = math.floor(percent * 0.01 * consts.AB_NUM_BINS)
+    print(string.format("Variant pos: %s gets %s buckets starting at pos %s",
+    var_id_to_index_map[variant.id], total_bins, num_set))
     assert(num_set + total_bins <= consts.AB_NUM_BINS, "Total number of bins should be less that total bins")
     for set_vals=num_set, num_set + total_bins - 1 do
       bin[set_vals] = var_id_to_index_map[variant.id]
     end
-    total = total + total_bins
+    num_set = num_set + total_bins
     total_percentage = total_percentage + percent
   end
-  assertx(total <= consts.AB_NUM_BINS, "More than max bins cannot be occupied, total:", total)
+  assertx(num_set <= consts.AB_NUM_BINS, "More than max bins cannot be occupied, total:", total)
   assertx(total_percentage == 100, "Total percentage should add up to 100 percent", total_percentage)
 end
 
@@ -42,7 +43,7 @@ local function populate_variants(c_test, variants)
     -- TODO check about final variant
     if tonumber(value.is_final) == consts.TRUE then
       c_test.final_variant_idx = curr_index
-     end
+    end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
     -- TODO THIS NEEDS TO BE UNDONE, Ramesh to tell if name is absent for device
     -- specific
@@ -79,7 +80,10 @@ local function add_device_specific(c_test, test_data)
   end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 
-  local index = 0
+  local index_to_key_map = {}
+  for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
+    index_to_key_map[device_name] = dev_variants[1].device_id
+  end
   for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
     -- Also note that the id field in device specific part is useless and what
     -- we want is that variant_id so we can think of providing a getter function
@@ -90,8 +94,9 @@ local function add_device_specific(c_test, test_data)
     end
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
+    local index = index_to_key_map[device_name] - 1
+    print("Processing device:", device_name, "at index", index)
     set_variants_per_bin(c_test.variant_per_bin[index], dev_variants, var_id_to_index_map)
-    index = index + 1
   end
 end
 
