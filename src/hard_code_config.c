@@ -48,7 +48,7 @@ hard_code_config(void)
   g_cfg.sz_log_q = 65536;
   g_cfg.num_post_retries = 1;
 
-  strcpy(g_cfg.default_url, "http://localhost:8080/test_webapp/index0.html");
+  strcpy(g_cfg.default_url, "http://localhost:8080/AB/test_webapp/index0.html");
   g_cfg.uuid_len = 8;
   g_cfg.xy_guid = 1;
 
@@ -116,7 +116,7 @@ add_fake_tests(
   //-----------------------------------------------
   strcpy(g_tests[idx].name, test_name);
   g_tests[idx].id = name_hash & 0x0FFFFFFF;
-  g_tests[idx].name_hash = name_hash;
+  g_tests[idx].name_hash = name_hash + test_type;
   g_tests[idx].external_id = 1234567890;
   g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;
@@ -147,7 +147,7 @@ add_fake_tests(
     if ( vidx == nV ) { vidx = 0; }
   }
   for ( vidx = 0; vidx < nV; vidx++ ) { 
-    sprintf(buf, "http://localhost:8080/test_webapp/index%d.html", vidx);
+    sprintf(buf, "http://localhost:8080/AB/test_webapp/index%d.html", vidx);
     variants[vidx].url = strdup(buf);
     sprintf(buf, "{ \"key%d\" : \"val%d\" } ", vidx, vidx);
     variants[vidx].custom_data = strdup(buf);
