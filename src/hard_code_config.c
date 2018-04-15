@@ -2,6 +2,30 @@
 #include "ab_globals.h"
 #include "auxil.h"
 #include "hard_code_config.h"
+#include "get_test_idx.h"
+
+static int 
+get_empty_spot(
+    uint64_t name_hash,
+    int *ptr_idx
+    )
+//</hdr>
+{
+  int status = 0; int idx = -1;
+  int start = name_hash % AB_MAX_NUM_TESTS;
+  for ( int i = start; i < AB_MAX_NUM_TESTS; i++ ) { 
+    if ( g_tests[i].name_hash == 0 ) { idx = i; break; }
+  }
+  if ( idx < 0 ) { 
+    for ( int i = 0; i < start; i++ ) { 
+      if ( g_tests[i].name_hash == 0 ) { idx = i; break; }
+    }
+  }
+  if ( idx < 0 ) { go_BYE(-1); }
+  *ptr_idx = idx;
+BYE:
+  return status;
+}
 void
 hard_code_config(void)
 {
@@ -24,7 +48,7 @@ hard_code_config(void)
   g_cfg.sz_log_q = 65536;
   g_cfg.num_post_retries = 1;
 
-  strcpy(g_cfg.default_url, "http://localhost:8000/api/v1/health_check");
+  strcpy(g_cfg.default_url, "http://localhost:8080/test_webapp/index0.html");
   g_cfg.uuid_len = 8;
   g_cfg.xy_guid = 1;
 
@@ -43,20 +67,58 @@ hard_code_config(void)
 
 int
 add_fake_tests(
-    void
+    const char *args
     )
 {
-  int idx = 0;
-  const char *name = "TestAB";
+  int status = 0;
+  int idx = -1, vidx = -1;
   VARIANT_REC_TYPE *variants = NULL;
   uint8_t **vpb = NULL;
-  int nV = 3;
+  int nV = 0; int test_type;
+  int bufsz = 63;
+  char test_name[AB_MAX_LEN_TEST_NAME+1]; char buf[bufsz+1];
 
-  strcpy(g_tests[idx].name, name);
-  g_tests[idx].id = 1; 
-  g_tests[idx].name_hash = spooky_hash64(name, strlen(name), g_seed1);
+  //-----------------------------------------------
+  memset(buf, '\0', bufsz+1);
+  status = extract_name_value(args, "TestType=", '&', buf, bufsz);
+  cBYE(status);
+  if ( buf[0] == '\0' ) { go_BYE(-1); }
+  if ( strcmp(buf, "ABTest") == 0 ) { 
+    test_type = AB_TEST_TYPE_AB;
+  }
+  else if ( strcmp(buf, "XYTest") == 0 ) { 
+    test_type = AB_TEST_TYPE_XY;
+  }
+  else {
+    go_BYE(-1);
+  }
+  //-----------------------------------------------
+  memset(test_name, '\0', AB_MAX_LEN_TEST_NAME+1);
+  status = extract_name_value(args, "TestName=", '&', test_name, 
+      AB_MAX_LEN_TEST_NAME);
+  cBYE(status);
+  if ( test_name[0] == '\0' ) { go_BYE(-1); }
+  //-----------------------------------------------
+  memset(buf, '\0', 8);
+  status = extract_name_value(args, "NumVariants=", '&', buf, bufsz);
+  cBYE(status);
+  status = stoI4(buf, &nV); cBYE(status);
+  if ( ( nV < AB_MIN_NUM_VARIANTS ) || 
+       ( nV > AB_MAX_NUM_VARIANTS ) ) { go_BYE(-1); }
+  //-----------------------------------------------
+  //-- Test must not exist
+  status = get_test_idx(test_name, test_type, &idx); 
+  if ( ( status == 0 ) && ( idx >= 0 ) )  { go_BYE(-1); }
+  // Find a spot 
+  uint64_t name_hash = spooky_hash64(test_name, strlen(test_name), g_seed1);
+  status = get_empty_spot(name_hash, &idx);  cBYE(status);
+  if ( idx < 0 ) { go_BYE(-1); }
+  //-----------------------------------------------
+  strcpy(g_tests[idx].name, test_name);
+  g_tests[idx].id = name_hash & 0x0FFFFFFF;
+  g_tests[idx].name_hash = name_hash;
   g_tests[idx].external_id = 1234567890;
-  g_tests[idx].test_type = AB_TEST_TYPE_AB;
+  g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;
   g_tests[idx].is_dev_specific = false;
   g_tests[idx].state = TEST_STATE_STARTED;
@@ -64,18 +126,31 @@ add_fake_tests(
 
   g_tests[idx].num_variants = nV;
   variants = malloc(nV * sizeof(VARIANT_REC_TYPE));
+  return_if_malloc_failed(variants);
+  //--- Set names
   strcpy(variants[0].name, "Control");
-  strcpy(variants[1].name, "VariantA");
-  strcpy(variants[2].name, "VariantB");
-  variants[0].id = 100;
-  variants[1].id = 200;
-  variants[2].id = 300;
-  variants[0].percentage = 34;
-  variants[1].percentage = 33;
-  variants[2].percentage = 33;
-  for ( int i = 0; i < nV; i++ ) { 
-    variants[i].url = NULL;
-    variants[i].custom_data = NULL;
+  for ( vidx = 1; vidx < nV; vidx++ ) { 
+    sprintf(variants[vidx].name, "Variant%d", vidx);
+  }
+  //----- Set variant IDs
+  int vid = name_hash & 0x0FFFFFFF;
+  for ( vidx = 0; vidx  < nV; vidx++ ) { 
+    variants[vidx].id = vid++;
+  }
+  // Set percentages as equally as possible
+  for ( vidx = 0; vidx  < nV; vidx++ ) { 
+    variants[vidx].percentage = 0;
+  }
+  int sum = 0; vidx = 0;
+  while ( sum <= 100 ) { 
+    variants[vidx++].percentage++; sum++;
+    if ( vidx == nV ) { vidx = 0; }
+  }
+  for ( vidx = 0; vidx < nV; vidx++ ) { 
+    sprintf(buf, "http://localhost:8080/test_webapp/index%d.html", vidx);
+    variants[vidx].url = strdup(buf);
+    sprintf(buf, "{ \"key%d\" : \"val%d\" } ", vidx, vidx);
+    variants[vidx].custom_data = strdup(buf);
   }
   g_tests[idx].variants = variants;
 
@@ -83,12 +158,17 @@ add_fake_tests(
   g_tests[idx].final_variant_id = NULL;
   g_tests[idx].final_variant_idx = NULL;
   vpb = malloc(1 * sizeof(uint8_t *));
+  return_if_malloc_failed(vpb);
   vpb[0] = malloc(AB_NUM_BINS * sizeof(uint8_t));
-  int vidx = 0;
+  return_if_malloc_failed(vpb[0]);
+  //---  Set bins 
+  vidx = 0;
   for ( int i = 0; i < AB_NUM_BINS; i++ ) { 
     vpb[0][i] = vidx++; 
     if ( vidx == nV ) { vidx = 0; }
   }
 
   g_tests[idx].variant_per_bin = vpb;
+BYE:
+  return status;
 }

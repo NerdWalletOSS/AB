@@ -68,22 +68,19 @@ int alt_get_variant(
 {
   int status = 0;
   int test_idx = -1;
-  uint64_t curr_time = RDTSC();
+  uint64_t curr_time = get_time_usec();
   char in_tracer[AB_MAX_LEN_TRACER+1];
-  char out_tracer[AB_MAX_LEN_TRACER+1];
   uint32_t variant_idx, variant_id;
 
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
   memset(g_redirect_url, '\0', (AB_MAX_LEN_REDIRECT_URL+1));
   memset(in_tracer, '\0', AB_MAX_LEN_TRACER+1);
-  memset(out_tracer, '\0', AB_MAX_LEN_TRACER+1);
 
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
   uint32_t test_id = g_tests[test_idx].id;
   g_log_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
-  set_tracer(out_tracer, AB_MAX_LEN_TRACER); 
 
   int device_idx;
   int bin = RDTSC() % AB_NUM_BINS;

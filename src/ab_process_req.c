@@ -47,8 +47,8 @@ ab_process_req(
       go_BYE(-1);
       break;
       //--------------------------------------------------------
-   case AddFakeTests : /* done by Lua */
-      add_fake_tests(); 
+   case AddFakeTests : /* done by C */
+      status = add_fake_tests(args);  cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------

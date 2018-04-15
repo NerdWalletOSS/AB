@@ -4,5 +4,5 @@ hard_code_config(
     );
 extern int
 add_fake_tests(
-    void
+    const char *args
     );

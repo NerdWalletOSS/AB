@@ -91,7 +91,7 @@ generic_handler(
     bool is_error = false;
     for (header = headers->tqh_first; header; 
         header = header->next.tqe_next) {
-      fprintf(stderr, "%s => %s\n",  header->key, header->value);
+      // fprintf(stderr, "%s => %s\n",  header->key, header->value);
       if ( strcasecmp(header->key, "Content-Type") == 0 ) { 
         found_header_1 = true;
         if ( strcasecmp(header->value, "application/json") != 0 ) { 
