@@ -42,6 +42,12 @@ $config = config_html($TestType);
 	<tr>
 		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
 	</tr>
+  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+  <tr>
+  <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id='<?php echo $external_id; ?> >
+  http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
+  </tr>
+  <?php } ?>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
@@ -57,7 +63,6 @@ $config = config_html($TestType);
   </tr>
   <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
-
   <tr> 
   <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
   <textarea class="form-control" rows="3" cols="20" name="TestDescription" 
@@ -67,7 +72,7 @@ $config = config_html($TestType);
   </textarea>
   </td>	
   </tr>
-<tr><td>
+<tr><td >
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 
 Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>&nbsp;
@@ -91,7 +96,15 @@ for ( $i = 0; $i < $nC; $i++ ) {
 } ?>
   </select>
 <?php } ?>
-</td></tr>	
+</td>
+<td colspan="2">
+<?php
+if ( isset($TestType) && ($TestType == "XYTest")) {
+if ($mode == "Edit") { ?>
+Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="modify_url" value="1" >
+<?php } } ?>
+</td>
+</tr>	
 <?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
   $max_prop = (100 /($num_var));
@@ -102,7 +115,7 @@ for ( $i = 0; $i < $nC; $i++ ) {
   <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' 
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
-  <input type='text' name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" <?php echo $Ureadonly; ?> required>
+  <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url" <?php echo $Ureadonly; ?> required>
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
@@ -175,7 +188,7 @@ else
   </tbody>
   </table>
 
-
+<?php require_once "confirmation_modal.php"; ?>
 
   <!-- ADD/EDIT FORM END  -->
   </div>
@@ -199,6 +212,13 @@ $('.prop').keyup(function () {
 <?php  } ?>
 });
 });
+</script>
+<script>
+$("#btn_ok").click(function (e) {
+  $('#ConfirmationModal').modal('hide');
+  $('#url').removeAttr('readonly');
+
+})
 </script>
 
 <!-- FOOTER -->

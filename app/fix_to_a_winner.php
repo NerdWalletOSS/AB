@@ -37,8 +37,10 @@ $config = config_html($TestType);
 
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+		<td colspan="2">
+    Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
   </td>
 	</tr>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
@@ -57,7 +59,7 @@ $config = config_html($TestType);
 <?php } ?>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   </td>
-<td><input type="radio" name="Winner" value="<?php echo $rslt['Variants'][$i]['name']; ?>"></td>
+<td><label class="btn btn-default active form-check-label"><input type="radio" autocomplete="off" name="Winner" value="<?php echo $rslt['Variants'][$i]['name']; ?>"></label></td>
 </tr>
 <?php } ?>
  <input type='hidden' name='TestID' value='<?php echo $id; ?>'>

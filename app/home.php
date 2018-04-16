@@ -7,6 +7,7 @@ require_once "set_path.php";
 require_once "header.php";
 
 // -- GET TESTS
+require_once "dbconn.php";
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
 $state = "'2','3','4'";
