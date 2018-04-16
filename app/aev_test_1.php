@@ -100,7 +100,7 @@ for ( $i = 0; $i < $nC; $i++ ) {
 <td colspan="2">
 <?php
 if ( isset($TestType) && ($TestType == "XYTest")) {
-if ($mode == "Edit") { ?>
+if ($this_state == "started") { ?>
 Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="modify_url" value="1" >
 <?php } } ?>
 </td>
@@ -115,7 +115,13 @@ Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-targe
   <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' 
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
-  <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url_<?php echo $i; ?>" <?php echo $Ureadonly; ?> required>
+  <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url_<?php echo $i; ?>" 
+<?php if ($this_state == "started") { 
+  echo "readonly"; 
+} else {
+  echo $Ureadonly; 
+} 
+?> required>
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 

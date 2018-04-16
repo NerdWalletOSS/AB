@@ -56,7 +56,7 @@ require_once "lkp.php";
   if ( $mode == "Edit" )
   {
     $readonly = "";
-    $Ureadonly = "readonly";
+    $Ureadonly = "";
     $Preadonly = "";
     if (isset($rslt['Channel'])) {$Channel = $rslt['Channel'];}
     if ($this_state == "draft") {$readonly = "";}
