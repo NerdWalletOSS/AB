@@ -115,8 +115,8 @@ add_fake_tests(
   if ( idx < 0 ) { go_BYE(-1); }
   //-----------------------------------------------
   strcpy(g_tests[idx].name, test_name);
-  g_tests[idx].id = name_hash & 0x0FFFFFFF;
-  g_tests[idx].name_hash = name_hash + test_type;
+  g_tests[idx].id = (name_hash & 0x0FFFFFFF) + test_type;
+  g_tests[idx].name_hash = name_hash;
   g_tests[idx].external_id = 1234567890;
   g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;

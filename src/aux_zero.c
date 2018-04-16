@@ -5,9 +5,37 @@
 #include "auxil.h"
 
 
-//<hdr>
 int
 zero_test(
+    uint32_t test_idx
+    )
+{
+  int status = 0;
+  if ( test_idx > AB_MAX_NUM_TESTS ) { go_BYE(-1); }
+  TEST_META_TYPE *ptr_test = &(g_tests[test_idx]);
+
+  memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
+  ptr_test->test_type = 0;
+  ptr_test->id = 0;
+  ptr_test->name_hash = 0;
+  ptr_test-> external_id = 0;
+  ptr_test-> has_filters = false;
+  ptr_test-> is_dev_specific = false;
+  ptr_test->state = 0;
+  ptr_test->seed = 0;
+
+  ptr_test->num_variants = 0;
+  ptr_test->variants = NULL;
+
+  ptr_test->final_variant_id = NULL;
+  ptr_test->final_variant_idx = NULL;
+  ptr_test->variant_per_bin = NULL;
+BYE:
+  return status;
+}
+//<hdr>
+int
+free_test(
     uint32_t test_idx
     )
 {
@@ -32,11 +60,18 @@ zero_test(
   free_if_non_null(ptr_test->variants);
   ptr_test->num_variants = 0;
 
-  ptr_test->final_variant_id = NULL;
-  ptr_test->final_variant_idx = NULL;
+  free_if_non_null(ptr_test->final_variant_id);
+  free_if_non_null(ptr_test->final_variant_idx);
+  if ( ptr_test->variant_per_bin != NULL ) { 
+    for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
+      free_if_non_null(ptr_test->variant_per_bin[i]);
+    }
+  }
+  free_if_non_null(ptr_test->variant_per_bin);
 BYE:
   return status;
 }
+
 void 
 shutdown_curl(
     void
