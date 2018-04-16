@@ -66,7 +66,7 @@ hard_code_config(void)
 }
 
 int
-add_fake_tests(
+add_fake_test(
     const char *args
     )
 {
@@ -168,6 +168,7 @@ add_fake_tests(
     if ( vidx == nV ) { vidx = 0; }
   }
 
+  fprintf(stderr, "Created test %s at location %d \n", test_name, idx);
   g_tests[idx].variant_per_bin = vpb;
 BYE:
   return status;

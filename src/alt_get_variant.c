@@ -112,7 +112,7 @@ int alt_get_variant(
   }
   else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
     variant_idx = g_tests[test_idx].variant_per_bin[device_idx][bin];
-    variant_id  = 0; // TODO FIX P0
+    variant_id  = g_tests[test_idx].variants[variant_idx].id;
   }
   else {
     go_BYE(-1);

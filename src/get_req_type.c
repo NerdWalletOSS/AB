@@ -7,8 +7,8 @@ get_req_type(
     const char *api
     )
 {
-  if (strcasecmp(api, "AddFakeTests") == 0) {
-    return AddFakeTests;
+  if (strcasecmp(api, "AddFakeTest") == 0) {
+    return AddFakeTest;
   }
   else if (strcasecmp(api, "AddTest") == 0) {
     return AddTest;
