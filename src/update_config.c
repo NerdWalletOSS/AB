@@ -68,7 +68,7 @@ update_config(
     fprintf(stderr, "WARNING! /GetVariant NOT being logged\n");
   }
   else {
-    status = setup_curl("POST", NULL, g_cfg.logger.server, 
+    status = setup_curl("logger", "POST", NULL, g_cfg.logger.server, 
         g_cfg.logger.port, g_cfg.logger.url, g_cfg.logger.health_url, 
         AB_LOGGER_TIMEOUT_MS, &g_ch, &g_curl_hdrs);
     cBYE(status);
@@ -82,7 +82,7 @@ update_config(
     /* The get_or_create endpoint averages around 25ms response, with 
      * a 95th percentile of 30ms. The plain get endpoint would be 
      * expected to be faster -- Andrew Hollenbach */
-    status = setup_curl("GET", g_ss_response, g_cfg.ss.server, 
+    status = setup_curl("ss", "GET", g_ss_response, g_cfg.ss.server, 
         g_cfg.ss.port, g_cfg.ss.url, g_cfg.ss.health_url, 
         AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
     cBYE(status);

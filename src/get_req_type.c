@@ -67,11 +67,8 @@ get_req_type(
   else if (strcasecmp(api, "MakeFeatureVector") == 0) {
     return MakeFeatureVector;
   }
-  else if (strcasecmp(api, "PingLogServer") == 0) {
-    return PingLogServer;
-  }
-  else if (strcasecmp(api, "PingSessionServer") == 0) {
-    return PingSessionServer;
+  else if (strcasecmp(api, "PingServer") == 0) {
+    return PingServer;
   }
   else if (strcasecmp(api, "PostProcPreds") == 0) {
     return PostProcPreds;

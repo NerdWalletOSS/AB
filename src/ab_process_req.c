@@ -37,6 +37,7 @@ ab_process_req(
 // STOP FUNC DECL
 {
   int status = 0;
+  char server[AB_MAX_LEN_SERVER_NAME+1];
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -131,15 +132,27 @@ ab_process_req(
       cBYE(status);
       break;
       //--------------------------------------------------------
-    case PingLogServer : /* done by C */
-      ping_server(g_cfg.logger.server, g_cfg.logger.port, 
-          g_cfg.logger.health_url, g_rslt);
-      break;
-      //--------------------------------------------------------
-    case PingSessionServer : /* done by C */
-      ping_server(g_cfg.ss.server, 
-          g_cfg.ss.port, 
-          g_cfg.ss.health_url, g_rslt);
+    case PingServer : /* done by C */
+      memset(server, '\0', AB_MAX_LEN_SERVER_NAME);
+      status = extract_name_value(args, "Service=", '&', 
+          server, AB_MAX_LEN_SERVER_NAME);
+      cBYE(status);
+      if ( *server == '\0' ) { go_BYE(-1); }
+      if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.logger.server, 
+            g_cfg.logger.port, g_cfg.logger.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.ss.server, 
+            g_cfg.ss.port, g_cfg.ss.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.webapp.server, 
+            g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
+      }
+      else {
+        go_BYE(-1);
+      }
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */

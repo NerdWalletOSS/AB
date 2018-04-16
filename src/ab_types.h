@@ -29,8 +29,7 @@ typedef enum _ab_req_type {
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
   MakeFeatureVector, // Read &  Lua
-  PingLogServer, // Read &  C
-  PingSessionServer, // Read &  C
+  PingServer, // Read &  C
   PostProcPreds, // Read &  C
   Reload, // Write &  Lua 
   Restart, // Read &  C 
@@ -107,6 +106,7 @@ typedef struct _cftype {
   SERVICE_TYPE logger;
   SERVICE_TYPE ss;
   SERVICE_TYPE statsd;
+  SERVICE_TYPE webapp;
 
   uint32_t sz_log_q;
   int num_post_retries;  

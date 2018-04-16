@@ -64,6 +64,7 @@ int
 setup_curl(
     const char *method,
     char *write_buffer,
+    const char *service,
     const char *server,
     int port,
     const char *url,
@@ -129,7 +130,7 @@ setup_curl(
   //-------
   // Check that log server is listening
   if ( ( health_url != NULL ) && ( *health_url != '\0' ) ) {
-    int ping_status = ping_server(server, port, health_url, NULL);
+    int ping_status = ping_server(service, server, port, health_url, NULL);
     if ( ping_status < 0 ) { 
       fprintf(stderr, "WARNING! Server %s:%d, url %s  not running\n", 
           server, port, health_url);
