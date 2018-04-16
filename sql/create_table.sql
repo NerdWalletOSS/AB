@@ -1,7 +1,7 @@
 -- DROP DATABASE abdb; || true
-DROP DATABASE abdb;
-CREATE DATABASE abdb;
-USE abdb;
+DROP DATABASE abdb2;
+CREATE DATABASE abdb2;
+USE abdb2;
 
 DROP TABLE IF EXISTS api; -- config
 CREATE TABLE api (

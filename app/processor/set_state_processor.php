@@ -8,6 +8,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 
 require_once 'set_state.php';
 require_once 'db_get_test.php';
+//require_once 'cli_del_test.php';
 //require_once '../create_good_json_test.php';
 //-----------------------------------------------------------
 //-------- ACCESS POST parameters
@@ -32,30 +33,30 @@ function action_state($state_id) {
   }
 }
 
-/*ob_start();
-if ( !$_GET ) {
-  echo '{ "Set State" : "ERROR", "Message" : "No paylaod" }'; exit;
-}*/
-//$str_inJ = json_encode($_POST);
+
+// GET DATA
 $X = db_get_test($_GET['TestID']);
+
+// CASE: FIX TO A WINNER
 $X['NewState'] = action_state($_GET['state_id']);
 if ((isset($_GET['Winner'])) && ($_GET['state_id'] == "2")) {
-$X['Winner'] = $_GET['Winner'];
+  $X['Winner'] = $_GET['Winner'];
 }
+// CASE: RESURRECT
+if( $_GET['state_id'] == "4" && ($_GET['action'] == "resurrect")) {
+  $X['NewState'] = "started";
+}
+// CASE: DELETE
+if( $_GET['state_id'] == "1" && ($_GET['action'] == "delete")) {
+  $X['NewState'] = "archived";
+}
+
 $X['Updater'] = $User;
 $str_inJ = json_encode($X);
-
-
-//$json_input = create_good_json_test($str_inJ);
-//if ( !$json_input ) {
-//  echo '{ "InsertTest" : "ERROR", "Message" : "Bad JSOn" }'; exit;
-//}
 //-------------------------------------
 // Call to set state
 $outJ = set_state($str_inJ);
-//var_dump($rslt);
-//header("TestID: ".$rslt["TestID"]);
-//ob_clean();
+
 header('Location: ../home.php');
 
 ?>

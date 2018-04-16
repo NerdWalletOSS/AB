@@ -102,7 +102,7 @@ function test_basic(
     $inJ->{'BinType'} = $bin_type;
   }
   else {
-    $bin_type = get_json_element($inJ, 'bin_type'); 
+    $bin_type = get_json_element($inJ, 'BinType');
   }
 
   rs_assert($bin_type, "Bin type not set ");

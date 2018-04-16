@@ -5,7 +5,8 @@ $(document).ready(function() {
     ]
   });
   $("#error").css('display', 'none', 'important');
-  $('#follow_on').submit(function() {
+  $('#follow_on').submit(function(e) {
+    e.preventDefault();
     $.ajax({
       type: "POST",
       url: "processor/page_4_processor.php",

@@ -9,6 +9,7 @@ require_once 'db_set_row.php';
 require_once 'inform_rts.php';
 require_once 'chk_test_basic.php';
 
+
 function set_state(
   $str_inJ
 )
@@ -71,7 +72,7 @@ function set_state(
     rs_assert(
       ( ( $old_state == "dormant") || 
         ($old_state == "terminated" && ( $test_type == "XYTest") ) ), 
-      "can start a test only if prevous state == dormant, not$old_state");
+      "can start a test only if prevous state == dormant, not $old_state");
     $X1['state_id'] = lkp("state", "started");
     break;
   case "terminated" : 
