@@ -168,7 +168,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
     <td> </td>
   </tr>
 <tr>
-<td><button onclick="window.location.href = 'home.php'"  class="btn btn-lg btn-primary btn-block" >Cancel</button></td>
+<td><a href="home.php"><button class="btn btn-lg btn-primary btn-block" >Cancel</button></a></td>
 <?php 
 if ( $mode == "View" ) 
   {
@@ -177,7 +177,7 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><input class="btn btn-lg btn-success btn-block" type="submit" id="add_test" value="Next"></td>
+<td><input class="btn btn-lg btn-success btn-block" type="button" id="add_test" value="Next"></td>
 
 <?php } ?>
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
