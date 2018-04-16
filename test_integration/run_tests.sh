@@ -10,3 +10,4 @@ cd ../bin
 cd - 
 curl -H "Content-Type: application/json" -X POST --url "http://localhost:8000/addTest" --data @../test_webapp/sample1.json
 lua test_percentages.lua
+kill -9 %1
