@@ -20,6 +20,7 @@ clean(){
 }
 
 buildall(){
+  sudo apt-get update
   sudo apt-get install gcc python python-pip cmake -y
   sudo pip install pystatsd
   clean
