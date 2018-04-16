@@ -67,16 +67,14 @@ local function add_device_specific(c_test, test_data)
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
-  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
-  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
+  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
+   ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
 
-  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint8_t*") * num_devices), ffi.C.free))
   for index=0, num_devices-1 do
-    local z = ffi.cast("uint8_t*", ffi.gc(
-    ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
-    ffi.fill(z, ffi.sizeof(c_type))
-    c_test.variant_per_bin[index] = z
+    c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
+    ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
+    ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
   end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 

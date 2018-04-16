@@ -44,6 +44,7 @@ function curl.get(c_url, hdrs, body)
   local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
+  -- dbg()
   local return_code = tonumber(res_hdrs[1]:split(" ")[2])
   assert(return_code, "Invalid return code " .. res_hdrs[1]:split(" ")[2])
   res_body = table.concat(res_body, "")

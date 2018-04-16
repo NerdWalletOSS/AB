@@ -3,19 +3,16 @@ local ffi = require 'ab_ffi'
 local consts = require 'ab_consts'
 local bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok = {}
 local function set_variants_per_bin(c_test, variant_count)
+  -- No device specific routing here
   --clean all the entries
-  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
-  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
-  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof(cast_type)), ffi.C.free))
+  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  ffi.C.malloc(ffi.sizeof("uint8_t*")), ffi.C.free))
 
-  -- print(ffi.typeof(c_test.variant_per_bin[0]))
   c_test.variant_per_bin[0] = ffi.cast("uint8_t*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
-
+  ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
   local variants = c_test.variants
   local variants_bin = c_test.variant_per_bin[0]
-  ffi.fill(variants_bin, ffi.sizeof(c_type))
+  ffi.fill(variants_bin, ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
 
   -- First use dedicated bins for each variant
   -- Dedicated bins for variant i are i, i+1*nV, i+2*nV ...
