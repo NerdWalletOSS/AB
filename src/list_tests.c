@@ -38,7 +38,7 @@ l_list_tests(
       lua_pop(g_L, 1);
       go_BYE(-1);
     } else {
-      memcpy(g_buf, tests, strlen(tests));
+      memcpy(g_rslt, tests, strlen(tests));
       lua_pop(g_L, 1);
     }
   }
