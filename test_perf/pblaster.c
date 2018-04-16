@@ -97,7 +97,7 @@ void *
       memset(url, '\0', 1024);
       int test_id = abs(random()) % num_tests;
 
-      sprintf(url, "%s/GetVariant?TestName=Test%d&TestType=ABTest&UUID=%d", 
+      sprintf(url, "%s/GetVariant?TestName=T%d&TestType=ABTest&UUID=%d", 
           g_base_url, test_id+1, start_uuid+uid);
       uint64_t t_start = timestamp();
       status = execute(ch, url); 
@@ -150,15 +150,6 @@ main(
   if ( log_port == ab_port ) { go_BYE(-1); }
 
   memset(g_chunk, '\0', CHUNK_SIZE);
-  /*
-   http://curl.haxx.se/libcurl/c/libcurl-tutorial.html.  When using
-  the HTTP protocol, there are many different ways a client can
-  provide those credentials to the server and you can control which
-  way libcurl will (attempt to) use them. The default HTTP
-  authentication method is called 'Basic', which is sending the name
-  and password in clear-text in the HTTP request, base64-encoded. This
-  is insecure.
-  */
 
   int num_tests   = 64;
   int num_threads = 128;
@@ -171,7 +162,6 @@ main(
   int niter = 1;
   int start_uuid = 12345678;
   char buf[1024];
-  int test_id = 1;
 
   pch = malloc(num_threads * sizeof(CURL *));
   return_if_malloc_failed(pch);
@@ -191,36 +181,11 @@ main(
   memset(g_base_url, '\0', 1024);
   sprintf(g_base_url, "%s:%d", server, ab_port);
   // Restart the log server
-  /*
+
   sprintf(url, "http://%s:%d/Restart", server, log_port);
   fprintf(stderr, "url = %s \n" , url);
   status = execute(pch[0], url); cBYE(status);
-  */
-#undef CREATE_TESTS
-#ifdef CREATE_TESTS
-  // Restart the ab server
-  sprintf(url, "%s:%d/Restart", server, ab_port);
-  status = execute(pch[0], url); cBYE(status);
-  sleep(3);
-  //-- Create tests
-  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
-    memset(url, '\0', 1024);
-    memset(buf, '\0', 1024); 
-    strcpy(url, g_base_url);
-    sprintf(buf, "/AddTest?TestType=ABTest&TestName=Test%d&TestID=%d&NumVariants=3", 
-        test_id+1,test_id+1);
-    strcat(url, buf);
-    sprintf(buf, "&VariantID0=%d&Variant0=Control:70", ((test_id+1)*1000)+0);
-    strcat(url, buf);
-    sprintf(buf, "&VariantID1=%d&Variant1=Red:10", ((test_id+1)*1000)+1);
-    strcat(url, buf);
-    sprintf(buf, "&VariantID2=%d&Variant2=Blue:20", ((test_id+1)*1000)+2);
-    strcat(url, buf);
-    //--------------------------------------------------
-    status = execute(pch[0], url); cBYE(status);
-  }
-  fprintf(stderr, "Created %d tests \n", num_tests);
-#endif
+
 
 #undef SEQUENTIAL
   for ( int tid = 0; tid < num_threads; tid++ ) { 

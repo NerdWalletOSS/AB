@@ -157,10 +157,13 @@ add_fake_test(
   // If device specific is not set, we use device_idx = 0
   g_tests[idx].final_variant_id = NULL;
   g_tests[idx].final_variant_idx = NULL;
-  vpb = malloc(1 * sizeof(uint8_t *));
+  int nD = 1; // num devices
+  vpb = malloc(nD * sizeof(uint8_t *));
   return_if_malloc_failed(vpb);
-  vpb[0] = malloc(AB_NUM_BINS * sizeof(uint8_t));
-  return_if_malloc_failed(vpb[0]);
+  for ( int i = 0; i < nD; i++ ) { 
+    vpb[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
+    return_if_malloc_failed(vpb[i]);
+  }
   //---  Set bins 
   vidx = 0;
   for ( int i = 0; i < AB_NUM_BINS; i++ ) { 

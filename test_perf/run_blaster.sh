@@ -12,6 +12,7 @@ gcc $FLAGS pblaster.c \
   -std=gnu99 \
     -I../src/ -I$HOME/local/include/ \
     ../src/auxil.c \
+    ../src/mmap.c \
     -o pblaster \
     -lpthread -lcurl
 

@@ -119,7 +119,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
-      status = l_list_tests(body); cBYE(status);
+      status = l_list_tests(args); cBYE(status);
       break;
       //--------------------------------------------------------
     case LoadConfig : /* done by Lua */
