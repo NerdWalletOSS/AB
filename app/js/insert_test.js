@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
-  $('form').submit(function(e) {
+  $('#add_test').click(function(e) {
     e.preventDefault();
     $.ajax({
       type: "POST",
