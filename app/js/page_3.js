@@ -1,6 +1,7 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
-  $('#device_x_variant').submit(function() {
+  $('#device_x_variant').submit(function(e) {
+    e.preventDefault();
     $.ajax({
       type: "POST",
       url: "processor/page_3_processor.php",

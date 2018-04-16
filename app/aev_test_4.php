@@ -51,10 +51,10 @@ $result = db_get_rows("test", "pred_id != ''");
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form  id='follow_on' method='post'>
+
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
-
+  <form  id='follow_on' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
 		<td >Test ID: <?php echo $id; ?></td>
@@ -102,16 +102,17 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 ?>
 </tr>
 <?php } ?>
+</form>
 <tr>
-<td > <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<td > <button onclick="window.location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
 <?php if (($T['State'] == "draft") && ( $nF != 0 ) ) { ?>
-<td><button class='btn btn-lg btn-success btn-block' type='submit' id='follow_on'>Set Follow On</button></td>
+<td><input class='btn btn-lg btn-success btn-block' type='submit' form="follow_on" id='fol_on'>Set Follow On</button></td>
 <?php } ?>
-<td >  <a onclick="location.href='home.php'"><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
+<td >  <a onclick="window.location.href='home.php'"><button class='btn btn-lg btn-warning btn-block' >Skip</button></a></td>
 </tr>
   </tbody>
   </table>
-</form>
+
 </div>
 </div>
 </div>
