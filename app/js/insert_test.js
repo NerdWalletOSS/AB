@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
-  $('#add_test').click(function(e) {
+  $('#addTest').submit(function(e) {
     e.preventDefault();
     $.ajax({
       type: "POST",
@@ -29,7 +29,9 @@ $(document).ready(function() {
         $("#error_message").html("Loading...")
       }
     });
+
     return false;
 
   });
+
 });

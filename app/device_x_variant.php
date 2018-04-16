@@ -9,10 +9,10 @@
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='device_x_variant' method='post'>
+
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
-
+  <form class="form-signin" id='device_x_variant' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
 		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
@@ -58,8 +58,9 @@ for ( $i = 0; $i < $nD; $i++ ) {
   echo "</tr>";
 
   } ?>
+</form>
 <tr>
-<td colspan="2"> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
+<td colspan="2"> <button onclick="window.location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
 <?php 
 if ( $mode == "View" ) 
   {
@@ -68,14 +69,14 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td colspan="3"><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
+<td colspan="3"><input class="btn btn-lg btn-success btn-block" type="submit" form="device_x_variant" id="dev_x_var" value="Next"></td>
 <?php } ?>
-<td colspan="2"> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td colspan="2"> <button onclick="window.location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
  </table>
-</form>
+
 </div>
 </div>
 </div>

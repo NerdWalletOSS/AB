@@ -115,7 +115,7 @@ Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-targe
   <input type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' 
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
-  <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url" <?php echo $Ureadonly; ?> required>
+  <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url_<?php echo $i; ?>" <?php echo $Ureadonly; ?> required>
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
@@ -167,6 +167,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
     </td>
     <td> </td>
   </tr>
+</form>
 <tr>
 <td><a href="home.php"><button class="btn btn-lg btn-primary btn-block" >Cancel</button></a></td>
 <?php 
@@ -177,14 +178,13 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><input class="btn btn-lg btn-success btn-block" type="button" id="add_test" value="Next"></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" form="addTest" id="add_test" value="Next"></td>
 
 <?php } ?>
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
 <td> <button onclick="window.location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 <?php } ?>
 </tr>
-  </form>
   </tbody>
   </table>
 
@@ -216,8 +216,13 @@ $('.prop').keyup(function () {
 <script>
 $("#btn_ok").click(function (e) {
   $('#ConfirmationModal').modal('hide');
-  $('#url').removeAttr('readonly');
-
+  // Get the value of NumVariants
+  var NumVar = $("input[name=NumVariants]" ).val();
+  var i = 0;
+  while (i < NumVar) {
+    $('#url_'+i).removeAttr('readonly');
+    i++;
+  }
 })
 </script>
 
