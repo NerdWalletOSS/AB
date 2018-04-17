@@ -13,6 +13,7 @@ function all_rts_get_url(
 )
 {
   $SP = list_rts();
+  if ((count($SP)) > 0 ) {
   $first = true;
   $rval = array(count($SP)); $ridx = 0;
   foreach ( $SP as $sp ) { 
@@ -24,6 +25,9 @@ function all_rts_get_url(
     $rval[$ridx++] = $rslt;
   }
   return $rval;
+  } else {
+  echo "<strong>NO TEST REGISTERED IN RTS</strong>";
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -51,7 +55,7 @@ function all_rts_get_url(
 	<div class="container">
 	<div class="navbar-header">
 <!-- Application Title -->
-	<a class="navbar-brand" id="modLink" href="#">AB/URL Diagnostics</a>
+	<a class="navbar-brand" id="modLink" href="diagnostics.php">AB/URL Diagnostics</a>
 	</div>
  <div class="navbar-collapse collapse" id="navbar">
       <ul class="nav navbar-nav navbar-right">
@@ -69,8 +73,8 @@ function all_rts_get_url(
   </div>
   </nav>
 <div class="container theme-showcase" role="main" >
-<?php if ((isset($GET['service'])) != "") {
-$service = $GET['service'];
+<?php if ((isset($_GET['service'])) && ($_GET['service'] != "")) {
+$service = $_GET['service'];
 $url = "localhost:8000/PingServer?Service=".$service;
 $rval = all_rts_get_url($url);
 }
