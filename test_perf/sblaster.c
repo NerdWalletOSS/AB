@@ -76,6 +76,7 @@ main(
   char url[MAX_LEN_URL+1];
   char base_url[MAX_LEN_SERVER_NAME+1+64]; 
   uint32_t *T = NULL; // for timing measurements
+  char **test_url = NULL;
 
   if ( argc != 3 ) { go_BYE(-1); }
 
@@ -103,7 +104,7 @@ main(
   ch = curl_easy_init();
 
    // follow redirects
-  curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 0);
   // insecure is okay
   curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 0);
   curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -121,7 +122,7 @@ main(
 
   int num_tests = 16;
   int niter = 8;
-  int nU = 64*1024; 
+  int nU = 1024; 
   int start_uuid = 12345678;
 
   // Set base URL
@@ -141,6 +142,13 @@ main(
   int ttidx = 0;
   int num_variants = AB_MIN_NUM_VARIANTS;
   int is_dev_specific = 1;
+
+  test_url = malloc(num_tests * sizeof(char *));
+  return_if_malloc_failed(test_url);
+  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
+    test_url[test_id] = malloc(AB_MAX_LEN_URL * sizeof(char));
+    return_if_malloc_failed(test_url[test_id]);
+  }
   fprintf(stderr, "Creating %d tests T1, T2, .. \n", num_tests);
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     char test_type[8]; memset(test_type, '\0', 8);
@@ -160,6 +168,8 @@ main(
     else {
       is_dev_specific = 0;
     }
+    sprintf(test_url[test_id], "%s:%d/GetVariant?TestName=T%d&TestType=%s",
+      server, ab_port, test_id, test_type);
     sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&IsDevSpecific=%d&NumVariants=%d", server, ab_port, test_id, test_type, is_dev_specific, num_variants);
     execute(ch, url);
     curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
@@ -189,10 +199,9 @@ main(
   int ndots = 0;
   for ( int iter = 0; iter < niter; iter++ ) { 
     fprintf(stderr, "iter = %d \n", iter);
-    for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
-      for ( int uid = 0; uid < nU; uid++ ) {
-        sprintf(url, "%s/GetVariant?TestName=T%d&TestType=ABTest&UUID=%d", 
-            base_url, test_id, start_uuid+uid);
+    for ( int uid = 0; uid < nU; uid++ ) {
+      for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
+        sprintf(url, "%s&UUID=%d", test_url[test_id], start_uuid+uid);
         t1 = get_time_usec();
         execute(ch, url);
         curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
@@ -244,6 +253,12 @@ DONE:
 BYE:
   fclose_if_non_null(ofp);
   free_if_non_null(T);
+  if ( test_url != NULL ) { 
+    for ( int test_id = 0; test_id < num_tests; test_id++ ) {
+      free_if_non_null(test_url[test_id]);
+    }
+  }
+  free_if_non_null(test_url);
   if ( ch != NULL ) { curl_easy_cleanup(ch); }
   return status ;
 }

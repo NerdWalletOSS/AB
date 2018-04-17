@@ -42,8 +42,8 @@ typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
   char name[AB_MAX_LEN_VARIANT_NAME+1];
-  const char * url; // AB_MAX_LEN_VARIANT_URL+1
-  const char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
+  char * url; // AB_MAX_LEN_VARIANT_URL+1
+  char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
