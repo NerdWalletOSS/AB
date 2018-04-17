@@ -123,9 +123,9 @@ main(
   /* we pass our 'chunk' struct to the callback function */ 
   curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)&g_chunk);
 
-  int num_tests = 4;
-  int niter = 4;
-  int nU = 64; 
+  int num_tests = 128;
+  int niter = 64;
+  int nU = 64*1024; 
   int start_uuid = 12345678;
   char buf[1024];
   int test_id = 1;
