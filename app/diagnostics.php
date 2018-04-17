@@ -1,7 +1,30 @@
 <?php session_start(); 
 if (isset($_SESSION['User']) && isset($_SESSION['TestType'])) {header('Location: home.php');} else { /* Do Nothing */}
-// -- SET PATH
-require_once "set_path.php";
+
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php/rts");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../php");
+require_once "rs_assert.php";
+require_once "list_rts.php";
+require_once "get_url.php";
+function all_rts_get_url(
+  $url
+)
+{
+  $SP = list_rts();
+  $first = true;
+  $rval = array(count($SP)); $ridx = 0;
+  foreach ( $SP as $sp ) { 
+    $server = $sp['server'];
+    $port   = $sp['port'];
+    $http_code = 0; $rslt = "";
+    $status = get_url($server, $port, $url, $http_code, $rslt);
+    rs_assert($status); 
+    $rval[$ridx++] = $rslt;
+  }
+  return $rval;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,21 +56,26 @@ require_once "set_path.php";
  <div class="navbar-collapse collapse" id="navbar">
       <ul class="nav navbar-nav navbar-right">
           <li>
-          <a href="diagnostics_processor.php?service=logger"><button class="btn btn-sm btn-danger" type="button">Logger</button></a>
+          <a href="diagnostics.php?service=logger"><button class="btn btn-sm btn-info" type="button">Logger</button></a>
         </li>        
          <li>
-          <a href="diagnostics_processor.php?service=ss"><button class="btn btn-sm btn-danger" type="button">SS</button></a>
+          <a href="diagnostics.php?service=ss"><button class="btn btn-sm btn-info" type="button">SS</button></a>
         </li>
         <li>
-          <a href="diagnostics_processor.php?service=webapp"><button class="btn btn-sm btn-danger" type="button">Webapp</button></a>
+          <a href="diagnostics.php?service=webapp"><button class="btn btn-sm btn-info" type="button">Webapp</button></a>
         </li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>
   </nav>
 <div class="container theme-showcase" role="main" >
-
+<?php if ((isset($GET['service'])) != "") {
+$service = $GET['service'];
+$url = "localhost:8000/PingServer?Service=".$service;
+$rval = all_rts_get_url($url);
+}
+?> 
 </div>
 <!-- /container -->
 	<!-- FOOTER -->
-<?php require_once "footer.php"; ?>
+<?php require_once "includes/footer.php"; ?>
