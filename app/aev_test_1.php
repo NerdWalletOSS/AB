@@ -66,7 +66,7 @@ $config = config_html($TestType);
   <tr> 
   <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
   <textarea class="form-control" rows="3" cols="20" name="TestDescription" 
-    maxlength="<?php echo $config['desc_maxlength']; ?>" 
+    maxlength="255" 
     <?php echo $readonly; ?> required>
   <?php if (isset($description)) {echo $description;}?>
   </textarea>
