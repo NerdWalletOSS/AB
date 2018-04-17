@@ -61,7 +61,7 @@ diagnostics(
     int is_dev_specific = g_tests[i].is_dev_specific;
     int num_variants = g_tests[i].num_variants;
     if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
-        ( num_variants < AB_MAX_NUM_VARIANTS ) ) {
+        ( num_variants > AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
     }
     int nD;
@@ -109,7 +109,8 @@ diagnostics(
       }
     }
     // TODO Check that counter[] is similar to percentage
-    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
+    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { 
+      go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
       if ( is_dev_specific ) { go_BYE(-1); }

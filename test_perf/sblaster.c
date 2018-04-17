@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #include "macros.h"
+#include "ab_constants.h"
 #include "auxil.h"
 
 #define CHUNK_SIZE 16384
@@ -68,17 +69,12 @@ main(
   int status = 0;
   FILE *ofp = NULL; // for timing measurements
   CURL *ch = NULL;
-  FILE *fp = NULL;
-  CURLINFO info;
   long http_code;
-  double c_length;  
 #define MAX_LEN_SERVER_NAME 127
 #define MAX_LEN_URL 127
   char server[MAX_LEN_SERVER_NAME+1];
   char url[MAX_LEN_URL+1];
   char base_url[MAX_LEN_SERVER_NAME+1+64]; 
-  bool write_to_file = false;
-  uint64_t t_start, t_stop;
   uint32_t *T = NULL; // for timing measurements
 
   if ( argc != 3 ) { go_BYE(-1); }
@@ -123,12 +119,10 @@ main(
   /* we pass our 'chunk' struct to the callback function */ 
   curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)&g_chunk);
 
-  int num_tests = 128;
-  int niter = 64;
+  int num_tests = 16;
+  int niter = 8;
   int nU = 64*1024; 
   int start_uuid = 12345678;
-  char buf[1024];
-  int test_id = 1;
 
   // Set base URL
   memset(base_url, '\0', (MAX_LEN_SERVER_NAME+1+64));
@@ -144,10 +138,29 @@ main(
   else {
     fprintf(stderr, "Reloaded server\n");
   }
-
+  int ttidx = 0;
+  int num_variants = AB_MIN_NUM_VARIANTS;
+  int is_dev_specific = 1;
   fprintf(stderr, "Creating %d tests T1, T2, .. \n", num_tests);
-  for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
-    sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=ABTest&NumVariants=3", server, ab_port, test_id);
+  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
+    char test_type[8]; memset(test_type, '\0', 8);
+    switch ( ttidx ) { 
+      case 0 : strcpy(test_type, "ABTest"); ttidx++; break; 
+      case 1 : strcpy(test_type, "XYTest"); ttidx--; break; 
+      default : go_BYE(-1); break;
+    }
+    if ( strcmp(test_type, "XYTest") == 0 ) {
+      if ( is_dev_specific == 0 ) { 
+        is_dev_specific = 1;
+      }
+      else {
+        is_dev_specific = 0;
+      }
+    }
+    else {
+      is_dev_specific = 0;
+    }
+    sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&IsDevSpecific=%d&NumVariants=%d", server, ab_port, test_id, test_type, is_dev_specific, num_variants);
     execute(ch, url);
     curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
     if ( http_code != 200 ) { 
@@ -156,12 +169,19 @@ main(
     else {
       fprintf(stderr, "Created test T%d\n", test_id); 
     }
+    num_variants++;
+    if ( num_variants > AB_MAX_NUM_VARIANTS ) { 
+      num_variants = AB_MIN_NUM_VARIANTS;
+    }
   }
+  double avg_time = 0;
+  double min_time = INT_MAX;
+  double max_time = INT_MIN;
 
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10);
   // Get variants for these tests for nU users
-  t_start = get_time_usec();
-  int num_bad = 0; int ndot = 0;
-  uint64_t maxt = 0, t1, t2, t;
+  int num_bad = 0; 
+  uint64_t t1, t2, t;
   // T is used to measure individual times 
   T = malloc(sizeof(uint32_t) * (num_tests* niter * nU));
   return_if_malloc_failed(T);
@@ -173,17 +193,24 @@ main(
       for ( int uid = 0; uid < nU; uid++ ) {
         sprintf(url, "%s/GetVariant?TestName=T%d&TestType=ABTest&UUID=%d", 
             base_url, test_id, start_uuid+uid);
-        t1 = RDTSC();
+        t1 = get_time_usec();
         execute(ch, url);
         curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
+        if ( num_bad > 10000 ) { goto DONE; }
         if ( http_code != 200 ) { 
           continue; num_bad++; 
         }
-        t2 = RDTSC();
+        t2 = get_time_usec();
         if ( t2 < t1 ) {  continue; }
         t = t2 - t1;
         T[tidx++] = t;
-        if ( ( tidx % 500 ) == 0 ) { 
+        if ( ( tidx % 500 ) == 0 ) {
+          sprintf(url, "%s:%d/Diagnostics?Source=C", server, ab_port);
+          execute(ch, url);
+          curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
+          if ( http_code != 200 ) { 
+            fprintf(stderr, "Diagnostics failed\n"); go_BYE(-1);
+          }
           ndots++; 
           fprintf(stderr, ".");
           if ( ndots >= 72 ) { 
@@ -194,10 +221,7 @@ main(
       }
     }
   }
-  t_stop = get_time_usec();
-  double avg_time = 0;
-  double min_time = INT_MAX;
-  double max_time = INT_MIN;
+DONE:
   for ( int i = 0; i < tidx; i++ ) { 
     if ( T[i] > max_time ) { max_time = T[i]; }
     if ( T[i] < min_time ) { min_time = T[i]; }

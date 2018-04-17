@@ -96,7 +96,7 @@ int alt_get_variant(
     if ( *buf != '\0' ) { 
       for ( int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
         if ( strcmp(g_justin_cat_lkp[j].name, buf) == 0 ) { 
-          device_idx = j; break;
+          device_idx = g_justin_cat_lkp[j].id - 1;
         }
       }
     }
@@ -104,6 +104,7 @@ int alt_get_variant(
   else {
     device_idx = 0; 
   }
+  if ( device_idx < 0 ) { go_BYE(-1); }
   if ( device_idx >= g_n_justin_cat_lkp ) { go_BYE(-1); }
   //----------------------------------
   if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {

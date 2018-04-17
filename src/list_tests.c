@@ -64,7 +64,7 @@ c_list_tests(
   int status = 0;
   bool first = true;
   char buf[2*(AB_MAX_LEN_TEST_NAME+1)];
-  strcpy(X, " [\n");
+  strcpy(X, " [ ");
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { continue; }
     if ( g_tests[i].test_type != test_type ) { continue; }

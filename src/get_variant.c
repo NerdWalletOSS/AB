@@ -25,7 +25,11 @@ get_variant(
   memset(g_uuid, '\0', g_cfg.uuid_len+1);
   //-------------------------------------------------------------
   status = get_test_name(args,  test_name);  cBYE(status);
-  status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
+  status = get_test_idx(test_name, test_type, &test_idx); 
+  if ( status < 0 ) { 
+    printf("hello world\n");
+  }
+  cBYE(status);
   T = &(g_tests[test_idx]);
   g_log_get_variant_calls++; 
   // Extract UUID
