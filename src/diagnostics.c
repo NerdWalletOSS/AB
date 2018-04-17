@@ -45,9 +45,14 @@ diagnostics(
     )
 {
   int status = 0;
+  int counter[AB_MAX_NUM_VARIANTS];
+  for ( int i = 0; i <  AB_MAX_NUM_VARIANTS; i++ ) { 
+    counter[i] = 0;
+  }
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { 
       if ( g_tests[i].name[0] != '\0' ) { go_BYE(-1); }
+      // TODO Make sure that everything else is NULL
       continue;
     }
     int test_type = g_tests[i].test_type;
@@ -56,8 +61,22 @@ diagnostics(
     int is_dev_specific = g_tests[i].is_dev_specific;
     int num_variants = g_tests[i].num_variants;
     if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
-         ( num_variants < AB_MAX_NUM_VARIANTS ) ) {
+        ( num_variants < AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
+    }
+    int nD;
+    if ( is_dev_specific == 0 ) { 
+      nD = 1; // num devices 
+    }
+    else {
+      nD = g_n_justin_cat_lkp;
+    }
+    for ( int ii = 0; ii < nD; ii++ ) {
+      for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
+        uint8_t x = g_tests[i].variant_per_bin[ii][jj];
+        if ( x >= num_variants ) { go_BYE(-1); }
+        counter[x]++;
+      }
     }
     float sum = 0;
     for ( int k = 0; k < num_variants; k++ ) {
@@ -86,6 +105,7 @@ diagnostics(
         // TODO Make sure it is valid JSON
       }
     }
+    // TODO Check that counter[] is similar to percentage
     if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
@@ -98,7 +118,7 @@ diagnostics(
       go_BYE(-1);
     }
     if ( ( state != TEST_STATE_STARTED ) &&
-         ( state != TEST_STATE_TERMINATED ) ) { 
+        ( state != TEST_STATE_TERMINATED ) ) { 
       go_BYE(-1);
     }
     for ( int j = i+1; j < AB_MAX_NUM_TESTS; j++ ) { 
