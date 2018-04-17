@@ -78,7 +78,9 @@ add_fake_test(
   int idx = -1, vidx = -1;
   VARIANT_REC_TYPE *variants = NULL;
   uint8_t **vpb = NULL;
-  int nV = 0; int test_type;
+  int nV = 0; // num variants 
+  int is_dev_specific = 0;
+  int test_type;
   int bufsz = 63;
   char test_name[AB_MAX_LEN_TEST_NAME+1]; char buf[bufsz+1];
 
@@ -109,6 +111,12 @@ add_fake_test(
   status = stoI4(buf, &nV); cBYE(status);
   if ( ( nV < AB_MIN_NUM_VARIANTS ) || 
        ( nV > AB_MAX_NUM_VARIANTS ) ) { go_BYE(-1); }
+  //-----------------------------------------------
+  memset(buf, '\0', 8);
+  status = extract_name_value(args, "IsDevSpecific=", '&', buf, bufsz);
+  cBYE(status);
+  status = stoI4(buf, &nV); cBYE(status);
+  if ( ( is_dev_specific < 0 ) || ( is_dev_specific > 1 ) ) { go_BYE(-1); }
   //-----------------------------------------------
   //-- Test must not exist
   status = get_test_idx(test_name, test_type, &idx); 
@@ -161,7 +169,14 @@ add_fake_test(
   // If device specific is not set, we use device_idx = 0
   g_tests[idx].final_variant_id = NULL;
   g_tests[idx].final_variant_idx = NULL;
-  int nD = 1; // num devices
+  int nD;
+  if ( is_dev_specific == 0 ) { 
+    nD = 1; // num devices 
+  }
+  else {
+    nD = g_n_justin_cat_lkp;
+  }
+  if ( nD < 1 ) { go_BYE(-1); }
   vpb = malloc(nD * sizeof(uint8_t *));
   return_if_malloc_failed(vpb);
   for ( int i = 0; i < nD; i++ ) { 
