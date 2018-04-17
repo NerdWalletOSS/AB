@@ -88,22 +88,24 @@ generic_handler(
     struct evkeyval  *header = NULL;
     headers = evhttp_request_get_input_headers (req);
     header = headers->tqh_first;
+    bool is_error = false;
     for (header = headers->tqh_first; header; 
         header = header->next.tqe_next) {
+      // fprintf(stderr, "%s => %s\n",  header->key, header->value);
       if ( strcasecmp(header->key, "Content-Type") == 0 ) { 
         found_header_1 = true;
         if ( strcasecmp(header->value, "application/json") != 0 ) { 
-          go_BYE(-1);
+          is_error = true; 
         }
       }
       if ( strcasecmp(header->key, "X-Caller-Client-ID") == 0 ) { 
         found_header_2 = true;
         if ( strcasecmp(header->value, "ab-runtime-service") != 0 ) { 
-          go_BYE(-1);
+          is_error = true; 
         }
       }
-      fprintf(stderr, "%s\n", header->key);
     }
+    if ( is_error ) { WHEREAMI; } // TODO FIX go_BYE(-1); }
     if ( !found_header_1 ) { go_BYE(-1); }
     if ( !found_header_2 ) { go_BYE(-1); }
     //-----------------------------------------------------

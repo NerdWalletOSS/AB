@@ -153,16 +153,6 @@ get_tracer(
   }
 }
 
-void
-set_tracer(
-    char *tracer,
-    size_t n
-    )
-{
-  memset(tracer, '\0', n+1);
-  // TODO TO BE IMPLEMENTED 
-}
-
 #include "yuarel.h"
 int 
 get_host(

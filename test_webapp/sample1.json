@@ -18,11 +18,11 @@
     "t_update": "152364418694989800",
     "creator_id": "1",
     "updater_id": "1",
-    "state_id": "1",
+    "state_id": "3",
     "Creator": "joe",
     "TestType": "XYTest",
     "BinType": "anonymous",
-    "State": "draft",
+    "State": "started",
     "Channel": "facebook",
     "Variants": [
         {

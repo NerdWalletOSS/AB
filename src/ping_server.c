@@ -5,6 +5,7 @@
 //<hdr>
 int 
 ping_server(
+    const char *service,
     const char *server,
     int port,
     const char *url,
@@ -55,14 +56,14 @@ ping_server(
 BYE:
   if ( rslt != NULL ) { 
     if ( status < 0 ) { 
-      sprintf(rslt, "{ \"Ping\" : \"ERROR\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\" }", server, port, url);
+      sprintf(rslt, "{ \"Ping\" : \"ERROR\", \"Service\" : \"%s\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\" }", service, server, port, url);
     }
     else {
       if ( time == 0 ) { 
         sprintf(rslt, "{ \"Ping\" : \"LOG SERVER NOT SET\" }");
       }
       else {
-        sprintf(rslt, "{ \"Ping\" : \"OK\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\", \"Time\" : \"%lf\" }", server, port, url, time);
+        sprintf(rslt, "{ \"Ping\" : \"OK\", \"Service\" : \"%s\", \"Server\" : \"%s\", \"Port\" : %d, \"URL\" : \"%s\", \"Time\" : \"%lf\" }", service, server, port, url, time);
       }
     }
   }

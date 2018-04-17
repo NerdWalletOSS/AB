@@ -7,7 +7,10 @@ get_req_type(
     const char *api
     )
 {
-  if (strcasecmp(api, "AddTest") == 0) {
+  if (strcasecmp(api, "AddFakeTest") == 0) {
+    return AddFakeTest;
+  }
+  else if (strcasecmp(api, "AddTest") == 0) {
     return AddTest;
   }
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
@@ -64,11 +67,8 @@ get_req_type(
   else if (strcasecmp(api, "MakeFeatureVector") == 0) {
     return MakeFeatureVector;
   }
-  else if (strcasecmp(api, "PingLogServer") == 0) {
-    return PingLogServer;
-  }
-  else if (strcasecmp(api, "PingSessionServer") == 0) {
-    return PingSessionServer;
+  else if (strcasecmp(api, "PingServer") == 0) {
+    return PingServer;
   }
   else if (strcasecmp(api, "PostProcPreds") == 0) {
     return PostProcPreds;

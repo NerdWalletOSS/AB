@@ -2,7 +2,6 @@
 #include "ab_globals.h"
 #include "auxil.h"
 #include "get_test_idx.h"
-#include "add_test.h"
 #include "log_decision.h"
 #include "chk_exclude.h"
 #include "get_variant.h"
@@ -20,7 +19,7 @@ get_variant(
   int test_type = AB_TEST_TYPE_AB;
   TEST_META_TYPE *T = NULL;
   char in_tracer[AB_MAX_LEN_TRACER+1];
-  char out_tracer[AB_MAX_LEN_TRACER+1];
+  uint64_t curr_time = get_time_usec();
 
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
   memset(g_uuid, '\0', g_cfg.uuid_len+1);
@@ -41,7 +40,6 @@ get_variant(
     g_log_bad_uuid++;
   }
   get_tracer(args, in_tracer);
-  set_tracer(out_tracer, AB_MAX_LEN_TRACER);
   //--------------------------------------------------------
   // Deal with exclusions for categorical attributes
   int is_exclude = FALSE; int nw;
@@ -94,10 +92,10 @@ get_variant(
   memset(lcl_payload.uuid, '\0', AB_MAX_LEN_UUID+1);
   strcpy(lcl_payload.uuid, g_uuid);
   strcpy(lcl_payload.in_tracer,  in_tracer);
-  strcpy(lcl_payload.out_tracer, out_tracer);
+  strcpy(lcl_payload.out_tracer, g_out_tracer);
   lcl_payload.test_id    = g_tests[test_idx].id;
   lcl_payload.variant_id = variant_id;
-  lcl_payload.time       = g_t_start;
+  lcl_payload.time       = curr_time;
   status = log_decision(lcl_payload);
   cBYE(status);
   //--------------------------------------------------------

@@ -247,6 +247,8 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
+  has_changed[4] = update_config(g_conf[0].webapp, config.AB.WEBAPP)
+
   cache.put("config", config)
   -- dbg()
 end

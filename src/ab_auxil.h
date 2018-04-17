@@ -27,11 +27,6 @@ get_tracer(
       const char *args, 
       char *tracer
       );
-extern void
-set_tracer(
-    char *tracer,
-    size_t n
-    );
 extern int 
 get_host(
     char *in,

@@ -85,7 +85,6 @@ generic_handler(
   // STOP:  NW Specific 
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
-  // TODO P0 WHY? status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
 #ifdef NW_SPECIFIC
   status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
