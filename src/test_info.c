@@ -85,8 +85,7 @@ c_test_info(
   if ( test_idx >= AB_MAX_NUM_TESTS) { go_BYE(-1); }
 
   TEST_META_TYPE *T = &(g_tests[test_idx]);
-  sprintf(buf, "{ \n");
-  strcat(X, buf);
+  strcpy(X, "{ \n");
   Xlen = strlen(X);
 
   sprintf(buf, "  \"Name\" : \"%s\", \n", T->name);
