@@ -93,6 +93,9 @@ diagnostics(
         VARIANT_REC_TYPE vl = g_tests[i].variants[l];
         if ( vl.id == vk.id ) { go_BYE(-1); }
         if ( strcmp(vl.name, vk.name ) == 0 ) { go_BYE(-1); }
+        if ( ( vl.url != NULL ) && ( vk.url != NULL ) ) {
+          if ( strcmp(vl.url, vk.url ) == 0 ) { go_BYE(-1); }
+        }
       }
       if ( vk.url != NULL ) { 
         if ( ( strncmp(vk.url, "https://", 8) != 0 ) &&
@@ -130,7 +133,8 @@ diagnostics(
           go_BYE(-1);
         }
       }
-      if ( g_tests[j].test_type == AB_TEST_TYPE_XY ) { 
+      if ( ( test_type == AB_TEST_TYPE_XY) && 
+          ( g_tests[j].test_type == AB_TEST_TYPE_XY ) ) { 
         if ( g_tests[j].external_id  == external_id ) {
           go_BYE(-1);
         }
