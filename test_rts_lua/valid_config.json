@@ -84,6 +84,26 @@
         "VALUE": "nw.metrics.ab.request_time"
       }
     },
+    "WEBAPP": {
+      "SERVER": {
+        "COMMENT": "the WebApp address",
+        "VALUE": "127.0.0.1"
+      },
+      "PORT": {
+        "COMMENT": "Port on which the webapp server is listening",
+        "VALUE": "8002"
+      },
+      "HEALTH_URL": {
+        "COMMENT": "Health check URL for Webapp",
+        "VALUE": "/health_check"
+      },
+      "URL": {
+        "COMMENT": "URL for Webapp",
+        "VALUE": "\"webapp\""
+      }
+ 
+    },
+ 
     "DEFAULT_URL": {
       "COMMENT": "For URL Router",
       "VALUE": "https://www.nerdwallet.com"

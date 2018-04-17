@@ -1,4 +1,4 @@
-package.path=package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
+package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
 require 'str'
 local json = require 'json'
 local curl = require 'curl'
