@@ -14,7 +14,7 @@
 #define AB_MAX_LEN_URL      4095 // used for URLs fired by RTS
 #define AB_MAX_LEN_CUSTOM_DATA      2047 // 
 #define AB_MAX_HEADERS_SIZE 8191
-#define AB_MAX_LEN_BODY    8191
+#define AB_MAX_LEN_BODY    32767
 #define AB_MAX_LEN_PAYLOAD  1024-1 // for POST to logger
 #define AB_MAX_LEN_RESULT   1048576-1
 

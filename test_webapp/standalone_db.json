@@ -1,6 +1,6 @@
 {
   "dbhost" : "localhost",
-  "dbname" : "abdb",
+  "dbname" : "abdb2",
   "dbuser" : "root",
   "dbpass" : "",
   "webapp_server" : "localhost",

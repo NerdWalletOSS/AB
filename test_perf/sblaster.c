@@ -139,10 +139,10 @@ main(
   else {
     fprintf(stderr, "Reloaded server\n");
   }
-  int state;
   int ttidx = 0;
   int num_variants = AB_MIN_NUM_VARIANTS;
   int is_dev_specific = 1;
+  char state[16]; strcpy(state, "started");
 
   test_url = malloc(num_tests * sizeof(char *));
   return_if_malloc_failed(test_url);
@@ -151,7 +151,6 @@ main(
     return_if_malloc_failed(test_url[test_id]);
   }
   fprintf(stderr, "Creating %d tests T1, T2, .. \n", num_tests);
-  state = TEST_STATE_STARTED;
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     char test_type[8]; memset(test_type, '\0', 8);
     switch ( ttidx ) { 
@@ -159,11 +158,11 @@ main(
       case 1 : strcpy(test_type, "XYTest"); ttidx--; break; 
       default : go_BYE(-1); break;
     }
-    if ( state == TEST_STATE_STARTED ) { 
-      state = TEST_STATE_TERMINATED;
+    if ( strcmp(state, "started") == 0 ) {
+      strcpy(state, "terminated");
     }
     else {
-      state = TEST_STATE_STARTED;
+      strcpy(state, "started");
     }
     if ( strcmp(test_type, "XYTest") == 0 ) {
       if ( is_dev_specific == 0 ) { 
@@ -178,7 +177,9 @@ main(
     }
     sprintf(test_url[test_id], "%s:%d/GetVariant?TestName=T%d&TestType=%s",
       server, ab_port, test_id, test_type);
-    sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&IsDevSpecific=%d&NumVariants=%d", server, ab_port, test_id, test_type, is_dev_specific, num_variants);
+    sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&State=%s&IsDevSpecific=%d&NumVariants=%d", server, ab_port, test_id, test_type, state, 
+        is_dev_specific, num_variants);
+    fprintf(stderr, "%s\n", url);
     execute(ch, url);
     curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
     if ( http_code != 200 ) { 

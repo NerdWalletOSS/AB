@@ -39,9 +39,12 @@ add_fake_test(
   int itemp; int nV = 0; // num variants 
   bool is_dev_specific;
   int test_type, state;
-  int bufsz = 63;
-  char test_name[AB_MAX_LEN_TEST_NAME+1]; char buf[bufsz+1];
+  int bufsz = 511; char *cptr = NULL;
+  char test_name[AB_MAX_LEN_TEST_NAME+1]; 
+  char *buf = NULL;
 
+  buf = malloc(bufsz+1);
+  memset(buf, '\0',  bufsz+1);
   //-----------------------------------------------
   memset(buf, '\0', bufsz+1);
   status = extract_name_value(args, "TestType=", '&', buf, bufsz);
@@ -141,10 +144,12 @@ add_fake_test(
   }
   // Set winner if terminated
   int winner_id = -1, winner_idx = -1;
-    if ( state == TEST_STATE_STARTED ) { 
-      winner_idx = name_hash % nV;
-      winner_id = variants[winner_id].id;
-    }
+  if ( state == TEST_STATE_TERMINATED ) { 
+    winner_idx = name_hash % nV;
+    winner_id = variants[winner_idx].id;
+    if ( winner_id <= 0 ) { go_BYE(-1); }
+    if ( winner_idx < 0 ) { go_BYE(-1); }
+  }
   int sum = 0; vidx = 0;
   switch ( state ) { 
     case TEST_STATE_STARTED : 
@@ -162,10 +167,14 @@ add_fake_test(
       break;
   }
   for ( vidx = 0; vidx < nV; vidx++ ) { 
+    memset(buf, '\0', bufsz+1);
     sprintf(buf, "http://localhost:8080/AB/test_webapp/index%d.html", vidx);
-    variants[vidx].url = strdup(buf);
+    cptr = strdup(buf); return_if_malloc_failed(cptr);
+    variants[vidx].url = cptr;
+    memset(buf, '\0', bufsz+1);
     sprintf(buf, "{ \"key%d\" : \"val%d\" } ", vidx, vidx);
-    variants[vidx].custom_data = strdup(buf);
+    cptr = strdup(buf); return_if_malloc_failed(cptr);
+    variants[vidx].custom_data = cptr;
   }
   g_tests[idx].variants = variants;
   // Determine numberof devices, nD
@@ -214,5 +223,6 @@ add_fake_test(
   fprintf(stderr, "Created test %s at location %d \n", test_name, idx);
 
 BYE:
+  free_if_non_null(buf);
   return status;
 }

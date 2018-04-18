@@ -45,6 +45,7 @@ get_variant(
     g_log_bad_uuid++;
   }
   get_tracer(args, in_tracer);
+  int nV = g_tests[test_idx].num_variants;
   //--------------------------------------------------------
   // Deal with exclusions for categorical attributes
   int is_exclude = FALSE; int nw;
@@ -62,6 +63,7 @@ get_variant(
   // Deal with special case of Terminated test 
   if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
     uint32_t final_variant_idx = g_tests[test_idx].final_variant_idx[0];
+    if ( final_variant_idx > nV ) { go_BYE(-1); }
     const char *cd = g_tests[test_idx].variants[final_variant_idx].custom_data;
     if ( cd == NULL ) { cd = "null"; }
     nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",

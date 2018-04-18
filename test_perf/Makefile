@@ -19,8 +19,8 @@ INCS= -I. \
 DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 # Uncomment below to capture server error 

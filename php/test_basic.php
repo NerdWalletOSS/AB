@@ -35,7 +35,9 @@ function test_basic(
   // START Check inputs
   rs_assert(!empty($str_inJ));
   rs_assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
+  $inJ = json_decode($str_inJ); 
+  rs_assert(gettype($inJ) != "string");
+  rs_assert($inJ, "invalid JSON");
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------

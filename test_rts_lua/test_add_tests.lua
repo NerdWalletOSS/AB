@@ -1,6 +1,6 @@
 package.path=package.path .. ";./../src/?.lua"
 local assertx = require 'assertx'
-local dbg = require 'debugger'
+-- local dbg = require 'debugger'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local consts = require 'ab_consts'
@@ -199,6 +199,7 @@ describe('AddTest framework', function()
             local j_table = json.decode(valid_json2)
             j_table.is_dev_specific = tostring(consts.TRUE)
             j_table.BinType = "anonymous"
+            j_table.State = "started"
             local j_str = json.encode(j_table)
             local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
             assertx(status == true, res)
@@ -295,6 +296,111 @@ describe('AddTest framework', function()
       end)
     end)
   end)
+  describe("should not have any final_variant entries for a started test", function()
+    it("Should have a no entry for device agnosticc anonymous tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.FALSE)
+      j_table.BinType = "anonymous"
+      j_table.State = "started"
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx == nil, "Final variant idx should be nil")
+      assert(c_test.final_variant_id == nil, "Final variant id should be nil")
+      cleanup(g_tests, c_index)
+    end)
+
+    it("Should have a no entry for device agnosticc c_to_v_ok_v_to_c_ok_v_to_v_not_ok tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.FALSE)
+      j_table.BinType = "c_to_v_ok_v_to_c_ok_v_to_v_not_ok"
+      j_table.State = "started"
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx == nil, "Final variant idx should be nil")
+      assert(c_test.final_variant_id == nil, "Final variant id should be nil")
+      cleanup(g_tests, c_index)
+    end)
+
+    it("Should have no  entries for device specific anonymous tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.TRUE)
+      j_table.BinType = "anonymous"
+      j_table.State = "started"
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      local num_devices = 0
+      for _ in pairs(j_table.DeviceCrossVariant) do num_devices = num_devices + 1 end
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx == nil, "Final variant idx should be nil")
+      assert(c_test.final_variant_id == nil, "Final variant id should be nil")
+      cleanup(g_tests, c_index)
+    end)
+  end)
+
+  describe("should have any final_variant entries for a terminated test", function()
+    it("for device agnostic anonymous tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.FALSE)
+      j_table.BinType = "anonymous"
+      j_table.State = "terminated"
+      j_table.Variants[1].is_final = tostring(consts.TRUE)
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx ~= nil, "Final variant idx should not be nil")
+      assert(c_test.final_variant_id ~= nil, "Final variant id should not be nil")
+      assert(c_test.final_variant_idx[0] ~= nil, "Final variant idx should not be nil")
+      assert(c_test.final_variant_id[0] ~= nil, "Final variant id should not be nil")
+
+
+      cleanup(g_tests, c_index)
+    end)
+
+    it("for device agnostic c_to_v_ok_v_to_c_ok_v_to_v_not_ok tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.FALSE)
+      j_table.BinType = "c_to_v_ok_v_to_c_ok_v_to_v_not_ok"
+      j_table.State = "terminated"
+      j_table.Variants[1].is_final = tostring(consts.TRUE)
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      assert(status, res)
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx ~= nil, "Final variant idx should not be nil")
+      assert(c_test.final_variant_id ~= nil, "Final variant id should not be nil")
+      assert(c_test.final_variant_idx[0] ~= nil, "Final variant idx should not be nil")
+      assert(c_test.final_variant_id[0] ~= nil, "Final variant id should not be nil")
+
+
+      cleanup(g_tests, c_index)
+    end)
+
+    it("for device specific anonymous tests", function()
+      local j_table = json.decode(valid_json2)
+      j_table.is_dev_specific = tostring(consts.TRUE)
+      j_table.BinType = "anonymous"
+      j_table.State = "terminated"
+      j_table.Variants[1].is_final = tostring(consts.TRUE)
+      local j_str = json.encode(j_table)
+      local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
+      local num_devices = 0
+      for _ in pairs(j_table.DeviceCrossVariant) do num_devices = num_devices + 1 end
+      local c_test = g_tests[c_index[0]]
+      assert(c_test.final_variant_idx ~= nil, "Final variant idx should not be nil")
+      assert(c_test.final_variant_id ~= nil, "Final variant id should not be nil")
+      for index = 0 , num_devices - 1 do
+        assert(c_test.final_variant_idx[index] ~= nil, "Final variant idx should not be nil")
+        assert(c_test.final_variant_id[index] ~= nil, "Final variant id should not be nil")
+      end
+      
+      cleanup(g_tests, c_index)
+    end)
+  end)
+
+
+
   describe("should delete archived tests", function()
     empty_g_tests()
     local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
