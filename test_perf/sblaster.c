@@ -139,6 +139,7 @@ main(
   else {
     fprintf(stderr, "Reloaded server\n");
   }
+  int state;
   int ttidx = 0;
   int num_variants = AB_MIN_NUM_VARIANTS;
   int is_dev_specific = 1;
@@ -150,12 +151,19 @@ main(
     return_if_malloc_failed(test_url[test_id]);
   }
   fprintf(stderr, "Creating %d tests T1, T2, .. \n", num_tests);
+  state = TEST_STATE_STARTED;
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     char test_type[8]; memset(test_type, '\0', 8);
     switch ( ttidx ) { 
       case 0 : strcpy(test_type, "ABTest"); ttidx++; break; 
       case 1 : strcpy(test_type, "XYTest"); ttidx--; break; 
       default : go_BYE(-1); break;
+    }
+    if ( state == TEST_STATE_STARTED ) { 
+      state = TEST_STATE_TERMINATED;
+    }
+    else {
+      state = TEST_STATE_STARTED;
     }
     if ( strcmp(test_type, "XYTest") == 0 ) {
       if ( is_dev_specific == 0 ) { 

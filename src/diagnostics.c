@@ -141,19 +141,19 @@ diagnostics(
       }
     }
 
-    if ( state != TEST_STATE_TERMINATED ) {
-      /* TODO INDRAJEET
+    if ( state == TEST_STATE_TERMINATED ) {
+
       if ( g_tests[i].variant_per_bin   != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
-      */
+
     }
     else if ( state == TEST_STATE_STARTED ) {
-      /* TODO INDRAJEET
+
       if ( g_tests[i].variant_per_bin == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx != NULL ) { go_BYE(-1); }
-      */
+
     }
     else {
       go_BYE(-1);

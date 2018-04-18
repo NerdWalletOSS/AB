@@ -11,7 +11,7 @@
 #include "chk_db_conn.h"
 #include "diagnostics.h"
 #include "dump_log.h"
-// #include "hard_code_config.h"
+#include "hard_code_config.h"
 #include "add_fake_test.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
@@ -27,7 +27,7 @@
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
 
-extern g_config_file[AB_MAX_LEN_FILE_NAME+1];
+extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
 // START FUNC DECL
 int 

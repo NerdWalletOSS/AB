@@ -32,6 +32,8 @@
 #include "extract_api_args.h"
 #include "get_nw_hdrs.h"
 #include "get_date.h"
+#include "ab_auxil.h"
+#include "make_guid.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>

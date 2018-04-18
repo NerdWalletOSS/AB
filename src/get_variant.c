@@ -1,6 +1,7 @@
 #include "ab_incs.h"
 #include "ab_globals.h"
 #include "auxil.h"
+#include "ab_auxil.h"
 #include "get_test_idx.h"
 #include "log_decision.h"
 #include "chk_exclude.h"
