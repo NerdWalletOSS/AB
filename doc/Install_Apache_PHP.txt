@@ -91,3 +91,5 @@ flag during linking and do at least one of the following:
    - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
    - have your system administrator add LIBDIR to `/etc/ld.so.conf'
 
+
+cp php.ini to $HOME/local/lib/ Edit it to set log file 
