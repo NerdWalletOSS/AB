@@ -115,6 +115,7 @@ function AddTests.add(test_str, g_tests, c_index)
     else
       error("Invalid TestType given")
     end
+    -- dbg()
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
     tests[test_data.id] = test_data
