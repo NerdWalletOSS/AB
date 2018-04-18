@@ -73,11 +73,14 @@ diagnostics(
     else {
       nD = g_n_justin_cat_lkp;
     }
-    for ( int ii = 0; ii < nD; ii++ ) {
-      for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
-        uint8_t x = g_tests[i].variant_per_bin[ii][jj];
-        if ( x >= num_variants ) { go_BYE(-1); }
-        counter[x]++;
+    if ( g_tests[i].state == TEST_STATE_STARTED ) { 
+      // not for terminated tests
+      for ( int ii = 0; ii < nD; ii++ ) {
+        for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
+          uint8_t x = g_tests[i].variant_per_bin[ii][jj];
+          if ( x >= num_variants ) { go_BYE(-1); }
+          counter[x]++;
+        }
       }
     }
     float sum = 0;
@@ -131,11 +134,13 @@ diagnostics(
       go_BYE(-1);
     }
     if ( g_tests[i].final_variant_id  != NULL ) { 
-      for ( int v = 0; v < num_variants; v++ ) { 
-        if ( g_tests[i].final_variant_id[v] <= 0 ) { go_BYE(-1); }
+      for ( int d = 0; d < nD; d++ ) { 
+        if ( g_tests[i].final_variant_id[d] <= 0 ) { 
+          go_BYE(-1); 
+        }
       }
-      for ( int v = 0; v < num_variants; v++ ) { 
-        if ( g_tests[i].final_variant_idx[v] >= (uint32_t)num_variants ) {
+      for ( int d = 0; d < nD; d++ ) { 
+        if ( g_tests[i].final_variant_idx[d] >= (uint32_t)num_variants ) {
           go_BYE(-1);
         }
       }
