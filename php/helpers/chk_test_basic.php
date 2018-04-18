@@ -25,7 +25,7 @@ function chk_test_basic(
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'description', false);
   $variants  = get_json_element($inJ, 'Variants');
-  $bin_type  = get_json_element($inJ, 'BinType');
+  $bin_type  = get_json_element($inJ, 'BinType', false);
 
   assert(is_array($variants));
   $nV = count($variants);
@@ -84,6 +84,7 @@ function chk_test_basic(
   $chk_rslt['variant_urls']   = $variant_urls;
   $chk_rslt['variant_percs']  = $variant_percs;
   $chk_rslt['variant_ids']    = $variant_ids;
+
   return $chk_rslt;
 }
 // COMMENT

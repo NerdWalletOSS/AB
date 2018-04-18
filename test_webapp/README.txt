@@ -3,9 +3,9 @@
 # When you don't want to use RTS, export AB_WEBAPP_STANDALONE=true
 # 
 # set up alias as follows
-abdb='mysql -u root --database abdb'
+abdb2='mysql -u root --database abdb2'
 # to clean out database
-abdb < ../sql/create_table.sql
+abdb2 < ../sql/create_table.sql
 # to set up environment variables
 source to_source 
 # to execute basic test

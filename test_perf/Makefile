@@ -16,8 +16,8 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
 OPTFLAGS= -O4
 OPTFLAGS= 

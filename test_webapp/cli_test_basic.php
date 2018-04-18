@@ -87,7 +87,6 @@ foreach ( $V as $v ) {
   $vidx++;
 }
 $outJ = test_basic(json_encode($X));
-echo("PREMAURE"); exit;
 terminate($test_id);
 archive($test_id);
 // create new test with same name 
