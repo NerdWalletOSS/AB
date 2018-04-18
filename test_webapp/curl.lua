@@ -63,15 +63,16 @@ function curl.post(c_url, hdrs, body)
     headerfunction = add_to_hdrs,
   }
   if body ~= nil then
-    request.postfields = JSON.encode(body)
+    request.postfields = body
   end
   local curl_handle = cURL.easy(request)
   local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
   local return_code = -1
-  for k, hdr as pairs(res_hdrs) do
-    if TODO then -- DO THIS ONLY if hdr starts wih HTTP
+  for k, hdr in pairs(res_hdrs) do
+    -- DO THIS ONLY if hdr starts wih HTTP
+    if  string.sub(hdr,1,4) == "HTTP" then 
       return_code = tonumber(hdr:split(" ")[2])
     end
   end
