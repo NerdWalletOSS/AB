@@ -32,6 +32,8 @@
 #include "extract_api_args.h"
 #include "get_nw_hdrs.h"
 #include "get_date.h"
+#include "ab_auxil.h"
+#include "make_guid.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -158,6 +160,7 @@ BYE:
   //--------------------
 }
 
+char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 int 
 main(
     int argc, 
@@ -168,6 +171,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
+  memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);
   if ( argc == 1 )  { 
@@ -176,7 +180,9 @@ main(
   }
   else {
     if ( argc != 2 ) { go_BYE(-1); }
-    status = l_load_config(argv[1]); cBYE(status);
+    if ( strlen(argv[2]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    strcpy(g_config_file, argv[1]);
+    status = l_load_config(g_config_file); cBYE(status);
   }
   status = update_config(); cBYE(status);
   //---------------------------------------------

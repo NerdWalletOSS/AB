@@ -43,8 +43,6 @@ free_test(
   if ( test_idx > AB_MAX_NUM_TESTS ) { go_BYE(-1); }
   TEST_META_TYPE *ptr_test = &(g_tests[test_idx]);
 
-  memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
-  ptr_test->test_type = 0;
   ptr_test->id = 0;
   ptr_test->name_hash = 0;
   ptr_test-> external_id = 0;
@@ -54,8 +52,8 @@ free_test(
   ptr_test->seed = 0;
 
   for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
-    free_if_non_null((ptr_test->variants[v].custom_data));
-    free_if_non_null((ptr_test->variants[v].url));
+    free_if_non_null(ptr_test->variants[v].custom_data);
+    free_if_non_null(ptr_test->variants[v].url);
   }
   free_if_non_null(ptr_test->variants);
   ptr_test->num_variants = 0;
@@ -63,11 +61,20 @@ free_test(
   free_if_non_null(ptr_test->final_variant_id);
   free_if_non_null(ptr_test->final_variant_idx);
   if ( ptr_test->variant_per_bin != NULL ) { 
-    for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
+    int num_devices = 0;
+    if ( ptr_test->is_dev_specific ) {
+      num_devices = g_n_justin_cat_lkp; 
+    }
+    else {
+      num_devices = 1;  
+    }
+    for ( int i = 0; i < num_devices; i++ ) { 
       free_if_non_null(ptr_test->variant_per_bin[i]);
     }
   }
   free_if_non_null(ptr_test->variant_per_bin);
+  memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
+  ptr_test->test_type = 0;
 BYE:
   return status;
 }

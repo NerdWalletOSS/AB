@@ -12,6 +12,7 @@
 #include "diagnostics.h"
 #include "dump_log.h"
 #include "hard_code_config.h"
+#include "add_fake_test.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
 #include "ping_server.h"
@@ -25,6 +26,8 @@
 #include "l_make_feature_vector.h"
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
+
+extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
 // START FUNC DECL
 int 
@@ -48,12 +51,12 @@ ab_process_req(
       go_BYE(-1);
       break;
       //--------------------------------------------------------
-   case AddFakeTest : /* done by C */
+    case AddFakeTest : /* done by C */
       status = add_fake_test(args);  cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
-   case AddTest : /* done by Lua */
+    case AddTest : /* done by Lua */
       status = l_add_test(body); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
@@ -178,6 +181,13 @@ ab_process_req(
       free_globals();
       status = zero_globals();  cBYE(status);
       status = init_lua(); cBYE(status);
+      if ( g_config_file[0] == '\0' )  {
+        hard_code_config(); // only for testing 
+        status = l_hard_code_config(); cBYE(status); // only for testing 
+      }
+      else {
+        status = l_load_config(g_config_file); cBYE(status);
+      }
       status = update_config(); cBYE(status);
       if ( g_cfg.sz_log_q > 0 ) { 
         pthread_mutex_init(&g_mutex, NULL);	
@@ -214,4 +224,3 @@ ab_process_req(
 BYE:
   return status ;
 }
-

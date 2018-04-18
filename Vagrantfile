@@ -70,8 +70,15 @@ Vagrant.configure('2') do |config|
   # SHELL
   config.vm.provision 'shell', inline: <<-SHELL
    cd /vagrant
-   echo 'export LD_LIBRARY_PATH="/vagrant/bin/libs;$LD_LIBRARY_PATH"' >> /home/vagrant/.bashrc
+   echo 'export LD_LIBRARY_PATH="/vagrant/bin/libs:$LD_LIBRARY_PATH"' >> /home/vagrant/.bashrc
    bash aio.sh -b
+   sudo mkdir -p /opt/ab
+   cp src/SAMPLE_CONFIG_FILES/justin_cat.csv /opt/ab/
+   cp src/SAMPLE_CONFIG_FILES/device.csv /opt/ab/
+   cp src/SAMPLE_CONFIG_FILES/device_type.csv /opt/ab/
+   cp src/SAMPLE_CONFIG_FILES/os.csv /opt/ab/
+   cp src/SAMPLE_CONFIG_FILES/referer_class.csv /opt/ab/
+
  SHELL
   # config.vm.provision :shell, path: "GUIDING_PRINCIPLES/aio.sh"
 end

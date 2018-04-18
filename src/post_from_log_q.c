@@ -65,15 +65,19 @@ post_from_log_q(
       curl_res = curl_easy_perform(g_ch);
       if ( curl_res != CURLE_OK ) { 
         g_log_failed_posts++;
-        fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
-        WHEREAMI;
+        if ( g_cfg.verbose ) { 
+          fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
+          WHEREAMI;
+        }
         continue;
       }
       curl_easy_getinfo(g_ch, CURLINFO_RESPONSE_CODE, &http_code);
       if ( http_code != 200 )  { 
         g_log_failed_posts++;
-        fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
-        WHEREAMI;
+        if ( g_cfg.verbose ) { 
+          fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
+          WHEREAMI;
+        }
         continue;
       }
       // If control comes here, it means we succeeded
@@ -83,7 +87,9 @@ post_from_log_q(
     }
     if ( !post_succeeded ) { 
       g_log_bad_posts++;
-      fprintf(stderr, "POST totally failed\n");  
+      if ( g_cfg.verbose ) { 
+        fprintf(stderr, "POST totally failed\n");  
+      }
     }
   }
   pthread_exit(NULL); 

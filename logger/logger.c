@@ -105,7 +105,7 @@ generic_handler(
         }
       }
     }
-    if ( is_error ) { WHEREAMI; } // TODO FIX go_BYE(-1); }
+    // TODO FIX P1 if ( is_error ) { go_BYE(-1); }
     if ( !found_header_1 ) { go_BYE(-1); }
     if ( !found_header_2 ) { go_BYE(-1); }
     //-----------------------------------------------------

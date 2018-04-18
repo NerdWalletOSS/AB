@@ -46,6 +46,8 @@ diagnostics(
 {
   int status = 0;
   int counter[AB_MAX_NUM_VARIANTS];
+  // we will collect all variant IDs in all_vids and test for uniqueness
+  int all_vids[AB_MAX_NUM_VARIANTS*AB_MAX_NUM_TESTS]; int n_all_vids = 0;
   for ( int i = 0; i <  AB_MAX_NUM_VARIANTS; i++ ) { 
     counter[i] = 0;
   }
@@ -61,7 +63,7 @@ diagnostics(
     int is_dev_specific = g_tests[i].is_dev_specific;
     int num_variants = g_tests[i].num_variants;
     if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
-        ( num_variants < AB_MAX_NUM_VARIANTS ) ) {
+        ( num_variants > AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
     }
     int nD;
@@ -82,9 +84,15 @@ diagnostics(
     for ( int k = 0; k < num_variants; k++ ) {
       VARIANT_REC_TYPE vk = g_tests[i].variants[k];
       if ( test_type == AB_TEST_TYPE_XY ) { 
-        if ( vk.url == NULL ) { go_BYE(-1); }
+        if ( vk.url == NULL ) { 
+          go_BYE(-1); 
+        }
+        else {
+          if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
+        } 
       }
       if ( vk.id <= 0 ) { go_BYE(-1); }
+      all_vids[n_all_vids++] = vk.id;
       sum += vk.percentage;
       if ( ( vk.percentage < 0 ) || ( vk.percentage > 100 ) ) { 
         go_BYE(-1); 
@@ -93,6 +101,9 @@ diagnostics(
         VARIANT_REC_TYPE vl = g_tests[i].variants[l];
         if ( vl.id == vk.id ) { go_BYE(-1); }
         if ( strcmp(vl.name, vk.name ) == 0 ) { go_BYE(-1); }
+        if ( ( vl.url != NULL ) && ( vk.url != NULL ) ) {
+          if ( strcmp(vl.url, vk.url ) == 0 ) { go_BYE(-1); }
+        }
       }
       if ( vk.url != NULL ) { 
         if ( ( strncmp(vk.url, "https://", 8) != 0 ) &&
@@ -102,11 +113,13 @@ diagnostics(
         // TODO Check URL to make sure it is valid URL
       }
       if ( vk.custom_data != NULL ) {
+        if ( strlen(vk.custom_data) > AB_MAX_LEN_CUSTOM_DATA ) { go_BYE(-1); }
         // TODO Make sure it is valid JSON
       }
     }
     // TODO Check that counter[] is similar to percentage
-    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
+    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { 
+      go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
       if ( is_dev_specific ) { go_BYE(-1); }
@@ -117,8 +130,32 @@ diagnostics(
     else {
       go_BYE(-1);
     }
-    if ( ( state != TEST_STATE_STARTED ) &&
-        ( state != TEST_STATE_TERMINATED ) ) { 
+    if ( g_tests[i].final_variant_id  != NULL ) { 
+      for ( int v = 0; v < num_variants; v++ ) { 
+        if ( g_tests[i].final_variant_id[v] <= 0 ) { go_BYE(-1); }
+      }
+      for ( int v = 0; v < num_variants; v++ ) { 
+        if ( g_tests[i].final_variant_idx[v] >= (uint32_t)num_variants ) {
+          go_BYE(-1);
+        }
+      }
+    }
+
+    if ( state == TEST_STATE_TERMINATED ) {
+
+      if ( g_tests[i].variant_per_bin   != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_id  == NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
+
+    }
+    else if ( state == TEST_STATE_STARTED ) {
+
+      if ( g_tests[i].variant_per_bin == NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_idx != NULL ) { go_BYE(-1); }
+
+    }
+    else {
       go_BYE(-1);
     }
     for ( int j = i+1; j < AB_MAX_NUM_TESTS; j++ ) { 
@@ -130,10 +167,19 @@ diagnostics(
           go_BYE(-1);
         }
       }
-      if ( g_tests[j].test_type == AB_TEST_TYPE_XY ) { 
+      if ( ( test_type == AB_TEST_TYPE_XY) && 
+          ( g_tests[j].test_type == AB_TEST_TYPE_XY ) ) { 
         if ( g_tests[j].external_id  == external_id ) {
           go_BYE(-1);
         }
+      }
+    }
+  }
+  // all variant IDs must be unique 
+  for ( int i = 0; i < n_all_vids; i++ ) { 
+    for ( int j = i+1; j < n_all_vids; j++ ) { 
+      if ( all_vids[i] == all_vids[j] ) {
+        go_BYE(-1);
       }
     }
   }

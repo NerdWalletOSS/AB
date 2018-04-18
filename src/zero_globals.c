@@ -62,7 +62,7 @@ free_globals(
 
 }
 
-  int
+int
 zero_globals(
     void
     )
