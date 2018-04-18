@@ -10,16 +10,16 @@ return
   Variants =  { {
     name =  "Control",
     percentage =  "50",
-    url =  "www.gmail.com"
+    url =  "http://www.gmail.com"
   },
   {
     name =  "Variant_A",
     percentage =  "30",
-    url =  "www.yahoo.com"
+    url =  "http://www.yahoo.com"
   },
   {
     name =  "Variant_B",
     percentage =  "20",
-    url =  "www.cnn.com"
+    url =  "http://www.cnn.com"
   }, }
 }

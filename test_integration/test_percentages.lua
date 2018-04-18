@@ -6,7 +6,7 @@ local curl = require 'curl'
 local file = assert(io.open("../test_webapp/sample1.json"), "File should exist")
 local test = json.decode(file:read("*a"))
 file:close()
-local url = "localhost:8000/addTest"
+local url = "localhost:8000/AddTest"
 curl.post(url, nil, test)
 local results = {}
 for key,entry in pairs(test.DeviceCrossVariant) do

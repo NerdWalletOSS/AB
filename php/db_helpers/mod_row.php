@@ -31,10 +31,7 @@ function mod_row(
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);
   $rslt = $stmt->execute($X); 
-  var_dump($sql);
-  var_dump($X);
   if ( !$rslt ) { 
-    print("XXXXXXXXXXX\n");
     var_dump($sql); var_dump($X);
     rs_assert(false, "mod_row failed");
   }

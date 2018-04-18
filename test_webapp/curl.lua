@@ -1,4 +1,4 @@
--- Only does PST and GET
+-- Only does POST and GET
 
 package.path=package.path .. ";./../src/?.lua;./../test_integration/?.lua;../test_generator/?.lua"
 -- require 'strict'
@@ -69,8 +69,12 @@ function curl.post(c_url, hdrs, body)
   local result = curl_handle:perform()
   -- return of previous is same as curl handle
   curl_handle:close()
-  local return_code = tonumber(res_hdrs[1]:split(" ")[2])
-  assert(return_code, "Invalid return code " .. res_hdrs[1]:split(" ")[2])
+  local return_code = -1
+  for k, hdr as pairs(res_hdrs) do
+    if TODO then -- DO THIS ONLY if hdr starts wih HTTP
+      return_code = tonumber(hdr:split(" ")[2])
+    end
+  end
   res_body = table.concat(res_body, "")
   return res_hdrs, res_body, return_code
 end
