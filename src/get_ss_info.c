@@ -8,22 +8,20 @@
 #include "macros.h"
 #include "ab_types.h"
 #include "auxil.h"
-#include "chk_exclude.h"
+#include "get_ss_info.h"
 #include "ab_globals.h"
 #include "dump_log.h"
 
+/* TODO P3 Verify that g_ss_response does not overflow */
 int
-chk_exclude(
-    const char * const test_name, // for Lua
-    const char * const uuid,
-    int *ptr_is_exclude
+get_ss_info(
+    const char * const uuid
     )
 {
   int status = 0;
   char url[AB_MAX_LEN_URL+1];
   CURLcode curl_res;  long http_code = 0;
   uint64_t t_start = 0, t_stop = 0;
-  *ptr_is_exclude = 0;  // Default: do not exclude this UUID 
   //----------------------------------------------
   // start assembling URL for session server
   memset(url, '\0', AB_MAX_LEN_URL+1);
@@ -33,7 +31,7 @@ chk_exclude(
   size_t nw = snprintf(url, AB_MAX_LEN_URL,
       "%s:%d/%s/v1/%s/?caller_client_id=abrts&fields=", 
       g_cfg.ss.server, g_cfg.ss.port, g_cfg.ss.url, uuid);
-  if ( nw > AB_MAX_LEN_URL ) { go_BYE(-1); } // Log this failure
+  if ( nw > AB_MAX_LEN_URL ) { go_BYE(-1); } 
 
   // Fire URL to session service
   // fprintf(stderr, "url = %s \n", url);
@@ -45,7 +43,7 @@ chk_exclude(
   t_stop = RDTSC();
 
   // check response and exit early if needed
-  if ( curl_res != CURLE_OK ) { g_log_ss_bad_code++; go_BYE(-2); }
+  if ( curl_res != CURLE_OK ) { g_log_ss_bad_code++; go_BYE(-2); } 
   curl_easy_getinfo(g_ss_ch, CURLINFO_RESPONSE_CODE, &http_code);
   if ( http_code != 200 )  {  
     fprintf(stderr, "url = %s, uuid = %s \n", url, uuid);
@@ -54,28 +52,27 @@ chk_exclude(
   // check ascii and lower case as you go 
   int idx = 0;
   for ( char *cptr = g_ss_response; *cptr != '\0'; cptr++ ) { 
-    if ( !isascii(*cptr) ) { g_log_ss_non_ascii++; go_BYE(-1); }
+    if ( !isascii(*cptr) ) { g_log_ss_non_ascii++; go_BYE(-2); }
     else {
-      g_ss_response[idx++] = *cptr;
+      g_ss_response[idx++] = tolower(*cptr);
     }
   }
 
   curl_easy_getinfo(g_ss_ch, CURLINFO_TOTAL_TIME, &ss_resp_time);
+  // TODO Make sure you are emitting proper statistics 
+  /* For Lua to do 
   int is_no_session;
   int is_bad_json;
   int is_null_data;
   // log response time TODO
-  /* status = lua_is_exclude(g_ss_response, g_sz_ss_response, 
+  status = lua_is_exclude(g_ss_response, g_sz_ss_response, 
    ptr_is_exclude, &is_no_session, &is_bad_json);
-  */
   if ( is_null_data ) { g_log_ss_null_data++; go_BYE(-2); }
   if ( is_bad_json )   { g_log_ss_bad_json++; go_BYE(-2); }
   if ( is_no_session ) { g_log_ss_no_session++; go_BYE(-2); }
+  */
 
 BYE:
-  if ( status < 0 ) { 
-    g_log_ss_bad_calls++;
-  }
   memset(g_ss_response, '\0', g_sz_ss_response);
   return status;
 }

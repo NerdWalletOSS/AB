@@ -4,7 +4,7 @@
 #include "ab_auxil.h"
 #include "get_test_idx.h"
 #include "log_decision.h"
-#include "chk_exclude.h"
+#include "get_ss_info.h"
 #include "get_variant.h"
 
 
@@ -45,17 +45,22 @@ get_variant(
     g_log_bad_uuid++;
   }
   get_tracer(args, in_tracer);
-  int nV = g_tests[test_idx].num_variants;
+  uint32_t nV = g_tests[test_idx].num_variants;
   //--------------------------------------------------------
   // Deal with exclusions for categorical attributes
-  int is_exclude = FALSE; int nw;
+  bool is_exclude = false; 
   if ( T->has_filters ) {  // ask Session Service
-    status = chk_exclude(test_name, g_uuid, &is_exclude);
-    if ( is_exclude == TRUE ) { 
-      nw = snprintf(g_rslt, AB_MAX_LEN_RESULT,
+    status = get_ss_info(g_uuid); 
+    if ( status == -1 ) { go_BYE(-1); }
+    if ( status == -2 ) { 
+      is_exclude = false; 
+    }
+    else { // call Lua INDRAJEET TODO  
+    }
+    if ( is_exclude ) {
+      int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT,
           "{ \"Variant\" : \"Ineligible\", \"VariantID\" :  0, \"Test\" : \"%s\", \"TestID\" : %d }",
-          test_name, 
-          g_tests[test_idx].id);
+          test_name, g_tests[test_idx].id);
       if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
       goto BYE;
     }
@@ -66,7 +71,7 @@ get_variant(
     if ( final_variant_idx > nV ) { go_BYE(-1); }
     const char *cd = g_tests[test_idx].variants[final_variant_idx].custom_data;
     if ( cd == NULL ) { cd = "null"; }
-    nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",
+    int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",
         g_tests[test_idx].variants[final_variant_idx].name,
         g_tests[test_idx].variants[final_variant_idx].id,
         cd,
@@ -86,7 +91,7 @@ get_variant(
   uint32_t variant_id  = g_tests[test_idx].variants[variant_idx].id;
   const char *cptr = g_tests[test_idx].variants[variant_idx].custom_data;
   if ( cptr == NULL ) { cptr = "null"; }
-  nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, 
+  int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, 
       "{ \"Variant\" : \"%s\", \"VariantID\" : %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d }", 
       g_tests[test_idx].variants[variant_idx].name, 
       variant_id, 

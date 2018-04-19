@@ -1,6 +1,6 @@
 extern int
 dump_log(
-    const char * const args
+    void
     );
 extern void
 write_log(

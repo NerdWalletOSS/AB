@@ -98,3 +98,76 @@ shutdown_curl(
   }
   curl_global_cleanup();   // TODO P4 Check that this is ok at startup 
 }
+
+int
+malloc_test(
+    int test_idx,
+    int num_variants,
+    int is_dev_specific
+    )
+{
+  int status = 0;
+  VARIANT_REC_TYPE *variants = NULL;
+  TEST_META_TYPE *p = NULL;
+  int num_devices;
+
+  //-- Check parameters -------------------------
+  if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
+       ( num_variants > AB_MAX_NUM_VARIANTS ) ) { 
+    go_BYE(-1);
+  }
+  if ( ( is_dev_specific < 0 ) || ( is_dev_specific > 1 ) ) { 
+    go_BYE(-1);
+  }
+  if ( ( test_idx < 0 ) || ( test_idx > AB_MAX_NUM_TESTS ) ) { 
+    go_BYE(-1);
+  }
+  //-- Check slot where allocation is to be done
+  p = &(g_tests[test_idx]);
+  if ( p->name_hash != 0 ) { go_BYE(-1); }
+  if ( p->id != 0 ) { go_BYE(-1); }
+  if ( p->external_id != 0 ) { go_BYE(-1); }
+  if ( p->state != 0 ) { go_BYE(-1); }
+  if ( p->seed != 0 ) { go_BYE(-1); }
+  if ( p->variants != NULL ) { go_BYE(-1); }
+  if ( p->final_variant_id  != NULL ) { go_BYE(-1); }
+  if ( p->final_variant_idx != NULL ) { go_BYE(-1); }
+  //------------------------------------------
+  variants = malloc(num_variants * sizeof(VARIANT_REC_TYPE));
+  free_if_non_null(variants);
+  for ( uint32_t v = 0; v < p->num_variants; v++ ) { 
+    memset(variants, '\0', sizeof(VARIANT_REC_TYPE));
+  }
+  for ( uint32_t v = 0; v < p->num_variants; v++ ) { 
+    variants[v].custom_data = malloc(AB_MAX_LEN_CUSTOM_DATA+1);
+    return_if_malloc_failed(variants[v].custom_data);
+    memset(variants[v].custom_data, '\0',  AB_MAX_LEN_CUSTOM_DATA+1);
+    variants[v].url = malloc(AB_MAX_LEN_URL+1);
+    return_if_malloc_failed(variants[v].url);
+    memset(variants[v].url, '\0',  AB_MAX_LEN_URL+1);
+  }
+  p->variants = variants;
+  p->num_variants = num_variants;
+  //--- Determine number of devices
+  if ( p->is_dev_specific ) {
+    num_devices = g_n_justin_cat_lkp; 
+  }
+  else {
+    num_devices = 1;  
+  }
+  if ( num_devices < 1 ) { go_BYE(-1); }
+  //------------------------------------------
+  p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
+  return_if_malloc_failed(p->final_variant_idx);
+  p->final_variant_id = malloc(num_devices * sizeof(uint32_t));
+  return_if_malloc_failed(p->final_variant_id);
+  p->variant_per_bin = malloc(num_devices * sizeof(uint8_t *));
+  return_if_malloc_failed(p->variant_per_bin);
+  //------------------------------------------
+  for ( int i = 0; i < num_devices; i++ ) { 
+    p->variant_per_bin[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
+    return_if_malloc_failed(p->variant_per_bin[i]);
+  }
+BYE:
+  return status;
+}

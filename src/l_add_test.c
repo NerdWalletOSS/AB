@@ -13,6 +13,52 @@ l_add_test(
   // cdata[0]=5;
   // printf("original value: %d\n", cdata[0]);
   int status = 0;
+  //-------------------------------------
+  int32_t rslt[4]; 
+  lua_getglobal(g_L, "preproc");
+  if ( !lua_isfunction(g_L, -1)) {
+    fprintf(stderr, "Function preproc does not exist \n");
+    lua_pop(g_L, 1);
+    go_BYE(-1);
+  }
+  entry_position[0] = -1;
+  lua_pushstring(g_L, args); // not pushing string as it causes a copy
+  lua_pushlightuserdata(g_L, g_tests);
+  lua_pushlightuserdata(g_L, rslt);
+  status = lua_pcall(g_L, 3, 0, 0);
+  if (status != 0) {
+    fprintf(stderr, "function preproc failed: %s\n", lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
+    lua_pop(g_L, 1);
+    go_BYE(-1);
+  }
+  // Now based on rslt, do things
+  int what_to_do      = rslt[0];
+  int test_idx        = rslt[1]; 
+  int num_devices     = rslt[2]; 
+  int is_dev_specific = rslt[3]; 
+  switch ( what_to_do ) { 
+    case 1 : 
+      /* malloc full */
+      break;
+    case 2 : 
+      /* malloc partial */
+      break;
+    case 3 : 
+      /* free_partial */
+      break;
+    case 4 : 
+      /* free_all */
+      break;
+    case 5 : 
+      /* do nothing */
+      break;
+    default : 
+      go_BYE(-1);
+      break;
+  }
+
+  //-------------------------------------
   lua_getglobal(g_L, "add");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function add does not exist in lua's global space\n");
