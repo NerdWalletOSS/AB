@@ -43,8 +43,15 @@ function set_state(
 
   $test_type_id = intval($T['test_type_id']);
   $test_type    = lkp("test_type", $test_type_id, "reverse");
-  // return if new state is same as current one
-  if ( $old_state == $new_state ) { 
+  // return if new state is same as current one or old == archived
+  if ( ( $old_state != $new_state ) && ( $old_state == "archived" ) ) { 
+    $outJ["status_code"] = 400;
+    $outJ["msg_stdout"] = "No change once test is archived\n";
+    db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
+    header("Error-Code: 400");
+    return $outJ;
+  }
+  if ( ( $old_state == $new_state ) || ( $old_state == "archived" ) ) { 
     $outJ["status_code"] = 200;
     $outJ["msg_stdout"] = "No change in state for $test_id from $new_state";
     db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);

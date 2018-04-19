@@ -12,5 +12,9 @@ if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "SetState" : "ERROR", "Message" : "No payload" }'; exit;
 }
 $rslt =  set_state($body);
+foreach ( $rslts as $key=> $val ) {
+  $val = convert_uuencode($val);
+  header("$key: $val");
+}
 ob_clean();
 ?>

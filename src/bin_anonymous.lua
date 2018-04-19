@@ -34,7 +34,7 @@ local function populate_variants(c_test, variants)
   assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
   c_test.num_variants = #variants -- TODO check for device specific too`
   table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
-  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
+  -- TODO removed as mallocs in C c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
   -- TODO final variants, HELP
   for index, value in ipairs(variants) do
@@ -53,9 +53,12 @@ local function populate_variants(c_test, variants)
     ffi.copy(entry.name, value.name)
     if c_test.test_type == "ABTest" then
       -- TODO ABTests cannpt ne anonymous
-      entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
+      assert("ABTest cannot be anonymous")
+      -- entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
     else
-      entry.url = value.url
+      local url = value.url
+      assert(#url >=0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      ffi.copy(entry.url, url)
     end
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
@@ -68,8 +71,8 @@ local function add_device_specific_terminated(c_test, test_data)
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   c_test.variant_per_bin = nil
-  c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
-  c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
+  -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
+  -- TODO removed as mallocs in C c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
   -- TODO right now we only have one final variant over time one final for each
   -- device
   for index=0,num_devices-1 do
@@ -88,12 +91,12 @@ local function add_device_specific_started(c_test, test_data)
   local var_id_to_index_map = populate_variants(c_test, variants)
 
   c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
+  -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
   ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
 
   for index=0, num_devices-1 do
     c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
-    ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
+    -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
     ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
   end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
@@ -129,8 +132,8 @@ local function add_device_agnostic(c_test, test_data)
     c_test.final_variant_idx = nil
     c_test.final_variant_id = nil
   elseif state == "terminated" then
-    c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
-    c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    -- TODO removed as mallocs in C c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
     c_test.final_variant_idx[0] = assert(final_variant_idx, "Final variant idx cannot be nil for a terminated test")
     c_test.final_variant_id[0] = assert(final_variant_id, "Final variant id cannot be nil for a terminated test")
   else

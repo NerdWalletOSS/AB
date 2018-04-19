@@ -27,7 +27,6 @@ write_log(
 
 int
 dump_log(
-    const char * const args
     )
 {
   int status = 0;
@@ -78,7 +77,7 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
   // TODO P4 Guard this in terms of ridx
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
-BYE:
+
   return status;
 }
 

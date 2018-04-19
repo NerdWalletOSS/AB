@@ -16,7 +16,7 @@ function mod_row(
     if ( is_null($val) ) { 
       continue; 
     }
-    if ( $val == "__NULL__" ) { 
+    if ( $val === "__NULL__" ) { 
       $val = null;
     }
     if ( $first ) { 
@@ -26,7 +26,7 @@ function mod_row(
       $sql .= ", ";
     }
     $sql .= " $key = :$key ";
-    $X["$key"] = $val;
+    $X[$key] = $val;
   }
   $sql  .= $where_clause;
   $stmt = $dbh->prepare($sql);

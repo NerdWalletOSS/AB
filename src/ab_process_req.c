@@ -84,7 +84,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
-      status = dump_log(args); cBYE(status);
+      status = dump_log(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */

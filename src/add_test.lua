@@ -123,4 +123,23 @@ function AddTests.add(test_str, g_tests, c_index)
   end
 end
 
+function AddTests.preproc(test_str, g_tests, o_arr)
+  -- o arr is the array that returns requirements to C
+  -- 0 is the test id
+  -- 1 is the number of variants
+  -- 2 is wheter it is device specific or not
+  -- 3 is whether it is terminated or not
+  local j_table = json.decode(test_str)
+  o_arr = ffi.cast("int32_t*", o_arr)
+  AddTests.get_test(g_tests, test_data, o_arr) -- get test position iin 0 location or o_arr
+  -- o_arr[0] = WHAT TO DO 
+  -- o_arr[1] = test_idx
+  o_arr[2] = #j_table.Variants
+  o_arr[3] = tonumber(j_table.is_dev_specific)
+  if j_table.State:lower() == "terminated" then
+    o_arr[3] = consts.TRUE
+  else
+    o_arr[3] = consts.FALSE
+  end
+end
 return AddTests

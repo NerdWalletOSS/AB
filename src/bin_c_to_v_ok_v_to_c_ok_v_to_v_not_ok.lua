@@ -84,9 +84,8 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
     ffi.copy(entry.name, value.name)
     if value.url ~= nil then
-      entry.url = value.url
-    else
-      entry.url = nil
+     assert(#value.url >=0 and #value.url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+     ffi.copy(entry.url, value.url)
     end
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
