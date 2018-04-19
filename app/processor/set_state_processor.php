@@ -43,11 +43,11 @@ if ((isset($_GET['Winner'])) && ($_GET['state_id'] == "2")) {
   $X['Winner'] = $_GET['Winner'];
 }
 // CASE: RESURRECT
-if( $_GET['state_id'] == "4" && ($_GET['action'] == "resurrect")) {
+if( $_GET['state_id'] == "4" && (isset($_GET['action']) == "resurrect")) {
   $X['NewState'] = "started";
 }
 // CASE: DELETE
-if( $_GET['state_id'] == "1" && ($_GET['action'] == "delete")) {
+if( $_GET['state_id'] == "1" && (isset($_GET['action']) == "delete")) {
   $X['NewState'] = "archived";
 }
 
