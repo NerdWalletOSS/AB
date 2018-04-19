@@ -26,8 +26,7 @@ tests.t1 = function (
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
   local test_id = get_test_id(hdrs)
-  local hdrs, body = get_test_info(test_id)
-  local T = JSON:decode(body)
+  local T = get_test_info(test_id)
   local test_id = tonumber(T.id)
   local state_id = tonumber(T.state_id)
   assert(state_id == states.draft)
@@ -65,8 +64,7 @@ tests.t2 = function (
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
   local test_id = get_test_id(hdrs)
-  local hdrs, body = get_test_info(test_id)
-  local T = JSON:decode(body)
+  local T = get_test_info(test_id)
   local test_id = tonumber(T.id)
   -- Move state to dormant 
   T.NewState = "dormant"
@@ -107,8 +105,7 @@ tests.t3 = function (
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
   local test_id = get_test_id(hdrs)
-  local hdrs, body = get_test_info(test_id)
-  local T = JSON:decode(body)
+  local T = get_test_info(test_id)
   local test_id = tonumber(T.id)
   -- Move state to dormant 
   T.NewState = "dormant"
@@ -161,8 +158,7 @@ tests.t4 = function (
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
   local test_id = get_test_id(hdrs)
-  local hdrs, body = get_test_info(test_id)
-  local T = JSON:decode(body)
+  local T = get_test_info(test_id)
   local test_id = tonumber(T.id)
 
   T.Updater =  "joe" -- TODO Improve this hard coding
@@ -214,8 +210,7 @@ tests.t5 = function (
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
   local test_id = get_test_id(hdrs)
-  local hdrs, body = get_test_info(test_id)
-  local T = JSON:decode(body)
+  local T = get_test_info(test_id)
   local test_id = tonumber(T.id)
 
   T.Updater =  "joe" -- TODO Improve this hard coding
