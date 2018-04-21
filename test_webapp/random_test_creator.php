@@ -46,25 +46,25 @@ function publish($test_id) {
   $outJ = set_state($str_inJ);
 }
 
-if ( $argc != 2 ) { echo "Expected 3 arguments. Got $argc"; exit(1); }
+if ( $argc != 3 ) { echo "Expected 3 arguments. Got $argc"; exit(1); }
 
 $infile = $argv[1];
-
+$numTest = $argv[2];
 assert(is_file($infile));
 // Create a test using information from file
 $data = file_get_contents($infile);
-for ($i = 1; $i <= 10; $i++) {
+for ($i = 1; $i <= $numTest; $i++) {
   $X = json_decode($data);
   if ( $i % 3 == 0) {
   $X->{'TestType'} = "ABTest";
   }
   $test_name = "T".$i;
   $X->{'name'} = $test_name;
-  var_dump($X);
+  //var_dump($X);
   $outJ = test_basic(json_encode($X));
   //- Get testID of created test
   $test_id = $outJ['TestID'];
-  echo "Created test with test id ".$test_id;
+  echo "Created test with test id ".$test_id."\n";
   publish($test_id);
   start($test_id);
   if ( $i % 2 == 0) {
