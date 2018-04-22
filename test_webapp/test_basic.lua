@@ -44,7 +44,7 @@ end
 
 --============================
 -- START: Stuff common to all tests in this suite
-url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+url = "http://localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
 curl_params = { 
   url = url,
   post       = true,
@@ -70,11 +70,11 @@ tests.t1 = function (
   --==============
   local v 
   local Variants = {}
-  v = {} v.name = "Control" v.percentage = "50" v.url = "www.google.com"
+  v = {} v.name = "Control" v.percentage = "50" v.url = "http://www.google.com"
   Variants[#Variants+1] = v
-  v = {} v.name = "V1" v.percentage = "30" v.url = "www.yahoo.com"
+  v = {} v.name = "V1" v.percentage = "30" v.url = "http://www.yahoo.com"
   Variants[#Variants+1] = v
-  v = {} v.name = "V2" v.percentage = "20" v.url = "www.cnn.com"
+  v = {} v.name = "V2" v.percentage = "20" v.url = "http://www.cnn.com"
   Variants[#Variants+1] = v
   --==============
   T.Variants = Variants
@@ -96,7 +96,7 @@ tests.t1 = function (
   local error_code = assert(get_error_code(hdrs))
   assert(error_code == 200)
   -- Check that test info is same as what you sent in
-  local chk_url = "localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
+  local chk_url = "http://localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
 
   local body_out, hdrs_out = get_url(chk_url)
   local Tout = assert(JSON:decode(body_out), chk_url)
@@ -196,7 +196,7 @@ tests.t5 = function (
   local error_code = assert(get_error_code(hdrs))
   assert(error_code == 200)
   -- Check that test info is same as what you sent in
-  local chk_url = "localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
+  local chk_url = "http://localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
 
   local body_out, hdrs_out = get_url(chk_url)
   local Tout = assert(JSON:decode(body_out), chk_url)

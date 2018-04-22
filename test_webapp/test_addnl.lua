@@ -115,7 +115,7 @@ tests.t1 = function (
       -- for k, v in pairs(hdrs) do print(k, v) end 
       local error_code = assert(get_error_code(hdrs))
       if ( prefix == "good" ) then 
-        assert(error_code == 200)
+        assert(error_code == 200, "Failure on " .. filename)
         -- Check that test info is same as what you sent in
         local body_out, hdrs_out = get_url(chk_url .. test_id)
         local Tout = assert(JSON:decode(body_out))

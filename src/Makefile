@@ -14,8 +14,6 @@ INCS= -I. \
 	-I../libyuarel/ \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
-
-
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
 

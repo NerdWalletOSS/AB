@@ -14,8 +14,7 @@ function dup_row(
   if ( !$dbh ) { go_BYE(""); }
 
   $R = db_get_row($tbl, "id", $id);
-  if ( $changes_to_old ) { 
-    print("changing old " . $R['id'] . " XXX \n");
+  if ( !empty($changes_to_old) ) { 
     mod_row($tbl, $changes_to_old, " where id = " . $R['id']);
   }
   unset($R['id']);
@@ -23,6 +22,8 @@ function dup_row(
     foreach  ( $changes_to_new as $k => $v ) {
       $R[$k] = $v;
     }
+    // Following is sneaky, not every table has pred_id
+    $R['pred_id'] = $id; 
   }
   $new_id = insert_row($tbl, $R);
   return $new_id;

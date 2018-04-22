@@ -605,7 +605,7 @@ chk_tracer(
     size_t max_len
     )
 {
-  if ( *tracer == '\0' ) { return false; }
+  if ( *tracer == '\0' ) { return true; }
   size_t len = 0;
   for ( char *cptr = (char *)tracer; *cptr != '\0'; cptr++, len++ ) { 
     if ( len > max_len ) { return false; }

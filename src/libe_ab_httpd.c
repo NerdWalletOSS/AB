@@ -32,6 +32,8 @@
 #include "extract_api_args.h"
 #include "get_nw_hdrs.h"
 #include "get_date.h"
+#include "ab_auxil.h"
+#include "make_guid.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -85,7 +87,6 @@ generic_handler(
   // STOP:  NW Specific 
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
-  // TODO P0 WHY? status = get_ua_to_device_id(req, &g_device_idx); cBYE(status);
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
 #ifdef NW_SPECIFIC
   status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
@@ -159,6 +160,7 @@ BYE:
   //--------------------
 }
 
+char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 int 
 main(
     int argc, 
@@ -169,6 +171,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
+  memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);
   if ( argc == 1 )  { 
@@ -177,7 +180,9 @@ main(
   }
   else {
     if ( argc != 2 ) { go_BYE(-1); }
-    status = l_load_config(argv[1]); cBYE(status);
+    if ( strlen(argv[2]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    strcpy(g_config_file, argv[1]);
+    status = l_load_config(g_config_file); cBYE(status);
   }
   status = update_config(); cBYE(status);
   //---------------------------------------------

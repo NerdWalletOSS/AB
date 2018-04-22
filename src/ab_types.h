@@ -9,6 +9,7 @@
 
 typedef enum _ab_req_type {
   Undefined, // --- & --- 
+  AddFakeTest, 
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
@@ -28,8 +29,7 @@ typedef enum _ab_req_type {
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
   MakeFeatureVector, // Read &  Lua
-  PingLogServer, // Read &  C
-  PingSessionServer, // Read &  C
+  PingServer, // Read &  C
   PostProcPreds, // Read &  C
   Reload, // Write &  Lua 
   Restart, // Read &  C 
@@ -42,8 +42,8 @@ typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
   char name[AB_MAX_LEN_VARIANT_NAME+1];
-  const char * url; // AB_MAX_LEN_VARIANT_URL+1
-  const char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
+  char * url; // AB_MAX_LEN_VARIANT_URL+1
+  char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
@@ -62,9 +62,9 @@ typedef struct _test_meta_type {
   VARIANT_REC_TYPE *variants;
 
   // If device specific is not set, we use device_idx = 0
-  uint32_t *final_variant_id; // [g_num_devices]; 
-  uint32_t *final_variant_idx; // [g_num_devices]; 
-  uint8_t *variant_per_bin[AB_NUM_BINS]; // [g_num_devices][AB_NUM_BINS]; 
+  uint32_t *final_variant_id; // [g_n_justin_cat_lkp]; 
+  uint32_t *final_variant_idx; // [g_n_justin_cat_lkp]; 
+  uint8_t **variant_per_bin; // [g_n_justin_cat_lkp][AB_NUM_BINS]; 
 
 } TEST_META_TYPE;
 
@@ -106,6 +106,7 @@ typedef struct _cftype {
   SERVICE_TYPE logger;
   SERVICE_TYPE ss;
   SERVICE_TYPE statsd;
+  SERVICE_TYPE webapp;
 
   uint32_t sz_log_q;
   int num_post_retries;  

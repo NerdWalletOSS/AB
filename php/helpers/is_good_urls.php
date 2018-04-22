@@ -4,6 +4,7 @@ require_once 'is_unique.php';
 require_once 'chk_url.php';
 function is_good_urls(
   $U
+  // TODO Urls should start with http:// or https:// 
 )
 {
   rs_assert(isset($U));
@@ -15,6 +16,11 @@ function is_good_urls(
   rs_assert($nU <= lkp('configs', "max_num_variants"));
   rs_assert(is_unique($U), "URLS need to be unique");
   foreach ( $U as $u ) {
+    $is_http = $is_https = false;
+    if ( substr($u, 0, 7 ) === "http://" ) { $is_http = true; }
+    if ( substr($u, 0, 8 ) === "https://" ) { $is_https = true; }
+    rs_assert($is_http || $is_https, 
+      "URL [$u] must start with http:// or https://");
     rs_assert(strlen($u) <= lkp("configs", "max_len_url"),
       "URL is too long. Max length is " . lkp("configs", "max_len_url"));
     rs_assert(chk_url_text($u), 

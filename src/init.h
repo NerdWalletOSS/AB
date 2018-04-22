@@ -17,6 +17,7 @@ extern int
 setup_curl(
     const char *method,
     char *write_buffer,
+    const char *service,
     const char *server,
     int port,
     const char *url,

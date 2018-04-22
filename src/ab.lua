@@ -10,6 +10,9 @@ function add(...)
   tests.add(...)
 end
 
+function preproc(...)
+  tests.preprco(...)
+end
 --=== Sample of what you need to do to get a new Lua file in
 --=== for any Lua function that is pcall'ed from C. As an example
 --===  lua_getglobal(g_L, "make_feature_vector");

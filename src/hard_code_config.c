@@ -2,6 +2,7 @@
 #include "ab_globals.h"
 #include "auxil.h"
 #include "hard_code_config.h"
+#include "get_test_idx.h"
 void
 hard_code_config(void)
 {
@@ -18,13 +19,17 @@ hard_code_config(void)
   strcpy(g_cfg.ss.url, "session");
   strcpy(g_cfg.ss.health_url, "api/v1/health_check");
 
+  strcpy(g_cfg.webapp.server, "localhost");
+  g_cfg.webapp.port = 8080;
+  strcpy(g_cfg.webapp.health_url, "AB/php/index.html");
+
   strcpy(g_cfg.statsd.server, "localhost");
   g_cfg.statsd.port = 8125;
   
   g_cfg.sz_log_q = 65536;
   g_cfg.num_post_retries = 1;
 
-  strcpy(g_cfg.default_url, "localhost:8000/index.html");
+  strcpy(g_cfg.default_url, "http://localhost:8080/AB/test_webapp/index0.html");
   g_cfg.uuid_len = 8;
   g_cfg.xy_guid = 1;
 

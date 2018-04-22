@@ -1,6 +1,7 @@
 #include "ab_incs.h"
-#include "auxil.h"
 #include "ab_globals.h"
+#include "auxil.h"
+#include "ab_auxil.h"
 #include "url.h"
 #include "ext_get_host.h"
 

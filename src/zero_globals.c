@@ -11,12 +11,15 @@ extern size_t g_len_dt_file;
 extern uint32_t g_num_dt_map;
 
 //<hdr>
-  void
+void
 free_globals(
     void
     )
   //</hdr>
 {
+  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
+    free_test(i); 
+  }
   free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
 
   if ( g_statsd_link != NULL ) {
@@ -59,7 +62,7 @@ free_globals(
 
 }
 
-  int
+int
 zero_globals(
     void
     )

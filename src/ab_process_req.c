@@ -6,11 +6,13 @@
 #include "init.h"
 #include "post_from_log_q.h"
 
-#include "add_test.h"
+#include "l_add_test.h"
 #include "chk_logger_conn.h"
 #include "chk_db_conn.h"
-// TODO PUT BACK #include "diagnostics.h"
+#include "diagnostics.h"
 #include "dump_log.h"
+#include "hard_code_config.h"
+#include "add_fake_test.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
 #include "ping_server.h"
@@ -25,6 +27,8 @@
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
 
+extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
+
 // START FUNC DECL
 int 
 ab_process_req(
@@ -36,6 +40,7 @@ ab_process_req(
 // STOP FUNC DECL
 {
   int status = 0;
+  char server[AB_MAX_LEN_SERVER_NAME+1];
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -46,7 +51,12 @@ ab_process_req(
       go_BYE(-1);
       break;
       //--------------------------------------------------------
-   case AddTest : /* done by Lua */
+    case AddFakeTest : /* done by C */
+      status = add_fake_test(args);  cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case AddTest : /* done by Lua */
       status = l_add_test(body); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
@@ -69,14 +79,12 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Diagnostics : /* done by C and Lua */
-      /* TODO PUT BACK 
-      status = diagnostics(); cBYE(status);
+      status = l_diagnostics(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
-      */
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
-      status = dump_log(args); cBYE(status);
+      status = dump_log(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
@@ -113,7 +121,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
-      status = l_list_tests(body); cBYE(status);
+      status = l_list_tests(args); cBYE(status);
       break;
       //--------------------------------------------------------
     case LoadConfig : /* done by Lua */
@@ -125,15 +133,27 @@ ab_process_req(
       cBYE(status);
       break;
       //--------------------------------------------------------
-    case PingLogServer : /* done by C */
-      ping_server(g_cfg.logger.server, g_cfg.logger.port, 
-          g_cfg.logger.health_url, g_rslt);
-      break;
-      //--------------------------------------------------------
-    case PingSessionServer : /* done by C */
-      ping_server(g_cfg.ss.server, 
-          g_cfg.ss.port, 
-          g_cfg.ss.health_url, g_rslt);
+    case PingServer : /* done by C */
+      memset(server, '\0', AB_MAX_LEN_SERVER_NAME);
+      status = extract_name_value(args, "Service=", '&', 
+          server, AB_MAX_LEN_SERVER_NAME);
+      cBYE(status);
+      if ( *server == '\0' ) { go_BYE(-1); }
+      if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.logger.server, 
+            g_cfg.logger.port, g_cfg.logger.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.ss.server, 
+            g_cfg.ss.port, g_cfg.ss.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "logger") == 0 ) { 
+        status = ping_server("logger", g_cfg.webapp.server, 
+            g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
+      }
+      else {
+        go_BYE(-1);
+      }
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */
@@ -161,6 +181,13 @@ ab_process_req(
       free_globals();
       status = zero_globals();  cBYE(status);
       status = init_lua(); cBYE(status);
+      if ( g_config_file[0] == '\0' )  {
+        hard_code_config(); // only for testing 
+        status = l_hard_code_config(); cBYE(status); // only for testing 
+      }
+      else {
+        status = l_load_config(g_config_file); cBYE(status);
+      }
       status = update_config(); cBYE(status);
       if ( g_cfg.sz_log_q > 0 ) { 
         pthread_mutex_init(&g_mutex, NULL);	
@@ -197,4 +224,3 @@ ab_process_req(
 BYE:
   return status ;
 }
-

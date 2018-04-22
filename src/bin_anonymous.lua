@@ -7,7 +7,6 @@ local spooky_hash = require 'spooky_hash'
 
 local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 
-  local total = 0
   local num_set = 0
   local total_percentage = 0
   -- In case the bins dont fill up
@@ -16,23 +15,26 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   for index, variant in ipairs(dev_variants) do
     local percent = assert(tonumber(variant.percentage), "Variant must have a valid percentage")
     local total_bins = math.floor(percent * 0.01 * consts.AB_NUM_BINS)
+    -- print(string.format("Variant pos: %s gets %s buckets starting at pos %s",
+    -- var_id_to_index_map[variant.id], total_bins, num_set))
     assert(num_set + total_bins <= consts.AB_NUM_BINS, "Total number of bins should be less that total bins")
     for set_vals=num_set, num_set + total_bins - 1 do
       bin[set_vals] = var_id_to_index_map[variant.id]
     end
-    total = total + total_bins
+    num_set = num_set + total_bins
     total_percentage = total_percentage + percent
   end
-  assertx(total <= consts.AB_NUM_BINS, "More than max bins cannot be occupied, total:", total)
+  assertx(num_set <= consts.AB_NUM_BINS, "More than max bins cannot be occupied, total:", total)
   assertx(total_percentage == 100, "Total percentage should add up to 100 percent", total_percentage)
 end
 
 local function populate_variants(c_test, variants)
   local var_id_to_index_map = {}
+  local final_variant_idx, final_variant_id
   assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
   c_test.num_variants = #variants -- TODO check for device specific too`
   table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
-  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
+  -- TODO removed as mallocs in C c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
   -- TODO final variants, HELP
   for index, value in ipairs(variants) do
@@ -41,45 +43,68 @@ local function populate_variants(c_test, variants)
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
     -- TODO check about final variant
     if tonumber(value.is_final) == consts.TRUE then
-      c_test.final_variant_idx = curr_index
-     end
+      final_variant_idx = index -1
+      final_variant_id = entry.id
+    end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
     -- TODO THIS NEEDS TO BE UNDONE, Ramesh to tell if name is absent for device
     -- specific
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Invalid name for variant at position " , index, " NAME:", value.name)
     ffi.copy(entry.name, value.name)
     if c_test.test_type == "ABTest" then
-      entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
+      -- TODO ABTests cannpt ne anonymous
+      assert("ABTest cannot be anonymous")
+      -- entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
     else
-      entry.url = value.url
+      local url = value.url
+      assert(#url >=0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      ffi.copy(entry.url, url)
     end
     entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
   end
-  return var_id_to_index_map
+  return var_id_to_index_map, final_variant_idx, final_variant_id
 end
 
-local function add_device_specific(c_test, test_data)
-  -- get all variants
+local function add_device_specific_terminated(c_test, test_data)
   local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
+  local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
+  c_test.variant_per_bin = nil
+  -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
+  -- TODO removed as mallocs in C c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
+  -- TODO right now we only have one final variant over time one final for each
+  -- device
+  for index=0,num_devices-1 do
+    c_test.final_variant_idx[index] = final_variant_idx
+    c_test.final_variant_id[index] = final_variant_id
+  end
+
+end
+
+local function add_device_specific_started(c_test, test_data)
+  -- get all variants
+  local variants = test_data.Variants
+  local num_devices = 0
+  for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
-  local cast_type = string.format("uint8_t *(&)[%s]", consts.AB_NUM_BINS)
-  local c_type = string.format("uint8_t[%s]", consts.AB_NUM_BINS)
+  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
+  ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
 
-  c_test.variant_per_bin = ffi.cast(cast_type, ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint8_t*") * num_devices), ffi.C.free))
   for index=0, num_devices-1 do
-    local z = ffi.cast("uint8_t*", ffi.gc(
-    ffi.C.malloc(ffi.sizeof(c_type)), ffi.C.free))
-    ffi.fill(z, ffi.sizeof(c_type))
-    c_test.variant_per_bin[index] = z
+    c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
+    -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
+    ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
   end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 
-  local index = 0
+  local index_to_key_map = {}
+  for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
+    index_to_key_map[device_name] = dev_variants[1].device_id
+  end
   for device_name, dev_variants in pairs(test_data.DeviceCrossVariant) do
     -- Also note that the id field in device specific part is useless and what
     -- we want is that variant_id so we can think of providing a getter function
@@ -90,14 +115,41 @@ local function add_device_specific(c_test, test_data)
     end
     -- TODO strong assumption is that the devices will have ids starting from 0
     -- Idea is bin[device_id]
+    local index = index_to_key_map[device_name] - 1
+
+    -- print("Processing device:", device_name, "at index", index)
     set_variants_per_bin(c_test.variant_per_bin[index], dev_variants, var_id_to_index_map)
-    index = index + 1
   end
+  c_test.final_variant_idx = nil
+  c_test.final_variant_id = nil
 end
 
 local function add_device_agnostic(c_test, test_data)
   local variants = test_data.Variants
-  local var_id_to_index_map = populate_variants(c_test, variants)
+  local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
+  local state = test_data.State:lower()
+  if state == "started" then
+    c_test.final_variant_idx = nil
+    c_test.final_variant_id = nil
+  elseif state == "terminated" then
+    -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    -- TODO removed as mallocs in C c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    c_test.final_variant_idx[0] = assert(final_variant_idx, "Final variant idx cannot be nil for a terminated test")
+    c_test.final_variant_id[0] = assert(final_variant_id, "Final variant id cannot be nil for a terminated test")
+  else
+    error("Unknown test state " .. state)
+  end
+end
+
+local function add_device_specific(c_test, test_data)
+  local state = test_data.State:lower()
+  if state == "started" then
+    add_device_specific_started(c_test, test_data)
+  elseif state == "terminated" then
+    add_device_specific_terminated(c_test, test_data)
+  else
+    error("Unrecognized state " .. state)
+  end
 end
 
 function bin_anonymous.add_bins_and_variants(c_test, test_data)
