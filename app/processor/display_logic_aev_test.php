@@ -2,6 +2,7 @@
 require_once "db_get_test.php";
 require_once "db_get_row.php";
 require_once "lkp.php";
+
   // Decide Mode
 {
   if ($id == "") { 

@@ -13,7 +13,7 @@ require_once "db_get_test.php";
 // -- TEST TestID CREDENTIALS
 if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
 	{
-		header('Location: home.php');
+		header('Location: error.php?error="TestID is not set"');
 		return false;
 	}
 # -- Check if number of TestID are set.
