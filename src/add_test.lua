@@ -124,22 +124,63 @@ function AddTests.add(test_str, g_tests, c_index)
 end
 
 function AddTests.preproc(test_str, g_tests, o_arr)
-  -- o arr is the array that returns requirements to C
-  -- 0 is the test id
-  -- 1 is the number of variants
-  -- 2 is wheter it is device specific or not
-  -- 3 is whether it is terminated or not
+ -- o arr is the array that returns requirements to C
+  -- int what_to_do      = rslt[0];
+  -- int test_idx        = rslt[1];
+  -- int num_variants     = rslt[2];
+  -- int is_dev_specific = rslt[3];
+  --
   local j_table = json.decode(test_str)
+  g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   o_arr = ffi.cast("int32_t*", o_arr)
-  AddTests.get_test(g_tests, test_data, o_arr) -- get test position iin 0 location or o_arr
-  -- o_arr[0] = WHAT TO DO 
-  -- o_arr[1] = test_idx
+  AddTests.get_test(g_tests, j_table, o_arr + 1) -- get test position iin 0 location or o_arr
   o_arr[2] = #j_table.Variants
   o_arr[3] = tonumber(j_table.is_dev_specific)
-  if j_table.State:lower() == "terminated" then
-    o_arr[3] = consts.TRUE
+  local tests = cache.get("tests") or {}
+  local test = tests[j_table.id]
+  local state = j_table.State:lower()
+  tests = nil
+  if test == nil then
+    if state ==  "started" then
+      o_arr[0] = 1
+    elseif state == "terminated" then
+      o_arr[0] = 2
+    elseif state == "archived" then
+      o_arr[0] = 3
+    else
+      error("Invalid state present: " ..state)
+    end
+    return
   else
-    o_arr[3] = consts.FALSE
+    local old_state = test.State:lower()
+    if old_state == "started" then
+      if state ==  "started" then
+        o_arr[0] = 4
+      elseif state == "terminated" then
+        o_arr[0] = 5
+      elseif state == "archived" then
+        o_arr[0] = 6
+      else
+        error("Invalid state present: " ..state)
+      end
+      return
+    elseif old_state == "terminated" then
+      if state ==  "started" then
+        o_arr[0] = 7
+      elseif state == "terminated" then
+        o_arr[0] = 8
+      elseif state == "archived" then
+        o_arr[0] = 9
+      else
+        error("Invalid state present: " ..state)
+      end
+      return
+    else
+      error("Invali old state " .. old_state)
+    end
+
   end
+  -- no change in num variants or is_dev_specific
 end
+
 return AddTests

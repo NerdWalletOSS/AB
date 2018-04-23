@@ -39,15 +39,25 @@ l_add_test(
 	int is_dev_specific = rslt[3];
   switch ( what_to_do ) { 
     case 1:
-      // null -> started
+      // nil to started
     case 2:
-      // null -> terminated
+      // nil to terminated
     case 3:
-      // started -> terminated
+      // nil to archived
     case 4:
-      // any -> archived aka free all
+      // stared to started
     case 5:
-      // do nothing
+      // stared to terminated
+    case 6:
+      // started to archived
+    case 7:
+      // terminated to started
+      // return 400
+    case 8:
+      // terminated to terminated
+      // return 400
+    case 9:
+      // terminated to archived
     default:
       go_BYE(-1);
       break;
