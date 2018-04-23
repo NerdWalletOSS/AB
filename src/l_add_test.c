@@ -35,29 +35,24 @@ l_add_test(
   // Now based on rslt, do things
   int what_to_do      = rslt[0];
   int test_idx        = rslt[1]; 
-  int num_devices     = rslt[2]; 
-  int is_dev_specific = rslt[3]; 
+  int num_variants    = rslt[2];
+	int is_dev_specific = rslt[3];
   switch ( what_to_do ) { 
-    case 1 : 
-      /* malloc full */
-      break;
-    case 2 : 
-      /* malloc partial */
-      break;
-    case 3 : 
-      /* free_partial */
-      break;
-    case 4 : 
-      /* free_all */
-      break;
-    case 5 : 
-      /* do nothing */
-      break;
-    default : 
+    case 1:
+      // null -> started
+    case 2:
+      // null -> terminated
+    case 3:
+      // started -> terminated
+    case 4:
+      // any -> archived aka free all
+    case 5:
+      // do nothing
+    default:
       go_BYE(-1);
       break;
   }
-
+    
   //-------------------------------------
   lua_getglobal(g_L, "add");
   if ( !lua_isfunction(g_L, -1)) {
