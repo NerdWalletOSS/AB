@@ -206,7 +206,7 @@ main(
   return_if_malloc_failed(T);
   int tidx = 0; // index into T
   int ndots = 0;
-  for ( int iter = 0; iter < niter; iter++ ) { 
+  for ( int iter = 0; iter < niter; iter++ ) {
     fprintf(stderr, "iter = %d \n", iter);
     for ( int uid = 0; uid < nU; uid++ ) {
       for ( int test_id = 0; test_id < num_tests; test_id++ ) { 

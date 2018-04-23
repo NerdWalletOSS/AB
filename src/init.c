@@ -46,6 +46,7 @@ init_lua(
     )
 {
   int status = 0;
+  if ( g_disable_lua ) { return status; }
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
   status = luaL_loadfile(g_L, "./ab.lua"); cBYE(status);

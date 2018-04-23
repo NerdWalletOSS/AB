@@ -109,6 +109,7 @@ diagnostics(
         }
       }
       if ( vk.url != NULL ) { 
+        if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
         if ( ( strncmp(vk.url, "https://", 8) != 0 ) &&
             ( strncmp(vk.url, "http://", 7) != 0 ) ) {
           go_BYE(-1);
