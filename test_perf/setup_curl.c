@@ -37,7 +37,7 @@ setup_curl(
   /* send all data to this function  */ 
   curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
   /* we pass our 'chunk' struct to the callback function */ 
-  curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)&g_chunk);
+  curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)g_chunk);
 
   *ptr_ch = ch;
 BYE:

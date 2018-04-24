@@ -23,8 +23,8 @@ main(
   char server[MAX_LEN_SERVER_NAME+1];
   char url[MAX_LEN_URL+1];
   char base_url[MAX_LEN_SERVER_NAME+1+64]; 
-  uint32_t *T = NULL; // for timing measurements
   char **test_urls = NULL;
+  int *H = NULL; int nH = 1000; // histogram  for response times 
 
   // Set globals 
   g_chunk_size = 16384; g_chunk = NULL;
@@ -45,6 +45,7 @@ main(
   int niter = 8;
   int nU = 1024; 
   int start_uuid = 12345678;
+  H = malloc(nH * sizeof(int)); return_if_malloc_failed(H);
 
   status = setup_curl(&ch); cBYE(status);
   // Set base URL
@@ -58,24 +59,20 @@ main(
   //-- Add a bunch of tests 
   status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
 
-  int ttidx = 0;
   double avg_time = 0;
   double min_time = INT_MAX;
   double max_time = INT_MIN;
-
-  WHEREAMI; goto BYE; 
 
   curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10);
   // Get variants for these tests for nU users
   int num_bad = 0; 
   uint64_t t1, t2, t;
   // T is used to measure individual times 
-  T = malloc(sizeof(uint32_t) * (num_tests* niter * nU));
-  return_if_malloc_failed(T);
-  int tidx = 0; // index into T
+  int hit_ctr = 0; // number of hits with valid responses
   int ndots = 0;
+  int num_over = 0;
+  int exp_num_hits = niter * nU * num_tests; 
   for ( int iter = 0; iter < niter; iter++ ) {
-    fprintf(stderr, "iter = %d \n", iter);
     for ( int uid = 0; uid < nU; uid++ ) {
       for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
         sprintf(url, "%s&UUID=%d", test_urls[test_id], start_uuid+uid);
@@ -86,15 +83,21 @@ main(
         t2 = get_time_usec();
         if ( t2 < t1 ) {  continue; }
         t = t2 - t1;
-        T[tidx++] = t;
-        if ( ( tidx % 500 ) == 0 ) {
+        if ( t > max_time ) { max_time = t; }
+        if ( t < min_time ) { min_time = t; }
+        avg_time += t;
+        hit_ctr++;
+        t = t % 1000; // convert to msec
+        if ( (int)t >= nH ) { t = nH; num_over++; }
+        H[t]++;
+        if ( ( hit_ctr % 500 ) == 0 ) {
           sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
           status = execute(ch, url, &http_code); cBYE(status);
           if ( http_code != 200 ) { go_BYE(-1); }
           ndots++; 
           fprintf(stderr, ".");
-          if ( ndots >= 72 ) { 
-            fprintf(stderr, "\n");
+          if ( ndots >= 64 ) { 
+            fprintf(stderr, "%d/%d\n", hit_ctr, exp_num_hits);
             ndots = 0;
           }
         }
@@ -102,28 +105,25 @@ main(
     }
   }
 DONE:
-  for ( int i = 0; i < tidx; i++ ) { 
-    if ( T[i] > max_time ) { max_time = T[i]; }
-    if ( T[i] < min_time ) { min_time = T[i]; }
-    avg_time += T[i];
-  }
-  avg_time /= tidx;
+  fprintf(stderr, "num_over = %d \n", num_over);
+  avg_time /= hit_ctr;
   fprintf(stderr, "num_bad   \t = %d\n", num_bad);
   fprintf(stderr, "num_tests \t = %d\n", num_tests);
-  fprintf(stderr, "num_trials\t = %d\n", tidx);
+  fprintf(stderr, "num_trials\t = %d\n", hit_ctr);
   fprintf(stderr, "num_users \t = %d\n", nU);
   fprintf(stderr, "avg_time  \t = %f\n",  avg_time);
   fprintf(stderr, "min_time  \t = %f\n",  min_time);
   fprintf(stderr, "max_time  \t = %f\n",  max_time);
   curl_easy_cleanup(ch); ch = NULL;
 
-  ofp = fopen("_timings.bin", "wb");
-  return_if_fopen_failed(ofp, "_timings.bin", "wb");
-  fwrite(T, sizeof(uint32_t), tidx, ofp);
+  ofp = fopen("_timings.csv", "w");
+  return_if_fopen_failed(ofp, "_timings.csv", "w");
+  for (  int i = 0; i < nH; i++ ) { 
+    fprintf(ofp, "%d,%d\n", i, H[i]);
+  }
   fclose_if_non_null(ofp);
 BYE:
   fclose_if_non_null(ofp);
-  free_if_non_null(T);
   if ( test_urls != NULL ) { 
     for ( int test_id = 0; test_id < num_tests; test_id++ ) {
       free_if_non_null(test_urls[test_id]);
