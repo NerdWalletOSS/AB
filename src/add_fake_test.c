@@ -99,7 +99,7 @@ add_fake_test(
     switch ( itemp ) { 
       case 0 : is_dev_specific = false; break; 
       case 1 : is_dev_specific = true; break; 
-      default : go_BYE(-1); break;
+      default : fprintf(stderr, "%s\n", args); go_BYE(-1); break;
     }
   }
   else {

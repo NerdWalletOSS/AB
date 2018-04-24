@@ -25,6 +25,9 @@ get_req_type(
   else if (strcasecmp(api, "ClassifyUA") == 0) {
     return ClassifyUA;
   }
+  else if (strcasecmp(api, "DeleteTest") == 0) {
+    return DeleteTest;
+  }
   else if (strcasecmp(api, "Diagnostics") == 0) {
     return Diagnostics;
   }

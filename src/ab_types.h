@@ -9,12 +9,13 @@
 
 typedef enum _ab_req_type {
   Undefined, // --- & --- 
-  AddFakeTest, 
+  AddFakeTest, // Read & C (for testing) 
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
+  DeleteTest, // Write & C (for testing)
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
   EvalDT, // Read & C

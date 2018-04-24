@@ -104,6 +104,7 @@ main(
       }
     }
   }
+  status = del_tests(ch, server, port, num_tests); cBYE(status);
 DONE:
   fprintf(stderr, "num_over = %d \n", num_over);
   avg_time /= hit_ctr;
