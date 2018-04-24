@@ -7,8 +7,6 @@
 #include "get_ss_info.h"
 #include "get_variant.h"
 
-
-
 int 
 get_variant(
     const char *args
@@ -28,7 +26,7 @@ get_variant(
   status = get_test_name(args,  test_name);  cBYE(status);
   status = get_test_idx(test_name, test_type, &test_idx); 
   if ( status < 0 ) { 
-    printf("hello world\n");
+    fprintf(stderr, "%s\n", args);
   }
   cBYE(status);
   T = &(g_tests[test_idx]);

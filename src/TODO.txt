@@ -1,3 +1,5 @@
+[RAMESH] Add DeleteTest, pure C implementation
+
 [RAMESH] Finish ext_classify_ip
 
 [RAMESH] Make a sample db.json for both RTS and Webapp after cleaning up
@@ -8,18 +10,7 @@
 
 [RAMESH]  statsd metrics 
 
-WIP [RAMESH] set tracer
-
-[INDRAJEET] All config variables should be read by Lua and then Lua calls C to set them
-
 [RAMESH] database migration 
-
-[INDRAJEET] journaling triggers
-
-[INDRAJEET] database permissions
-
-[INDRAJEET] ALL deployment stuff
-
 
 [RAMESH] Use logger to verify that headers are coming across correctly
 
