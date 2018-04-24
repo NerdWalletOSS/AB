@@ -26,9 +26,7 @@ l_diagnostics(
       fprintf(stderr, "calling function [diagnostics] failed: %s\n", lua_tostring(g_L, -1));
       sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
       lua_pop(g_L, 1);
-      // TODO P1 do we need to return here?
     }
-    /* TODO Need to fill this out; Indrajeet to do  */
   }
   else if ( ( *buf != '\0' ) && ( strcmp(buf, "C") == 0 ) ) {
     status = diagnostics(); cBYE(status);
@@ -54,7 +52,7 @@ diagnostics(
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { 
       if ( g_tests[i].name[0] != '\0' ) { go_BYE(-1); }
-      // TODO Make sure that everything else is NULL
+      // TODO P3 Make sure that everything else is NULL
       continue;
     }
     int test_type = g_tests[i].test_type;
@@ -113,16 +111,17 @@ diagnostics(
             ( strncmp(vk.url, "http://", 7) != 0 ) ) {
           go_BYE(-1);
         }
-        // TODO Check URL to make sure it is valid URL
+        for ( char *cptr = vk.url; *cptr != '\0'; cptr++ ) { 
+          if ( !is_valid_url_char(*cptr) ) { go_BYE(-1); }
+        }
       }
       if ( vk.custom_data != NULL ) {
         if ( strlen(vk.custom_data) > AB_MAX_LEN_CUSTOM_DATA ) { go_BYE(-1); }
-        // TODO Make sure it is valid JSON
+        // TODO P3 Make sure it is valid JSON
       }
     }
     // TODO Check that counter[] is similar to percentage
-    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { 
-      go_BYE(-1); }
+    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
       if ( is_dev_specific ) { go_BYE(-1); }

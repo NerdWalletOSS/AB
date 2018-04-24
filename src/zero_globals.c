@@ -55,8 +55,10 @@ free_globals(
   }
 
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
-  if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
-  if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+  if ( !g_disable_lua ) { 
+    if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
+    if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+  }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
 

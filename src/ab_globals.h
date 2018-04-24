@@ -107,6 +107,7 @@ EXTERN MAXMIND_REC_TYPE g_maxmind;
 //------------------------ For Lua
 EXTERN lua_State *g_L; // Set by C
 EXTERN lua_State *g_L_DT; // Set by C
+EXTERN bool g_disable_lua; // used for testing, normally false
 
 
 #include "ab_log_globals.h"
