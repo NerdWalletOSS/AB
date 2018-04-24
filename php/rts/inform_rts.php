@@ -28,7 +28,7 @@ function inform_rts(
     $body = json_encode(db_get_test($test_id));
     $url = "AddTest";
     if ( $is_check ) {
-      $url .= "?JustCheck=true";
+      $url = "CheckTest";
     }
     post_url($server, $port, $url, $body, $http_code, $rslt);
     if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
