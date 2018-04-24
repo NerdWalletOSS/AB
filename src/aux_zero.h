@@ -14,5 +14,10 @@ extern int
 malloc_test(
     int test_idx,
     int num_variants,
-    int is_dev_specific
+    int is_dev_specific,
+    int state
+    );
+extern int
+free_variant_per_bin(
+    uint32_t test_idx
     );

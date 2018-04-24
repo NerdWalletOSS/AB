@@ -1,6 +1,7 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
+#include "aux_zero.h"
 #include "l_add_test.h"
 
 // int cdata[1];
@@ -35,29 +36,41 @@ l_add_test(
   // Now based on rslt, do things
   int what_to_do      = rslt[0];
   int test_idx        = rslt[1]; 
-  int num_devices     = rslt[2]; 
-  int is_dev_specific = rslt[3]; 
+  int num_variants    = rslt[2];
+  int is_dev_specific = rslt[3];
   switch ( what_to_do ) { 
-    case 1 : 
-      /* malloc full */
+    case 1: // nil to started
+      status = malloc_test(test_idx, num_variants, is_dev_specific,
+          TEST_STATE_STARTED);
       break;
-    case 2 : 
-      /* malloc partial */
+    case 2: // nil to terminated
+      status = malloc_test(test_idx, num_variants, is_dev_specific,
+          TEST_STATE_TERMINATED);
       break;
-    case 3 : 
-      /* free_partial */
+    case 3: // nil to archived => Nothing to do
       break;
-    case 4 : 
-      /* free_all */
+    case 4: // stared to started => Nothing to do
       break;
-    case 5 : 
-      /* do nothing */
+    case 5: // stared to terminated
+      status = free_variant_per_bin(test_idx);
       break;
-    default : 
+    case 6: // started to archived
+      status = free_test(test_idx); 
+      break;
+    case 7: // terminated to started
+      go_BYE(-1); 
+      break;
+    case 8: // terminated to terminated
+      go_BYE(-1); 
+      break;
+    case 9: // terminated to archived
+      status = free_test(test_idx); 
+      break;
+    default:
       go_BYE(-1);
       break;
   }
-
+  cBYE(status);
   //-------------------------------------
   lua_getglobal(g_L, "add");
   if ( !lua_isfunction(g_L, -1)) {
