@@ -27,6 +27,7 @@
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
 #include "delete_test.h"
+#include "l_chk_test.h"
 
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
@@ -69,6 +70,10 @@ ab_process_req(
       //--------------------------------------------------------
     case CheckDBConnectivity : /* done by Lua */
       status = l_chk_db_conn(); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case CheckTest : /* done by Lua */
+      status = l_chk_test(body); cBYE(status);
       break;
       //--------------------------------------------------------
     case ClassifyIP : /* done by C */

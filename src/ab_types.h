@@ -13,6 +13,7 @@ typedef enum _ab_req_type {
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
+  CheckTest, /// Read & Lua 
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
   DeleteTest, // Write & C (for testing)
