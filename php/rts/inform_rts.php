@@ -10,6 +10,7 @@ require_once 'db_get_test.php';
 
 function inform_rts(
   $test_id,
+  $is_check = false,
   &$err_msg
 )
 {
@@ -25,8 +26,11 @@ function inform_rts(
     $rslt = ""; $http_code = 0;
     $server = $sp['server']; $port   = $sp['port'];
     $body = json_encode(db_get_test($test_id));
-    echo($body);
-    post_url($server, $port, "AddTest", $body, $http_code, $rslt);
+    $url = "AddTest";
+    if ( $is_check ) {
+      $url .= "?JustCheck=true";
+    }
+    post_url($server, $port, $url, $body, $http_code, $rslt);
     if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
   }
   return $is_ok;

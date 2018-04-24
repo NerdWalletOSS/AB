@@ -38,3 +38,11 @@ Repeat for XYTest instead of ABTest above
 
 =======================================
 
+After we check that the tests match up, then we will hit 
+
+$err_msg = “”;
+$just_check = true
+$is_ok = inform_rts($test_id, $just_check, $err_msg);
+
+and inform the user if any error has occurred
+

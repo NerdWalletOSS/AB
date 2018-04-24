@@ -313,7 +313,7 @@ function test_basic(
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
   // Note it is possible for both msg_stdout and msg_stderr to be set
-  if ( $state == "started" ) {
+  if ( ( $state != "draft" ) &&  ( $state != "dormant" ) ) {
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 
       $http_code = 400; 
