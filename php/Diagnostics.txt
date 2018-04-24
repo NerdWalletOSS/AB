@@ -3,14 +3,17 @@
   Note that you will need to use  php/rts/all_rts_get_url.php
   since this must be performed for each RTS 
 
+=======================================
 2. List RTS
 
 See php/rts/list_rts.php
 
+=======================================
 3. Invariants
 Be able to invoke each database invariants and show status
   AB/php/invariants/inv*php
 
+=======================================
 4. Get DeviceID. Provide a text box where user can enter User-Agent
 
 For each RTS, invoke
@@ -24,4 +27,14 @@ Device and DeviceID.
 
 You may need to URL encode the text entered. Not sure. Please experiment.
 
+=======================================
+5. Check tests
+
+Execute db_get_tests("ABTest", array("started" , "terminated"))
+what you get back should be same as 
+/ListTests?Source=C&TestType=ABTest
+
+Repeat for XYTest instead of ABTest above
+
+=======================================
 
