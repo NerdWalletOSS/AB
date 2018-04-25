@@ -1,4 +1,4 @@
--- local dbg = require 'debugger'
+local dbg = require 'debugger'
 local bin_anonymous = {}
 local assertx = require 'assertx'
 local consts = require 'ab_consts'
@@ -58,9 +58,17 @@ local function populate_variants(c_test, variants)
     else
       local url = value.url
       assert(#url >=0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      assert(entry.url ~= nil, "Space must have been allocated for url")
       ffi.copy(entry.url, url)
     end
-    entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
+    -- RODO make checks 
+    assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
+    if value.custom_data ~= nil then
+      ffi.copy(entry.custom_data, value.custom_data)
+    else
+      ffi.copy(entry.custom_data,"NULL")
+    end
+
   end
   return var_id_to_index_map, final_variant_idx, final_variant_id
 end
@@ -88,14 +96,15 @@ local function add_device_specific_started(c_test, test_data)
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end
 
+  dbg()
   local var_id_to_index_map = populate_variants(c_test, variants)
 
-  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  -- c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
   -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
   ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
 
   for index=0, num_devices-1 do
-    c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
+    -- c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
     -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
     ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
   end
@@ -126,6 +135,7 @@ end
 
 local function add_device_agnostic(c_test, test_data)
   local variants = test_data.Variants
+  dbg()
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   local state = test_data.State:lower()
   if state == "started" then
