@@ -100,7 +100,45 @@ del_tests(
   char url[AB_MAX_LEN_URL+1];
 
   curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000);
-  fprintf(stderr, "Deleting %d tests T1, T2, .. \n", num_tests);
+  fprintf(stderr, "\nDeleting %d tests T1, T2, .. \n", num_tests);
+  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
+    memset(url, '\0', AB_MAX_LEN_URL+1);
+    bool is_one_good = false;
+    sprintf(url, "%s:%d/DeleteTest?TestName=T%d&TestType=ABTest",
+        server, port, test_id);
+    status = execute(ch, url, &http_code); cBYE(status);
+    if ( http_code != 200 ) { is_one_good = true; }
+
+    sprintf(url, "%s:%d/StopTest?TestName=T%d&TestType=XYTest",
+        server, port, test_id);
+    status = execute(ch, url, &http_code); cBYE(status);
+    if ( http_code != 200 ) { is_one_good = true; }
+
+    if ( !is_one_good ) { 
+      fprintf(stderr, "Error on %s \n", url);
+    }
+    sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
+    status = execute(ch, url, &http_code); cBYE(status);
+    if ( http_code != 200 ) { go_BYE(-1); }
+  }
+BYE:
+  return status;
+}
+
+int
+stop_tests(
+    CURL *ch,
+    char *server,
+    int port,
+    int num_tests
+    )
+{
+  int status = 0;
+  long http_code;
+  char url[AB_MAX_LEN_URL+1];
+
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000);
+  fprintf(stderr, "\nStopping %d tests T1, T2, .. \n", num_tests);
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     memset(url, '\0', AB_MAX_LEN_URL+1);
     bool is_one_good = false;

@@ -36,6 +36,7 @@ typedef enum _ab_req_type {
   Reload, // Write &  Lua 
   Restart, // Read &  C 
   Router, // Read &  C
+  StopTest, // Write & C (for testing)
   TestInfo, // Read &  Lua
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;

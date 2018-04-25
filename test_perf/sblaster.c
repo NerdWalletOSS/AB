@@ -104,6 +104,16 @@ main(
       }
     }
   }
+  // Stop tests and do some more GetVariant requests.
+  status = stop_tests(ch, server, port, num_tests); cBYE(status);
+  for ( int uid = 0; uid < nU; uid++ ) {
+    for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
+      sprintf(url, "%s&UUID=%d", test_urls[test_id], start_uuid+uid);
+      execute(ch, url, &http_code);
+      if ( http_code != 200 ) { continue; num_bad++; }
+    }
+  }
+  // Delete all tests 
   status = del_tests(ch, server, port, num_tests); cBYE(status);
 DONE:
   fprintf(stderr, "num_over = %d \n", num_over);

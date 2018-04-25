@@ -88,6 +88,9 @@ get_req_type(
   else if (strcasecmp(api, "Router") == 0) {
     return Router;
   }
+  else if (strcasecmp(api, "StopTest") == 0) {
+    return StopTest;
+  }
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
   }
