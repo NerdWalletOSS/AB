@@ -29,13 +29,14 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 end
 
 local function populate_variants(c_test, variants)
+  -- dbg()
   local var_id_to_index_map = {}
   local final_variant_idx, final_variant_id
   assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
   c_test.num_variants = #variants -- TODO check for device specific too`
   table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
   -- TODO removed as mallocs in C c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
-  ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
+  -- ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
   -- TODO final variants, HELP
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]
@@ -58,9 +59,17 @@ local function populate_variants(c_test, variants)
     else
       local url = value.url
       assert(#url >=0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      assert(entry.url ~= nil, "Space must have been allocated for url")
       ffi.copy(entry.url, url)
     end
-    entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
+    -- RODO make checks 
+    assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
+    if value.custom_data ~= nil then
+      ffi.copy(entry.custom_data, value.custom_data)
+    else
+      ffi.copy(entry.custom_data,"NULL")
+    end
+
   end
   return var_id_to_index_map, final_variant_idx, final_variant_id
 end
@@ -90,14 +99,14 @@ local function add_device_specific_started(c_test, test_data)
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
-  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  -- c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
   -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t*")*num_devices), ffi.C.free))
-  ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
+  -- ffi.fill(c_test.variant_per_bin, ffi.sizeof("uint8_t*")*num_devices)
 
   for index=0, num_devices-1 do
-    c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
+    -- c_test.variant_per_bin[index] = ffi.cast("uint8_t*", ffi.gc(
     -- TODO removed as mallocs in C ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
-    ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
+    -- ffi.fill(c_test.variant_per_bin[index] , ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
   end
   table.sort(test_data.DeviceCrossVariant, function(a,b) return tonumber(a[1].device_id) < tonumber(b[1].device_id) end)
 
