@@ -1,6 +1,6 @@
 package.path=package.path .. ";./../src/?.lua"
 local assertx = require 'assertx'
-local dbg = require 'debugger'
+-- local dbg = require 'debugger'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local consts = require 'ab_consts'
@@ -59,6 +59,7 @@ describe('AddTest framework', function()
     local num_variants = o_arr[2]
     local is_dev_specific = o_arr[3]
     local test_idx = o_arr[1]
+    -- print(test_idx)
     local state = o_arr[0]
     local num_devices = 6
     assert(num_variants >= consts.AB_MIN_NUM_VARIANTS and num_variants <= consts.AB_MAX_NUM_VARIANTS, "Invalid number of variants given")
@@ -337,6 +338,7 @@ describe('AddTest framework', function()
           local j_str = json.encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
+          -- dbg()
           local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
           assertx(status == true, res)
           cleanup(g_tests, c_index)
@@ -475,7 +477,6 @@ describe('AddTest framework', function()
       local j_str = json.encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
-      dbg()
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
       local c_test = g_tests[c_index[0]]
       assert(c_test.final_variant_idx == nil, "Final variant idx should be nil")

@@ -37,7 +37,7 @@ local function match(c_test, test_data, name_hash)
 end
 
 function AddTests.get_test(g_tests, test_data, c_index)
-  print("name is ", test_data.name)
+  -- print("name is ", test_data.name)
   local name_hash = spooky_hash.spooky_hash64(test_data.name, #test_data.name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
@@ -119,7 +119,7 @@ function AddTests.add(test_str, g_tests, c_index)
     else
       error("Invalid TestType given")
     end
-    print(c_index[0])
+    -- print(c_index[0])
     -- dbg()
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
