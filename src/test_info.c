@@ -123,15 +123,12 @@ c_test_info(
   sprintf(buf, "  \"Seed\" : \"%" PRIu64 "\", \n", T->seed);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-  /* TODO P2
   if ( T->state == TEST_STATE_TERMINATED ) { 
-    sprintf(buf, "  \"FinalVariant\" : \"%s\", \n", T->final_variant);
+    sprintf(buf, "  \"FinalVariantID\" : \"%u\", \n", T->final_variant_id[0]);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
-
-    sprintf(buf, "  \"FinalVariantURL\" : \"%s\", \n", T->final_var_url);
+    sprintf(buf, "  \"FinalVariantIDX\" : \"%u\", \n", T->final_variant_idx[0]);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
   }
-  */
 
   sprintf(buf, "  \"NumVariants\" : \"%d\", \n", T->num_variants);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);

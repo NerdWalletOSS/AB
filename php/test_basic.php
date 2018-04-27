@@ -113,6 +113,13 @@ function test_basic(
   else {
     $bin_type = get_json_element($inJ, 'BinType');
   }
+  rs_assert($state, "State should be known by now");
+  if ( ( $state == "terminated" ) || ( $state == "archived" ) ) {
+    $outJ["status_code"] = 400;
+    $outJ["msg_stderr"] = "No changes to archived/terminated test\n");
+    header("Error-Code: 400");
+    return $outJ;
+  }
 
   rs_assert($bin_type, "Bin type not set ");
   //-------------------------------------------------
@@ -313,7 +320,8 @@ function test_basic(
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
   // Note it is possible for both msg_stdout and msg_stderr to be set
-  if ( ( $state != "draft" ) &&  ( $state != "dormant" ) ) {
+  // Note that state cannot be terminated or archived for this endpoint
+  if ( $state == "started" ) {
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 
       $http_code = 400; 

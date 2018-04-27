@@ -36,6 +36,7 @@ typedef enum _ab_req_type {
   Reload, // Write &  Lua 
   Restart, // Read &  C 
   Router, // Read &  C
+  StopTest, // Write & C (for testing)
   TestInfo, // Read &  Lua
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
@@ -43,6 +44,7 @@ typedef enum _ab_req_type {
 typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
+  char separator; // either question mark or ampersand
   char name[AB_MAX_LEN_VARIANT_NAME+1];
   char * url; // AB_MAX_LEN_VARIANT_URL+1
   char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 

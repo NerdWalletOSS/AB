@@ -27,6 +27,7 @@
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
 #include "delete_test.h"
+#include "stop_test.h"
 #include "l_chk_test.h"
 
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
@@ -217,6 +218,11 @@ ab_process_req(
       //--------------------------------------------------------
     case Router : /* done by C */
       status = router(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case StopTest : /* done by C */
+      status = stop_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
       break;
       //--------------------------------------------------------
     case TestInfo : /* done by Lua */

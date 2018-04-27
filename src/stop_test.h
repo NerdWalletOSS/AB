@@ -1,4 +1,4 @@
 extern int
-l_stop_test(
+stop_test(
     const char *args
     );

@@ -14,13 +14,13 @@ log_decision(
   if ( g_cfg.sz_log_q > 0  ) {
     if ( g_n_log_q >= g_cfg.sz_log_q ) { go_BYE(-1); }
     if ( g_n_log_q > g_cfg.sz_log_q - 2 ) {
-      // TODO: Raise alert using statsd
       g_log_dropped_posts++; 
       goto BYE; 
     }
 
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
-    if ( g_n_log_q == g_cfg.sz_log_q ) { // TODO P3 Remove
+    if ( g_n_log_q == g_cfg.sz_log_q ) { 
+      // Control never comes here because of abandonment above
       fprintf(stderr, "Waiting for space \n");
       is_wait = true;
     }

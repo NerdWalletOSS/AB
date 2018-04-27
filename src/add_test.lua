@@ -37,7 +37,7 @@ local function match(c_test, test_data, name_hash)
 end
 
 function AddTests.get_test(g_tests, test_data, c_index)
-  -- dbg()
+  -- print("name is ", test_data.name)
   local name_hash = spooky_hash.spooky_hash64(test_data.name, #test_data.name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
@@ -53,10 +53,10 @@ function AddTests.get_test(g_tests, test_data, c_index)
     end
   until stop == true
   if match(test, test_data, name_hash) then
-    test.name_hash = name_hash
+    -- test.name_hash = name_hash
     -- print(position -1)
     c_index[0] = position -1
-    return test
+    return test, name_hash
   else
     -- Now search from 0 to orignal position -1
     position = 0
@@ -69,10 +69,10 @@ function AddTests.get_test(g_tests, test_data, c_index)
       end
     until stop == true
     if match(test, test_data, name_hash) then
-      test.name_hash = name_hash
+      -- test.name_hash = name_hash
       -- print(position -1)
       c_index[0] = position - 1
-      return test
+      return test, name_hash
     else
       c_index[0] = -1
       assert(nil, "Unable to find any position for insertion")
@@ -84,17 +84,21 @@ end
 function AddTests.add(test_str, g_tests, c_index)
   -- print(test_str)
   local test_data = json.decode(test_str)
+  -- dbg()
   local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
   assert(test_data.name ~= nil, "Test should have a name")
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
-  local c_test = AddTests.get_test(g_tests, test_data, c_index)
+  local c_test, name_hash = AddTests.get_test(g_tests, test_data, c_index)
+  c_test.name_hash = name_hash
+
   assert(c_test ~= nil, "Position not found to insert")
+  
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
-    ffi.fill( ffi.cast("TEST_META_TYPE*", g_tests) + c_index[0], ffi.sizeof("TEST_META_TYPE"))
+    -- ffi.fill( ffi.cast("TEST_META_TYPE*", g_tests) + c_index[0], ffi.sizeof("TEST_META_TYPE"))
     local tests = cache.get("tests") or {}
     tests[test_data.id] = nil
     cache.put("tests", tests)
@@ -115,6 +119,7 @@ function AddTests.add(test_str, g_tests, c_index)
     else
       error("Invalid TestType given")
     end
+    -- print(c_index[0])
     -- dbg()
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}

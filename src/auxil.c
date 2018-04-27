@@ -6,6 +6,7 @@
 #include <math.h>
 #include <time.h>
 #include <dirent.h>
+#include <float.h>
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -39,8 +40,8 @@ stoF4(
   if ( ( X == NULL ) || ( *X == '\0' ) ) { go_BYE(-1); }
   valF8 = strtod(X, &endptr);
   if ( ( *endptr != '\0' ) && ( *endptr != '\n' ) ) { go_BYE(-1); }
-  // TODO P1 WTF??? Following needs to be commented out??
-  // if ( ( valF8 < FLT_MIN ) || ( valF8 > FLT_MAX ) ) { go_BYE(-1); }
+  if ( ( valF8 < -1.0 * FLT_MAX ) || ( valF8 > FLT_MAX ) ) { go_BYE(-1); }
+  if ( abs(valF8) <  FLT_MIN ) { go_BYE(-1); }
   *ptr_valF4 = valF8;
  BYE:
   return status ;

@@ -107,10 +107,10 @@ generic_handler(
   //--------------------------------------
 
   if ( strcmp(api, "Halt") == 0 ) {
-    // TODO: Need to get loopbreak to wait for these 3 statements
-    // evbuffer_add_printf(opbuf, "%s\n", g_rslt);
-    // evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
-    // evbuffer_free(opbuf);
+    // TODO: P4 Need to get loopbreak to wait for these 3 statements
+    evbuffer_add_printf(opbuf, "%s\n", g_rslt);
+    evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
+    evbuffer_free(opbuf);
     free_globals();
     event_base_loopbreak(base);
   }

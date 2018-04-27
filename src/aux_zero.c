@@ -86,7 +86,7 @@ shutdown_curl(
   if ( g_ss_curl_hdrs != NULL ) { 
     curl_slist_free_all(g_ss_curl_hdrs); g_ss_curl_hdrs = NULL;
   }
-  curl_global_cleanup();   // TODO P4 Check that this is ok at startup 
+  curl_global_cleanup();
 }
 
 int

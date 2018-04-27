@@ -13,3 +13,10 @@ del_tests(
     int port,
     int num_tests
     );
+extern int
+stop_tests(
+    CURL *ch,
+    char *server,
+    int port,
+    int num_tests
+    );

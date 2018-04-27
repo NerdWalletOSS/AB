@@ -51,8 +51,19 @@ diagnostics(
   }
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { 
-      if ( g_tests[i].name[0] != '\0' ) { go_BYE(-1); }
-      // TODO P3 Make sure that everything else is NULL
+      if ( g_tests[i].name[0]           != '\0' ) { go_BYE(-1); }
+      if ( g_tests[i].test_type         != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].id                != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].external_id       != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].has_filters       != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].is_dev_specific   != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].state             != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].seed              != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].num_variants      != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].variants          != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_idx != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].variant_per_bin  != NULL ) { go_BYE(-1); }
       continue;
     }
     int test_type = g_tests[i].test_type;
@@ -84,13 +95,19 @@ diagnostics(
     float sum = 0;
     for ( int k = 0; k < num_variants; k++ ) {
       VARIANT_REC_TYPE vk = g_tests[i].variants[k];
-      if ( test_type == AB_TEST_TYPE_XY ) { 
-        if ( vk.url == NULL ) { 
-          go_BYE(-1); 
+      if ( ( test_type == AB_TEST_TYPE_XY ) && ( vk.url == NULL ) )  {
+        go_BYE(-1);
+      }
+      if ( vk.url == NULL ) { 
+        if ( vk.separator != '\0' ) { go_BYE(-1); }
+      }
+      else {
+        if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
+        /* TODO P1 Put this check in 
+        if ( ( vk.separator != '?' ) && ( vk.separator != '&' ) ) {
+          go_BYE(-1);
         }
-        else {
-          if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
-        } 
+        */
       }
       if ( vk.id <= 0 ) { go_BYE(-1); }
       all_vids[n_all_vids++] = vk.id;
@@ -120,7 +137,7 @@ diagnostics(
         // TODO P3 Make sure it is valid JSON
       }
     }
-    // TODO Check that counter[] is similar to percentage
+    // TODO P3 Check that counter[] is similar to percentage
     if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
