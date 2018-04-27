@@ -42,13 +42,12 @@ int get_test_idx(
     )
 {
   int status = 0;
-  int num_probes = 0;
   *ptr_test_idx   = -1; 
   if ( ( name == NULL ) || ( *name == '\0' ) ) { go_BYE(-1); }
   uint64_t name_hash = spooky_hash64(name, strlen(name), g_seed1);
   int start = name_hash % AB_MAX_NUM_TESTS;
   for ( int i = start; i < AB_MAX_NUM_TESTS; i++ ) {
-    num_probes++;
+    g_log_num_probes++;
     if ( name_hash == g_tests[i].name_hash ) {
       if ( strcmp(g_tests[i].name, name) == 0 ) { 
         if ( g_tests[i].test_type == test_type ) { 
@@ -60,7 +59,7 @@ int get_test_idx(
   }
   if ( *ptr_test_idx < 0 ) { 
     for ( int i = 0; i < start; i++ ) {
-      num_probes++;
+      g_log_num_probes++;
       if ( name_hash == g_tests[i].name_hash ) {
         if ( strcmp(g_tests[i].name, name) == 0 ) { 
           if ( g_tests[i].test_type == test_type ) { 
@@ -74,7 +73,7 @@ int get_test_idx(
     g_log_missing_test++;
     go_BYE(-1);
   }
-  /* TODO: statsd logging for num_probes */
+
 BYE:
   return status;
 }

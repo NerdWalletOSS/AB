@@ -80,4 +80,6 @@ EXTERN uint64_t g_log_router_calls;
 EXTERN uint64_t g_log_bad_router_calls;
 /*C TODO */
 
+EXTERN uint64_t g_log_num_probes; 
+/*C Number of probes to find test in hash table */
 

@@ -124,6 +124,7 @@ int alt_get_variant(
   sprintf(g_rslt, "{ \"Variant\" : \"%s\", \"GUID\" : \"%s\", \"VariantID\" :  %d, \"URL\" : \"%s\" }",
       var_name, g_out_tracer, variant_id, url);
   // START: Handle fact that question mark should occur only once
+  // TODO P1 take separator from test info 
   char separator = '?';
   for ( const char *cptr = g_tests[test_idx].variants[variant_idx].url; 
       *cptr != '\0'; cptr++ ) { 
@@ -153,7 +154,6 @@ int alt_get_variant(
 
   status = log_decision(lcl_payload); cBYE(status);
   cBYE(status);
-  // TODO: P4 Do we need trailing slash afterlanding page URL?
 BYE:
   return status;
 }

@@ -6,3 +6,6 @@ extern int
 l_hard_code_config(
     void
     );
+extern void restart_subsystems(
+    char* has_changed
+    );

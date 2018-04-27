@@ -141,7 +141,7 @@ classify_ua(
       *ptr_device_type_id = X[mid].device_type_id;
       *ptr_justin_cat_id = X[mid].justin_cat_id;
     }
-    else if ( this_hash > hash1 ) { // TODO P1 Check comparison
+    else if ( this_hash > hash1 ) { 
       ub = mid;
     }
     else {

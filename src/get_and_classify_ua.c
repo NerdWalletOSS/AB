@@ -50,7 +50,7 @@ get_and_classify_ua(
     if ( status < 0 ) { WHEREAMI; status = 0; }
   }
   else {
-    g_log_no_user_agent++; // TODO Log error
+    g_log_no_user_agent++; 
   }
 BYE:
   return status;

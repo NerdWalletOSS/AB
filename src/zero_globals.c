@@ -248,4 +248,6 @@ zero_log()
   g_log_get_variants_calls    = 0;
   g_log_router_calls          = 0;
   g_log_bad_router_calls      = 0;
+
+  g_log_num_probes     = 0;
 }
