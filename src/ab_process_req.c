@@ -29,6 +29,7 @@
 #include "delete_test.h"
 #include "stop_test.h"
 #include "l_chk_test.h"
+#include "get_utm_kv.h"
 
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
@@ -131,6 +132,11 @@ ab_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
+    case IgnoreKafkaErrors :  /* done by C */
+      g_ignore_kafka_errors = true;
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
     case ListTests : /* done by Lua */
       status = l_list_tests(args); cBYE(status);
       break;
@@ -225,8 +231,12 @@ ab_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
       break;
       //--------------------------------------------------------
-    case TestInfo : /* done by Lua */
+    case TestInfo : /* done by Lua and C */
       status = l_test_info(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case UTMKV : /* done by C */
+      status = get_utm_kv(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

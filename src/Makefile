@@ -9,6 +9,7 @@ INCS= -I. \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 	-I../dt_interpreter/src/  \
+	-I../utm_kv/src/  \
 	-I../libmaxminddb-1.3.2/include/ \
 	-I../registered-domain-libs/C/ \
 	-I../libyuarel/ \
@@ -144,6 +145,7 @@ ab_httpd : $(COBJS)  \
 	../registered-domain-libs/C/regdom.o \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
 	-lm  -lpthread -ldl   

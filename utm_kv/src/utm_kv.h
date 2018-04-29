@@ -1,3 +1,6 @@
+#include "url.h"
+#include "utm_incs.h"
+#include "utm_types.h"
 extern int
 utm_kv(
     const char *instr,

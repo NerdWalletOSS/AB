@@ -64,6 +64,9 @@ get_req_type(
   else if (strcasecmp(api, "Ignore") == 0) {
     return Ignore;
   }
+  else if (strcasecmp(api, "IgnoreKafkaErrors") == 0) {
+    return IgnoreKafkaErrors;
+  }
   else if (strcasecmp(api, "ListTests") == 0) {
     return ListTests;
   }
@@ -93,6 +96,9 @@ get_req_type(
   }
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
+  }
+  else if (strcasecmp(api, "UTMKV") == 0) {
+    return UTMKV;
   }
   else if (strcasecmp(api, "ZeroCounters") == 0) {
     return ZeroCounters;

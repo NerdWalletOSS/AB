@@ -44,4 +44,6 @@ hard_code_config(void)
   strcpy(g_cfg.mdl_file,  "/opt/ab/mdl.bin");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
+
+  // INDRAJEET TO PROVIDE KAFKA SETTINGS
 }

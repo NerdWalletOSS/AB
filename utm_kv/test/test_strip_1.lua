@@ -51,10 +51,11 @@ assert(plpath.isfile(out_file_name))
 local ifh = io.open(in_file_name, "r")
 local ofh = io.open(out_file_name, "r")
 local num_errors = 0
+local num_lines = 0
 while true do 
   instr = ifh:read()
   if ( not instr ) then 
-    print("Read lines " .. i)
+    print("Read lines " .. num_lines)
     break
   end
   ffi.C.strcpy(input[0].X, instr)
@@ -68,6 +69,7 @@ while true do
     print("actual ", outstr)
     print("expected ", expected_outstr)
     num_errors = num_errors + 1
+    num_lines = num_lines + 1
   end
   -- assert(outstr == expected_outstr, "Failure at line " .. i)
 end -- iterate over all lines

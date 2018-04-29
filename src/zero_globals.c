@@ -71,6 +71,8 @@ zero_globals(
 {
   int status = 0;
 
+  g_use_kafka = false;
+  g_ignore_kafka_errors = false;
   if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
     go_BYE(-1);
   }

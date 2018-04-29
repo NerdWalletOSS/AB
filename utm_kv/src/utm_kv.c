@@ -1,6 +1,3 @@
-#include "url.h"
-#include "utm_incs.h"
-#include "utm_types.h"
 #include "utm_kv.h"
 
 int
@@ -12,9 +9,9 @@ print_utm_kv(
 {
   memset(buf, '\0', sz);
   snprintf(buf, sz, " { \
-      \"medium\" : \"%s\", \
-      \"campaign\" : \"%s\", \
-      \"source\" : \"%s\" } ", 
+      \"utm_med\" : \"%s\", \
+      \"utm_camp\" : \"%s\", \
+      \"utm_src\" : \"%s\" } ", 
   X.medium, X.source, X.campaign);
 }
 
