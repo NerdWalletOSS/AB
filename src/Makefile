@@ -88,6 +88,9 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
+../utm_kv/src/utm_kv.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+	make -C ../utm_kv/src/
+
 ../curl-7.51.0/lib/.libs/libcurl.so : 
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
@@ -132,11 +135,12 @@ ab_httpd : $(COBJS)  \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
 	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
-	./libs/libmaxminddb.so
+	./libs/libmaxminddb.so 
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
