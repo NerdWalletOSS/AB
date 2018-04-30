@@ -13,7 +13,8 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/include/ \
 	-I../registered-domain-libs/C/ \
 	-I../libyuarel/ \
-	-I../libmaxminddb-1.3.2/projects/VS12/
+	-I../libmaxminddb-1.3.2/projects/VS12/ \
+	-I../librdkafka/src
 
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
@@ -140,7 +141,8 @@ ab_httpd : $(COBJS)  \
 	../libyuarel/yuarel.o \
 	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
-	./libs/libmaxminddb.so 
+	./libs/libmaxminddb.so \
+  ../librdkafka/src/librdkafka.so
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
@@ -152,6 +154,7 @@ ab_httpd : $(COBJS)  \
 	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
+	../librdkafka/src/librdkafka.so \
 	-lm  -lpthread -ldl   
 
 libspooky_hash.so:
