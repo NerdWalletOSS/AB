@@ -35,7 +35,8 @@ build(){
 	./configure
 	make
 	cd ../
-	git clone https://github.com/edenhill/librdkafka.git
+	rm -rf ./librdkafka
+  git clone https://github.com/edenhill/librdkafka.git
 	cd librdkafka/
 	./configure
 	make
@@ -58,8 +59,8 @@ start_support_systems(){
 
 install_kafka(){
 	sudo apt-get update
-	sudo apt-get install default-jre
-	sudo apt-get install zookeeperd
+	sudo apt-get install default-jre -y
+	sudo apt-get install zookeeperd -y
 	RES="`echo ruok | nc localhost 2181`"
 	if [[ "$RES" != "imok" ]]
   then
@@ -94,7 +95,7 @@ install_mysql(){
 	sudo apt-get update
 	sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password x'
 	sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
-	sudo apt-get -y install mysql-server
+	sudo apt-get install mysql-server -y
 	mysql -uroot -px -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
 }
 
