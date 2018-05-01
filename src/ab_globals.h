@@ -107,6 +107,7 @@ EXTERN MAXMIND_REC_TYPE g_maxmind;
 //------------------------ For Lua
 EXTERN lua_State *g_L; // Set by C
 EXTERN lua_State *g_L_DT; // Set by C
+EXTERN bool g_disable_lua; // used for testing, normally false
 
 
 #include "ab_log_globals.h"
@@ -122,3 +123,12 @@ EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */
+
+#include "utm_kv.h"
+EXTERN UTM_REC_TYPE g_utm_kv;
+
+// For Kafka
+EXTERN bool g_use_kafka; 
+EXTERN bool g_ignore_kafka_errors; 
+// INDRAJEET TO PROVIDE WHAT ELSE
+

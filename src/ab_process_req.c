@@ -11,7 +11,7 @@
 #include "chk_db_conn.h"
 #include "diagnostics.h"
 #include "dump_log.h"
-// #include "hard_code_config.h"
+#include "hard_code_config.h"
 #include "add_fake_test.h"
 #include "route_get_variant.h"
 #include "list_tests.h"
@@ -26,8 +26,12 @@
 #include "l_make_feature_vector.h"
 #include "ext_get_host.h"
 #include "l_post_proc_preds.h"
+#include "delete_test.h"
+#include "stop_test.h"
+#include "l_chk_test.h"
+#include "get_utm_kv.h"
 
-extern g_config_file[AB_MAX_LEN_FILE_NAME+1];
+extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
 // START FUNC DECL
 int 
@@ -70,6 +74,10 @@ ab_process_req(
       status = l_chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
+    case CheckTest : /* done by Lua */
+      status = l_chk_test(body); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case ClassifyIP : /* done by C */
       status = ext_classify_ip(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
@@ -78,13 +86,17 @@ ab_process_req(
       status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
+    case DeleteTest : /* done by C */
+      status = delete_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      break;
     case Diagnostics : /* done by C and Lua */
       status = l_diagnostics(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
-      status = dump_log(args); cBYE(status);
+      status = dump_log(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
@@ -117,6 +129,11 @@ ab_process_req(
       //--------------------------------------------------------
     case HealthCheck :  /* done by C */
     case Ignore :  /* done by C */
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case IgnoreKafkaErrors :  /* done by C */
+      g_ignore_kafka_errors = true;
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -209,8 +226,17 @@ ab_process_req(
       status = router(args); cBYE(status);
       break;
       //--------------------------------------------------------
-    case TestInfo : /* done by Lua */
+    case StopTest : /* done by C */
+      status = stop_test(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      break;
+      //--------------------------------------------------------
+    case TestInfo : /* done by Lua and C */
       status = l_test_info(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case UTMKV : /* done by C */
+      status = get_utm_kv(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

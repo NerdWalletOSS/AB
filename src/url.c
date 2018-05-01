@@ -60,7 +60,7 @@ url_encode(
       chk_len++;
     }
     else {
-      if ( chk_len >= (len-3) ) { go_BYE(-1); } // TODO Check this line
+      if ( chk_len >= (len-3) ) { go_BYE(-1); } 
       *pbuf++ = '%'; 
       *pbuf++ = to_hex(*pstr >> 4); 
       *pbuf++ = to_hex(*pstr & 15);

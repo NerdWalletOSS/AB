@@ -9,12 +9,14 @@
 
 typedef enum _ab_req_type {
   Undefined, // --- & --- 
-  AddFakeTest, 
+  AddFakeTest, // Read & C (for testing) 
   AddTest, // Write &  Lua
   CheckLoggerConnectivity, // Read &  C 
   CheckDBConnectivity, // Config &  Lua
+  CheckTest, /// Read & Lua 
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
+  DeleteTest, // Write & C (for testing)
   Diagnostics, // Read &  C  AND Lua 
   DumpLog, // Read &  C
   EvalDT, // Read & C
@@ -26,6 +28,7 @@ typedef enum _ab_req_type {
   Halt, // Read &  C
   HealthCheck, // Read &  C
   Ignore, // Read &  C
+  IgnoreKafkaErrors, // Read &  C
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
   MakeFeatureVector, // Read &  Lua
@@ -34,13 +37,16 @@ typedef enum _ab_req_type {
   Reload, // Write &  Lua 
   Restart, // Read &  C 
   Router, // Read &  C
+  StopTest, // Write & C (for testing)
   TestInfo, // Read &  Lua
+  UTMKV, // Read &  C
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
 typedef struct _variant_rec_type {
   uint32_t id;
   float percentage;
+  char separator; // either question mark or ampersand
   char name[AB_MAX_LEN_VARIANT_NAME+1];
   char * url; // AB_MAX_LEN_VARIANT_URL+1
   char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1 
@@ -50,6 +56,7 @@ typedef struct _test_meta_type {
   char name[AB_MAX_LEN_TEST_NAME+1];
   int test_type; // whether AB_TEST_TYPE or XY_TEST_TYPE or ..
   uint32_t id; // external test id
+  uint32_t ramp; // ramp, starts at 1 and increments every time percentage changes
   uint64_t name_hash; // set by Lua, read by C 
   uint64_t external_id; // exposed to external entities
   bool has_filters; // has filters using categorical/boolean attributes
@@ -62,9 +69,9 @@ typedef struct _test_meta_type {
   VARIANT_REC_TYPE *variants;
 
   // If device specific is not set, we use device_idx = 0
-  uint32_t *final_variant_id; // [g_num_devices]; 
-  uint32_t *final_variant_idx; // [g_num_devices]; 
-  uint8_t **variant_per_bin; // [g_num_devices][AB_NUM_BINS]; 
+  uint32_t *final_variant_id; // [g_n_justin_cat_lkp]; 
+  uint32_t *final_variant_idx; // [g_n_justin_cat_lkp]; 
+  uint8_t **variant_per_bin; // [g_n_justin_cat_lkp][AB_NUM_BINS]; 
 
 } TEST_META_TYPE;
 
@@ -72,6 +79,7 @@ typedef struct _payload_type {
   char uuid[AB_MAX_LEN_UUID+1];
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
+  uint64_t ramp;
   uint64_t time;
   uint32_t test_id;
   uint32_t variant_id;

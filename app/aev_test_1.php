@@ -1,12 +1,25 @@
 <?php 
 // -- SET PATH
 require_once "set_path.php";
+// -- TEST TestID CREDENTIALS
+if (!isset($_GET['TestID'])) {
+		header('Location: error.php?error="TestID is not set"');
+		return false;
+	} else {
+  $id = $_GET['TestID'];
+}
 
-# -- CHECK IF TEST ID IS SET
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+# -- Get Tests
+require_once "db_get_test.php";
+$T = db_get_test($id);
 
 // -- STANDARD HEADER INFORMATION
 require_once "header.php"; 
+require_once "display_logic_aev_test.php";
+# -- CHECK IF TEST ID IS SET
+if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+
+
 ?>
 <script src="js/insert_test.js"></script>
 <?php 
@@ -66,7 +79,7 @@ $config = config_html($TestType);
   <tr> 
   <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
   <textarea class="form-control" rows="3" cols="20" name="TestDescription" 
-    maxlength="<?php echo $config['desc_maxlength']; ?>" 
+    maxlength="255" 
     <?php echo $readonly; ?> required>
   <?php if (isset($description)) {echo $description;}?>
   </textarea>
@@ -100,9 +113,14 @@ for ( $i = 0; $i < $nC; $i++ ) {
 <td colspan="2">
 <?php
 if ( isset($TestType) && ($TestType == "XYTest")) {
-if ($this_state == "started") { ?>
+  if ( $mode == "Edit" ) {
+    if ($this_state == "started") { ?>
 Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="modify_url" value="1" >
-<?php } } ?>
+<?php 
+    } 
+  } 
+} 
+?>
 </td>
 </tr>	
 <?php
@@ -116,7 +134,8 @@ Change URL(s)?:&nbsp;&nbsp;<input type="checkbox" data-toggle="modal" data-targe
 value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
   <input type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url_<?php echo $i; ?>" 
-<?php if ($this_state == "started") { 
+<?php 
+if (($mode == "Edit") && ($this_state == "started")) { 
   echo "readonly"; 
 } else {
   echo $Ureadonly; 
@@ -156,7 +175,7 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
   </tr>
 <?php } ?>
 <input type='hidden' name='TestID' value='<?php echo $id; ?>'>
-<input type='hidden' name='NumVariants' value="<?php echo $n_var; ?>">
+<input type='hidden' name='NumVariants' value="<?php if (isset($n_var)) {echo $n_var; }?>">
 <?php if ($mode == "Add") { ?>
 <input type='hidden' name='Creator' value='<?php echo $User; ?>'>
 <?php } else { ?>

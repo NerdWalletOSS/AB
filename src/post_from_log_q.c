@@ -64,32 +64,20 @@ post_from_log_q(
     for ( ;  retry_count < g_cfg.num_post_retries ; retry_count++ ) {
       curl_res = curl_easy_perform(g_ch);
       if ( curl_res != CURLE_OK ) { 
-        g_log_failed_posts++;
-        if ( g_cfg.verbose ) { 
-          fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
-          WHEREAMI;
-        }
-        continue;
+        g_log_failed_posts++; continue;
       }
       curl_easy_getinfo(g_ch, CURLINFO_RESPONSE_CODE, &http_code);
       if ( http_code != 200 )  { 
-        g_log_failed_posts++;
-        if ( g_cfg.verbose ) { 
-          fprintf(stderr, "ERROR! POST Failed = %s\n", g_curl_payload);
-          WHEREAMI;
-        }
-        continue;
+        g_log_failed_posts++; continue;
       }
       // If control comes here, it means we succeeded
       post_succeeded = true;
       break;
-      sleep(1); // give logger some breathing room
+      // Should we sleep and give logger some breathing room?
     }
     if ( !post_succeeded ) { 
       g_log_bad_posts++;
-      if ( g_cfg.verbose ) { 
-        fprintf(stderr, "POST totally failed\n");  
-      }
+      if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
     }
   }
   pthread_exit(NULL); 

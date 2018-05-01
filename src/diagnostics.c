@@ -26,9 +26,7 @@ l_diagnostics(
       fprintf(stderr, "calling function [diagnostics] failed: %s\n", lua_tostring(g_L, -1));
       sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
       lua_pop(g_L, 1);
-      // TODO P1 do we need to return here?
     }
-    /* TODO Need to fill this out; Indrajeet to do  */
   }
   else if ( ( *buf != '\0' ) && ( strcmp(buf, "C") == 0 ) ) {
     status = diagnostics(); cBYE(status);
@@ -53,8 +51,19 @@ diagnostics(
   }
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { 
-      if ( g_tests[i].name[0] != '\0' ) { go_BYE(-1); }
-      // TODO Make sure that everything else is NULL
+      if ( g_tests[i].name[0]           != '\0' ) { go_BYE(-1); }
+      if ( g_tests[i].test_type         != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].id                != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].external_id       != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].has_filters       != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].is_dev_specific   != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].state             != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].seed              != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].num_variants      != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].variants          != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].final_variant_idx != NULL ) { go_BYE(-1); }
+      if ( g_tests[i].variant_per_bin  != NULL ) { go_BYE(-1); }
       continue;
     }
     int test_type = g_tests[i].test_type;
@@ -73,23 +82,32 @@ diagnostics(
     else {
       nD = g_n_justin_cat_lkp;
     }
-    for ( int ii = 0; ii < nD; ii++ ) {
-      for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
-        uint8_t x = g_tests[i].variant_per_bin[ii][jj];
-        if ( x >= num_variants ) { go_BYE(-1); }
-        counter[x]++;
+    if ( g_tests[i].state == TEST_STATE_STARTED ) { 
+      // not for terminated tests
+      for ( int ii = 0; ii < nD; ii++ ) {
+        for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
+          uint8_t x = g_tests[i].variant_per_bin[ii][jj];
+          if ( x >= num_variants ) { go_BYE(-1); }
+          counter[x]++;
+        }
       }
     }
     float sum = 0;
     for ( int k = 0; k < num_variants; k++ ) {
       VARIANT_REC_TYPE vk = g_tests[i].variants[k];
-      if ( test_type == AB_TEST_TYPE_XY ) { 
-        if ( vk.url == NULL ) { 
-          go_BYE(-1); 
+      if ( ( test_type == AB_TEST_TYPE_XY ) && ( vk.url == NULL ) )  {
+        go_BYE(-1);
+      }
+      if ( vk.url == NULL ) { 
+        if ( vk.separator != '\0' ) { go_BYE(-1); }
+      }
+      else {
+        if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
+        /* TODO P1 Put this check in 
+        if ( ( vk.separator != '?' ) && ( vk.separator != '&' ) ) {
+          go_BYE(-1);
         }
-        else {
-          if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
-        } 
+        */
       }
       if ( vk.id <= 0 ) { go_BYE(-1); }
       all_vids[n_all_vids++] = vk.id;
@@ -110,16 +128,17 @@ diagnostics(
             ( strncmp(vk.url, "http://", 7) != 0 ) ) {
           go_BYE(-1);
         }
-        // TODO Check URL to make sure it is valid URL
+        for ( char *cptr = vk.url; *cptr != '\0'; cptr++ ) { 
+          if ( !is_valid_url_char(*cptr) ) { go_BYE(-1); }
+        }
       }
       if ( vk.custom_data != NULL ) {
         if ( strlen(vk.custom_data) > AB_MAX_LEN_CUSTOM_DATA ) { go_BYE(-1); }
-        // TODO Make sure it is valid JSON
+        // TODO P3 Make sure it is valid JSON
       }
     }
-    // TODO Check that counter[] is similar to percentage
-    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { 
-      go_BYE(-1); }
+    // TODO P3 Check that counter[] is similar to percentage
+    if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
       if ( is_dev_specific ) { go_BYE(-1); }
@@ -131,29 +150,31 @@ diagnostics(
       go_BYE(-1);
     }
     if ( g_tests[i].final_variant_id  != NULL ) { 
-      for ( int v = 0; v < num_variants; v++ ) { 
-        if ( g_tests[i].final_variant_id[v] <= 0 ) { go_BYE(-1); }
+      for ( int d = 0; d < nD; d++ ) { 
+        if ( g_tests[i].final_variant_id[d] <= 0 ) { 
+          go_BYE(-1); 
+        }
       }
-      for ( int v = 0; v < num_variants; v++ ) { 
-        if ( g_tests[i].final_variant_idx[v] >= (uint32_t)num_variants ) {
+      for ( int d = 0; d < nD; d++ ) { 
+        if ( g_tests[i].final_variant_idx[d] >= (uint32_t)num_variants ) {
           go_BYE(-1);
         }
       }
     }
 
-    if ( state != TEST_STATE_TERMINATED ) {
-      /* TODO INDRAJEET
+    if ( state == TEST_STATE_TERMINATED ) {
+
       if ( g_tests[i].variant_per_bin   != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
-      */
+
     }
     else if ( state == TEST_STATE_STARTED ) {
-      /* TODO INDRAJEET
+
       if ( g_tests[i].variant_per_bin == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx != NULL ) { go_BYE(-1); }
-      */
+
     }
     else {
       go_BYE(-1);

@@ -9,7 +9,7 @@ return
   Variants =  { {
     name =  "Variant_A",
     percentage =  "100",
-    url =  "www.gmail.com"
+    url =  "http://www.gmail.com"
     --[[Only 1 variant: Testing Minimum Number of Variant]]--
   },
  }

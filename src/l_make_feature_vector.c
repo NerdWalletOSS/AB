@@ -10,6 +10,7 @@ l_make_feature_vector(
     )
 {
   int status = 0;
+  if ( g_disable_lua ) { go_BYE(-1); }
   lua_getglobal(g_L_DT, "make_feature_vector");
   if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Lua Function make_feature_vector undefined\n");

@@ -16,11 +16,11 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 # Uncomment below to capture server error 
@@ -31,7 +31,9 @@ CFLAGS= $(LFLAGS)
 CC= clang
 CC= gcc
 
-SBLASTER_OBJS = sblaster.o  ../src/auxil.o ../src/mmap.o 
+SBLASTER_OBJS = \
+	setup_curl.o sblaster.o  execute.o add_tests.o \
+	../src/auxil.o ../src/mmap.o 
 SBLASTER_INCS = ../src/ab_incs.h
 
 all : sblaster 

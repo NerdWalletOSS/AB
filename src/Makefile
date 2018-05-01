@@ -9,10 +9,12 @@ INCS= -I. \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 	-I../dt_interpreter/src/  \
+	-I../utm_kv/src/  \
 	-I../libmaxminddb-1.3.2/include/ \
 	-I../registered-domain-libs/C/ \
 	-I../libyuarel/ \
-	-I../libmaxminddb-1.3.2/projects/VS12/
+	-I../libmaxminddb-1.3.2/projects/VS12/ \
+	-I../librdkafka/src
 
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
@@ -87,6 +89,9 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
+../utm_kv/src/utm_kv.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+	make -C ../utm_kv/src/
+
 ../curl-7.51.0/lib/.libs/libcurl.so : 
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
@@ -131,11 +136,13 @@ ab_httpd : $(COBJS)  \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
 	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
-	./libs/libmaxminddb.so
+	./libs/libmaxminddb.so \
+  ../librdkafka/src/librdkafka.so
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
@@ -144,8 +151,10 @@ ab_httpd : $(COBJS)  \
 	../registered-domain-libs/C/regdom.o \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
+	../librdkafka/src/librdkafka.so \
 	-lm  -lpthread -ldl   
 
 libspooky_hash.so:

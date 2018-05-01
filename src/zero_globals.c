@@ -55,8 +55,10 @@ free_globals(
   }
 
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
-  if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
-  if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+  if ( !g_disable_lua ) { 
+    if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
+    if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+  }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
 
@@ -69,6 +71,8 @@ zero_globals(
 {
   int status = 0;
 
+  g_use_kafka = false;
+  g_ignore_kafka_errors = false;
   if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
     go_BYE(-1);
   }
@@ -246,4 +250,6 @@ zero_log()
   g_log_get_variants_calls    = 0;
   g_log_router_calls          = 0;
   g_log_bad_router_calls      = 0;
+
+  g_log_num_probes     = 0;
 }

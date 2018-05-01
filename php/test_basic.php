@@ -16,6 +16,7 @@ require_once 'chk_test_basic.php';
 require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
+require_once 'dup_row.php';
 error_reporting(E_NOTICE);
 
 function test_basic(
@@ -35,10 +36,18 @@ function test_basic(
   // START Check inputs
   rs_assert(!empty($str_inJ));
   rs_assert(is_string($str_inJ), "input not string");
-  $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
+  $inJ = json_decode($str_inJ); 
+  rs_assert(gettype($inJ) != "string");
+  rs_assert($inJ, "invalid JSON");
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------
+  $is_overwrite = false;
+  $x         = get_json_element($inJ, 'OverWriteURL', false);
+  if ( $x === "true" ) {
+    $is_over_write = true;
+  }
+  header("OverWrite: $is_over_write");
   $state     = get_json_element($inJ, 'State', false);
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
@@ -103,6 +112,13 @@ function test_basic(
   }
   else {
     $bin_type = get_json_element($inJ, 'BinType');
+  }
+  rs_assert($state, "State should be known by now");
+  if ( ( $state == "terminated" ) || ( $state == "archived" ) ) {
+    $outJ["status_code"] = 400;
+    $outJ["msg_stderr"] = "No changes to archived/terminated test\n");
+    header("Error-Code: 400");
+    return $outJ;
   }
 
   rs_assert($bin_type, "Bin type not set ");
@@ -170,15 +186,17 @@ function test_basic(
             if ( ( $test_type == "XYTest" ) && ( $state == "started" ) ) { 
               $R = db_get_row("variant", "id", $variant_ids[$i]);
               $old_url = $R['url'];
-              if ( $old_url != $variant_urls[$i] ) {
-                // We need to create a new variant
-                $variant_ids[$i]  = dup_row("variant", $variant_ids[$i],
-                  array( "is_del" => true, 
-                        "pred_id" => $variant_ids[$i]), null);
+              header("old_url: $old_url");
+              $new_url = $variant_urls[$i];
+              if ( $old_url != $new_url ) { 
+                $new_variant_id  = dup_row("variant", $variant_ids[$i],
+                  array( "is_del" => true), 
+                  array( "url" => $new_url));
                 // Update device_x_variant table???
-                $X6['variant_id'] = $variant_ids[$i];
+                $X6['variant_id'] = $new_variant_id;
                 mod_row("device_x_variant", $X6, 
-                 " variant_id = " . $variant_ids[$i]);
+                 "  where variant_id = " . $variant_ids[$i]);
+                $variant_ids[$i] = $new_variant_id;
               }
             }
           }
@@ -302,6 +320,7 @@ function test_basic(
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
   // Note it is possible for both msg_stdout and msg_stderr to be set
+  // Note that state cannot be terminated or archived for this endpoint
   if ( $state == "started" ) {
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 

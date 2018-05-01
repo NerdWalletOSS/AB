@@ -46,6 +46,7 @@ init_lua(
     )
 {
   int status = 0;
+  if ( g_disable_lua ) { return status; }
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
   status = luaL_loadfile(g_L, "./ab.lua"); cBYE(status);
@@ -145,26 +146,3 @@ BYE:
   free_if_non_null(full_url);
   return status;
 }
-
-#ifdef TEST_INIT_STAND_ALONE
-// TODO P2 Make a standalone Lua test out of this 
-int
-main(
-    int argc,
-    char **argv
-    )
-{
-  int status = 0;
-  char X[16];
-  memset(X, '\0', 16);
-  uint64_t t = get_time_usec();
-  status = make_guid(t, X);
-  fprintf(stderr, "%s\n", X);
-  for( int i = 0; i < 40; i++ ) {
-  status = make_guid(0, X);
-  fprintf(stderr, "%s\n", X);
-  }
-BYE:
-  return status;
-}
-#endif

@@ -22,6 +22,7 @@ int
 l_hard_code_config()
 {
   int status = 0;
+  if ( g_disable_lua ) { return status; }
   lua_getglobal(g_L_DT, "hard_code");
   if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Function hard_code does not exist\n");

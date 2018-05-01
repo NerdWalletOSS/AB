@@ -35,8 +35,8 @@ options=" --enable-so \
 --enable-headers \
 --enable-cache \
 --enable-ssl"
-# should we have this in options? ./configure $options
---enable-lua \
+#-- have taken out enable-lua
+./configure $options
 make
 make install
 

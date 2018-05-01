@@ -6,14 +6,30 @@ local curl = require 'curl'
 local file = assert(io.open("../test_webapp/sample1.json"), "File should exist")
 local test = json.decode(file:read("*a"))
 file:close()
-local url = "localhost:8000/addTest"
+local url = "localhost:8000/AddTest"
 curl.post(url, nil, test)
+
+local variants = {}
+for _, var in ipairs(test.Variants) do
+  variants[var.id] = var
+end
+
+local target = {}
+for dev_name, entry in pairs(test.DeviceCrossVariant) do
+  target[dev_name] = {}
+  for _, var in ipairs(entry) do
+    local url = variants[var.variant_id].url
+    local percentage = tonumber(var.percentage)
+    target[dev_name][url] = (target[dev_name][url] or 0) + percentage
+  end
+end
+
 local results = {}
 for key,entry in pairs(test.DeviceCrossVariant) do
   local tbl = {}
   -- local device_id = entry[1].device_id
   local c_url = string.format("http://localhost:8000/Router?TestName=T1&Device=%s", key)
-  for i=1,10000 do
+  for i=1,1000 do
     local hdrs, body, status = curl.get(c_url)
     assert(status == 302, "Must be redirecting")
     local redirected_url = hdrs[3]:split(" ")[2]:split("?")[1]
@@ -32,6 +48,6 @@ end
 
 for k,v in pairs(results) do
   for dev, count in pairs(v) do
-    print(k, dev, count*100.0/totals[k], " total: ", count)
+    print(k, dev, " total: ", count, " got: ", count*100.0/totals[k], " target: ", target[k][dev])
   end
 end

@@ -19,7 +19,6 @@ get_body(
   }
   memset(body, '\0', n_body+1);
   inbuf = evhttp_request_get_input_buffer(req);
-  // TODO Why do we need while loop?
   if ( evbuffer_get_length(inbuf) > 0 ) {
     int n;
     n = evbuffer_remove(inbuf, body, n_body);

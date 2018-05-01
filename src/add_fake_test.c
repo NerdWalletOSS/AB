@@ -38,10 +38,13 @@ add_fake_test(
   uint8_t **vpb = NULL;
   int itemp; int nV = 0; // num variants 
   bool is_dev_specific;
-  int test_type;
-  int bufsz = 63;
-  char test_name[AB_MAX_LEN_TEST_NAME+1]; char buf[bufsz+1];
+  int test_type, state;
+  int bufsz = 511; char *cptr = NULL;
+  char test_name[AB_MAX_LEN_TEST_NAME+1]; 
+  char *buf = NULL;
 
+  buf = malloc(bufsz+1);
+  memset(buf, '\0',  bufsz+1);
   //-----------------------------------------------
   memset(buf, '\0', bufsz+1);
   status = extract_name_value(args, "TestType=", '&', buf, bufsz);
@@ -57,20 +60,38 @@ add_fake_test(
     go_BYE(-1);
   }
   //-----------------------------------------------
+  memset(buf, '\0', bufsz+1);
+  status = extract_name_value(args, "State=", '&', buf, bufsz);
+  cBYE(status);
+  if ( buf[0] == '\0' ) { 
+    state = TEST_STATE_STARTED;
+  }
+  else {
+    if ( strcasecmp(buf, "started") == 0 ) {
+      state = TEST_STATE_STARTED;
+    }
+    else if ( strcasecmp(buf, "terminated") == 0 ) {
+      state = TEST_STATE_TERMINATED;
+    }
+    else {
+      go_BYE(-1);
+    }
+  }
+  //-----------------------------------------------
   memset(test_name, '\0', AB_MAX_LEN_TEST_NAME+1);
   status = extract_name_value(args, "TestName=", '&', test_name, 
       AB_MAX_LEN_TEST_NAME);
   cBYE(status);
   if ( test_name[0] == '\0' ) { go_BYE(-1); }
   //-----------------------------------------------
-  memset(buf, '\0', 8);
+  memset(buf, '\0', bufsz+1);
   status = extract_name_value(args, "NumVariants=", '&', buf, bufsz);
   cBYE(status);
   status = stoI4(buf, &nV); cBYE(status);
   if ( ( nV < AB_MIN_NUM_VARIANTS ) || 
-       ( nV > AB_MAX_NUM_VARIANTS ) ) { go_BYE(-1); }
+      ( nV > AB_MAX_NUM_VARIANTS ) ) { go_BYE(-1); }
   //-----------------------------------------------
-  memset(buf, '\0', 8);
+  memset(buf, '\0', bufsz+1);
   status = extract_name_value(args, "IsDevSpecific=", '&', buf, bufsz);
   cBYE(status);
   if ( *buf != '\0' ) { 
@@ -78,7 +99,7 @@ add_fake_test(
     switch ( itemp ) { 
       case 0 : is_dev_specific = false; break; 
       case 1 : is_dev_specific = true; break; 
-      default : go_BYE(-1); break;
+      default : fprintf(stderr, "%s\n", args); go_BYE(-1); break;
     }
   }
   else {
@@ -102,7 +123,7 @@ add_fake_test(
   g_tests[idx].external_id = name_hash;
   g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;
-  g_tests[idx].state = TEST_STATE_STARTED;
+  g_tests[idx].state = state;
   g_tests[idx].seed = 9876543210;
 
   g_tests[idx].num_variants = nV;
@@ -118,25 +139,45 @@ add_fake_test(
   for ( vidx = 0; vidx  < nV; vidx++ ) { 
     variants[vidx].id = vid++;
   }
-  // Set percentages as equally as possible
   for ( vidx = 0; vidx  < nV; vidx++ ) { 
     variants[vidx].percentage = 0;
   }
+  // Set winner if terminated
+  int winner_id = -1, winner_idx = -1;
+  if ( state == TEST_STATE_TERMINATED ) { 
+    winner_idx = name_hash % nV;
+    winner_id = variants[winner_idx].id;
+    if ( winner_id <= 0 ) { go_BYE(-1); }
+    if ( winner_idx < 0 ) { go_BYE(-1); }
+  }
   int sum = 0; vidx = 0;
-  while ( sum < 100 ) { 
-    variants[vidx++].percentage++; sum++;
-    if ( vidx == nV ) { vidx = 0; }
+  switch ( state ) { 
+    case TEST_STATE_STARTED : 
+     // Set percentages as equally as possible
+      while ( sum < 100 ) { 
+        variants[vidx++].percentage++; sum++;
+        if ( vidx == nV ) { vidx = 0; }
+      }
+      break;
+    case TEST_STATE_TERMINATED : 
+      variants[winner_idx].percentage = 100;
+      break;
+    default : 
+      go_BYE(-1);
+      break;
   }
   for ( vidx = 0; vidx < nV; vidx++ ) { 
+    memset(buf, '\0', bufsz+1);
     sprintf(buf, "http://localhost:8080/AB/test_webapp/index%d.html", vidx);
-    variants[vidx].url = strdup(buf);
+    cptr = strdup(buf); return_if_malloc_failed(cptr);
+    variants[vidx].url = cptr;
+    memset(buf, '\0', bufsz+1);
     sprintf(buf, "{ \"key%d\" : \"val%d\" } ", vidx, vidx);
-    variants[vidx].custom_data = strdup(buf);
+    cptr = strdup(buf); return_if_malloc_failed(cptr);
+    variants[vidx].custom_data = cptr;
   }
-
-  // If device specific is not set, we use device_idx = 0
-  g_tests[idx].final_variant_id = NULL;
-  g_tests[idx].final_variant_idx = NULL;
+  g_tests[idx].variants = variants;
+  // Determine numberof devices, nD
   int nD;
   if ( is_dev_specific ) { 
     nD = g_n_justin_cat_lkp;
@@ -146,24 +187,42 @@ add_fake_test(
   }
   if ( nD < 1 ) { go_BYE(-1); }
 
-  g_tests[idx].variants = variants;
-  vpb = malloc(nD * sizeof(uint8_t *));
-  return_if_malloc_failed(vpb);
-  for ( int i = 0; i < nD; i++ ) { 
-    vpb[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
-    return_if_malloc_failed(vpb[i]);
+  // If device specific is not set, we use device_idx = 0
+  switch ( state ) {
+    case TEST_STATE_STARTED : 
+      g_tests[idx].final_variant_id = NULL;
+      g_tests[idx].final_variant_idx = NULL;
+      vpb = malloc(nD * sizeof(uint8_t *));
+      return_if_malloc_failed(vpb);
+      for ( int i = 0; i < nD; i++ ) { 
+        vpb[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
+        return_if_malloc_failed(vpb[i]);
+      }
+      //---  Set bins 
+      vidx = 0;
+      for ( int d = 0; d < nD; d++ ) { 
+        for ( int i = 0; i < AB_NUM_BINS; i++ ) { 
+          if ( vidx == nV ) { vidx = 0; }
+          vpb[d][i] = vidx++; 
+        }
+      }
+      g_tests[idx].variant_per_bin = vpb;
+      break;
+    case TEST_STATE_TERMINATED : 
+      g_tests[idx].final_variant_id = malloc(nD * sizeof(int));
+      g_tests[idx].final_variant_idx = malloc(nD * sizeof(int));
+      for ( int d = 0; d < nD; d++ ) { 
+        g_tests[idx].final_variant_idx[d] = winner_idx;
+        g_tests[idx].final_variant_id[d]  = winner_id;
+      }
+      break;
+    default : 
+      go_BYE(-1);
+      break;
   }
-  //---  Set bins 
-  vidx = 0;
-  for ( int d = 0; d < nD; d++ ) { 
-    for ( int i = 0; i < AB_NUM_BINS; i++ ) { 
-      if ( vidx == nV ) { vidx = 0; }
-      vpb[d][i] = vidx++; 
-    }
-  }
-
   fprintf(stderr, "Created test %s at location %d \n", test_name, idx);
-  g_tests[idx].variant_per_bin = vpb;
+
 BYE:
+  free_if_non_null(buf);
   return status;
 }

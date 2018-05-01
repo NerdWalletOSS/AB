@@ -27,7 +27,6 @@ write_log(
 
 int
 dump_log(
-    const char * const args
     )
 {
   int status = 0;
@@ -74,11 +73,11 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumGetAltVariantCalls", g_log_get_alt_variant_calls);
   write_log(g_rslt, &ridx, n, "NumGetVariantCalls", g_log_get_variant_calls);
   write_log(g_rslt, &ridx, n, "NumGetVariantsCalls", g_log_get_variant_calls);
-  write_log(g_rslt, &ridx, n, "NumRouterCalls",      g_log_router_calls);
+  write_log(g_rslt, &ridx, n, "NumRouterCalls",     g_log_router_calls);
   write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
-  // TODO P4 Guard this in terms of ridx
+  write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
+  if ( strlen(g_rslt) > AB_MAX_LEN_RESULT - 32 ) { WHEREAMI; return -1; }
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
-BYE:
   return status;
 }
 

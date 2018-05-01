@@ -42,7 +42,8 @@ get_variants(
   //-------------------------------------------------------------
   memset(g_mrslt, '\0', AB_MAX_LEN_RESULT+1);
   int oplen = 2; // length of output string 
-  /* TODO 
+  /* WILL NOT IMPLEMENT. Do not agree with Abhi's request below
+
 Abhi: make sure that GetVariants returns a valid json. Right now it 
 returns an array which is not a valid json string. Just make it 
 

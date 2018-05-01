@@ -32,6 +32,8 @@
 #include "extract_api_args.h"
 #include "get_nw_hdrs.h"
 #include "get_date.h"
+#include "ab_auxil.h"
+#include "make_guid.h"
 #include "dump_log.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -105,10 +107,10 @@ generic_handler(
   //--------------------------------------
 
   if ( strcmp(api, "Halt") == 0 ) {
-    // TODO: Need to get loopbreak to wait for these 3 statements
-    // evbuffer_add_printf(opbuf, "%s\n", g_rslt);
-    // evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
-    // evbuffer_free(opbuf);
+    // TODO: P4 Need to get loopbreak to wait for these 3 statements
+    evbuffer_add_printf(opbuf, "%s\n", g_rslt);
+    evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
+    evbuffer_free(opbuf);
     free_globals();
     event_base_loopbreak(base);
   }
@@ -169,6 +171,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
+  g_disable_lua = true; // NORMALLY FALSE. Just for testing
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);

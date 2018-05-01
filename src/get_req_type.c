@@ -19,11 +19,17 @@ get_req_type(
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
     return CheckDBConnectivity;
   }
+  else if (strcasecmp(api, "CheckTest") == 0) {
+    return CheckTest;
+  }
   else if (strcasecmp(api, "ClassifyIP") == 0) {
     return ClassifyIP;
   }
   else if (strcasecmp(api, "ClassifyUA") == 0) {
     return ClassifyUA;
+  }
+  else if (strcasecmp(api, "DeleteTest") == 0) {
+    return DeleteTest;
   }
   else if (strcasecmp(api, "Diagnostics") == 0) {
     return Diagnostics;
@@ -58,6 +64,9 @@ get_req_type(
   else if (strcasecmp(api, "Ignore") == 0) {
     return Ignore;
   }
+  else if (strcasecmp(api, "IgnoreKafkaErrors") == 0) {
+    return IgnoreKafkaErrors;
+  }
   else if (strcasecmp(api, "ListTests") == 0) {
     return ListTests;
   }
@@ -82,8 +91,14 @@ get_req_type(
   else if (strcasecmp(api, "Router") == 0) {
     return Router;
   }
+  else if (strcasecmp(api, "StopTest") == 0) {
+    return StopTest;
+  }
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
+  }
+  else if (strcasecmp(api, "UTMKV") == 0) {
+    return UTMKV;
   }
   else if (strcasecmp(api, "ZeroCounters") == 0) {
     return ZeroCounters;

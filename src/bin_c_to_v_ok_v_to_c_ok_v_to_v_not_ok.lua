@@ -1,3 +1,4 @@
+-- local dbg = require 'debugger'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
 local consts = require 'ab_consts'
@@ -5,11 +6,11 @@ local bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok = {}
 local function set_variants_per_bin(c_test, variant_count)
   -- No device specific routing here
   --clean all the entries
-  c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint8_t*")), ffi.C.free))
+  -- c_test.variant_per_bin = ffi.cast("uint8_t**", ffi.gc(
+  -- ffi.C.malloc(ffi.sizeof("uint8_t*")), ffi.C.free))
 
-  c_test.variant_per_bin[0] = ffi.cast("uint8_t*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
+  -- c_test.variant_per_bin[0] = ffi.cast("uint8_t*", ffi.gc(
+  -- ffi.C.malloc(ffi.sizeof("uint8_t")*consts.AB_NUM_BINS), ffi.C.free))
   local variants = c_test.variants
   local variants_bin = c_test.variant_per_bin[0]
   ffi.fill(variants_bin, ffi.sizeof("uint8_t")*consts.AB_NUM_BINS)
@@ -60,36 +61,58 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
   assertx(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <=consts.AB_MAX_NUM_VARIANTS,
   "Expected variants to be between ", consts.AB_MIN_NUM_VARIANTS, " and ", consts.AB_MAX_NUM_VARIANTS)
   c_test.num_variants = #variants
-  c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
-  ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
-  -- c_test.final_variant_id = assert(test_data.FinalVariantID, "need a final variant") -- TODO check where this comes in
+  -- c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(
+  -- ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
+
   local pos, curr_index, total = 1, 0, 0
   -- sort the variants table
   -- ensures that control is at the first position
-  local function compare(a,b)
-    return a.id < b.id
-  end
-  table.sort(variants, compare)
+  table.sort(variants, function(a,b) return a.id < b.id end)
   if test_data.TestType == "ABTest" then
     assert(variants[1].name:lower() == "control", "First entry has to be control")
   end
+  local final_variant_idx, final_variant_id
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
-    if entry.id == c_test.final_variant_id then
-      c_test.final_variant_idx = curr_index
+    if value.is_final ~= nil and tonumber(value.is_final) == consts.TRUE then
+      final_variant_idx = index - 1
+      final_variant_id = entry.id
     end
     entry.percentage = assert(tonumber(value.percentage), "Every variant must have a percentage")
     total = total + entry.percentage
-    -- print(curr_index, value.name)
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Valid name for variant at position " , index)
     ffi.copy(entry.name, value.name)
-    entry.url = assert(value.url, "Entry should have a url") -- TODO why do we have a max length?
-    entry.custom_data = value.custom_data or "NULL" -- TODO why do we have a max length
+    if value.url ~= nil then
+      assert(#value.url >=0 and #value.url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      -- dbg()
+       assert(entry.url ~= nil, "Space must have been allocated for url")
+       ffi.copy(entry.url, value.url)
+    end
+    -- TODO check lenfth of custom data
+    assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
+    if value.custom_data ~= nil then
+      ffi.copy(entry.custom_data, value.custom_data)
+    else
+      ffi.copy(entry.custom_data,"NULL")
+    end
   end
-  
+
   assertx(total == 100, "all the percentages should add up to 100, added to ", total)
-  set_variants_per_bin(c_test, #variants)
+  local test_state = test_data.State:lower()
+  if test_state == "started" then
+    c_test.final_variant_idx = nil
+    c_test.final_variant_id = nil
+    set_variants_per_bin(c_test, #variants)
+  elseif test_state == "terminated" then
+    -- c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    -- c_test.final_variant_id = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")), ffi.C.free))
+    c_test.final_variant_idx[0] = assert(final_variant_idx, "Final variant idx cannot be nil for a terminated test")
+    c_test.final_variant_id[0] = assert(final_variant_id, "Final variant id cannot be nil for a terminated test")
+
+  else
+    error("Unrecognized test state " .. test_data.State)
+  end
 end
 
 return bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok

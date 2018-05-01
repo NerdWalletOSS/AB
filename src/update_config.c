@@ -163,8 +163,6 @@ update_config(
     status = load_mdl(g_cfg.mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
-    // TODO DELETE BELOW 
-    for ( uint32_t i = 0; i < g_n_mdl; i++ ) { g_predictions[i] = 1.0/(i+2); }
   }
   //--------------------------------------------------------
 
@@ -185,6 +183,7 @@ update_config(
     // FIX 2nd parameter TODO P1
     g_mmdb_in_use = true;
   }
+  // INDRAJEET: PUT IN STUFF FOR LUA 
 
 BYE:
   return status;

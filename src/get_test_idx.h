@@ -21,3 +21,9 @@ get_test_name(
     const char *args, 
     char *test_name
     );
+extern int
+get_test_from_args(
+    const char *args,
+    int *ptr_test_idx,
+    int *ptr_test_type
+    );

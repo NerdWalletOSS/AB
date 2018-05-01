@@ -1,5 +1,5 @@
 package.path=package.path .. ";./../src/?.lua"
-local dbg = require 'debugger'
+-- local dbg = require 'debugger'
 require 'str'
 math.randomseed(os.time())
 
@@ -17,7 +17,7 @@ function gen_table.get_exactly_one(k, constraints)
   if target ~= nil then
     constraints.exactly_one[k][target] = true
   end
-  print("exactly one  constraint: ", k, target)
+  -- print("exactly one  constraint: ", k, target)
   return target
 end
 
@@ -36,7 +36,7 @@ function gen_table.get_unique(k, v, constraints, init_value)
     until unique[val] == nil and ex_one[val] == nil
   end
   unique[val] = true
-  print("unique constraint: ", k, val)
+  -- print("unique constraint: ", k, val)
   return val
 end
 
@@ -44,13 +44,13 @@ function gen_table.add_set_entry(j_table, constraints)
   local entry = {}
   local is_last = false
   if constraints.count ~= nil then
-    print("count constraint", constraints.count)
+    -- print("count constraint", constraints.count)
     if constraints.count == 1 then
       is_last = true
     end
     constraints.count = constraints.count - 1
   end
-  dbg()
+  -- dbg()
   for k,v in pairs(j_table.entry_fields) do
     if constraints.sum[k] ~= nil then
       -- STRONG ASSUMPTION is that the lower value is 0
@@ -63,7 +63,7 @@ function gen_table.add_set_entry(j_table, constraints)
         local old_upper = assert(tonumber(v.value.random.upper), "Must be a valid number")
         v.value.random.upper = constraints.sum[k]
         local n_v = gen_table.get_entry(v)
-        print("sum constraint: ", k, n_v )
+        -- print("sum constraint: ", k, n_v )
         local val = assert(tonumber(n_v), "must be  a number")
         assert(val <= tonumber(constraints.sum[k]))
 
@@ -99,9 +99,9 @@ end
 
 function gen_table.get_constraints(j_table)
   local constraints = {}
-  dbg()
+  -- dbg()
   for k,e_set in pairs(j_table.constraints) do
-    print("constraint keys", k)
+    -- print("constraint keys", k)
     for _, v in ipairs(e_set) do
       if v.type == "sum" then
         local sum = constraints.sum or {}
@@ -123,7 +123,7 @@ function gen_table.get_constraints(j_table)
         count = math.random(
         tonumber(v.value.random.lower), tonumber(v.value.random.upper))
         constraints.count = count
-        print(k, v.type, count)
+        -- print(k, v.type, count)
       else
         error("Unknown type of constraint")
       end
@@ -179,7 +179,7 @@ function gen_table.get_entry(v, exactly_one)
       val = math.random(lower, upper)
     end
     if val < 0 then
-      print("Boooooo", val, upper, lower)
+      -- print("Boooooo", val, upper, lower)
       error()
     end
     return tostring(val)
@@ -200,4 +200,35 @@ function gen_table.gen_table(l_table)
   return j_res
 end
 
-return gen_table.gen_table
+function hack_for_ab_tests(l_table)
+  local j_res = gen_table.gen_table(l_table)
+  if j_res.State ~= "terminated" then 
+    for _, entry in ipairs(j_res.Variants) do
+      entry.is_final = "0"
+    end
+  end
+  
+  if j_res.TestType == "ABTest" then
+    -- Just a hack around the generator for ABTests 100/(nV-1)
+    local nV = #j_res.Variants
+    local percentage_left = 0
+    local control_entry = nil
+    local max_percentage = 100.0/(nV - 1)
+    for _, entry in ipairs(j_res.Variants) do
+      if entry.name ~= "Control" then
+        local percentage = tonumber(entry.percentage)
+        if percentage > max_percentage then
+          entry.percentage = tostring(max_percentage)
+          percentage_left = percentage_left + (percentage - max_percentage)
+        end
+      else
+        control_entry = entry
+      end
+    end
+    control_entry.percentage = tostring(tonumber(control_entry.percentage) + percentage_left)
+  end
+  return j_res
+end
+
+-- return gen_table.gen_table
+return hack_for_ab_tests
