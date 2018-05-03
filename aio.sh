@@ -9,7 +9,8 @@ usage(){
 	echo "  -p  Builds tarballs for AB and abadmin in addition to building everything"
 	echo "  -t  Builds AB and runs tests"
 	echo "  -x  Builds a tarball of all the php companents for AB admin"
-	exit 1 ;
+	# echo "  -r  Builds and run AB with all other auxillary service"
+  exit 1 ;
 }
 
 clean(){
