@@ -138,6 +138,17 @@ diagnostics(
       }
     }
     // TODO P3 Check that counter[] is similar to percentage
+    if(g_tests[i].is_dev_specific == false){
+        int bins_allocation = 0;
+	VARIANT_REC_TYPE v_index = NULL;
+        for(int index = 0; index < num_variants; index++){
+	 v_index = g_tests[i].variants[index];
+         bins_allocation = v_index.percentage * 0.01 * AB_NUM_BINS;
+         if(bins_allocation != counter[index]){
+          go_BYE(-1);
+         }
+        }
+    }
     if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
