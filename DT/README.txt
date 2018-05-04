@@ -17,3 +17,15 @@ In that directory, we have
 Input = float *g_predictions [g_n_predictions] 
 where g_n_predictions is the number of models in the problem
 Ouput = char *X // [nX] 
+
+
+5) A directory called test. Inside this, all tests that need to be executed will
+be in files called test_*.lua
+
+Currently, we have a script that takes dt.csv and converts it into 3 vinary
+files called
+dt.bin
+rf.bin
+mdl.bin
+which are loaded by the C server
+
