@@ -23,6 +23,7 @@ update_config(
     )
 {
   int status = 0;
+  char *buf = NULL; 
   // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
@@ -153,7 +154,15 @@ update_config(
   // dt, rf, mdl
   free_if_non_null(g_dt_feature_vector); 
   free_if_non_null(g_predictions); 
+  if ( g_dt  != NULL ) { rs_munmap(g_dt,  g_len_dt_file); }
+  if ( g_rf  != NULL ) { rs_munmap(g_rf,  g_len_rf_file); }
+  if ( g_mdl != NULL ) { rs_munmap(g_mdl, g_len_mdl_file); }
   if ( *g_cfg.dt_dir != '\0' ) { 
+    int buflen = strlen(g_dt_dir) + strlen("dt.bin") + 4 ;
+    if ( buflen > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    buf = malloc(buflen); return_if_malloc_failed(buf);
+    memset(buf, '\0', buflen); 
+    sprintf(g_dt_file, "%s/dt.bin", g_dt_dir); 
     status = load_dt(g_cfg.dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
     status = load_rf(g_cfg.rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
@@ -187,5 +196,6 @@ update_config(
   // INDRAJEET: PUT IN STUFF FOR LUA 
 
 BYE:
+  free_if_non_null(buf);
   return status;
 }

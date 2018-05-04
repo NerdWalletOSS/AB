@@ -142,7 +142,7 @@ ab_httpd : $(COBJS)  \
 	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so \
-  ../librdkafka/src/librdkafka.so
+	../librdkafka/src/librdkafka.so
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
