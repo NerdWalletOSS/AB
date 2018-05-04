@@ -175,8 +175,9 @@ update_config(
   //--------------------------------------------------------
 
   free_if_non_null(g_dt_feature_vector); 
-  if  ( g_n_dt_feature_vector > 0 ) { 
-    status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status);
+  status = l_get_num_features(&g_n_dt_feature_vector ); 
+  if ( status < 0 ) { g_n_dt_feature_vector = 0; }
+  if ( g_n_dt_feature_vector > 0 ) { 
     g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
   }
 

@@ -27,6 +27,7 @@ l_get_num_features(
   }
   int num_features = lua_tonumber(g_L_DT, -1);
   lua_pop(g_L_DT, 1);
+  if ( num_features <= 0 ) { go_BYE(-1); }
   *ptr_num_features = num_features;
 BYE:
   return status;
