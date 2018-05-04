@@ -7,7 +7,7 @@ WARN= -g -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-pro
 # else you will get 
 # ./test_dt: /usr/lib/x86_64-linux-gnu/libgomp.so.1: version `GOMP_4.0' not
 # found (required by ./test_dt)
-INCS= -I. -I../../src/
+INCS= -I. -I../../src/ -I../../curl-7.51.0/include/
 
 
 DBGFLAGS= 
