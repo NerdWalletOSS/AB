@@ -157,6 +157,9 @@ ab_httpd : $(COBJS)  \
 	../librdkafka/src/librdkafka.so \
 	-lm  -lpthread -ldl   
 
+../librdkafka/src/librdkafka.so:
+	cd ../librdkafka && ./configure && make
+
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
