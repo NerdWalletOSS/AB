@@ -45,6 +45,8 @@ all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua ../dt_interpreter/src/
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
+ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so
+
 ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 
 update_config.c : load_rf.h load_mdl.h load_rf.c load_mdl.c 

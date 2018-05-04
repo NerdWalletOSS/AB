@@ -12,11 +12,14 @@ l_get_num_features(
     )
 {
   int status = 0;
-  char buf[1024]; // TODO FIX P1 
+  char *luafile = NULL; int buflen = 0;
   if ( *g_dt_dir == '\0' ) { go_BYE(-1); }
-  sprintf(buf, "%s/get_num_features", g_dt_dir);
+  buflen = strlen(g_data_dir) + strlen("get_num_features") + 4;
+  luafile = malloc(buflen); return_if_malloc_failed(buflen); 
+  memset(luafile, '\0', buflen); 
+  sprintf(luafile, "%s/get_num_features", g_dt_dir);
   *ptr_num_features = 0;
-  lua_getglobal(g_L_DT, buf);
+  lua_getglobal(g_L_DT, luafile);
   if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Function get_num_features does not exist in %s\n", g_dt_dir);
     lua_pop(g_L_DT, 1);
@@ -34,5 +37,6 @@ l_get_num_features(
   if ( num_features <= 0 ) { go_BYE(-1); }
   *ptr_num_features = num_features;
 BYE:
+  free_if_non_null(buf);
   return status;
 }

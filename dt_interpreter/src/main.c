@@ -70,12 +70,14 @@ main(
   float *invals = NULL;
   FILE *fp = NULL;
   FILE *ofp = NULL;
-  if ( argc != 6 ) { go_BYE(-1); }
+  if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
-  test_data_file_name     = argv[2];
-  dt_file_name            = argv[3];
-  rf_file_name            = argv[4];
-  mdl_file_name           = argv[5];
+  dt_file_name            = argv[2];
+  rf_file_name            = argv[3];
+  mdl_file_name           = argv[4];
+  if ( argc == 6 ) { 
+    test_data_file_name     = argv[5];
+  }
 
   status = is_uq(argv, argc); cBYE(status);
 
@@ -84,13 +86,18 @@ main(
   status = read_random_forest(random_forest_file_name, 
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
+
+  if ( test_data_file_name == NULL ) { 
+    fprintf(stderr, "NO test data provided. Quitting early\n"); goto BYE;
+  }
   int nF = 0 ; 
   for ( int i = 0; i < n_dt; i++ ) { nF = max(nF, dt[i].feature_idx); }
   nF++; // this is important
   invals = malloc((nF+1) * sizeof(float)); // +1 for prediction
   return_if_malloc_failed(invals);
-  fp = fopen(test_data_file_name, "r");
-  return_if_fopen_failed(fp,  test_data_file_name, "r");
+    fp = fopen(test_data_file_name, "r");
+    return_if_fopen_failed(fp,  test_data_file_name, "r");
+  }
 #define MAXLINE 65535
   char line [MAXLINE+1];
   int lno = 0;
