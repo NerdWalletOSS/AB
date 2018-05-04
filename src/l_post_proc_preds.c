@@ -5,7 +5,7 @@
 
 int 
 l_post_proc_preds(
-    float *pred_vector, // TODO P3 give better name 
+    float *pred_vector, // this is g_predictions [n_pred_vector]
     int n_pred_vector,
     char *X,
     size_t nX

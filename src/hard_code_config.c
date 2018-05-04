@@ -39,6 +39,8 @@ hard_code_config(void)
   strcpy(g_cfg.browser_file,  "/opt/ab/browser.csv");
   strcpy(g_cfg.device_type_file,  "/opt/ab/device_type.csv");
 
+  // strcpy(g_cfg.dt,  "DT/CREDIT_CARD_APPROVALS");
+
   strcpy(g_cfg.dt_file,  "/opt/ab/dt.bin");
   strcpy(g_cfg.rf_file,  "/opt/ab/rf.bin");
   strcpy(g_cfg.mdl_file,  "/opt/ab/mdl.bin");

@@ -108,6 +108,7 @@ zero_globals(
   memset(g_cfg.browser_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
+  memset(g_cfg.dt_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.dt_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.rf_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.mdl_file, '\0', AB_MAX_LEN_FILE_NAME+1);

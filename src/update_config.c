@@ -151,34 +151,27 @@ update_config(
   }
   //--------------------------------------------------------
   // dt, rf, mdl
-  bool is_dt = false, is_rf = false, is_mdl = false, 
-  if ( *g_cfg.dt_file != '\0' ) { 
+  free_if_non_null(g_dt_feature_vector); 
+  free_if_non_null(g_predictions); 
+  if ( *g_cfg.dt_dir != '\0' ) { 
     status = load_dt(g_cfg.dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
-    is_dt = true;
-  }
-  if ( *g_cfg.rf_file != '\0' ) { 
     status = load_rf(g_cfg.rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
     cBYE(status);
-    is_rf = true;
-  }
-  if ( *g_cfg.mdl_file != '\0' ) { 
     status = load_mdl(g_cfg.mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
-    is_mdl = true;
+
+    free_if_non_null(g_dt_feature_vector); 
+    status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
+    g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
+    return_if_malloc_failed(g_dt_feature_vector);
   }
   // all must be set or none must be set 
   bool x = is_dt && is_rf && is_mdl;
   bool y = is_dt || is_rf || is_mdl;
   if ( x != y ) { go_BYE(-1); }
   //--------------------------------------------------------
-
-  free_if_non_null(g_dt_feature_vector); 
-  if  ( g_n_dt_feature_vector > 0 ) { 
-    status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status);
-    g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
-  }
 
   if ( g_mmdb_in_use ) { 
     MMDB_close(&g_mmdb);

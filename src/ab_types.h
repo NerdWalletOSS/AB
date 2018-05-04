@@ -132,6 +132,7 @@ typedef struct _cftype {
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For classifying user agent 
   // START: For decision tree
+  char dt_dir[AB_MAX_LEN_FILE_NAME+1];   
   char dt_file[AB_MAX_LEN_FILE_NAME+1];   
   char rf_file[AB_MAX_LEN_FILE_NAME+1];   
   char mdl_file[AB_MAX_LEN_FILE_NAME+1];   

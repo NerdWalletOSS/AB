@@ -12,6 +12,7 @@ l_get_num_features(
 {
   int status = 0;
   *ptr_num_features = 0;
+  // lua_getglobal(g_L_DT, "XYZ/get_num_features");
   lua_getglobal(g_L_DT, "get_num_features");
   if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Function get_num_features does not exist in lua's global space\n");
@@ -27,6 +28,7 @@ l_get_num_features(
   }
   int num_features = lua_tonumber(g_L_DT, -1);
   lua_pop(g_L_DT, 1);
+  if ( num_features <= 0 ) { go_BYE(-1); }
   *ptr_num_features = num_features;
 BYE:
   return status;
