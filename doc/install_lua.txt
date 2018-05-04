@@ -1,0 +1,25 @@
+You should not need to do any of this since aio.sh is supposed to take 
+care of it. Nonetheless, here it is
+
+wget https://www.lua.org/ftp/lua-5.1.5.tar.gz
+tar -zxvf lua-5.1.5.tar.gz 
+cd lua*
+sudo apt-get install readline
+sudo apt-get install libreadline6
+sudo apt-get install libreadline6-dev
+sudo apt-get install libncurses5-dev
+make linux
+cd test_webapp/lua-5.1.5/
+cd src
+export PATH=$PATH:$PWD
+sudo luarocks install penlight
+sudo apt install luarocks
+sudo luarocks install penlight
+sudo luarocks install Lua-cURL
+sudo luarocks install lua-curl
+luarocks install lua-curl
+sudo pt-get install libcurl4-gnutls-dev
+sudo apt-get install libcurl4-gnutls-dev
+sudo luarocks install lua-curl
+sudo luarocks install ltn12
+

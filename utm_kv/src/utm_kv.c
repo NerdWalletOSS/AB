@@ -1,6 +1,6 @@
 #include "utm_kv.h"
 
-int
+void
 print_utm_kv(
     UTM_REC_TYPE X,
     char *buf,
@@ -15,7 +15,7 @@ print_utm_kv(
   X.medium, X.source, X.campaign);
 }
 
-int
+void
 free_utm_kv(
     UTM_REC_TYPE X
     )
@@ -27,7 +27,7 @@ free_utm_kv(
 
 int
 utm_kv(
-    const char *instr,
+    const char *raw_instr,
     UTM_REC_TYPE *ptr_out
     )
 {
@@ -37,6 +37,19 @@ utm_kv(
   char needles[NUM_NEEDLES][MAX_LEN_NEEDLE] = 
   { "utm_medium=", "utm_source=", "utm_campaign=" };
   char *outbuf = NULL;
+  bool valid_chars[256];
+  char *instr = NULL;
+
+  status = url_decode(raw_instr, &instr);  cBYE(status);
+
+  memset(valid_chars, '\0', 256);
+  for ( char c = '0'; c <= '9'; c++ ) { valid_chars[(uint8_t)c] = true; }
+  for ( char c = 'a'; c <= 'z'; c++ ) { valid_chars[(uint8_t)c] = true; }
+  for ( char c = 'A'; c <= 'Z'; c++ ) { valid_chars[(uint8_t)c] = true; }
+  valid_chars[(uint8_t)'_'] = true;
+  valid_chars[(uint8_t)'-'] = true;
+  valid_chars[(uint8_t)'.'] = true;
+  valid_chars[(uint8_t)' '] = true;
 
   ptr_out->medium = NULL;
   ptr_out->source = NULL;
@@ -46,45 +59,40 @@ utm_kv(
     outbuf = NULL;
     char *needle = needles[i];
     char *val = strstr(instr, needle);
+    if ( val == NULL ) { continue; } // skip if no match found
+    // find longest string after needle, breaking on non alphanum,_,-
     char *start = NULL, *cptr = NULL;
-    if ( val != NULL ) { 
-      start = val + strlen(needle);
-      for ( cptr = start; 
-          ( ( *cptr != '\0' ) && ( *cptr != '#' ) && ( *cptr != '&' ) );
-          cptr++ ) {
-      }
+    start = val + strlen(needle);
+    for ( cptr = start; ; cptr++ ) { 
+      if ( !valid_chars[(uint8_t)*cptr] ) { break; }
     }
+    //-----------------------------------
     int len = cptr - start;
-    if ( ( cptr != NULL ) && 
-        ( len >= 1 ) && ( len <= UTM_MAX_LEN_PARAM ) ) { 
-      char inbuf[UTM_MAX_LEN_PARAM+1];
-      memset(inbuf, '\0', UTM_MAX_LEN_PARAM+1);
-      memcpy(inbuf, start,  len);
-      status = url_decode(inbuf, &outbuf);
-      if ( status < 0 ) { WHEREAMI; continue; }
-      for ( char *xptr = outbuf; *xptr != '\0'; xptr++ ) { 
-        *xptr = tolower(*xptr);
-      }
+    // string not found or too long 
+    if ( ( len <= 0 ) || ( len > UTM_MAX_LEN_PARAM ) ) { 
+      continue;
     }
-    else { 
-      // printf("11\n"); WHEREAMI; 
+    outbuf = malloc(len+1); return_if_malloc_failed(outbuf);
+    memset(outbuf, '\0', len+1);
+    memcpy(outbuf, start,  len);
+    for ( char *xptr = outbuf; *xptr != '\0'; xptr++ ) { 
+      *xptr = tolower(*xptr);
     }
-    if ( outbuf != NULL ) { 
-      if ( strcmp(needle, "utm_medium=") == 0 ) { 
-        ptr_out->medium = outbuf;
-      }
-      else if ( strcmp(needle, "utm_source=") == 0 ) { 
-        ptr_out->source = outbuf;
-      }
-      else if ( strcmp(needle, "utm_campaign=") == 0 ) { 
-        ptr_out->campaign = outbuf;
-      }
-      else {
-        // printf("22\n"); WHEREAMI; 
-        go_BYE(-1);
-      }
+    if ( strcmp(needle, "utm_medium=") == 0 ) { 
+      ptr_out->medium = outbuf;
+    }
+    else if ( strcmp(needle, "utm_source=") == 0 ) { 
+      ptr_out->source = outbuf;
+    }
+    else if ( strcmp(needle, "utm_campaign=") == 0 ) { 
+      ptr_out->campaign = outbuf;
+     }
+    else {
+      // printf("22\n"); WHEREAMI; 
+      go_BYE(-1);
     }
   }
 BYE:
+  free_if_non_null(instr);
   return status;
 }

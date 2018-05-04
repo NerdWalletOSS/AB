@@ -231,6 +231,7 @@ CREATE TABLE test (
   name varchar(128) not null,
   api_id int(8) not null, 
   request_webapp_id int(8) not null, 
+  ramp int(8) default 1 not null, -- increments when percentages change
   test_type_id int(8) not null, 
   bin_type_id int(8) not null, -- 
   pred_id int(8), -- can be null

@@ -52,37 +52,52 @@ local cfh = assert(io.open(out_c, "r"))
 local num_errors = 0
 local num_lines = 0
 while true do 
+  -- read string in 
   instr = ifh:read()
   if ( not instr ) then 
-    print("Read lines " .. i)
+    print("Read lines " .. num_lines)
     break
   end
+  -- TODO strip it and then call utm_kv
   --=================================
   libh.utm_kv(instr, output);
   local exp_sstr = sfh:read()
   local exp_mstr = mfh:read()
   local exp_cstr = cfh:read()
-  if ( exp_sstr == '""' ) then exp_sstr = ffi.NULL end 
-  if ( exp_mstr == '""' ) then exp_mstr = ffi.NULL end 
-  if ( exp_cstr == '""' ) then exp_cstr = ffi.NULL end 
+  if ( not exp_sstr ) then 
+    print("Nothing more to compare against")
+    break
+  end
+  if ( exp_sstr == nil) or ( exp_mstr == nil ) or ( exp_sstr == nil ) then 
+    print("Nothing more to compare against") break
+  end
+  if ( exp_sstr == '""' ) then exp_sstr = '' end
+  if ( exp_mstr == '""' ) then exp_mstr = '' end
+  if ( exp_cstr == '""' ) then exp_cstr = '' end
 
   -- print(exp_sstr, exp_mstr, exp_cstr)
   local sstr = ffi.NULL
   local mstr = ffi.NULL
   local cstr = ffi.NULL
-  if ( output[0].source ~= ffi.NULL ) then sstr= ffi.string(output.source) end 
-  if ( output[0].medium ~= ffi.NULL ) then mstr = ffi.string(output.medium) end 
-  if ( output[0].campaign ~= ffi.NULL ) then cstr = ffi.string(output.campaign) end
-  if ( sstr ~= exp_sstr ) then 
-    print("AA", sstr, exp_sstr) 
+  if ( output[0].source ~= ffi.NULL ) then 
+    sstr = ffi.string(output.source) 
+  end 
+  if ( output[0].medium ~= ffi.NULL ) then 
+    mstr = ffi.string(output.medium) 
+  end 
+  if ( output[0].campaign ~= ffi.NULL ) then 
+    cstr = ffi.string(output.campaign) 
+  end
+  if sstr and ( sstr ~= exp_sstr ) then 
+    print("Source Line: " .. num_lines .. "{" .. sstr .. "}" .. "[" .. exp_sstr .. "]") 
     num_errors = num_errors + 1
   end
-  if ( mstr ~= exp_mstr ) then 
-    print("Line: " .. num_lines .. "{" .. mstr .. "}" .. "[" .. exp_mstr .. "]") 
+  if mstr and ( mstr ~= exp_mstr ) then 
+    print("Medium Line: " .. num_lines .. "{" .. mstr .. "}" .. "[" .. exp_mstr .. "]") 
     num_errors = num_errors + 1
   end
-  if ( cstr ~= exp_cstr ) then 
-    print("Line: " .. num_lines .. "{" .. cstr .. "}" .. "[" .. exp_cstr .. "]") 
+  if cstr and ( cstr ~= exp_cstr ) then 
+    print("Campaign Line: " .. num_lines .. "{" .. cstr .. "}" .. "[" .. exp_cstr .. "]") 
     num_errors = num_errors + 1
   end
   num_lines = num_lines + 1

@@ -22,6 +22,12 @@ ffi.cdef("void *memset(void *s, int c, size_t n);")
 ffi.cdef("char *strcpy(char *dest, const char *src);")
 ffi.cdef(" size_t strlen(const char *s);")
 
+local function strip_start_stop_dquote(instr)
+  local x = string.gsub(instr, '"$', "")
+  local y = string.gsub(x, '^"', "")
+  return y
+end
+
 -- local input = ffi.C.malloc(ffi.sizeof("STR_REC_TYPE"))
 local input = ffi.C.malloc(ffi.sizeof("double"))
 input = ffi.cast("STR_REC_TYPE *", input)
@@ -42,7 +48,6 @@ libh.strip_url(input[0], output);
 local outstr = ffi.string(output.X, output.nX)
 assert(outstr == "https://www.nerdwallet.com/investing/best-stock-broker-comparison/embed?brokerIds=31,2,35,19")
 
-
 -- Now do it for a file
 local in_file_name = "./strip/url_strip_input.txt"
 local out_file_name = "./strip/url_strip_output.txt"
@@ -58,19 +63,21 @@ while true do
     print("Read lines " .. num_lines)
     break
   end
+  instr = strip_start_stop_dquote(instr)
   ffi.C.strcpy(input[0].X, instr)
   input[0].nX = ffi.C.strlen(instr)
   --=================================
   libh.strip_url(input[0], output);
   local outstr = ffi.string(output.X, output.nX)
   local expected_outstr = ofh:read()
+  expected_outstr = strip_start_stop_dquote(expected_outstr)
   if ( outstr ~= expected_outstr ) then 
     print("input ", instr)
     print("actual ", outstr)
     print("expected ", expected_outstr)
     num_errors = num_errors + 1
-    num_lines = num_lines + 1
   end
+  num_lines = num_lines + 1
   -- assert(outstr == expected_outstr, "Failure at line " .. i)
 end -- iterate over all lines
 print("num_errors = ", num_errors)

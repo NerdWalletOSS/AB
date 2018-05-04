@@ -151,19 +151,27 @@ update_config(
   }
   //--------------------------------------------------------
   // dt, rf, mdl
+  bool is_dt = false, is_rf = false, is_mdl = false, 
   if ( *g_cfg.dt_file != '\0' ) { 
     status = load_dt(g_cfg.dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
+    is_dt = true;
   }
   if ( *g_cfg.rf_file != '\0' ) { 
     status = load_rf(g_cfg.rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
     cBYE(status);
+    is_rf = true;
   }
   if ( *g_cfg.mdl_file != '\0' ) { 
     status = load_mdl(g_cfg.mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
+    is_mdl = true;
   }
+  // all must be set or none must be set 
+  bool x = is_dt && is_rf && is_mdl;
+  bool y = is_dt || is_rf || is_mdl;
+  if ( x != y ) { go_BYE(-1); }
   //--------------------------------------------------------
 
   free_if_non_null(g_dt_feature_vector); 

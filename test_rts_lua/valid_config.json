@@ -131,6 +131,18 @@
     "UA_TO_DEV_MAP_FILE": {
       "VALUE": "\"./ua_to_dev.bin\""
     },
+    "DT_BIN_FILE": {
+      "VALUE": "/opt/ab/dt.bin",
+      "COMMENT": "Decision Tree as binary"
+    },
+    "RF_BIN_FILE": {
+      "VALUE": "/opt/ab/rf.bin",
+      "COMMENT": "Random Forest as binary"
+    },
+    "MDL_BIN_FILE": {
+      "VALUE": "/opt/ab/mdl.bin",
+      "COMMENT": "Models as binary"
+    },
     "UDP_NODE": {
       "COMMENT": "Only for local testing",
       "VALUE": "localhost"

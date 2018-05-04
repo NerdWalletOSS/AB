@@ -6,11 +6,11 @@ utm_kv(
     const char *instr,
     UTM_REC_TYPE *ptr_out
     );
-extern int
+extern void
 free_utm_kv(
     UTM_REC_TYPE X
     );
-extern int
+extern void
 print_utm_kv(
     UTM_REC_TYPE X,
     char *buf,

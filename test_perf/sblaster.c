@@ -63,7 +63,7 @@ main(
   double min_time = INT_MAX;
   double max_time = INT_MIN;
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10);
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 100000); // TODO FIX 
   // Get variants for these tests for nU users
   int num_bad = 0; 
   uint64_t t1, t2, t;

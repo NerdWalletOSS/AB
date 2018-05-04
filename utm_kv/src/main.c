@@ -4,8 +4,7 @@
 #include "utm_kv.h"
 int
 main(
-    int argc,
-    char **argv
+    void
     )
 {
   int status = 0;

@@ -1,9 +1,8 @@
 make clean
 make
-dtfile=../data/dt2.csv
-dtfile=/tmp/dt.csv
+dtfile=../data/spam_data/spam_dt.csv
 test -f $dtfile
-testfile=../data/test1.csv
+testfile=../data/spam_data/test_1_10.csv
 test -f $testfile
 dtfile=dt.bin
 rffile=rf.bin

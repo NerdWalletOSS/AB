@@ -124,7 +124,8 @@ add_fake_test(
   g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;
   g_tests[idx].state = state;
-  g_tests[idx].seed = 9876543210;
+  g_tests[idx].seed = 9876543210;1; // bogus but legit value
+  g_tests[idx].ramp = 1; // bogus but legit value
 
   g_tests[idx].num_variants = nV;
   variants = malloc(nV * sizeof(VARIANT_REC_TYPE));

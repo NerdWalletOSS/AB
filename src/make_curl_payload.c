@@ -24,12 +24,14 @@ make_curl_payload(
 \"uuid\" : \"%s\", \
 \"test_id\" : \"%u\", \
 \"variant_id\" : \"%d\", \
+\"ramp\" : \"%d\", \
 \"in_tracer_id\" : \"%s\", \
 \"out_tracer_id\" : \"%s\", \
 \"time\" : \"%" PRIu64 "\" }",
       lcl_payload.uuid,
       lcl_payload.test_id, 
       lcl_payload.variant_id,
+      lcl_payload.ramp,
       lcl_payload.in_tracer,
       lcl_payload.out_tracer,
       lcl_payload.time
