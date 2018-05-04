@@ -104,7 +104,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ../librdkafka/src/librdkafka.so
 
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/
@@ -158,7 +158,7 @@ ab_httpd : $(COBJS)  \
 	-lm  -lpthread -ldl   
 
 ../librdkafka/src/librdkafka.so:
-	cd ../librdkafka && ./configure && make
+	cd ../ && rm -rf librdkafka &&  tar -xvzf librdkafka.tar.gz && cd librdkafka && ./configure && make
 
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
