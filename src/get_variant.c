@@ -100,7 +100,7 @@ get_variant(
   if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
   //------------------------------------------------
   PAYLOAD_TYPE lcl_payload;
-  memset(lcl_payload.uuid, '\0', AB_MAX_LEN_UUID+1);
+  memset(lcl_payload, '\0', AB_MAX_LEN_PAYLOAD);
   strcpy(lcl_payload.uuid, g_uuid);
   strcpy(lcl_payload.in_tracer,  in_tracer);
   strcpy(lcl_payload.out_tracer, g_out_tracer);

@@ -79,7 +79,7 @@ main(
     test_data_file_name     = argv[5];
   }
 
-  status = is_uq(argv, argc); cBYE(status);
+  status = is_uq(argc, argv); cBYE(status);
 
   g_num_compares = 0;
 
@@ -95,9 +95,8 @@ main(
   nF++; // this is important
   invals = malloc((nF+1) * sizeof(float)); // +1 for prediction
   return_if_malloc_failed(invals);
-    fp = fopen(test_data_file_name, "r");
-    return_if_fopen_failed(fp,  test_data_file_name, "r");
-  }
+  fp = fopen(test_data_file_name, "r");
+  return_if_fopen_failed(fp,  test_data_file_name, "r");
 #define MAXLINE 65535
   char line [MAXLINE+1];
   int lno = 0;

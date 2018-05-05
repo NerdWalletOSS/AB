@@ -20,14 +20,13 @@ int chk_logger_connectivity(
     strcpy(X, "{ \"CheckLoggerConnectivity\" : \"Logging Disabled\" } ");
     goto BYE;
   }
-  memset(curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
   memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
   // START: Make a bogus UUID that is alphanumeric 
   strncpy(lcl_payload.uuid, "UUID_CHCKPIPE", AB_MAX_LEN_UUID);
   strncpy(lcl_payload.in_tracer, "IN_CHCKPIPE", AB_MAX_LEN_TRACER);
   strncpy(lcl_payload.out_tracer, "OUT_CHCKPIPE", AB_MAX_LEN_TRACER);
   //----------------------------------------------
-  status = make_curl_payload(lcl_payload, curl_payload); cBYE(status);
+  status = make_curl_payload(lcl_payload, curl_payload, AB_MAX_LEN_PAYLOAD); cBYE(status);
   status = post_url(g_ch, curl_payload, &time_taken);
   if ( status < 0 ) { 
     nw = snprintf(X, nX,

@@ -12,14 +12,15 @@
 int 
 make_curl_payload(
     PAYLOAD_TYPE lcl_payload,
-    char *curl_payload
+    char *curl_payload,
+    size_t sz_curl_payload
     )
 //</hdr>
 {
   int status = 0;
 
-  memset(g_curl_payload,            '\0', AB_MAX_LEN_PAYLOAD+1);
-  size_t sz = snprintf(curl_payload, AB_MAX_LEN_PAYLOAD, 
+  memset(curl_payload,            '\0', sz_curl_payload+1);
+  size_t sz = snprintf(curl_payload, sz_curl_payload, 
 "{  \
 \"uuid\" : \"%s\", \
 \"test_id\" : \"%u\", \

@@ -1,3 +1,0 @@
-# Ideally, you do not need this file. For now, here are things to consider
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../libmaxminddb-1.3.2/src/.libs/
-# Check that /opt/ab/ has all necessary config files

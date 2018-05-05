@@ -16,11 +16,11 @@ make_guid(
   int sz_buf = 64;
   char buf[sz_buf];
   uint64_t x, hash, hash1, hash2;
-  char X[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-    'A', 'B', 'C', 'D', 'E', 'F' };
+  int nX = 16;
+  char X[nX+1]; strcpy(X, "0123456789ABCDEF");
 
   if ( guid == NULL ) { go_BYE(-1); }
-  if ( sz_guid <= 1 )  { go_BYE(-1); }
+  if ( sz_guid < 1 )  { go_BYE(-1); }
   memset(buf, '\0', sz_buf);
   x = RDTSC();
   if (( seed != NULL) && ( *seed != '\0' ) ) {
@@ -35,10 +35,12 @@ make_guid(
     // TODO P4 improve following code 
     if ( n_guid == 0 ) { hash = hash1; } 
     if ( n_guid == 16 ) { hash = hash2; } 
-    uint8_t val = hash & 0xF;
-    hash = hash >> 4;
+    uint8_t val = 0;
+    val = hash & 0xF;
     if ( n_guid > sz_guid ) { break; }
+    if ( val >= nX ) { go_BYE(-1); }
     guid[n_guid++] = X[val];
+    hash = hash >> 4;
   }
 BYE:
   return status;

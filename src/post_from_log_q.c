@@ -11,6 +11,7 @@ post_from_log_q(
     void *arg
     )
 {
+  int status = 0;
   CURLcode curl_res; 
   long http_code;
   PAYLOAD_TYPE lcl_payload;
@@ -43,8 +44,7 @@ post_from_log_q(
     // Now that you are out of the critical section, do the POST
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
-    memset(g_curl_payload, '\0', AB_MAX_LEN_PAYLOAD+1);
-    make_curl_payload(lcl_payload, g_curl_payload);
+    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
     curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
 #ifdef NW_SPECIFIC
     struct curl_slist *chunk = NULL;

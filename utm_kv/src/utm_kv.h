@@ -10,7 +10,7 @@ extern void
 free_utm_kv(
     UTM_REC_TYPE X
     );
-extern void
+extern int
 print_utm_kv(
     UTM_REC_TYPE X,
     char *buf,

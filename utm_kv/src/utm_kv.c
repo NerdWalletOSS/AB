@@ -1,18 +1,25 @@
 #include "utm_kv.h"
 
-void
+int 
 print_utm_kv(
     UTM_REC_TYPE X,
     char *buf,
     size_t sz
     )
 {
+  int status = 0;
+  if ( buf == NULL ) { go_BYE(-1); }
+  if ( sz == 0 ) { go_BYE(-1); }
   memset(buf, '\0', sz);
-  snprintf(buf, sz, " { \
+
+  size_t nw = snprintf(buf, sz, " { \
       \"utm_med\" : \"%s\", \
       \"utm_camp\" : \"%s\", \
       \"utm_src\" : \"%s\" } ", 
   X.medium, X.source, X.campaign);
+  if ( nw >= sz ) { go_BYE(-1); }
+BYE:
+  return status;
 }
 
 void
