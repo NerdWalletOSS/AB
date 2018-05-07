@@ -106,7 +106,12 @@ typedef struct _service_type {
   char health_url[AB_MAX_LEN_URL+1]; 
 } SERVICE_TYPE;
 
-typedef struct _cftype {
+typedef struct _kafka_cfg_type {
+  char brokers[AB_MAX_LEN_SERVER_NAME+1]; 
+  char topic[AB_MAX_LEN_KAFKA_TOPIC+1];
+} KAFKA_CFG_TYPE;
+
+typedef struct _cfg_type {
 
   uint16_t  port;  // port on which AB RTS will run 
   bool verbose;    // how chatty should RTS be 
@@ -115,6 +120,7 @@ typedef struct _cftype {
   SERVICE_TYPE ss;
   SERVICE_TYPE statsd;
   SERVICE_TYPE webapp;
+  KAFKA_CFG_TYPE kafka;
 
   uint32_t sz_log_q;
   int num_post_retries;  

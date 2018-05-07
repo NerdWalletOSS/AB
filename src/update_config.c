@@ -12,6 +12,8 @@
 #include "load_rf.h"
 #include "load_mdl.h"
 #include "maxminddb.h"
+#include "kafka_close_conn.h"
+#include "kafka_open_conn.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 extern DT_REC_TYPE *g_dt_map; 
 extern size_t g_len_dt_file; 
@@ -189,6 +191,15 @@ update_config(
     // FIX 2nd parameter TODO P1
     g_mmdb_in_use = true;
   }
+  // Kafka
+  kafka_close_conn();
+  if ( g_cfg.kafka.brokers[0] != '\0' ) { 
+    // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
+     kafka_open_conn("ab", "127.0.0.1");
+     sprintf(g_buf, "hey in hardcode for demo\0"); 
+     kafka_add_to_queue(g_buf);  
+  }
+  // ---------------------
   // INDRAJEET: PUT IN STUFF FOR LUA 
 
 BYE:

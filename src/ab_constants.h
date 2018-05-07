@@ -84,5 +84,7 @@
 #define AB_MAX_LEN_COUNTRY    3
 #define AB_MAX_LEN_STATE      31
 #define AB_MAX_LEN_CITY       31
+
+#define AB_MAX_LEN_KAFKA_TOPIC 63
 #endif
 

@@ -3,7 +3,9 @@
 #include "auxil.h"
 #include "hard_code_config.h"
 #include "get_test_idx.h"
-void
+#include "kafka_add_to_queue.h"
+  
+  void
 hard_code_config(void)
 {
   g_cfg.port = 8000;
@@ -43,5 +45,7 @@ hard_code_config(void)
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
-  // INDRAJEET TO PROVIDE KAFKA SETTINGS
+  strcpy(g_cfg.kafka.brokers, "127.0.0.1");
+  strcpy(g_cfg.kafka.topic, "ab");
+
 }

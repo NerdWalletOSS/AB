@@ -62,6 +62,7 @@ free_globals(
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
 
+  kafka_close_conn();
 }
 
 int
@@ -71,8 +72,6 @@ zero_globals(
 {
   int status = 0;
 
-  g_use_kafka = false;
-  g_ignore_kafka_errors = false;
   if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
     go_BYE(-1);
   }
@@ -204,6 +203,14 @@ zero_globals(
   g_rf  = NULL; g_n_rf = 0;
   g_mdl = NULL; g_n_mdl = 0;
   g_predictions = NULL;
+
+  // For Kafka
+  g_ignore_kafka_errors = false; 
+  g_rk = NULL;         /* Producer instance handle */
+  g_rkt = NULL;  /* Topic object */
+  g_kafka_conf = NULL;  /* Temporary configuration object */
+  memset(g_errstr, '\0', 512);
+  //---------------------------
 
   zero_log();
 BYE:

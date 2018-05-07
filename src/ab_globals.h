@@ -132,7 +132,6 @@ EXTERN char g_mdl_file[AB_MAX_LEN_FILE_NAME+1];
 EXTERN UTM_REC_TYPE g_utm_kv;
 
 // For Kafka
-EXTERN bool g_use_kafka; 
 EXTERN bool g_ignore_kafka_errors; 
 // INDRAJEET TO PROVIDE WHAT ELSE
 EXTERN rd_kafka_t *g_rk;         /* Producer instance handle */

@@ -6,6 +6,8 @@
 #include "log_decision.h"
 #include "get_ss_info.h"
 #include "get_variant.h"
+#include "make_curl_payload.h"
+#include "kafka_add_to_queue.h"
 
 int 
 get_variant(
@@ -107,9 +109,9 @@ get_variant(
   lcl_payload.test_id    = g_tests[test_idx].id;
   lcl_payload.variant_id = variant_id;
   lcl_payload.time       = curr_time;
-  if ( g_use_kafka ) { 
-    status = make_curl_payload(lcl_payload, g_curl_payload); cBYE(status);
-    // INDRAJEETestatus = send_to_kafka(g_curl_payload); cBYE(status);
+  if ( g_rk != NULL ) {  // kafka in use 
+    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD); cBYE(status);
+    status = kafka_add_to_queue(g_curl_payload); cBYE(status);
   }
   else {
     status = log_decision(lcl_payload); cBYE(status);
