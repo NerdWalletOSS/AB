@@ -29,8 +29,8 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-SO_SRCS := $(filter-out main.c, $(CSRCS))
-SO_COBJS = $(SOCSRCS:.c=.o)
+SO_CSRCS := $(filter-out main.c, $(CSRCS))
+SO_COBJS = $(SO_CSRCS:.c=.o)
 
 # all : test_ua ua.so
 all : ua.so
@@ -52,9 +52,5 @@ ua.so : $(SO_COBJS)
 	$(CC) -shared $(CFLAGS) $(SO_COBJS) $(INCS) -o ua.so \
 	-lm  -lpthread -ldl  -lgomp
 
-clean:
-	rm -r -f test_ua $(COBJS) 
-	echo "ALL CLEAN"
-
-qclean :
+clean :
 	rm -r -f ua.so test_ua $(COBJS) *.o _*
