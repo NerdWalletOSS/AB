@@ -5,9 +5,9 @@ clean_url(
     size_t n_out
     );
 extern int
-idx_in_set(
+idx_in_model(
     const char *in,
-    const char **X, /* array of [nX] strings */
-    size_t nX,
+    MODEL_REC_TYPE *M,
+    size_t nM,
     int *ptr_idx
     );

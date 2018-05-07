@@ -32,21 +32,21 @@ COBJS = $(CSRCS:.c=.o)
 SO_CSRCS := $(filter-out main.c, $(CSRCS))
 SO_COBJS = $(SO_CSRCS:.c=.o)
 
-# all : test_ua ua.so
-all : ua.so
+all : test_ua ua.so
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
 
-XOBJS = mmap.o
+auxil.o :
+	$(CC) -c -o $@ ../../src/auxil.c $(CFLAGS)  $(INCS)
+
+XOBJS = mmap.o auxil.o
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-# test_ua : $(COBJS) $(XOBJS) 
-# 	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  \
-# 	-lm  -lpthread -ldl  -lgomp
-
+test_ua : $(COBJS) $(XOBJS) 
+	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_ua
 
 ua.so : $(SO_COBJS) 
 	$(CC) -shared $(CFLAGS) $(SO_COBJS) $(INCS) -o ua.so \

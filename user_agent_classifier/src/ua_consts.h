@@ -3,5 +3,5 @@
 #define TRUE 1
 #define FALSE 0
 
-#define UA_MAX_LEN_WORD 15
+#define UA_MAX_LEN_WORD 31
 #endif
