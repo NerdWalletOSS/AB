@@ -4,4 +4,5 @@
 #define FALSE 0
 
 #define UA_MAX_LEN_WORD 31
+#define UA_MAX_LEN_MODEL_NAME 31
 #endif
