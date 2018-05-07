@@ -14,6 +14,18 @@ local function is_present(v_table)
   end
 end
 
+local function is_modified(a, b, prev)
+  if prev == consts.TRUE then
+    return consts.TRUE
+  end
+  if a == b then
+    return consts.FALSE
+  else
+    return consts.TRUE
+  end
+end
+
+
 local function update_string_field(field, g_conf_value, is_updated, min, max)
   if is_updated ~= consts.TRUE then
     is_updated = consts.FALSE
@@ -53,7 +65,7 @@ local function update_number_field(field, g_conf_value, is_updated, min, max)
     is_updated = is_modified(g_conf_value ,val, is_updated)
     g_conf_value = val
   end
-  return is_updated
+  return is_updated, g_conf_value
 end
 
 
@@ -75,20 +87,9 @@ local function get_value_from_bool(x)
   end
 end
 
-local function is_modified(a, b, prev)
-  if prev == consts.TRUE then
-    return consts.TRUE
-  end
-  if a == b then
-    return consts.FALSE
-  else
-    return consts.TRUE
-  end
-end
-
 local function update_config(c_struct, config)
-  local is_updated consts.FALSE
-  is_updated = update_number_field(config.PORT, c_struct.port, is_updated, 0,
+  local is_updated = consts.FALSE
+  is_updated, c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
   2^16 - 1)
   is_updated = update_string_field(config.SERVER, c_struct.server, is_updated,
   1, consts.AB_MAX_LEN_SERVER_NAME)
@@ -133,9 +134,9 @@ end
 
 local function update_rts_configs(g_conf, config)
   local c_struct = g_conf[0]
-  is_updated = consts.FALSE
-  is_updated = update_number_field(config.PORT, c_struct.port, is_updated, 0,
-    2^16-1)
+  local is_updated = consts.FALSE
+  is_updated,  c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
+  2^16-1)
   if is_present(config.VERBOSE) then
     local verbose = -1
     if config.VERBOSE.VALUE:lower() == "false" then
@@ -148,14 +149,14 @@ local function update_rts_configs(g_conf, config)
       error("VERBOSE can only be true or false")
     end
   end
-  is_updated = update_number_field(config.SZ_LOG_Q, c_struct.sz_log_q, is_updated, 0,
+  is_updated, c_struct.sz_log_q = update_number_field(config.SZ_LOG_Q, c_struct.sz_log_q, is_updated, 0,
   2^32-1)
-  is_updated = update_number_field(config.LOGGER.NUM_POST_RETRIES,
-    c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
+  c_struct.num_post_retries, is_updated, 0, 2^32-1)
   is_updated = update_string_field(config.DEFAULT_URL,
-    c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
-  is_updated = update_number_field(config.SZ_UUID_HT,
-    c_struct.uuid_len, is_updated, 1, 2^32 -1)
+  c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+  is_updated, c_struct.uuid_len = update_number_field(config.SZ_UUID_HT,
+  c_struct.uuid_len, is_updated, 1, 2^32 -1)
   is_updated = load_db_data(g_conf, config, is_updated)
   return is_updated
 end
@@ -235,9 +236,9 @@ local function update_ml_configs(g_conf, config)
   local c_struct = g_conf[0]
 
   is_updated = update_file_field(config.DT_DIR, c_struct.dt_dir, is_updated)
-  is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
-  is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
-  is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
+  -- is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
+  -- is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
+  -- is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
   is_updated = update_file_field(config.MMDB_FILE, c_struct.mmdb_file, is_updated)
 
   return is_updated
@@ -268,6 +269,7 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   -- pos 2 = ss
   -- pos 3 = statsd
   has_changed = ffi.cast("unsigned char*", has_changed)
+  ffi.fill(has_changed, ffi.sizeof("unsigned char")*7)
   has_changed[0] = update_rts_configs(g_conf, config.AB)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)

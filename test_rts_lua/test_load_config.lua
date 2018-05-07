@@ -1,11 +1,18 @@
 package.path=package.path .. ";./../src/?.lua"
+-- require 'strict'
 local assertx = require 'assertx'
 local ffi = require 'ab_ffi'
 local json = require 'json'
 local consts = require 'ab_consts'
 local load_config = require 'load_config'
 local cache = require 'cache'
-local config = require 'valid_config'
+-- local dbg = require 'debugger'
+
+local file = io.open("./valid_config.json", "r")
+local config 
+config = file:read("*a")
+file:close()
+
 describe('Load config should', function()
   local confs_size = consts.NUM_SERVICES
   local g_conf = ffi.cast("CFG_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("CFG_TYPE")), ffi.C.free))
@@ -30,7 +37,7 @@ describe('Load config should', function()
       load_config.load_config(config, g_conf, has_changed)
       load_config.load_config(config, g_conf, has_changed)
       for index=0, confs_size -1 do
-        assertx(has_changed[index] == consts.FALSE, "Config should changed for index ", index)
+        assertx(has_changed[index] == consts.FALSE, "Config should be false for index ", index)
       end
       ffi.fill(g_conf, ffi.sizeof("CFG_TYPE"))
       ffi.fill(has_changed, ffi.sizeof("unsigned char")*confs_size )
