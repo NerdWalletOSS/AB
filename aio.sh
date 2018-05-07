@@ -10,7 +10,7 @@ usage(){
 	echo "  -t  Builds AB and runs tests"
 	echo "  -x  Builds a tarball of all the php companents for AB admin"
 	# echo "  -r  Builds and run AB with all other auxillary service"
-  exit 1 ;
+	exit 1 ;
 }
 
 clean(){
@@ -37,7 +37,7 @@ build(){
 	make
 	cd ../
 	rm -rf ./librdkafka
-  git clone https://github.com/edenhill/librdkafka.git
+	git clone https://github.com/edenhill/librdkafka.git
 	cd librdkafka/
 	./configure
 	make
@@ -53,9 +53,14 @@ build(){
 }
 
 start_support_systems(){
-/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning &
+	/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning &
 
+}
 
+run_logger(){
+	cd logger
+	make
+  ./ab_logger&	
 }
 
 install_kafka(){
@@ -64,7 +69,7 @@ install_kafka(){
 	sudo apt-get install zookeeperd -y
 	RES="`echo ruok | nc localhost 2181`"
 	if [[ "$RES" != "imok" ]]
-  then
+	then
 		echo "Zookeeper is not working\n"
 		exit 1
 	fi
@@ -81,15 +86,16 @@ install_kafka(){
 	sudo chown -R kafka:nogroup /opt/kafka
 	sudo chown -R kafka:nogroup /var/lib/kafka
 	sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties &
-	/opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic ab
+	/opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic ab &
+	kill -9 %2
 	/opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181 | grep "ab"
 	RES="`echo $?`"
 	if [[ "$RES" != "0" ]]
-  then
+	then
 		echo "Unable to get registered topic ab"
 		exit 1
 	fi
-
+	kill -9 %1
 }
 
 install_mysql(){
@@ -179,4 +185,4 @@ do
 done
 usage
 
-# sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties 
+# sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
