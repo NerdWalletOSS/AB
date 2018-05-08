@@ -17,7 +17,8 @@ main(
   MODEL_REC_TYPE *M = NULL; int nM;
   MODEL_NAME_TYPE *N = NULL; int num_models;
   FILE *fp = NULL;
-  float *scores = NULL;
+  double *scores = NULL;
+  uint64_t *H = NULL; int nH = 0; // hashes
 
   if ( argc != 4 )  { go_BYE(-1); }
   model_file_name = argv[1];
@@ -25,12 +26,13 @@ main(
   test_file_name  = argv[3];
 
   status = load_names(model_file_name, &N, &num_models); cBYE(status);
-  status = load_model(coeff_file_name, num_models, &M, &nM); cBYE(status);
+  status = load_model(coeff_file_name, num_models, &M, &nM, &H, &nH); 
+  cBYE(status);
   fprintf(stderr, "loaded %d rows \n", nM);
   //----- Start testing
   char url[MAX_LEN_URL+1];
 
-  scores = malloc(num_models * sizeof(float));
+  scores = malloc(num_models * sizeof(double));
   return_if_malloc_failed(scores);
 
   fp = fopen(test_file_name, "r");
@@ -58,6 +60,7 @@ BYE:
   free_if_non_null(M); 
   free_if_non_null(N); 
   fclose_if_non_null(fp);
+  fclose_if_non_null(H);
   free_if_non_null(scores);
   return status;
 }

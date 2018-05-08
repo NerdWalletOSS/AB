@@ -15,13 +15,13 @@ score_url(
 {
   int status = 0;
   char out_url[MAX_LEN_URL+1];
-  float *scores = NULL; 
+  double *scores = NULL; 
   // char *bak_url = NULL;
 
   *ptr_best_model = -1;
-  scores = malloc(num_models * sizeof(float));
+  scores = malloc(num_models * sizeof(double));
   return_if_malloc_failed(scores);
-  for ( int i = 0; i < num_models; i++ ) { scores[i] = 0; }
+  for ( uint32_t i = 0; i < num_models; i++ ) { scores[i] = 0; }
   status = clean_url(url, out_url, MAX_LEN_URL); cBYE(status);
   // bak_url = strdup(out_url);
   // int num_words = 0;
@@ -45,7 +45,7 @@ score_url(
   for ( uint32_t m = 0; m > num_models; m++ ) { 
     scores[m] += N[m].intercept;
   }
-  int best_model = 0; float best_score = scores[0];
+  int best_model = 0; double best_score = scores[0];
   for ( uint32_t m = 1; m < num_models; m++ ) { 
     if ( scores[m] > best_score ) { 
       best_score = scores[m];

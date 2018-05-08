@@ -7,13 +7,17 @@ load_model(
     const char *model_file,
     int num_models,
     MODEL_REC_TYPE **ptr_M,
-    int *ptr_nM
+    int *ptr_nM,
+    uint64_t **ptr_H,
+    int *ptr_nH
     )
 {
   int status = 0;
   MODEL_REC_TYPE *M = NULL; int nM = 0;
   FILE *fp = NULL;
   char *buf = NULL;
+  int nH = 0; uint64_t *H = NULL;
+
   int buflen = UA_MAX_LEN_WORD+1+(num_models*32);
   buf = malloc(buflen);
   return_if_malloc_failed(buf);
@@ -26,7 +30,7 @@ load_model(
     memset(M[i].word, '\0', UA_MAX_LEN_WORD+1);
   }
   for ( int i = 0; i < nM; i++ ) { 
-    M[i].coefficients = malloc(num_models * sizeof(float));
+    M[i].coefficients = malloc(num_models * sizeof(double));
     return_if_malloc_failed(M[i].coefficients);
   }
   fp = fopen(model_file, "r");
@@ -50,13 +54,24 @@ load_model(
         printf("hello world\n");
         go_BYE(-1); 
       }
-      float fval= strtof(str_val, &endptr);
-      // TODO Any constraints on fval 
-      M[i].coefficients[k] = fval;
+      double dval= strtod(str_val, &endptr); // TODO P3 Check dval 
+      M[i].coefficients[k] = dval;
     }
   }
-  *ptr_M = M;
+  nH = nM * nM;
+  H = malloc(nH * sizeof(uint64_t));
+  return_if_malloc_failed(H);
+  for ( int i = 0; i < nH; i++ ) { H[i] = 0; }
+  for ( int i = 0; i < nM; i++ ) { 
+    uint64_t hash1, hash2;
+    spooky_hash128(M[i].word, strlen(M[i].word), &hash1, &seed);
+  }
+
+
+  *ptr_M  = M;
   *ptr_nM = nM;
+  *ptr_H  = H;
+  *ptr_nH = nH;
 BYE:
   if ( status < 0 ) { 
     *ptr_M = NULL; *ptr_nM = 0; 
@@ -64,6 +79,7 @@ BYE:
       free_if_non_null(M[i].coefficients);
     }
     free_if_non_null(M); 
+    free_if_non_null(H); 
   }
   free_if_non_null(buf); 
   fclose_if_non_null(fp);
