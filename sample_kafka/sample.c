@@ -95,11 +95,11 @@ static void dr_msg_cb (rd_kafka_t *g_rk,
 				rd_kafka_err2str(rkmessage->err));
 		// count in statsd
 	}
-	//else
-	//        fprintf(stderr,
-	//                "%% Message delivered (%zd bytes, "
-	//                "partition %"PRId32")\n",
-	//                rkmessage->len, rkmessage->partition);
+	else
+	        fprintf(stderr,
+	                "%% Message delivered (%zd bytes, "
+	                "partition %"PRId32")\n",
+	                rkmessage->len, rkmessage->partition);
 
 	/* The rkmessage is destroyed automatically by librdkafka */
 }

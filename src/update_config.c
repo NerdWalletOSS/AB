@@ -206,7 +206,7 @@ update_config(
   kafka_close_conn();
   if ( g_cfg.kafka.brokers[0] != '\0' ) { 
     // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
-     kafka_open_conn("ab", "127.0.0.1");
+     kafka_open_conn(g_cfg.kafka);
      sprintf(g_buf, "hey in hardcode for demo\0"); 
      kafka_add_to_queue(g_buf);  
   }

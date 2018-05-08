@@ -109,6 +109,9 @@ typedef struct _service_type {
 typedef struct _kafka_cfg_type {
   char brokers[AB_MAX_LEN_SERVER_NAME+1]; 
   char topic[AB_MAX_LEN_KAFKA_TOPIC+1];
+  char queue_size[AB_MAX_LEN_KAFKA_QUEUE_SIZE+1];
+  char retries[AB_MAX_LEN_KAFKA_NUM_RETRIES+1];
+  char max_buffering_time[AB_MAX_LEN_KAFKA_BUF_TIME+1];
 } KAFKA_CFG_TYPE;
 
 typedef struct _cfg_type {
