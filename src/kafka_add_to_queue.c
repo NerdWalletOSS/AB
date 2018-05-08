@@ -17,7 +17,7 @@ int kafka_add_to_queue(char* buf){
   }
 
   fprintf(stderr, "Adding %s\n", buf);
-  rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
+  // rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
 
   size_t len = strlen(buf);
 retry:
