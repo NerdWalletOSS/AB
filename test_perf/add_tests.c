@@ -27,7 +27,7 @@ add_tests(
   int num_variants = AB_MIN_NUM_VARIANTS;
   char url[AB_MAX_LEN_URL+1];
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000);
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000); 
   // allocate test URLs
   test_urls = malloc(num_tests * sizeof(char *));
   return_if_malloc_failed(test_urls);

@@ -12,7 +12,14 @@
 #include "load_rf.h"
 #include "load_mdl.h"
 #include "maxminddb.h"
+#ifdef KAFKA
+#include "kafka_close_conn.h"
+#include "kafka_open_conn.h"
+#include "kafka_add_to_queue.h"
+#endif
+#ifdef MAXMIND
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+#endif
 extern DT_REC_TYPE *g_dt_map; 
 extern size_t g_len_dt_file; 
 extern uint32_t g_num_dt_map; 
@@ -23,6 +30,7 @@ update_config(
     )
 {
   int status = 0;
+  char *buf = NULL; 
   // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
@@ -96,8 +104,12 @@ update_config(
   // default_url, Nothing to do 
   // reload_on_startup, Nothing to do 
   // xy_guid, Nothing to do 
-  // uuid_len, Nothing to do 
 
+  free_if_non_null(g_uuid);
+  if ( g_cfg.max_len_uuid > AB_MAX_LEN_UUID ) { go_BYE(-1); }
+  if ( g_cfg.max_len_uuid < 1 ) { go_BYE(-1); }
+  g_uuid = malloc(g_cfg.max_len_uuid+1);
+  return_if_malloc_failed(g_uuid);
   // justin cat file 
   free_if_non_null(g_justin_cat_lkp);  
   g_n_justin_cat_lkp = 0; 
@@ -151,31 +163,38 @@ update_config(
   }
   //--------------------------------------------------------
   // dt, rf, mdl
-  if ( *g_cfg.dt_file != '\0' ) { 
-    status = load_dt(g_cfg.dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
+  free_if_non_null(g_dt_feature_vector); 
+  free_if_non_null(g_predictions); 
+  if ( g_dt  != NULL ) { rs_munmap(g_dt,  g_len_dt_file); }
+  if ( g_rf  != NULL ) { rs_munmap(g_rf,  g_len_rf_file); }
+  if ( g_mdl != NULL ) { rs_munmap(g_mdl, g_len_mdl_file); }
+  if ( *g_cfg.dt_dir != '\0' ) { 
+    int buflen = strlen(g_cfg.dt_dir) + strlen("dt.bin") + 4 ;
+    if ( buflen > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    buf = malloc(buflen); return_if_malloc_failed(buf);
+    memset(buf, '\0', buflen); 
+    sprintf(g_dt_file, "%s/dt.bin", g_cfg.dt_dir); 
+    status = load_dt(g_dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
-  }
-  if ( *g_cfg.rf_file != '\0' ) { 
-    status = load_rf(g_cfg.rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
+    status = load_rf(g_rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
     cBYE(status);
-  }
-  if ( *g_cfg.mdl_file != '\0' ) { 
-    status = load_mdl(g_cfg.mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
+    status = load_mdl(g_mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
     g_predictions = malloc(g_n_mdl * sizeof(float));
+
+    free_if_non_null(g_dt_feature_vector); 
+    status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
+    g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
+    return_if_malloc_failed(g_dt_feature_vector);
   }
   //--------------------------------------------------------
 
-  free_if_non_null(g_dt_feature_vector); 
-  if  ( g_n_dt_feature_vector > 0 ) { 
-    status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status);
-    g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
-  }
-
+#ifdef MAXMIND
   if ( g_mmdb_in_use ) { 
     MMDB_close(&g_mmdb);
     g_mmdb_in_use = false;
   }
+  g_mmdb_in_use = false;
   if ( *g_cfg.mmdb_file != '\0' ) { 
     status = MMDB_open(g_cfg.mmdb_file, 0, &g_mmdb); 
     if ( status != MMDB_SUCCESS ) { go_BYE(-1); }
@@ -183,7 +202,20 @@ update_config(
     // FIX 2nd parameter TODO P1
     g_mmdb_in_use = true;
   }
+#endif
+#ifdef KAFKA
+  kafka_close_conn();
+  if ( g_cfg.kafka.brokers[0] != '\0' ) { 
+    // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
+     kafka_open_conn("ab", "127.0.0.1");
+     sprintf(g_buf, "hey in hardcode for demo\0"); 
+     kafka_add_to_queue(g_buf);  
+  }
+#endif
+  // ---------------------
+  // INDRAJEET: PUT IN STUFF FOR LUA 
 
 BYE:
+  free_if_non_null(buf);
   return status;
 }

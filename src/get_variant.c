@@ -6,6 +6,10 @@
 #include "log_decision.h"
 #include "get_ss_info.h"
 #include "get_variant.h"
+#include "make_curl_payload.h"
+#ifdef KAFKA
+#include "kafka_add_to_queue.h"
+#endif
 
 int 
 get_variant(
@@ -21,31 +25,29 @@ get_variant(
   uint64_t curr_time = get_time_usec();
 
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
-  memset(g_uuid, '\0', g_cfg.uuid_len+1);
+  memset(g_uuid, '\0', g_cfg.max_len_uuid+1);
   //-------------------------------------------------------------
   status = get_test_name(args,  test_name);  cBYE(status);
-  status = get_test_idx(test_name, test_type, &test_idx); 
-  if ( status < 0 ) { 
-    fprintf(stderr, "%s\n", args);
-  }
+  status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   cBYE(status);
   T = &(g_tests[test_idx]);
   g_log_get_variant_calls++; 
   // Extract UUID
-  status = extract_name_value(args, "UUID=", '&', g_uuid, g_cfg.uuid_len);
+  status = extract_name_value(args, "UUID=", '&', g_uuid, g_cfg.max_len_uuid);
   if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { 
     status = -1;
     g_log_no_uuid++;
   }
   cBYE(status);
-  status = chk_uuid(g_uuid, g_cfg.uuid_len); cBYE(status);
+  status = chk_uuid(g_uuid, g_cfg.max_len_uuid); 
   if ( status < 0 ) {
     g_log_bad_uuid++;
   }
+  cBYE(status);
   get_tracer(args, in_tracer);
   uint32_t nV = g_tests[test_idx].num_variants;
   //--------------------------------------------------------
-  // Deal with exclusions for categorical attributes
+  // Deal with filters
   bool is_exclude = false; 
   if ( T->has_filters ) {  // ask Session Service
     status = get_ss_info(g_uuid); 
@@ -66,24 +68,27 @@ get_variant(
   // Deal with special case of Terminated test 
   if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
     uint32_t final_variant_idx = g_tests[test_idx].final_variant_idx[0];
-    if ( final_variant_idx > nV ) { go_BYE(-1); }
+    if ( final_variant_idx >= nV ) { go_BYE(-1); }
     const char *cd = g_tests[test_idx].variants[final_variant_idx].custom_data;
+    const char *vname = g_tests[test_idx].variants[final_variant_idx].name;
+    int vid = g_tests[test_idx].variants[final_variant_idx].id;
     if ( cd == NULL ) { cd = "null"; }
     int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",
-        g_tests[test_idx].variants[final_variant_idx].name,
-        g_tests[test_idx].variants[final_variant_idx].id,
+        vname, 
+        vid,
         cd,
         test_name, 
-        g_tests[test_idx].id);
-    if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
-    goto BYE;
+        g_tests[test_idx].id); if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
+    goto BYE; // Nothing more to do. Early exit
   }
   //-----------------------------------------------------------
   if ( g_tests[test_idx].state != TEST_STATE_STARTED )  { go_BYE(-1); }
   uint64_t uuid_hash = 
-    spooky_hash64(g_uuid, g_cfg.uuid_len, g_tests[test_idx].seed);
+    spooky_hash64(g_uuid, g_cfg.max_len_uuid, g_tests[test_idx].seed);
   //-----------------------------------------------------------
   uint32_t bin = uuid_hash % AB_NUM_BINS;
+  if ( g_tests[test_idx].is_dev_specific ) { go_BYE(-1); }
+
   uint32_t variant_idx = g_tests[test_idx].variant_per_bin[0][bin];
   if ( variant_idx >= g_tests[test_idx].num_variants ) { go_BYE(-1); }
   uint32_t variant_id  = g_tests[test_idx].variants[variant_idx].id;
@@ -99,15 +104,22 @@ get_variant(
   if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
   //------------------------------------------------
   PAYLOAD_TYPE lcl_payload;
-  memset(lcl_payload.uuid, '\0', AB_MAX_LEN_UUID+1);
+  zero_payload(&lcl_payload);
   strcpy(lcl_payload.uuid, g_uuid);
   strcpy(lcl_payload.in_tracer,  in_tracer);
   strcpy(lcl_payload.out_tracer, g_out_tracer);
   lcl_payload.test_id    = g_tests[test_idx].id;
   lcl_payload.variant_id = variant_id;
   lcl_payload.time       = curr_time;
-  status = log_decision(lcl_payload);
-  cBYE(status);
+  if ( g_rk != NULL ) {  // kafka in use 
+    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD); cBYE(status);
+#ifdef KAFKA
+    status = kafka_add_to_queue(g_curl_payload); cBYE(status);
+#endif
+  }
+  else {
+    status = log_decision(lcl_payload); cBYE(status);
+  }
   //--------------------------------------------------------
 BYE:
   return status;

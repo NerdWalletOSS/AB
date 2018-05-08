@@ -23,6 +23,7 @@ zero_test(
   ptr_test-> is_dev_specific = false;
   ptr_test->state = 0;
   ptr_test->seed = 0;
+  ptr_test->num_devices = 0;
 
   ptr_test->num_variants = 0;
   ptr_test->variants = NULL;
@@ -51,19 +52,14 @@ free_test(
 
   free_if_non_null(ptr_test->final_variant_id);
   free_if_non_null(ptr_test->final_variant_idx);
+  uint32_t num_devices = ptr_test->num_devices;
   if ( ptr_test->variant_per_bin != NULL ) { 
-    int num_devices = 0;
-    if ( ptr_test->is_dev_specific ) {
-      num_devices = g_n_justin_cat_lkp; 
-    }
-    else {
-      num_devices = 1;  
-    }
     for ( int i = 0; i < num_devices; i++ ) { 
       free_if_non_null(ptr_test->variant_per_bin[i]);
     }
   }
   free_if_non_null(ptr_test->variant_per_bin);
+  ptr_test->num_devices = 0;
   memset(ptr_test, '\0', sizeof(TEST_META_TYPE));
 BYE:
   return status;

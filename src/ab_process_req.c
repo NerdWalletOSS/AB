@@ -29,6 +29,10 @@
 #include "delete_test.h"
 #include "stop_test.h"
 #include "l_chk_test.h"
+#include "get_utm_kv.h"
+#ifdef KAFKA
+#include "kafka_close_conn.h"
+#endif
 
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
@@ -124,10 +128,18 @@ ab_process_req(
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
       }
+#ifdef KAFKA
+      kafka_close_conn();
+#endif
       break;
       //--------------------------------------------------------
     case HealthCheck :  /* done by C */
     case Ignore :  /* done by C */
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
+    case IgnoreKafkaErrors :  /* done by C */
+      g_ignore_kafka_errors = true;
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -225,8 +237,12 @@ ab_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
       break;
       //--------------------------------------------------------
-    case TestInfo : /* done by Lua */
+    case TestInfo : /* done by Lua and C */
       status = l_test_info(args); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case UTMKV : /* done by C */
+      status = get_utm_kv(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

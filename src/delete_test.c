@@ -14,7 +14,7 @@ delete_test(
   int test_type, test_idx;
 
   status = get_test_from_args(args, &test_idx, &test_type); cBYE(status);
-  status = zero_test(test_idx); go_BYE(-1);
+  status = free_test(test_idx); go_BYE(-1);
 BYE:
   return status;
 }

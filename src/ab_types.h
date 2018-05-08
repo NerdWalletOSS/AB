@@ -28,6 +28,7 @@ typedef enum _ab_req_type {
   Halt, // Read &  C
   HealthCheck, // Read &  C
   Ignore, // Read &  C
+  IgnoreKafkaErrors, // Read &  C
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
   MakeFeatureVector, // Read &  Lua
@@ -38,6 +39,7 @@ typedef enum _ab_req_type {
   Router, // Read &  C
   StopTest, // Write & C (for testing)
   TestInfo, // Read &  Lua
+  UTMKV, // Read &  C
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
 
@@ -54,6 +56,7 @@ typedef struct _test_meta_type {
   char name[AB_MAX_LEN_TEST_NAME+1];
   int test_type; // whether AB_TEST_TYPE or XY_TEST_TYPE or ..
   uint32_t id; // external test id
+  uint32_t ramp; // ramp, starts at 1 and increments every time percentage changes
   uint64_t name_hash; // set by Lua, read by C 
   uint64_t external_id; // exposed to external entities
   bool has_filters; // has filters using categorical/boolean attributes
@@ -66,6 +69,8 @@ typedef struct _test_meta_type {
   VARIANT_REC_TYPE *variants;
 
   // If device specific is not set, we use device_idx = 0
+  uint32_t num_devices; // redundant but useful. 
+  // above Should be same as g_n_justin_cat_lkp
   uint32_t *final_variant_id; // [g_n_justin_cat_lkp]; 
   uint32_t *final_variant_idx; // [g_n_justin_cat_lkp]; 
   uint8_t **variant_per_bin; // [g_n_justin_cat_lkp][AB_NUM_BINS]; 
@@ -76,6 +81,7 @@ typedef struct _payload_type {
   char uuid[AB_MAX_LEN_UUID+1];
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
+  uint32_t ramp;
   uint64_t time;
   uint32_t test_id;
   uint32_t variant_id;
@@ -102,7 +108,12 @@ typedef struct _service_type {
   char health_url[AB_MAX_LEN_URL+1]; 
 } SERVICE_TYPE;
 
-typedef struct _cftype {
+typedef struct _kafka_cfg_type {
+  char brokers[AB_MAX_LEN_SERVER_NAME+1]; 
+  char topic[AB_MAX_LEN_KAFKA_TOPIC+1];
+} KAFKA_CFG_TYPE;
+
+typedef struct _cfg_type {
 
   uint16_t  port;  // port on which AB RTS will run 
   bool verbose;    // how chatty should RTS be 
@@ -111,13 +122,14 @@ typedef struct _cftype {
   SERVICE_TYPE ss;
   SERVICE_TYPE statsd;
   SERVICE_TYPE webapp;
+  KAFKA_CFG_TYPE kafka;
 
   uint32_t sz_log_q;
   int num_post_retries;  
   
   char default_url[AB_MAX_LEN_REDIRECT_URL+1]; 
 
-  int uuid_len; 
+  int max_len_uuid; 
   uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
   // START: For classifying user agent 
@@ -128,9 +140,7 @@ typedef struct _cftype {
   char device_type_file[AB_MAX_LEN_FILE_NAME+1]; 
   // STOP: For classifying user agent 
   // START: For decision tree
-  char dt_file[AB_MAX_LEN_FILE_NAME+1];   
-  char rf_file[AB_MAX_LEN_FILE_NAME+1];   
-  char mdl_file[AB_MAX_LEN_FILE_NAME+1];   
+  char dt_dir[AB_MAX_LEN_FILE_NAME+1];   
   // STOP: For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
 

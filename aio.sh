@@ -1,132 +1,188 @@
 #!/bin/bash
 usage(){
-  echo "Usage: $0 [-h|-b|-c|-p] -- program to build AB and pack the bin and dependencies"
-  echo "where:"
-  echo "  -h  shows this message"
-  echo "  -b  builds AB and places everything in the bin directory"
-  echo "  -o  Same as -b but doesn't install packages build"
-  echo "  -c  Cleans out all the binary files"
-  echo "  -p  Builds tarballs for AB and abadmin in addition to building everything"
-  echo "  -t  Builds AB and runs tests"
-  echo "  -x  Builds a tarball of all the php companents for AB admin"
-  exit 1 ;
+	echo "Usage: $0 [-h|-b|-c|-p] -- program to build AB and pack the bin and dependencies"
+	echo "where:"
+	echo "  -h  shows this message"
+	echo "  -b  builds AB and places everything in the bin directory"
+	echo "  -o  Same as -b but doesn't install packages build"
+	echo "  -c  Cleans out all the binary files"
+	echo "  -p  Builds tarballs for AB and abadmin in addition to building everything"
+	echo "  -t  Builds AB and runs tests"
+	echo "  -x  Builds a tarball of all the php companents for AB admin"
+	# echo "  -r  Builds and run AB with all other auxillary service"
+	exit 1 ;
 }
 
 clean(){
-  rm -rf bin
-  rm -f bin.tar.gz
-  make -C ./src clean
-  make -C ./curl-7.51.0 clean
+	rm -rf bin
+	rm -f bin.tar.gz
+	make -C ./src clean
+	make -C ./curl-7.51.0 clean
 }
 
 buildall(){
-  sudo apt-get update
-  sudo apt-get install gcc python python-pip cmake -y
-  sudo pip install pystatsd
-  clean
-  set -e
-  build
+	sudo apt-get update
+	sudo apt-get install gcc python python-pip cmake -y
+	sudo pip install pystatsd
+	clean
+	set -e
+	build
 }
 
 build(){
-  rm -rf bin
-  mkdir bin
-  cd ./curl-7.51.0/
-  ./configure
-  make
-  cd ../
-  mkdir ./bin/libs
-  cd ./src
-  make
-  cp ab_httpd ../bin
-  find ../ -name "*.so*" -exec cp {} ../bin/libs \;
-  find ./ -name "*.lua" -exec cp --parents {} ../bin \;
-  cd ../
-  set +e
+	rm -rf bin
+	mkdir bin
+	cd ./curl-7.51.0/
+	./configure
+	make
+	cd ../
+	rm -rf ./librdkafka
+	git clone https://github.com/edenhill/librdkafka.git
+	cd librdkafka/
+	./configure
+	make
+	cd ../
+	cd ./src
+	make
+	mkdir -p ../bin/libs
+	cp ab_httpd ../bin
+	find ../ -name "*.so*" -exec cp {} ../bin/libs \;
+	find ./ -name "*.lua" -exec cp --parents {} ../bin \;
+	cd ../
+	set +e
+}
+
+start_support_systems(){
+	/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning &
+
+}
+
+run_logger(){
+	cd logger
+	make
+  ./ab_logger&	
+}
+
+install_kafka(){
+	sudo apt-get update
+	sudo apt-get install default-jre -y
+	sudo apt-get install zookeeperd -y
+	RES="`echo ruok | nc localhost 2181`"
+	if [[ "$RES" != "imok" ]]
+	then
+		echo "Zookeeper is not working\n"
+		exit 1
+	fi
+	sudo adduser --system --no-create-home --disabled-password --disabled-login kafka
+	wget "http://www-eu.apache.org/dist/kafka/1.0.1/kafka_2.12-1.0.1.tgz"
+	curl http://kafka.apache.org/KEYS | gpg --import
+	wget https://dist.apache.org/repos/dist/release/kafka/1.0.1/kafka_2.12-1.0.1.tgz.asc
+	gpg --verify kafka_2.12-1.0.1.tgz.asc kafka_2.12-1.0.1.tgz
+	sudo mkdir /opt/kafka
+	sudo tar -xvzf kafka_2.12-1.0.1.tgz --directory /opt/kafka --strip-components 1
+	rm -rf kafka_2.12-1.0.1.tgz kafka_2.12-1.0.1.tgz.asc
+	sudo mkdir /var/lib/kafka
+	sudo mkdir /var/lib/kafka/data
+	sudo chown -R kafka:nogroup /opt/kafka
+	sudo chown -R kafka:nogroup /var/lib/kafka
+	sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties &
+	/opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic ab &
+	kill -9 %2
+	/opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181 | grep "ab"
+	RES="`echo $?`"
+	if [[ "$RES" != "0" ]]
+	then
+		echo "Unable to get registered topic ab"
+		exit 1
+	fi
+	kill -9 %1
 }
 
 install_mysql(){
-  sudo apt-get update
-  sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password x'
-  sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
-  sudo apt-get -y install mysql-server
-  mysql -uroot -px -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
+	sudo apt-get update
+	sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password x'
+	sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
+	sudo apt-get install mysql-server -y
+	mysql -uroot -px -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
 }
 
 install_apache(){
-  which apache2
-  RES="`echo $?`"
-  if [ $RES -eq 1 ]
-  then
-    sudo apt-get install lua apache2 libapache2-mod-php -y
-    cd ../
-    sudo ln -s AB/ /var/www/html/AB
-    mkdir -p /opt/abadmin/
-    sudo chown `whoami`:`whoami` /opt/abadmin
-    echo -e '{\n  "dbhost" : "127.0.0.1",\n  "dbname" : "abdb",\n  "dbuser" : "root",\n  "dbpass" : "",\n  "webapp_server" : "localhost",\n  "webapp_port" : "8080",\n  "ab_rts_server" : "",\n  "ab_rts_port" : "8000",\n  "ab_log_server" : "localhost",\n  "ab_log_port" : "8004",\n  "rts_finder_server" : "localhost",\n  "rts_finder_port" : "8020",\n  check_url_reachable" : "false",\n  "default_landing_page" : "http://www.nerdwallet.com"\n}' > /opt/abadmin/db.json
-    sudo sed  -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
-    sudo /etc/init.d/apache2 restart
-    cd -
-  fi
+	which apache2
+	RES="`echo $?`"
+	if [ $RES -eq 1 ]
+	then
+		sudo apt-get install lua apache2 libapache2-mod-php -y
+		cd ../
+		sudo ln -s AB/ /var/www/html/AB
+		mkdir -p /opt/abadmin/
+		sudo chown `whoami`:`whoami` /opt/abadmin
+		echo -e '{\n  "dbhost" : "127.0.0.1",\n  "dbname" : "abdb",\n  "dbuser" : "root",\n  "dbpass" : "",\n  "webapp_server" : "localhost",\n  "webapp_port" : "8080",\n  "ab_rts_server" : "",\n  "ab_rts_port" : "8000",\n  "ab_log_server" : "localhost",\n  "ab_log_port" : "8004",\n  "rts_finder_server" : "localhost",\n  "rts_finder_port" : "8020",\n  check_url_reachable" : "false",\n  "default_landing_page" : "http://www.nerdwallet.com"\n}' > /opt/abadmin/db.json
+		sudo sed  -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
+		sudo /etc/init.d/apache2 restart
+		cd -
+	fi
 }
 
 run_lua_tests(){
-  sudo luarocks install busted Lua-cURL luasec
-  cd ./test_rts_lua/
-  busted ./test_*.lua --lua=luajit -c  &>/dev/null
-  STATUS="`echo $?`"
-  if [ $STATUS -eq 1 ]
-  then
-    echo "ERROR RTS lua tests failed"
-    exit 1
-  fi
+	sudo luarocks install busted Lua-cURL luasec
+	cd ./test_rts_lua/
+	busted ./test_*.lua --lua=luajit -c  &>/dev/null
+	STATUS="`echo $?`"
+	if [ $STATUS -eq 1 ]
+	then
+		echo "ERROR RTS lua tests failed"
+		exit 1
+	fi
 }
 
 while getopts "bochptx" opt;
 do
-  case $opt in
-    h)
-      usage
-      ;;
-    p)
-      # echo "-f was triggered, Parameter: $OPTARG" >&2
-      build
-      tar -cvzf bin.tar.gz ./bin
-      tar -cvzf php.tar.gz php app
-      exit 0
-      ;;
-    b)
-      buildall
-      exit 0
-      ;;
-    o)
-      build
-      exit 0
-      ;;
-    c)
-      clean
-      exit 0
-      ;;
-    t)
-      buildall
-      install_apache
-      install_mysql
-      run_lua_tests
-      echo "All Tests succeeded"
-      exit 0
-      ;;
-    x)
-      tar -cvzf php.tar.gz php app
-      exit 0
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG" 1>&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." 1>&2
-      exit 1
-      ;;
-  esac
+	case $opt in
+		h)
+			usage
+			;;
+		p)
+			# echo "-f was triggered, Parameter: $OPTARG" >&2
+			build
+			tar -cvzf bin.tar.gz ./bin
+			tar -cvzf php.tar.gz php app
+			exit 0
+			;;
+		b)
+			buildall
+			exit 0
+			;;
+		o)
+			build
+			exit 0
+			;;
+		c)
+			clean
+			exit 0
+			;;
+		t)
+			buildall
+			install_apache
+			install_mysql
+			install_kafka
+			run_lua_tests
+			echo "All Tests succeeded"
+			exit 0
+			;;
+		x)
+			tar -cvzf php.tar.gz php app
+			exit 0
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" 1>&2
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." 1>&2
+			exit 1
+			;;
+	esac
 done
 usage
+
+# sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties

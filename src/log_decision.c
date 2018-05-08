@@ -39,8 +39,8 @@ log_decision(
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
   }
   else {
-    memset(g_curl_payload,            '\0', AB_MAX_LEN_PAYLOAD+1);
-    status = make_curl_payload(lcl_payload, g_curl_payload);
+    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
+    cBYE(status);
     status = post_url(g_ch, g_curl_payload, NULL);
     switch ( status ) {
       case 0  : /* all is well */ break;

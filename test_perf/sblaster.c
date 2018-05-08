@@ -1,6 +1,7 @@
 #include "incs.h"
 #include "ab_constants.h"
 #include "add_tests.h"
+#include "make_guid.h"
 #include "auxil.h"
 #include "execute.h"
 #include "setup_curl.h"
@@ -41,9 +42,11 @@ main(
   if ( ( itemp < 80 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
   uint16_t port = (uint16_t)itemp; 
   //----------------------------------------
+  int num_restarts = 1;
+  int num_outside_iters = 1;
   int num_tests = 16;
-  int niter = 8;
-  int nU = 1024; 
+  int niter = 2; // TODO FIX P1
+  int nU = 1024;  // TODO FIX P1
   int start_uuid = 12345678;
   H = malloc(nH * sizeof(int)); return_if_malloc_failed(H);
 
@@ -51,70 +54,83 @@ main(
   // Set base URL
   memset(base_url, '\0', (MAX_LEN_SERVER_NAME+1+64));
   sprintf(base_url, "%s:%d", server, port);
-  // Restart AB RTS
-  fprintf(stderr, "Restarting the ab server\n");
-  sprintf(url, "%s:%d/Restart", server, port);
-  status = execute(ch, url, &http_code); cBYE(status);
-  if ( http_code != 200 ) { go_BYE(-1); }
-  //-- Add a bunch of tests 
-  status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
 
   double avg_time = 0;
   double min_time = INT_MAX;
   double max_time = INT_MIN;
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10);
-  // Get variants for these tests for nU users
   int num_bad = 0; 
   uint64_t t1, t2, t;
-  // T is used to measure individual times 
   int hit_ctr = 0; // number of hits with valid responses
   int ndots = 0;
   int num_over = 0;
-  int exp_num_hits = niter * nU * num_tests; 
-  for ( int iter = 0; iter < niter; iter++ ) {
-    for ( int uid = 0; uid < nU; uid++ ) {
-      for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
-        sprintf(url, "%s&UUID=%d", test_urls[test_id], start_uuid+uid);
-        t1 = get_time_usec();
-        execute(ch, url, &http_code);
-        if ( num_bad > 10000 ) { goto DONE; }
-        if ( http_code != 200 ) { continue; num_bad++; }
-        t2 = get_time_usec();
-        if ( t2 < t1 ) {  continue; }
-        t = t2 - t1;
-        if ( t > max_time ) { max_time = t; }
-        if ( t < min_time ) { min_time = t; }
-        avg_time += t;
-        hit_ctr++;
-        t = t % 1000; // convert to msec
-        if ( (int)t >= nH ) { t = nH; num_over++; }
-        H[t]++;
-        if ( ( hit_ctr % 500 ) == 0 ) {
-          sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
-          status = execute(ch, url, &http_code); cBYE(status);
-          if ( http_code != 200 ) { go_BYE(-1); }
-          ndots++; 
-          fprintf(stderr, ".");
-          if ( ndots >= 64 ) { 
-            fprintf(stderr, "%d/%d\n", hit_ctr, exp_num_hits);
-            ndots = 0;
+  int exp_num_hits = num_restarts * num_outside_iters * niter * nU * num_tests; 
+  for ( int r = 0; r  < num_restarts; r++ ) {
+    // Restart AB RTS
+    fprintf(stderr, "Restarting the ab server\n");
+    sprintf(url, "%s:%d/Restart", server, port);
+    status = execute(ch, url, &http_code); cBYE(status);
+    if ( http_code != 200 ) { go_BYE(-1); }
+    for ( int kk = 0; kk < num_outside_iters; kk++ ) {
+      //-- Add a bunch of tests 
+      status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
+
+      curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000); // TODO FIX 
+      // Get variants for these tests for nU users
+      for ( int iter = 0; iter < niter; iter++ ) {
+      // T is used to measure individual times 
+        for ( int uid = 0; uid < nU; uid++ ) {
+          for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
+            char tracer[AB_MAX_LEN_TRACER+1];
+            memset(tracer, '\0', AB_MAX_LEN_TRACER+1);
+            status = make_guid(NULL, tracer, AB_MAX_LEN_TRACER); 
+            cBYE(status);
+            sprintf(url, "%s&UUID=%d&Tracer=%s", 
+                test_urls[test_id], start_uuid+uid, tracer);
+            t1 = get_time_usec();
+            execute(ch, url, &http_code);
+            if ( num_bad > 10000 ) { goto DONE; }
+            if ( http_code != 200 ) { continue; num_bad++; }
+            t2 = get_time_usec();
+            if ( t2 < t1 ) {  continue; }
+            t = t2 - t1;
+            if ( t > max_time ) { max_time = t; }
+            if ( t < min_time ) { min_time = t; }
+            avg_time += t;
+            hit_ctr++;
+            t = t % 1000; // convert to msec
+            if ( (int)t >= nH ) { t = nH; num_over++; }
+            H[t]++;
+            if ( ( hit_ctr % 500 ) == 0 ) {
+              sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
+              status = execute(ch, url, &http_code); cBYE(status);
+              if ( http_code != 200 ) { go_BYE(-1); }
+              ndots++; 
+              fprintf(stderr, ".");
+              if ( ndots >= 64 ) { 
+                fprintf(stderr, "%d/%d\n", hit_ctr, exp_num_hits);
+                ndots = 0;
+              }
+            }
           }
         }
       }
+      // Stop tests and do some more GetVariant requests.
+      status = stop_tests(ch, server, port, num_tests); cBYE(status);
+      for ( int uid = 0; uid < nU; uid++ ) {
+        for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
+          sprintf(url, "%s&UUID=%d", test_urls[test_id], start_uuid+uid);
+          execute(ch, url, &http_code);
+          if ( http_code != 200 ) { continue; num_bad++; }
+        }
+      }
+      // Delete all tests 
+      status = del_tests(ch, server, port, num_tests); cBYE(status);
     }
   }
-  // Stop tests and do some more GetVariant requests.
-  status = stop_tests(ch, server, port, num_tests); cBYE(status);
-  for ( int uid = 0; uid < nU; uid++ ) {
-    for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
-      sprintf(url, "%s&UUID=%d", test_urls[test_id], start_uuid+uid);
-      execute(ch, url, &http_code);
-      if ( http_code != 200 ) { continue; num_bad++; }
-    }
-  }
-  // Delete all tests 
-  status = del_tests(ch, server, port, num_tests); cBYE(status);
+  sprintf(url, "%s:%d/Halt", server, port);
+  status = execute(ch, url, &http_code); cBYE(status);
+  if ( http_code != 200 ) { go_BYE(-1); }
 DONE:
   fprintf(stderr, "num_over = %d \n", num_over);
   avg_time /= hit_ctr;

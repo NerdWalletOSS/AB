@@ -14,7 +14,7 @@ local function post_proc_preds(
   local ccid_mapping = assert(cache.get('ccid_mapping'),
     'CCID_MAPPING missing from cache.')
   local n_cards = assert(get_n_cards(), 'get_n_cards failed.')
-  assertx(n_opvec == n_cards, 'feature vector length is ,',
+  assertx(n_opvec == n_cards, 'feature vector length is ',
     tostring(n_opvec), ', but ccid_mapping says length is ', 
     tostring(n_cards))
   for idx, ccid in pairs(ccid_mapping) do

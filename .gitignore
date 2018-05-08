@@ -113,3 +113,6 @@ dkms.conf
 #Created directories
 bin
 mysql-connector-c-6.1.6-src
+
+#Created binaries
+utm_kv/src/utm_kv

@@ -124,7 +124,7 @@ end
 
 local mysql_query = function( self, qstr )
   self:log("mysql_query:", qstr)
-  ret = ffi.C.mysql_query( self.conn, qstr )
+  local ret = ffi.C.mysql_query( self.conn, qstr )
   if ret ~= 0 then
     dbg()
     error( "fatal:" .. ffi.string(ffi.C.mysql_error(self.mysql)))

@@ -6,6 +6,70 @@ local json = require 'json'
 local sql = require 'sql'
 -- local dbg = require 'debugger'
 
+local function is_present(v_table)
+  if v_table == nil then
+    return false
+  else
+    return true
+  end
+end
+
+local function is_modified(a, b, prev)
+  if prev == consts.TRUE then
+    return consts.TRUE
+  end
+  if a == b then
+    return consts.FALSE
+  else
+    return consts.TRUE
+  end
+end
+
+
+local function update_string_field(field, g_conf_value, is_updated, min, max)
+  if is_updated ~= consts.TRUE then
+    is_updated = consts.FALSE
+  end
+  min = min or 0
+  max = max or consts.AB_MAX_LEN_ARGS
+  if is_present(field) then
+    local val = field.VALUE
+    is_updated = is_modified(ffi.string(g_conf_value) ,val, is_updated)
+    assertx(#val >= min and #val <= max, "Invalid length. Length is ", #val, " for ", val)
+    ffi.copy(g_conf_value, val)
+  end
+
+  return is_updated
+end
+
+local function update_file_field(field, g_conf_value, is_updated, min, max)
+  if is_updated ~= consts.TRUE then
+    is_updated = consts.FALSE
+  end
+  min = min or 1
+  max = max or consts.AB_MAX_LEN_FILE_NAME
+  -- TODO check if file exists
+  return update_string_field(field, g_conf_value, is_updated, min, max)
+end
+
+local function update_number_field(field, g_conf_value, is_updated, min, max)
+  if is_updated ~= consts.TRUE then
+    is_updated = consts.FALSE
+  end
+  min = min or 0
+  max = max or 2^32
+
+  if is_present(field) then
+    local val = assert(tonumber(field.VALUE), "must be valid number")
+    assert(val >= min and val <= max, "Value must be in the valid range of min ", min, " and max ", max)
+    is_updated = is_modified(g_conf_value ,val, is_updated)
+    g_conf_value = val
+  end
+  return is_updated, g_conf_value
+end
+
+
+
 local function file_exists(name)
   local f=io.open(name,"r")
   if f~=nil then
@@ -23,54 +87,16 @@ local function get_value_from_bool(x)
   end
 end
 
-local function is_modified(a, b, prev)
-  if prev == consts.TRUE then
-    return consts.TRUE
-  end
-  if a == b then
-    return consts.FALSE
-  else
-    return consts.TRUE
-  end
-end
-
-local function is_present(v_table)
-  if v_table == nil then
-    return false
-  else
-    return true
-  end
-end
-
 local function update_config(c_struct, config)
   local is_updated = consts.FALSE
-  if is_present(config.PORT) then
-    local port = tonumber(config.PORT.VALUE)
-    is_updated = is_modified(c_struct.port ,port, is_updated)
-    assertx(port >=0 and port <= 2^16, "Port number must be in the valid range", port)
-    c_struct.port = port
-  end
-  if is_present(config.SERVER) then
-    local server = config.SERVER.VALUE
-    is_updated = is_modified(ffi.string(c_struct.server),server, is_updated)
-    assertx(#server > 0 and #server <= consts.AB_MAX_LEN_SERVER_NAME, "server name length  must be in the valid range", server)
-    ffi.copy(c_struct.server, server)
-  end
-  -- TODO seems like there is no url for statsd
-  if is_present(config.URL) then
-    local url = config.URL.VALUE
-    is_updated = is_modified(ffi.string(c_struct.url), url)
-    assertx(#url > 0 and #url <= consts.AB_MAX_LEN_URL, "url length  must be in the valid range", url)
-    ffi.copy(c_struct.url, url)
-  end
-
-  if is_present(config.HEALTH_URL) then
-    local health_url = config.HEALTH_URL.VALUE
-    is_updated = is_modified(ffi.string(c_struct.health_url), health_url, is_updated)
-    assertx(#health_url > 0 and #health_url <= consts.AB_MAX_LEN_URL, "url length  must be in the valid range", url)
-    ffi.copy(c_struct.health_url, health_url)
-  end
-
+  is_updated, c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
+  2^16 - 1)
+  is_updated = update_string_field(config.SERVER, c_struct.server, is_updated,
+  1, consts.AB_MAX_LEN_SERVER_NAME)
+  is_updated = update_string_field(config.URL, c_struct.url, is_updated, 1,
+  consts.AB_MAX_LEN_URL)
+  is_updated = update_string_field(config.HEALTH_URL, c_struct.health_url,
+  is_updated, 1, consts.AB_MAX_LEN_URL)
   return is_updated
 end
 
@@ -85,7 +111,7 @@ function load_cfg.db_connect(mysql)
   local pass = mysql.PASSWORD.VALUE
   assert(pass ~= nil and type(pass) == "string", "Mysql entry must have a valid password")
   local port = tonumber(mysql.PORT.VALUE)
-  assert(port ~= nil and port >= 0 and port < 2^16, "Mysql entry must have a valid port")
+  assert(port ~= nil and port >= 0 and port < 2^16 - 1, "Mysql entry must have a valid port")
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
   -- print(host, user, pass, db, port)
@@ -107,13 +133,10 @@ local function load_db_data(g_conf, config, is_updated)
 end
 
 local function update_rts_configs(g_conf, config)
-  is_updated = consts.FALSE
-  if is_present(config.PORT) then
-    local port = assert(tonumber(config.PORT.VALUE), "must be a valid port number")
-    assert(port ~= nil and port >= 0 and port < 2^16, "RTS entry must have a valid port")
-    is_updated = is_modified(g_conf[0].port, port, is_updated)
-    g_conf[0].port = port
-  end
+  local c_struct = g_conf[0]
+  local is_updated = consts.FALSE
+  is_updated,  c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
+  2^16-1)
   if is_present(config.VERBOSE) then
     local verbose = -1
     if config.VERBOSE.VALUE:lower() == "false" then
@@ -126,65 +149,19 @@ local function update_rts_configs(g_conf, config)
       error("VERBOSE can only be true or false")
     end
   end
-  if is_present(config.LOGGER.SZ_LOG_Q) then
-    local log_size = assert(tonumber(config.LOGGER.SZ_LOG_Q.VALUE), "must be a valid queue size")
-    assert(log_size >=0 and log_size <= 2^32, "The log size must be a valid number")
-    is_updated = is_modified(g_conf[0].sz_log_q, log_size, is_updated)
-    g_conf[0].sz_log_q = log_size
-  end
-  if is_present(config.LOGGER.NUM_POST_RETRIE) then
-    local num_retries = assert(tonumber(config.LOGGER.NUM_POST_RETRIES.VALUE), "Must be  valid number for max retries")
-    assert(num_retries >=0 and num_retries <= 2^32, "Number or retries must be a valid value") -- TODO chat with Ramesh why not uint32_t
-    is_updated = is_modified(g_conf[0].num_post_retries, num_retries, is_updated)
-    g_conf[0].num_post_retries = num_retries
-  end
-
-  if is_present(config.DEFAULT_URL) then
-    local default_url = config.DEFAULT_URL.VALUE
-    assert(#default_url > 0 and #default_url <= consts.AB_MAX_LEN_REDIRECT_URL, "The length of the redirect url is out of bounds")
-    is_updated= is_modified(ffi.string(g_conf[0].default_url), default_url, is_updated)
-    ffi.copy(g_conf[0].default_url, default_url)
-  end
-  if is_present(config.SZ_UUID_HT) then
-    local uuid_len = assert(tonumber(config.SZ_UUID_HT.VALUE), "must be valid number")
-    assert(uuid_len > 0 and uuid_len <= 2^32, "Value must be in the valid range")
-    is_updated = is_modified(g_conf[0].uuid_len, uuid_len, is_updated)
-    g_conf[0].uuid_len = uuid_len
-  end
-  if is_present(config.UA_TO_DEV_MAP_FILE) then
-    local ua_dev_file = config.UA_TO_DEV_MAP_FILE.VALUE
-    assert( #ua_dev_file > 0 and #ua_dev_file <= consts.AB_MAX_LEN_FILE_NAME, "Max file len exceeded")
-    is_updated = is_modified(ffi.string(g_conf[0].ua_to_dev_map_file), ua_dev_file, is_updated)
-    ffi.copy(g_conf[0].ua_to_dev_map_file, ua_dev_file)
-  end
-  
+  is_updated, c_struct.sz_log_q = update_number_field(config.SZ_LOG_Q, c_struct.sz_log_q, is_updated, 0,
+  2^32-1)
+  is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
+  c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  is_updated = update_string_field(config.DEFAULT_URL,
+  c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+  is_updated, c_struct.uuid_len = update_number_field(config.SZ_UUID_HT,
+  c_struct.uuid_len, is_updated, 1, 2^32 -1)
   is_updated = load_db_data(g_conf, config, is_updated)
   return is_updated
 end
 
-function load_cfg.hard_code() 
-  local config = {}
-  config.POSTAL_CD_FEATURES = {}
-  config.REFERER_CLASS_FILE = {}
-  config.DT_FEATURE_FILE = {}
-  config.CCID_MAPPING = {}
-  config.POSTAL_CD_FEATURES.VALUE  = "/opt/ab/postal_cd_features.lua"
-  config.REFERER_CLASS_FILE.VALUE  = "/opt/ab/referer_class_file.lua"
-  config.DT_FEATURE_FILE.VALUE  = "/opt/ab/dt_feature.lua"
-  config.CCID_MAPPING.VALUE  = "/opt/ab/ccid_mapping.lua"
-  exec_config(config)
-end
-
-function load_cfg.load_transform_features(file_path) -- TODO pending test entries
-  local file = assert(io.open(file_path, 'r'), "Invalid filename given")
-  local conf_str = file:read('*a')
-  file:close()
-  local config = json.decode(conf_str)
-  config = config.AB
-  exec_config(config)
-end
-
-function exec_config(config)
+local function exec_config(config)
 
   --=============================================
   if ( ( config.POSTAL_CD_FEATURES ) and
@@ -232,6 +209,57 @@ function exec_config(config)
 
 end
 
+
+
+function load_cfg.hard_code()
+  local config = {}
+  config.POSTAL_CD_FEATURES = {}
+  config.REFERER_CLASS_FILE = {}
+  config.DT_FEATURE_FILE = {}
+  config.CCID_MAPPING = {}
+  config.POSTAL_CD_FEATURES.VALUE  = "/opt/ab/postal_cd_features.lua"
+  config.REFERER_CLASS_FILE.VALUE  = "/opt/ab/referer_class_file.lua"
+  config.DT_FEATURE_FILE.VALUE  = "/opt/ab/dt_feature.lua"
+  config.CCID_MAPPING.VALUE  = "/opt/ab/ccid_mapping.lua"
+  exec_config(config)
+end
+
+function load_cfg.load_transform_features(file_path) -- TODO pending test entries
+  local file = assert(io.open(file_path, 'r'), "Invalid filename given")
+  local conf_str = file:read('*a')
+  file:close()
+  local config = json.decode(conf_str)
+  config = config.AB
+  exec_config(config)
+end
+
+local function update_ml_configs(g_conf, config)
+  local is_updated = consts.FALSE
+  local c_struct = g_conf[0]
+
+  is_updated = update_file_field(config.DT_DIR, c_struct.dt_dir, is_updated)
+  -- is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
+  -- is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
+  -- is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
+  is_updated = update_file_field(config.MMDB_FILE, c_struct.mmdb_file, is_updated)
+
+  return is_updated
+end
+
+local function update_ua_configs(g_conf, config)
+  local is_updated = consts.FALSE
+  local c_struct = g_conf[0]
+
+  is_updated = update_file_field(config.UA_TO_DEV_MAP_FILE, c_struct.ua_to_dev_map_file, is_updated)
+  is_updated = update_file_field(config.DT_BIN_FILE, c_struct.justin_cat_file, is_updated)
+  is_updated = update_file_field(config.RF_BIN_FILE, c_struct.os_file, is_updated)
+  is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.browser_file, is_updated)
+  is_updated = update_file_field(config.MMDB_FILE, c_struct.device_type_file, is_updated)
+
+  return is_updated
+end
+
+
 function load_cfg.load_config(conf_str, g_conf, has_changed)
   local config = json.decode(conf_str)
 
@@ -243,12 +271,14 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   -- pos 2 = ss
   -- pos 3 = statsd
   has_changed = ffi.cast("unsigned char*", has_changed)
+  ffi.fill(has_changed, ffi.sizeof("unsigned char")*7)
   has_changed[0] = update_rts_configs(g_conf, config.AB)
   has_changed[1] = update_config(g_conf[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_conf[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_conf[0].statsd, config.AB.STATSD)
   has_changed[4] = update_config(g_conf[0].webapp, config.AB.WEBAPP)
-
+  has_changed[5] = update_ua_configs(g_conf, config.AB)
+  has_changed[6] = update_ml_configs(g_conf, config.AB)
   cache.put("config", config)
   -- dbg()
 end

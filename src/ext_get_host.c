@@ -3,7 +3,9 @@
 #include "auxil.h"
 #include "ab_auxil.h"
 #include "url.h"
+#ifdef GET_HOST_DOMAIN
 #include "ext_get_host.h"
+#endif
 
 
 //<hdr>
@@ -27,7 +29,9 @@ ext_get_host(
   status = extract_name_value(args, "URL=", '&', in, n);
   if ( in[0] == '\0' ) { go_BYE(-1); }
   status = url_decode(in, &alt_in); cBYE(status);
+#ifdef GET_HOST_DOMAIN
   status = get_host(alt_in, host, AB_MAX_LEN_HOSTNAME); cBYE(status);
+#endif
   sprintf(X, " { \"Host\" : \"%s\" } ", host);
 BYE:
   free_if_non_null(alt_in);

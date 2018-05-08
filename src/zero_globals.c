@@ -5,7 +5,12 @@
 #include "auxil.h"
 #include "maxminddb.h"
 #include "dt_types.h"
+#ifdef KAFKA
+#include "kafka_close_conn.h"
+#endif
+#ifdef MAXMIND
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+#endif
 extern DT_REC_TYPE *g_dt_map;
 extern size_t g_len_dt_file;
 extern uint32_t g_num_dt_map;
@@ -54,14 +59,18 @@ free_globals(
     munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
   }
 
+#ifdef MAXMIMD
   if ( g_mmdb_in_use ) { MMDB_close(&g_mmdb); g_mmdb_in_use = false; }
+#endif
   if ( !g_disable_lua ) { 
     if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
     if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
   }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
-
+#ifdef KAFKA
+  kafka_close_conn();
+#endif
 }
 
 int
@@ -71,6 +80,9 @@ zero_globals(
 {
   int status = 0;
 
+  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
+    zero_test(i); 
+  }
   if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
     go_BYE(-1);
   }
@@ -94,10 +106,10 @@ zero_globals(
   g_cfg.num_post_retries = 0;
   memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
 
-  g_cfg.uuid_len = AB_MAX_LEN_UUID; // default
-  g_uuid = malloc(AB_MAX_LEN_UUID+1);
+  g_cfg.max_len_uuid = AB_MAX_LEN_UUID;
+  g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
-  memset(g_uuid, '\0',  AB_MAX_LEN_UUID+1);
+  memset(g_uuid, '\0',  g_cfg.max_len_uuid+1);
   g_xy_guid = 0;
 
   memset(g_cfg.ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
@@ -106,9 +118,10 @@ zero_globals(
   memset(g_cfg.browser_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
-  memset(g_cfg.dt_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.rf_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.mdl_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.dt_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_dt_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_rf_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_mdl_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   memset(g_cfg.mmdb_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
@@ -193,14 +206,25 @@ zero_globals(
     g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
   }
 
+#ifdef KAFKA
   g_mmdb_in_use = false;
   memset(&g_maxmind, '\0', sizeof(MAXMIND_REC_TYPE));
+#endif
   g_L    =  NULL;
   g_L_DT = NULL;
   g_dt  = NULL; g_n_dt = 0;
   g_rf  = NULL; g_n_rf = 0;
   g_mdl = NULL; g_n_mdl = 0;
   g_predictions = NULL;
+
+#ifdef KAFKA
+  g_ignore_kafka_errors = false; 
+  g_rk = NULL;         /* Producer instance handle */
+  g_rkt = NULL;  /* Topic object */
+  g_kafka_conf = NULL;  /* Temporary configuration object */
+  memset(g_errstr, '\0', 512);
+#endif
+  //---------------------------
 
   zero_log();
 BYE:

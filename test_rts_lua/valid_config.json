@@ -101,9 +101,9 @@
         "COMMENT": "URL for Webapp",
         "VALUE": "\"webapp\""
       }
- 
+
     },
- 
+
     "DEFAULT_URL": {
       "COMMENT": "For URL Router",
       "VALUE": "https://www.nerdwallet.com"
@@ -130,6 +130,10 @@
     },
     "UA_TO_DEV_MAP_FILE": {
       "VALUE": "\"./ua_to_dev.bin\""
+    },
+    "DT_DIR": {
+      "VALUE": "/opt/ab/",
+      "COMMENT": "Decision Tree folder"
     },
     "UDP_NODE": {
       "COMMENT": "Only for local testing",

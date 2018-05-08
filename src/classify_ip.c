@@ -4,8 +4,10 @@
 #include "classify_ip.h"
 #include "load_lkp.h"
 
+#ifdef MAXMIND
 #include "maxminddb.h"
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+#endif
 
 #undef USE_SAMPLE
 //<hdr>
@@ -29,6 +31,7 @@ ext_classify_ip(
       ip_address, AB_MAX_LEN_IP_ADDRESS);
   if ( ip_address[0] == '\0' ) { go_BYE(-1); }
 
+#ifdef MAXMIND
   int gai_error, mmdb_error;
   MMDB_lookup_result_s result =
     MMDB_lookup_string(&g_mmdb, ip_address, &gai_error, &mmdb_error);
@@ -118,6 +121,7 @@ ext_classify_ip(
     int len = min(entry_data.data_size, AB_MAX_LEN_CITY);
     strncpy(g_maxmind.city, entry_data.utf8_string, len);
   }
+#endif
   snprintf(X, nX, "{ \"PostalCode\" : \"%s\", \
                     \"TimeZone\" : \"%s\", \
                     \"Country\" : \"%s\", \

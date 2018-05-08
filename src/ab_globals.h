@@ -14,6 +14,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <pthread.h>
+#include "rdkafka.h"
 
 EXTERN CFG_TYPE g_cfg; // Set by Lua . Config variables
 //
@@ -123,3 +124,20 @@ EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */
+EXTERN char g_dt_file[AB_MAX_LEN_FILE_NAME+1];   
+EXTERN char g_rf_file[AB_MAX_LEN_FILE_NAME+1];   
+EXTERN char g_mdl_file[AB_MAX_LEN_FILE_NAME+1];   
+
+#include "utm_kv.h"
+EXTERN UTM_REC_TYPE g_utm_kv;
+
+// For Kafka
+EXTERN bool g_ignore_kafka_errors; 
+// INDRAJEET TO PROVIDE WHAT ELSE
+EXTERN rd_kafka_t *g_rk;         /* Producer instance handle */
+EXTERN rd_kafka_topic_t *g_rkt;  /* Topic object */
+EXTERN rd_kafka_conf_t *g_kafka_conf;  /* Temporary configuration object */
+EXTERN char g_errstr[512];       /* librdkafka API error reporting buffer */
+// char g_buf[512];          /* Message value temporary buffer */
+
+
