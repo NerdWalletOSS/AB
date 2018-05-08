@@ -194,6 +194,7 @@ update_config(
     MMDB_close(&g_mmdb);
     g_mmdb_in_use = false;
   }
+  g_mmdb_in_use = false;
   if ( *g_cfg.mmdb_file != '\0' ) { 
     status = MMDB_open(g_cfg.mmdb_file, 0, &g_mmdb); 
     if ( status != MMDB_SUCCESS ) { go_BYE(-1); }

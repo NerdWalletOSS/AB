@@ -21,6 +21,7 @@ score_url(
   *ptr_best_model = -1;
   scores = malloc(num_models * sizeof(float));
   return_if_malloc_failed(scores);
+  for ( int i = 0; i < num_models; i++ ) { scores[i] = 0; }
   status = clean_url(url, out_url, MAX_LEN_URL); cBYE(status);
   // bak_url = strdup(out_url);
   // int num_words = 0;

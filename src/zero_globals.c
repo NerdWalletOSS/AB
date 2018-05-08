@@ -80,6 +80,9 @@ zero_globals(
 {
   int status = 0;
 
+  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
+    zero_test(i); 
+  }
   if ( sizeof(UA_REC_TYPE) != (sizeof(uint64_t)+ (4*sizeof(uint8_t)) ) ) {
     go_BYE(-1);
   }

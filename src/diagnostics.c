@@ -50,7 +50,7 @@ diagnostics(
     counter[i] = 0;
   }
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
-    if ( g_tests[i].name_hash == 0 ) { 
+    if ( g_tests[i].name_hash == 0 ) {
       if ( g_tests[i].name[0]           != '\0' ) { go_BYE(-1); }
       if ( g_tests[i].test_type         != 0 ) { go_BYE(-1); }
       if ( g_tests[i].id                != 0 ) { go_BYE(-1); }
@@ -59,6 +59,7 @@ diagnostics(
       if ( g_tests[i].is_dev_specific   != 0 ) { go_BYE(-1); }
       if ( g_tests[i].state             != 0 ) { go_BYE(-1); }
       if ( g_tests[i].seed              != 0 ) { go_BYE(-1); }
+      if ( g_tests[i].num_devices       != 0 ) { go_BYE(-1); }
       if ( g_tests[i].num_variants      != 0 ) { go_BYE(-1); }
       if ( g_tests[i].variants          != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
@@ -70,22 +71,17 @@ diagnostics(
     int state = g_tests[i].state;
     int has_filters = g_tests[i].has_filters;
     int is_dev_specific = g_tests[i].is_dev_specific;
+    uint32_t num_devices = g_tests[i].num_devices;
+    if ( num_devices < 1 ) { go_BYE(-1); }
     int num_variants = g_tests[i].num_variants;
     if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
         ( num_variants > AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
     }
-    int nD;
-    if ( is_dev_specific == 0 ) { 
-      nD = 1; // num devices 
-    }
-    else {
-      nD = g_n_justin_cat_lkp;
-    }
     if ( g_tests[i].state == TEST_STATE_STARTED ) { 
       // not for terminated tests
-      for ( int ii = 0; ii < nD; ii++ ) {
-        for ( int jj = 0; jj < AB_NUM_BINS; jj++ ) {
+      for ( uint32_t ii = 0; ii < num_devices; ii++ ) {
+        for ( uint32_t jj = 0; jj < AB_NUM_BINS; jj++ ) {
           uint8_t x = g_tests[i].variant_per_bin[ii][jj];
           if ( x >= num_variants ) { go_BYE(-1); }
           counter[x]++;
@@ -150,12 +146,12 @@ diagnostics(
       go_BYE(-1);
     }
     if ( g_tests[i].final_variant_id  != NULL ) { 
-      for ( int d = 0; d < nD; d++ ) { 
+      for ( uint32_t d = 0; d < num_devices; d++ ) { 
         if ( g_tests[i].final_variant_id[d] <= 0 ) { 
           go_BYE(-1); 
         }
       }
-      for ( int d = 0; d < nD; d++ ) { 
+      for ( uint32_t d = 0; d < num_devices; d++ ) { 
         if ( g_tests[i].final_variant_idx[d] >= (uint32_t)num_variants ) {
           go_BYE(-1);
         }

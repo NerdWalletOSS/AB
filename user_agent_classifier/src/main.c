@@ -36,7 +36,7 @@ main(
   fp = fopen(test_file_name, "r");
   return_if_fopen_failed(fp, test_file_name, "r");
   int num_urls = 0;
-  for ( int i = 0; i < nM; i++ ) { 
+  for ( ; ; ) { 
     if ( feof(fp) ) { go_BYE(-1); }
     memset(url, '\0', MAX_LEN_URL+1);
     char *xurl = fgets(url, MAX_LEN_URL, fp);
@@ -44,10 +44,10 @@ main(
     int best_model = -1;
     status = score_url(url, M, nM, N, num_models, &best_model); 
     cBYE(status);
-    fprintf(stderr, "%s\n", N[best_model].model);
+    fprintf(stdout, "%s\n", N[best_model].model);
     num_urls++;
   }
-  printf("Read %d URLs \n", num_urls);
+  fprintf(stderr, "Read %d URLs \n", num_urls);
   
 BYE:
   if ( M != NULL ) { 
