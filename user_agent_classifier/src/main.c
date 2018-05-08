@@ -41,14 +41,9 @@ main(
     memset(url, '\0', MAX_LEN_URL+1);
     char *xurl = fgets(url, MAX_LEN_URL, fp);
     if ( xurl == NULL ) { break; }
-    status = score_url(url, scores, num_models, M, nM); cBYE(status);
-    int best_model = 0; float best_score = scores[0];
-    for ( int m = 1; m < num_models; m++ ) { 
-      if ( scores[m] > best_score ) { 
-        best_score = scores[m];
-        best_model = m;
-      }
-    }
+    int best_model = -1;
+    status = score_url(url, M, nM, N, num_models, &best_model); 
+    cBYE(status);
     fprintf(stderr, "%s\n", N[best_model].model);
     num_urls++;
   }

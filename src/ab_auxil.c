@@ -153,6 +153,7 @@ get_tracer(
   }
 }
 
+#ifdef GET_HOST_DOMAIN
 #include "yuarel.h"
 int 
 get_host(
@@ -195,3 +196,4 @@ BYE:
   if ( tree != NULL ) { freeTldTree(tree); tree = NULL; }
   return status;
 }
+#endif

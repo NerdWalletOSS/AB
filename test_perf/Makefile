@@ -33,7 +33,11 @@ CC= gcc
 
 SBLASTER_OBJS = \
 	setup_curl.o sblaster.o  execute.o add_tests.o \
-	../src/auxil.o ../src/mmap.o 
+	../src/auxil.o \
+	../src/mmap.o  \
+	../src/make_guid.o  \
+	../src/spooky_hash.o  \
+
 SBLASTER_INCS = ../src/ab_incs.h
 
 all : sblaster 
@@ -53,6 +57,12 @@ auxil.o : ab_incs.h
 
 mmap.o : ab_incs.h
 	$(CC) ../src/mmap.c -c -o mmap.o $(CFLAGS)  $(INCS)
+
+make_guid.o : 
+	$(CC) ../src/make_guid.c -c -o make_guid.o $(CFLAGS)  $(INCS)
+
+spooky_hash.o : 
+	$(CC) ../src/spooky_hash.c -c -o spooky_hash.o $(CFLAGS)  $(INCS)
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)

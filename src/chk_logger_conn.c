@@ -22,7 +22,7 @@ int chk_logger_connectivity(
   }
   memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
   // START: Make a bogus UUID that is alphanumeric 
-  strncpy(lcl_payload.uuid, "UUID_CHCKPIPE", AB_MAX_LEN_UUID);
+  strncpy(lcl_payload.uuid, "UUID_CHCKPIPE", g_cfg.max_len_uuid);
   strncpy(lcl_payload.in_tracer, "IN_CHCKPIPE", AB_MAX_LEN_TRACER);
   strncpy(lcl_payload.out_tracer, "OUT_CHCKPIPE", AB_MAX_LEN_TRACER);
   //----------------------------------------------

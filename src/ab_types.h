@@ -79,7 +79,7 @@ typedef struct _payload_type {
   char uuid[AB_MAX_LEN_UUID+1];
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
-  uint64_t ramp;
+  uint32_t ramp;
   uint64_t time;
   uint32_t test_id;
   uint32_t variant_id;
@@ -127,7 +127,7 @@ typedef struct _cfg_type {
   
   char default_url[AB_MAX_LEN_REDIRECT_URL+1]; 
 
-  int uuid_len; 
+  int max_len_uuid; 
   uint64_t xy_guid; // Set to 0 for real, positive integer for testing
 
   // START: For classifying user agent 

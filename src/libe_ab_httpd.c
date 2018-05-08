@@ -100,17 +100,17 @@ generic_handler(
   if ( ( req_type == Router ) || 
        ( req_type == GetVariant ) || 
        ( req_type == GetVariants ) ) {
-    status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
-    status = make_guid(g_date, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
+    // status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
+    // TODO P1 put this back status = make_guid(NULL, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
   }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
 
   if ( strcmp(api, "Halt") == 0 ) {
     // TODO: P4 Need to get loopbreak to wait for these 3 statements
-    evbuffer_add_printf(opbuf, "%s\n", g_rslt);
-    evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
-    evbuffer_free(opbuf);
+    // evbuffer_add_printf(opbuf, "%s\n", g_rslt);
+    // evhttp_send_reply(req, HTTP_OK, "OK", opbuf);
+    // evbuffer_free(opbuf);
     free_globals();
     event_base_loopbreak(base);
   }

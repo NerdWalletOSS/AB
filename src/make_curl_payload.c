@@ -6,6 +6,22 @@
 #include "auxil.h"
 #include "make_curl_payload.h"
 
+//<hdr>
+void
+zero_payload(
+    PAYLOAD_TYPE *ptr_payload
+    )
+{
+  memset(ptr_payload->uuid, '\0', AB_MAX_LEN_UUID+1);
+  memset(ptr_payload->in_tracer, '\0', AB_MAX_LEN_TRACER+1);
+  memset(ptr_payload->out_tracer, '\0', AB_MAX_LEN_TRACER+1);
+  ptr_payload->ramp = 0;
+  ptr_payload->time = 0;
+  ptr_payload->test_id = 0;
+  ptr_payload->variant_id = 0;
+}
+
+//</hdr>
 /* Reads lcl_payload and writes to a string (curl_payload) that 
  will be POSTed to log server */
 //<hdr>
@@ -24,8 +40,8 @@ make_curl_payload(
 "{  \
 \"uuid\" : \"%s\", \
 \"test_id\" : \"%u\", \
-\"variant_id\" : \"%d\", \
-\"ramp\" : \"%d\", \
+\"variant_id\" : \"%u\", \
+\"ramp\" : \"%u\", \
 \"in_tracer_id\" : \"%s\", \
 \"out_tracer_id\" : \"%s\", \
 \"time\" : \"%" PRIu64 "\" }",

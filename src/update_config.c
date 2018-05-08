@@ -12,9 +12,14 @@
 #include "load_rf.h"
 #include "load_mdl.h"
 #include "maxminddb.h"
+#ifdef KAFKA
 #include "kafka_close_conn.h"
 #include "kafka_open_conn.h"
+#include "kafka_add_to_queue.h"
+#endif
+#ifdef MAXMIND
 extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
+#endif
 extern DT_REC_TYPE *g_dt_map; 
 extern size_t g_len_dt_file; 
 extern uint32_t g_num_dt_map; 
@@ -99,8 +104,12 @@ update_config(
   // default_url, Nothing to do 
   // reload_on_startup, Nothing to do 
   // xy_guid, Nothing to do 
-  // uuid_len, Nothing to do 
 
+  free_if_non_null(g_uuid);
+  if ( g_cfg.max_len_uuid > AB_MAX_LEN_UUID ) { go_BYE(-1); }
+  if ( g_cfg.max_len_uuid < 1 ) { go_BYE(-1); }
+  g_uuid = malloc(g_cfg.max_len_uuid+1);
+  return_if_malloc_failed(g_uuid);
   // justin cat file 
   free_if_non_null(g_justin_cat_lkp);  
   g_n_justin_cat_lkp = 0; 
@@ -180,6 +189,7 @@ update_config(
   }
   //--------------------------------------------------------
 
+#ifdef MAXMIND
   if ( g_mmdb_in_use ) { 
     MMDB_close(&g_mmdb);
     g_mmdb_in_use = false;
@@ -191,7 +201,8 @@ update_config(
     // FIX 2nd parameter TODO P1
     g_mmdb_in_use = true;
   }
-  // Kafka
+#endif
+#ifdef KAFKA
   kafka_close_conn();
   if ( g_cfg.kafka.brokers[0] != '\0' ) { 
     // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
@@ -199,6 +210,7 @@ update_config(
      sprintf(g_buf, "hey in hardcode for demo\0"); 
      kafka_add_to_queue(g_buf);  
   }
+#endif
   // ---------------------
   // INDRAJEET: PUT IN STUFF FOR LUA 
 

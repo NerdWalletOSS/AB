@@ -30,7 +30,9 @@
 #include "stop_test.h"
 #include "l_chk_test.h"
 #include "get_utm_kv.h"
+#ifdef KAFKA
 #include "kafka_close_conn.h"
+#endif
 
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
@@ -126,7 +128,9 @@ ab_process_req(
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
       }
+#ifdef KAFKA
       kafka_close_conn();
+#endif
       break;
       //--------------------------------------------------------
     case HealthCheck :  /* done by C */

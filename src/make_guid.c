@@ -30,16 +30,15 @@ make_guid(
     snprintf(buf, sz_buf,  "s%" PRIu64, x);
   }
   spooky_hash128(buf, sz_buf, &hash1, &hash2);
-  int n_guid = 0;
   for ( int i = 0; i < sz_guid; i++ ) { 
     // TODO P4 improve following code 
-    if ( n_guid == 0 ) { hash = hash1; } 
-    if ( n_guid == 16 ) { hash = hash2; } 
+    if ( i == 0 ) { hash = hash1; } 
+    if ( i == 16 ) { hash = hash2; } 
+    //---------------------------
     uint8_t val = 0;
     val = hash & 0xF;
-    if ( n_guid > sz_guid ) { break; }
     if ( val >= nX ) { go_BYE(-1); }
-    guid[n_guid++] = X[val];
+    guid[i++] = X[val];
     hash = hash >> 4;
   }
 BYE:
