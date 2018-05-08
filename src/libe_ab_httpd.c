@@ -35,6 +35,7 @@
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
+#include "l_update_config.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/queue.h>
@@ -186,6 +187,7 @@ main(
     status = l_load_config(g_config_file); cBYE(status);
   }
   status = update_config(); cBYE(status);
+  status = l_update_config(); cBYE(status);
   //---------------------------------------------
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
