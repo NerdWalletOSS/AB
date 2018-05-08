@@ -116,7 +116,7 @@ function test_basic(
   rs_assert($state, "State should be known by now");
   if ( ( $state == "terminated" ) || ( $state == "archived" ) ) {
     $outJ["status_code"] = 400;
-    $outJ["msg_stderr"] = "No changes to archived/terminated test\n");
+    $outJ["msg_stderr"] = "No changes to archived/terminated test\n";
     header("Error-Code: 400");
     return $outJ;
   }

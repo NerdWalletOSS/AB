@@ -124,7 +124,7 @@ add_fake_test(
   g_tests[idx].test_type = test_type;
   g_tests[idx].has_filters = false;
   g_tests[idx].state = state;
-  g_tests[idx].seed = 9876543210;1; // bogus but legit value
+  g_tests[idx].seed = 9876543210; // bogus but legit value
   g_tests[idx].ramp = 1; // bogus but legit value
 
   g_tests[idx].num_variants = nV;
@@ -181,10 +181,10 @@ add_fake_test(
   // Determine numberof devices, nD
   int nD;
   if ( is_dev_specific ) { 
-    nD = g_n_justin_cat_lkp;
+    g_tests[idx].num_devices = nD = g_n_justin_cat_lkp;
   }
   else {
-    nD = 1; // num devices 
+    g_tests[idx].num_devices = nD = 1; 
   }
   if ( nD < 1 ) { go_BYE(-1); }
 

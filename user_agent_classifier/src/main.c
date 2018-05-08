@@ -17,7 +17,8 @@ main(
   MODEL_REC_TYPE *M = NULL; int nM;
   MODEL_NAME_TYPE *N = NULL; int num_models;
   FILE *fp = NULL;
-  float *scores = NULL;
+  double *scores = NULL;
+  uint64_t *H = NULL; int nH = 0; // hashes
 
   if ( argc != 4 )  { go_BYE(-1); }
   model_file_name = argv[1];
@@ -25,18 +26,19 @@ main(
   test_file_name  = argv[3];
 
   status = load_names(model_file_name, &N, &num_models); cBYE(status);
-  status = load_model(coeff_file_name, num_models, &M, &nM); cBYE(status);
+  status = load_model(coeff_file_name, num_models, &M, &nM, &H, &nH); 
+  cBYE(status);
   fprintf(stderr, "loaded %d rows \n", nM);
   //----- Start testing
   char url[MAX_LEN_URL+1];
 
-  scores = malloc(num_models * sizeof(float));
+  scores = malloc(num_models * sizeof(double));
   return_if_malloc_failed(scores);
 
   fp = fopen(test_file_name, "r");
   return_if_fopen_failed(fp, test_file_name, "r");
   int num_urls = 0;
-  for ( int i = 0; i < nM; i++ ) { 
+  for ( ; ; ) { 
     if ( feof(fp) ) { go_BYE(-1); }
     memset(url, '\0', MAX_LEN_URL+1);
     char *xurl = fgets(url, MAX_LEN_URL, fp);
@@ -44,10 +46,10 @@ main(
     int best_model = -1;
     status = score_url(url, M, nM, N, num_models, &best_model); 
     cBYE(status);
-    fprintf(stderr, "%s\n", N[best_model].model);
+    fprintf(stdout, "%s\n", N[best_model].model);
     num_urls++;
   }
-  printf("Read %d URLs \n", num_urls);
+  fprintf(stderr, "Read %d URLs \n", num_urls);
   
 BYE:
   if ( M != NULL ) { 
@@ -58,6 +60,7 @@ BYE:
   free_if_non_null(M); 
   free_if_non_null(N); 
   fclose_if_non_null(fp);
+  fclose_if_non_null(H);
   free_if_non_null(scores);
   return status;
 }

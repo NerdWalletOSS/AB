@@ -75,7 +75,7 @@ main(
       //-- Add a bunch of tests 
       status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
 
-      curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 100000); // TODO FIX 
+      curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000); // TODO FIX 
       // Get variants for these tests for nU users
       for ( int iter = 0; iter < niter; iter++ ) {
       // T is used to measure individual times 

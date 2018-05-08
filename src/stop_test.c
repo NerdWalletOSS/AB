@@ -22,10 +22,10 @@ stop_test(
   if ( g_tests[test_idx].is_dev_specific ) { 
     num_devices = g_n_justin_cat_lkp;
   }
-  for ( int i = 0; i < num_devices; i++ ) { 
-    g_tests[test_idx].final_variant_idx[i] = winner_idx;
-    g_tests[test_idx].final_variant_id[i]  = winner_id ;
-    free_if_non_null(g_tests[test_idx].variant_per_bin[i]);
+  for ( int d = 0; d < num_devices; d++ ) { 
+    g_tests[test_idx].final_variant_idx[d] = winner_idx;
+    g_tests[test_idx].final_variant_id[d]  = winner_id ;
+    free_if_non_null(g_tests[test_idx].variant_per_bin[d]);
   }
   free_if_non_null(g_tests[test_idx].variant_per_bin);
 BYE:
