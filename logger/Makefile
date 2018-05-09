@@ -71,9 +71,9 @@ mmap.o : ab_incs.h
 ../libevent-2.0.22-stable/.libs/libevent.so : 
 	cd ../libevent-2.0.22-stable/ &&  ./configure && make && cd - 
 
-$(LOGGER_OBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
+$(LOGGER_OBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../jansson-2.10/src/.libs/libjansson.a
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so
+$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../jansson-2.10/src/.libs/libjansson.a
 
 clean:
 	rm -r -f ab_logger \
