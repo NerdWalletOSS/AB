@@ -155,8 +155,12 @@ local function update_rts_configs(g_conf, config)
   c_struct.num_post_retries, is_updated, 0, 2^32-1)
   is_updated = update_string_field(config.DEFAULT_URL,
   c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
-  is_updated, c_struct.uuid_len = update_number_field(config.SZ_UUID_HT,
-  c_struct.uuid_len, is_updated, 1, 2^32 -1)
+  is_updated, c_struct.max_len_uuid = update_number_field(config.SZ_UUID_HT,
+  c_struct.max_len_uuid, is_updated, 1, 2^32 -1)
+   is_updated, c_struct.xy_guid = update_number_field(config.XY_GUID,
+  c_struct.xy_guid, is_updated, 0, 2^32 -1)
+  
+  
   is_updated = load_db_data(g_conf, config, is_updated)
   return is_updated
 end
@@ -259,6 +263,18 @@ local function update_ua_configs(g_conf, config)
   return is_updated
 end
 
+local function update_kafka_configs(g_conf, conf)
+  local is_updated = consts.FALSE
+  if conf == nil then return is_updated end
+  local kafka = g_conf[0].kafka
+  is_updated = update_string_field(conf.BROKERS, kafka.brokers, is_updated, 1, consts.AB_MAX_LEN_SERVER_NAME)
+  is_updated = update_string_field(conf.TOPIC, kafka.topic, is_updated, 1, consts.AB_MAX_LEN_KAFKA_TOPIC)
+  is_updated = update_string_field(conf.QUEUE_SIZE, kafka.queue_size, is_updated, 1, consts.AB_MAX_LEN_KAFKA_QUEUE_SIZE)
+  is_updated = update_string_field(conf.RETRIES, kafka.retries, is_updated, 1, consts.AB_MAX_LEN_KAFKA_RETRIES)
+
+  is_updated = update_string_field(conf.MAX_BUFFERING_TIME, kafka.max_buffering_time, is_updated, 1, consts.AB_MAX_LEN_BUF_TIME)
+  return is_updated
+end
 
 function load_cfg.load_config(conf_str, g_conf, has_changed)
   local config = json.decode(conf_str)
@@ -279,6 +295,7 @@ function load_cfg.load_config(conf_str, g_conf, has_changed)
   has_changed[4] = update_config(g_conf[0].webapp, config.AB.WEBAPP)
   has_changed[5] = update_ua_configs(g_conf, config.AB)
   has_changed[6] = update_ml_configs(g_conf, config.AB)
+  has_changed[7] = update_kafka_configs(g_conf, config.AB.KAFKA)
   cache.put("config", config)
   -- dbg()
 end

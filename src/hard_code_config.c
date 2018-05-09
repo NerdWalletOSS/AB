@@ -6,7 +6,7 @@
 #ifdef KAFKA
 #include "kafka_add_to_queue.h"
 #endif
-  
+
   void
 hard_code_config(void)
 {
@@ -29,7 +29,7 @@ hard_code_config(void)
 
   strcpy(g_cfg.statsd.server, "localhost");
   g_cfg.statsd.port = 8125;
-  
+
   g_cfg.sz_log_q = 65536;
   g_cfg.num_post_retries = 1;
 
@@ -46,7 +46,10 @@ hard_code_config(void)
   // strcpy(g_cfg.dt_dir,  "DT/CREDIT_CARD_APPROVALS");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
-  // strcpy(g_cfg.kafka.brokers, "127.0.0.1");
-  // strcpy(g_cfg.kafka.topic, "ab");
 
+  strcpy(g_cfg.kafka.brokers, "127.0.0.1");
+  strcpy(g_cfg.kafka.topic, "ab");
+  strcpy(g_cfg.kafka.queue_size, "640000");
+  strcpy(g_cfg.kafka.retries, "5");
+  strcpy(g_cfg.kafka.max_buffering_time, "10");
 }

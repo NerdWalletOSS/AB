@@ -33,7 +33,7 @@
 
 #define AB_NUM_BINS             1000 
 
-#define NUM_SERVICES 7
+#define NUM_SERVICES 8
 
 #define TEST_STATE_DRAFT        1 
 #define TEST_STATE_DORMANT      2 
@@ -84,6 +84,11 @@
 #define AB_MAX_LEN_COUNTRY    3
 #define AB_MAX_LEN_STATE      31
 #define AB_MAX_LEN_CITY       31
+
+#define AB_MAX_LEN_KAFKA_NUM_RETRIES 3
+#define AB_MAX_LEN_KAFKA_BUF_TIME 7
+#define AB_MAX_LEN_KAFKA_QUEUE_SIZE 7
+
 
 #define AB_MAX_LEN_KAFKA_TOPIC 63
 #endif

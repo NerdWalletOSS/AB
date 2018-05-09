@@ -103,6 +103,28 @@
       }
 
     },
+    "KAFKA": {
+      "BROKERS": {
+        "COMMENT": "List of brokers",
+        "VALUE": "127.0.0.1"
+      },
+      "TOPIC": {
+        "COMMENT": "The topic for Kafka",
+        "VALUE": "ab"
+      },
+      "QUEUE_SIZE": {
+        "COMMENT": "The queue size for retries to kafka",
+        "VALUE": "1000000"
+      },
+      "MAX_BUFFERING_TIME": {
+        "COMMENT": "Max time in milliseconds that messages will be batched",
+        "VALUE": "50"
+      },
+      "RETRIES": {
+        "COMMENT": "Max number of retries to send a message to kafka",
+        "VALUE": "5"
+      }
+    },
 
     "DEFAULT_URL": {
       "COMMENT": "For URL Router",
