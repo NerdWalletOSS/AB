@@ -5,9 +5,17 @@ local plfile = require 'pl.file'
 local plpath = require 'pl.path'
 local curl = require 'curl'
 --==========================
-local function mk_test(infile)
-  assert(plpath.isfile(infile) )
-  local T = dofile(infile)
+local function mk_test(x)
+  local T 
+  if ( type(x) == "table" ) then
+    T = x
+  elseif ( type(x) == "string" ) then  
+    assert(plpath.isfile(infile) )
+    T = dofile(infile)
+  else
+    assert(nil, "bad type of input to mk_test")
+  end
+  assert(T)
   local inbody = JSON:encode(T)
   local url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
   local hdrs, outbody, status = curl.post(url, nil, inbody)
