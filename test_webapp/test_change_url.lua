@@ -30,7 +30,12 @@ tests.t1 = function (
   assert(status == 200)
   local test_id = get_test_id(hdrs)
   local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
+  assert(test_id == tonumber(T.id))
+
+  -- T.name = ""
+  -- T.id = nil
+  -- local hdrs, outbody, status = mk_test(T)
+  -- assert(status ~= 200)
   -- Move state to dormant 
   T.NewState = "dormant"
   T.Updater =  "joe" -- TODO Improve this hard coding
