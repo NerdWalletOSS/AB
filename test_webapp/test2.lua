@@ -71,9 +71,9 @@ tests.t1 = function (
   assert(test_id_1 > 0)
   local error_code = assert(get_error_code(hdrs))
   assert(error_code == 200)
-  return T
+  --return T
 
--- Create Another Test T2
+  -- Create Another Test T2
   hdrs = {} -- IMPORTANT: Needs to be reset because set in t1()
   body = "" -- IMPORTANT: Needs to be reset because set in t1()
   T.name = "T2"
