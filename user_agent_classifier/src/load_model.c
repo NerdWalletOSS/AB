@@ -58,6 +58,7 @@ load_model(
       M[i].coefficients[k] = dval;
     }
   }
+  /*
   nH = nM * nM;
   H = malloc(nH * sizeof(uint64_t));
   return_if_malloc_failed(H);
@@ -66,6 +67,7 @@ load_model(
     uint64_t hash1, hash2;
     spooky_hash128(M[i].word, strlen(M[i].word), &hash1, &seed);
   }
+  */
 
 
   *ptr_M  = M;

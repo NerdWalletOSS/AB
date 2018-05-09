@@ -21,8 +21,10 @@ score_url(
   *ptr_best_model = -1;
   scores = malloc(num_models * sizeof(double));
   return_if_malloc_failed(scores);
+  for ( uint32_t i = 0; i < nM; i++ ) { M[i].is_seen = false; }
   for ( uint32_t i = 0; i < num_models; i++ ) { scores[i] = 0; }
   status = clean_url(url, out_url, MAX_LEN_URL); cBYE(status);
+  // printf("out = %s \n", out_url);
   // bak_url = strdup(out_url);
   // int num_words = 0;
   for ( int j = 0; ; j++ ) { 
@@ -37,11 +39,16 @@ score_url(
     int word_idx = -1;
     status = idx_in_model(word, M, nM, &word_idx); cBYE(status);
     if ( word_idx >= 0 ) { 
-      for ( uint32_t m = 0; m < num_models; m++ ) { 
-        scores[m] += M[word_idx].coefficients[m];
+      if ( !M[word_idx].is_seen ) { 
+        for ( uint32_t m = 0; m < num_models; m++ ) { 
+          scores[m] += M[word_idx].coefficients[m];
+        }
+        // printf("word %d = %s \n", j, word);
+        M[word_idx].is_seen = true;
       }
     }
   }
+  //---------------------------
   for ( uint32_t m = 0; m > num_models; m++ ) { 
     scores[m] += N[m].intercept;
   }
