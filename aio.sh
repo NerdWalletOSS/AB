@@ -108,8 +108,8 @@ run_kafka(){
 }
 
 run_logger(){
-  if
-  then[ "`ps auxwwf | grep "ab_logger" | grep -v "grep" | wc -l`" -ne 1 ]
+  if [ "`ps auxwwf | grep "ab_logger" | grep -v "grep" | wc -l`" -ne 1 ]
+  then
     cd bin/libs
     export LD_LIBRARY_PATH="`pwd`"
     cd -
