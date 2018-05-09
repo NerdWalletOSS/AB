@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <string.h>
 
 #include <sys/mman.h>
@@ -18,6 +19,7 @@
 #include "macros.h"
 #include "auxil.h"
 #define __AB_MAIN_PROGRAM
+#include "halt_server.h"
 #include "ab_globals.h"
 #include "zero_globals.h"
 #include "hard_code_config.h"
@@ -168,6 +170,7 @@ main(
     char **argv
     )
 {
+  signal(SIGINT, halt_server);
   int status = 0;
   struct evhttp *httpd;
   struct event_base *base;
