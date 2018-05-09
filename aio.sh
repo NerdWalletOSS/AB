@@ -54,7 +54,7 @@ build(){
 }
 
 clean_kafka_logs(){
-  rm /opt/kafka/logs/*
+  sudo rm -f /opt/kafka/logs/*
 }
 
 install_kafka(){
