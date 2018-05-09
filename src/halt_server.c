@@ -1,11 +1,15 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
+#include "halt_server.h"
 #ifdef KAFKA
 #include "kafka_close_conn.h"
 #endif
 
-void halt_server(int sig){
+void halt_server(
+    int sig
+    )
+{
   g_halt = true;
   if ( g_cfg.sz_log_q > 0 ) {
     // Tell consumer ead nothing more is coming
@@ -20,6 +24,6 @@ void halt_server(int sig){
 #ifdef KAFKA
   kafka_close_conn();
 #endif
-exit(0);
+  exit(0);
 }
 

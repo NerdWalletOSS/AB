@@ -111,15 +111,7 @@ get_variant(
   lcl_payload.test_id    = g_tests[test_idx].id;
   lcl_payload.variant_id = variant_id;
   lcl_payload.time       = curr_time;
-  if ( g_rk != NULL ) {  // kafka in use 
-    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD); cBYE(status);
-#ifdef KAFKA
-    status = kafka_add_to_queue(g_curl_payload); cBYE(status);
-#endif
-  }
-  else {
-    status = log_decision(lcl_payload); cBYE(status);
-  }
+  status = log_decision(lcl_payload); cBYE(status);
   //--------------------------------------------------------
 BYE:
   return status;
