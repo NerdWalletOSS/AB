@@ -30,7 +30,7 @@ for i = 1, #actual do
     if ( crosstab[jointkey] ) then 
       crosstab[jointkey] = crosstab[jointkey] + 1
     else
-      crosstab[jointkey] = 0
+      crosstab[jointkey] = 1
     end
   end
 end

@@ -4,4 +4,4 @@
 #include "kafka_msg_callback.h"
 #include "rdkafka.h"
 
-int kafka_open_conn(const char* topic, const char* brokers);
+int kafka_open_conn( KAFKA_CFG_TYPE config);
