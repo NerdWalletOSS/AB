@@ -21,6 +21,7 @@ void halt_server(
     pthread_cond_destroy(&g_condc);
     pthread_cond_destroy(&g_condp);
   }
+  free_globals();
 #ifdef KAFKA
   kafka_close_conn();
 #endif
