@@ -22,6 +22,14 @@ clean_url(
       if ( oidx > n_out ) { go_BYE(-1); }
       out_url[oidx++] = c;
     }
+    else {
+      if ( ( oidx > 0 ) && ( out_url[oidx-1] == ' ' ) ) {
+        // don;t bother
+      }
+      else {
+        out_url[oidx++] = ' ';
+      }
+    }
   }
 BYE:
   return status;
