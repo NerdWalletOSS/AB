@@ -1,31 +1,18 @@
-local load_cfg = require 'load_config'
+local cache = require 'cache'
+local isdir = require '../lua/isdir'
+local x_load_config = require 'dt_load_config'
+local x_hard_code_config = require 'hard_code_config'
+local x_update_config = require 'dt_update_config'
 
 function load_config(...)
-  load_cfg.load_transform_features(...)
+  cache.put("config", x_load_config(...))
 end
 
-function hard_code(...)
-  load_cfg.hard_code(...)
+function hard_code_config(...)
+  cache.put("config", x_hard_code_config(...))
 end
 
-local make_feature_vec = require 'make_feature_vector'
-function make_feature_vector(...)
-  return make_feature_vec(...)
+function update_config(...)
+  x_update_config(...)
 end
-
-local get_num_feat = require 'get_num_features'
-function get_num_features(...)
-  return get_num_feat(...)
-end
-
-local get_n_cds = require 'get_n_cards'
-function get_n_cards(...)
-  return get_n_cds(...)
-end
-
-local post_proc = require 'post_proc_preds'
-function post_proc_preds(...)
-  return post_proc(...)
-end
-
 
