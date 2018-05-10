@@ -91,10 +91,6 @@ generic_handler(
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
-#ifdef NW_SPECIFIC
-  status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
-  cBYE(status);
-#endif
   if ( req_type == Router ) {  
     status = get_and_classify_ua(req, &g_device_type_id, &g_os_id, 
         &g_browser_id, &g_justin_cat_id);
@@ -104,7 +100,7 @@ generic_handler(
        ( req_type == GetVariant ) || 
        ( req_type == GetVariants ) ) {
     // status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
-    // TODO P1 put this back status = make_guid(NULL, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
+    status = make_guid(NULL, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
   }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
@@ -175,7 +171,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_disable_lua = true; // NORMALLY FALSE. Just for testing
+  g_disable_lua = false; // NORMALLY FALSE. Just for testing
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);

@@ -48,18 +48,6 @@ post_from_log_q(
     status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
     if ( g_rk == NULL ) { // use logger 
       curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
-#ifdef NW_SPECIFIC
-      struct curl_slist *chunk = NULL;
-      if ( *g_nw_x_caller_client_id == '\0' ) { 
-        chunk = curl_slist_append(chunk, "X-Caller-Client-ID;");
-      }
-      else {
-        char buf[AB_MAX_LEN_HDR_KEY+1+AB_MAX_LEN_HDR_VAL+1+8];
-        sprintf(buf, "X-Caller-Client-ID: %s", g_nw_x_caller_client_id);
-        chunk = curl_slist_append(chunk, buf);
-      }
-      curl_res = curl_easy_setopt(g_ch, CURLOPT_HTTPHEADER, chunk);
-#endif
       g_log_posts++;
       int retry_count = 0;
       bool post_succeeded = false;

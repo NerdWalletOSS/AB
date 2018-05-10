@@ -5,12 +5,12 @@ local tests = require 'add_test'
 local cache = require 'cache'
 local reload_tests = require 'reload'
 
-local hard_code_config = require 'hard_code_config'
+local x_hard_code_config = require 'hard_code_config'
 local x_load_config = require 'ab_load_config'
 local x_update_config = require 'ab_update_config'
 
 function hard_code_config(...)
-  cache.put("config", hard_code_config(...))
+  cache.put("config", x_hard_code_config(...))
 end
 
 function load_config(...)

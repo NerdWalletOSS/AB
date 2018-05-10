@@ -46,6 +46,8 @@ ab_logger : $(LOGGER_OBJS) $(LOGGER_INCS) \
 ../jansson-2.10/src/.libs/libjansson.a :
 	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
+logger.c : ../curl-7.51.0/include/curl/curlbuild.h 
+
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
