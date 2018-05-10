@@ -23,23 +23,26 @@ local tests = {}
 tests.t1 = function (
   just_pr
   )
-  local description = "A test to confirm change in channel resets follow on"
+  local description = "A test to check possibilities of duplicate name of test"
   if ( just_pr ) then print(description) return end
 
    -- START: Make some test 
   local chk_T
   reset_db()
   local hdrs, outbody, status = mk_test("good_basic1.lua")
-
   assert(status == 200)
   local test_id_1 = get_test_id(hdrs)
   local T1 = get_test_info(test_id_1)
   assert(test_id_1 == tonumber(T1.id))
-
   for k, v in pairs(T1) do print(k, v) end 
 
-  -- Create Another Test T2
-  T1.name = "T2"
+  -- Try to create a test with same name again
+  local hdrs, outbody, status = mk_test("good_basic1.lua")
+  assert(status ~= 200)
+  for k, v in pairs(T1) do print(k, v) end 
+
+  -- Create test name with same name but another test type
+  T1.TestType = "ABTest"
   T1.id = ""
   local hdrs, outbody, status = mk_test(T1)
   for k, v in pairs(hdrs) do print(k, v) end
@@ -48,61 +51,52 @@ tests.t1 = function (
   local T2 = get_test_info(test_id_2)
   assert(test_id_2 == tonumber(T2.id))
 
--- SET STATE of T2 to dormant
-  T2.NewState = "dormant"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
+-- SET STATE of T1 to dormant
+  T1.TestType = "XYTest" 
+  T1.id = test_id_1
+  T1.NewState = "dormant"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
   assert(status == 200)
-  chk_T = get_test_info(test_id_2)
+  chk_T = get_test_info(test_id_1)
 
   assert(chk_T.State == "dormant")
 
 -- SET STATE of T2 to started
-  T2.NewState = "started"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
+  T1.NewState = "started"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
   assert(status == 200)
-  chk_T = get_test_info(test_id_2)
+  chk_T = get_test_info(test_id_1)
   -- for k, v in pairs(chk_T) do print(k, v) end 
   assert(chk_T.State == "started")
 
 -- SET STATE of T2 to terminated
-  T2.NewState = "terminated"
-  T2.Winner = "Control"
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
+  T1.NewState = "terminated"
+  T1.Winner = "Control"
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
   assert(status == 200)
-  chk_T = get_test_info(test_id_2)
+  chk_T = get_test_info(test_id_1)
   -- for k, v in pairs(chk_T) do print(k, v) end 
   assert(chk_T.State == "terminated")
 
 -- SET STATE of T2 to archived
-  T2.NewState = "archived"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
+  T1.NewState = "archived"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
   assert(status == 200)
-  chk_T = get_test_info(test_id_2)
+  chk_T = get_test_info(test_id_1)
   -- for k, v in pairs(chk_T) do print(k, v) end 
   assert(chk_T.State == "archived")
 
 
--- T1 to follow T2
--- TODO: HOW TO SET FOLLOW ON PROPERLY. TO TAKE GUIDANCE FROM RAMESH SIR
-  local T3 = test_id_1, test_id_2
-  local hdrs, outbody, status = curl.post(fourl, nil, JSON:encode(T3))
+-- Reproduce test 1 of same testtype XYTest
+  local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
-
-
--- T1 changes channel to "aol"
-  T1.Channel = "facebook"
-  local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T1))
-  for k, v in pairs(hdrs) do print(k, v) end
-  assert(status == 200)
-  local test_id_1 = get_test_id(hdrs)
-  local T1 = get_test_info(test_id_1)
-  assert(test_id_1 == tonumber(T1.id))
--- Predeccessor id of T1 to be null
--- how to check pred_id?
-  assert("" == tonumber(T1.pred_id))
+  local test_id_3 = get_test_id(hdrs)
+  local T3 = get_test_info(test_id_3)
+  assert(test_id_3 == tonumber(T3.id))
+  for k, v in pairs(T1) do print(k, v) end 
 
 
 end
