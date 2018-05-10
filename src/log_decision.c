@@ -41,12 +41,19 @@ log_decision(
   else {
     status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
     cBYE(status);
+    if ( g_rk == NULL ) { 
     status = post_url(g_ch, g_curl_payload, NULL);
     switch ( status ) {
       case 0  : /* all is well */ break;
       case -1 : go_BYE(-1); break;
       case -2 : /* Not mission critical failure */ status = 0; break; 
       default : go_BYE(-1); break;
+    }
+    }
+    else  {
+#ifdef KAFKA
+    status = kafka_add_to_queue(g_curl_payload); cBYE(status);
+#endif
     }
   }
 BYE:

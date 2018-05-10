@@ -7,16 +7,16 @@
 #include "kafka_add_to_queue.h"
 #endif
 
-  void
+void
 hard_code_config(void)
 {
   g_cfg.port = 8000;
   g_cfg.verbose = false;
 
-  // strcpy(g_cfg.logger.server,  "localhost");
-  // g_cfg.logger.port = 8004;
-  // strcpy(g_cfg.logger.url, "Log");
-  // strcpy(g_cfg.logger.health_url, "Ignore");
+  strcpy(g_cfg.logger.server,  "localhost");
+  g_cfg.logger.port = 8004;
+  strcpy(g_cfg.logger.url, "Log");
+  strcpy(g_cfg.logger.health_url, "Ignore");
 
   strcpy(g_cfg.ss.server, "localhost");
   g_cfg.ss.port = 8024;
@@ -47,9 +47,11 @@ hard_code_config(void)
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
+  /*
   strcpy(g_cfg.kafka.brokers, "127.0.0.1");
   strcpy(g_cfg.kafka.topic, "ab");
   strcpy(g_cfg.kafka.queue_size, "640000");
   strcpy(g_cfg.kafka.retries, "5");
   strcpy(g_cfg.kafka.max_buffering_time, "10");
+  */
 }

@@ -1,32 +1,29 @@
-local csv = require "csv"
-local json = require "json"
--- local ffi = require 'ffi' 
-local tests = require 'add_test'
-local load_cfg = require 'load_config'
 local cache = require 'cache'
+local x_hard_code_config = require 'hard_code_config'
+local x_load_config = require 'ab_load_config'
+local x_update_config = require 'ab_update_config'
+
+local tests = require 'add_test'
 local reload_tests = require 'reload'
 
-function add(...)
-  tests.add(...)
+function load_config(...)
+  cache.put("config", x_load_config(...))
 end
 
+function hard_code_config(...)
+  cache.put("config", x_hard_code_config(...))
+end
+
+function update_config(...)
+  x_update_config(...)
+end
+--=================================================
 function preproc(...)
   tests.preprco(...)
-end
---=== Sample of what you need to do to get a new Lua file in
---=== for any Lua function that is pcall'ed from C. As an example
---===  lua_getglobal(g_L, "make_feature_vector");
---===  if ( !lua_isfunction(g_L, -1)) {
-function load_config(...)
-  load_cfg.load_config_from_file(...)
 end
 
 function list_tests()
   return json.encode(cache.get('tests'))
-end
-
-function get_config()
-  return cache.get('config')
 end
 
 function reload(...)
@@ -34,7 +31,7 @@ function reload(...)
 end
 
 function check_db_conn()
-  local configs = cache.get('config').AB.MYSQL
+  local configs = cache.get('config').AB.DB
   local conn = load_config.db_connect(configs)
   assert(conn ~= nil, "must be a valid connection object")
 end

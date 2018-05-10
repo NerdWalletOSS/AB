@@ -19,6 +19,7 @@ main(
   FILE *fp = NULL;
   double *scores = NULL;
   uint64_t *H = NULL; int nH = 0; // hashes
+  uint64_t total_time = 0;
 
   if ( argc != 4 )  { go_BYE(-1); }
   model_file_name = argv[1];
@@ -44,12 +45,16 @@ main(
     char *xurl = fgets(url, MAX_LEN_URL, fp);
     if ( xurl == NULL ) { break; }
     int best_model = -1;
+    uint64_t t_start = get_time_usec();
     status = score_url(url, M, nM, N, num_models, &best_model); 
+    uint64_t t_stop = get_time_usec();
+    total_time += (t_stop - t_start);
     cBYE(status);
     fprintf(stdout, "%s\n", N[best_model].model);
     num_urls++;
   }
   fprintf(stderr, "Read %d URLs \n", num_urls);
+  fprintf(stderr, "Average time = %lf \n", total_time/(double)num_urls);
   
 BYE:
   if ( M != NULL ) { 

@@ -4,6 +4,7 @@
 #include "get_variant.h"
 #include "post_from_log_q.h"
 #include "make_curl_payload.h"
+#include "kafka_add_to_queue.h"
 
 
 void *
@@ -25,7 +26,7 @@ post_from_log_q(
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
-     //  fprintf(stderr, "consumer waiting\n");
+      //  fprintf(stderr, "consumer waiting\n");
       pthread_cond_wait(&g_condc, &g_mutex);
       // fprintf(stderr, "consumer still waiting\n");
     }
@@ -45,39 +46,35 @@ post_from_log_q(
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
     status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
-    curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
-#ifdef NW_SPECIFIC
-    struct curl_slist *chunk = NULL;
-    if ( *g_nw_x_caller_client_id == '\0' ) { 
-      chunk = curl_slist_append(chunk, "X-Caller-Client-ID;");
+    if ( g_rk == NULL ) { // use logger 
+      curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
+      g_log_posts++;
+      int retry_count = 0;
+      bool post_succeeded = false;
+      for ( ;  retry_count < g_cfg.num_post_retries ; retry_count++ ) {
+        curl_res = curl_easy_perform(g_ch);
+        if ( curl_res != CURLE_OK ) { 
+          g_log_failed_posts++; continue;
+        }
+        curl_easy_getinfo(g_ch, CURLINFO_RESPONSE_CODE, &http_code);
+        if ( http_code != 200 )  { 
+          g_log_failed_posts++; continue;
+        }
+        // If control comes here, it means we succeeded
+        post_succeeded = true;
+        break;
+        // Should we sleep and give logger some breathing room?
+      }
+      if ( !post_succeeded ) { 
+        g_log_bad_posts++;
+        if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
+      }
     }
-    else {
-      char buf[AB_MAX_LEN_HDR_KEY+1+AB_MAX_LEN_HDR_VAL+1+8];
-      sprintf(buf, "X-Caller-Client-ID: %s", g_nw_x_caller_client_id);
-      chunk = curl_slist_append(chunk, buf);
-    }
-    curl_res = curl_easy_setopt(g_ch, CURLOPT_HTTPHEADER, chunk);
+    else { // use kafka
+#ifdef KAFKA
+      status = kafka_add_to_queue(g_curl_payload); 
+      if ( status != 0 ) { WHEREAMI; }
 #endif
-    g_log_posts++;
-    int retry_count = 0;
-    bool post_succeeded = false;
-    for ( ;  retry_count < g_cfg.num_post_retries ; retry_count++ ) {
-      curl_res = curl_easy_perform(g_ch);
-      if ( curl_res != CURLE_OK ) { 
-        g_log_failed_posts++; continue;
-      }
-      curl_easy_getinfo(g_ch, CURLINFO_RESPONSE_CODE, &http_code);
-      if ( http_code != 200 )  { 
-        g_log_failed_posts++; continue;
-      }
-      // If control comes here, it means we succeeded
-      post_succeeded = true;
-      break;
-      // Should we sleep and give logger some breathing room?
-    }
-    if ( !post_succeeded ) { 
-      g_log_bad_posts++;
-      if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
     }
   }
   pthread_exit(NULL); 

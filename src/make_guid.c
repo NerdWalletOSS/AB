@@ -38,7 +38,7 @@ make_guid(
     uint8_t val = 0;
     val = hash & 0xF;
     if ( val >= nX ) { go_BYE(-1); }
-    guid[i++] = X[val];
+    guid[i] = X[val];
     hash = hash >> 4;
   }
 BYE:

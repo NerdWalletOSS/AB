@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <string.h>
 
 #include <sys/mman.h>
@@ -18,12 +19,12 @@
 #include "macros.h"
 #include "auxil.h"
 #define __AB_MAIN_PROGRAM
+#include "halt_server.h"
 #include "ab_globals.h"
 #include "zero_globals.h"
 #include "hard_code_config.h"
 #include "get_and_classify_ua.h"
 #include "post_from_log_q.h"
-#include "load_config.h"
 #include "update_config.h"
 #include "init.h"
 #include "ab_process_req.h"
@@ -35,6 +36,7 @@
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
+#include "l_load_config.h"
 #include "l_update_config.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -89,10 +91,6 @@ generic_handler(
   AB_REQ_TYPE req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_body(req_type, req, body, AB_MAX_LEN_BODY);
-#ifdef NW_SPECIFIC
-  status = get_nw_hdrs(req, g_nw_x_caller_client_id, g_nw_x_cookie_id);
-  cBYE(status);
-#endif
   if ( req_type == Router ) {  
     status = get_and_classify_ua(req, &g_device_type_id, &g_os_id, 
         &g_browser_id, &g_justin_cat_id);
@@ -102,7 +100,7 @@ generic_handler(
        ( req_type == GetVariant ) || 
        ( req_type == GetVariants ) ) {
     // status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
-    // TODO P1 put this back status = make_guid(NULL, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
+    status = make_guid(NULL, g_out_tracer, AB_MAX_LEN_TRACER); cBYE(status);
   }
   status = ab_process_req(req_type, api, args, body); cBYE(status);
   //--------------------------------------
@@ -168,11 +166,12 @@ main(
     char **argv
     )
 {
+  signal(SIGINT, halt_server);
   int status = 0;
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_disable_lua = true; // NORMALLY FALSE. Just for testing
+  g_disable_lua = false; // NORMALLY FALSE. Just for testing
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);

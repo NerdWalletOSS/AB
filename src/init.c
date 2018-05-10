@@ -52,6 +52,11 @@ init_lua(
   status = luaL_loadfile(g_L, "./ab.lua"); cBYE(status);
   status = lua_pcall(g_L, 0, 0, 0); cBYE(status);
 
+  g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
+  luaL_openlibs(g_L_DT);  
+  status = luaL_loadfile(g_L_DT, "./dt.lua"); cBYE(status);
+  status = lua_pcall(g_L_DT, 0, 0, 0); cBYE(status);
+
 BYE:
   return status;
 }
@@ -105,6 +110,8 @@ setup_curl(
   }
   if ( nw >= len-1 ) { go_BYE(-1); }
   res = curl_easy_setopt(ch, CURLOPT_URL, full_url);
+  if ( res != CURLE_OK ) { go_BYE(-1);  }
+  res = curl_easy_setopt(ch, CURLOPT_VERBOSE, 0);
   if ( res != CURLE_OK ) { go_BYE(-1);  }
   res = curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS,     timeout_ms);
   if ( res != CURLE_OK ) { go_BYE(-1);  }

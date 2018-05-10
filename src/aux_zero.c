@@ -54,7 +54,7 @@ free_test(
   free_if_non_null(ptr_test->final_variant_idx);
   uint32_t num_devices = ptr_test->num_devices;
   if ( ptr_test->variant_per_bin != NULL ) { 
-    for ( int i = 0; i < num_devices; i++ ) { 
+    for ( uint32_t i = 0; i < num_devices; i++ ) { 
       free_if_non_null(ptr_test->variant_per_bin[i]);
     }
   }
