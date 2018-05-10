@@ -119,7 +119,6 @@ generic_handler(
       n = evbuffer_remove(inbuf, cbuf, sizeof(cbuf));
       if ( n == 0 ) { go_BYE(-1); }
       if ( n > 0) { // verify that it is good JSON
-        fprintf(stderr, "%s\n", cbuf);
         status = check_payload(cbuf); cBYE(status);
       }
     }

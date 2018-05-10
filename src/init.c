@@ -111,6 +111,8 @@ setup_curl(
   if ( nw >= len-1 ) { go_BYE(-1); }
   res = curl_easy_setopt(ch, CURLOPT_URL, full_url);
   if ( res != CURLE_OK ) { go_BYE(-1);  }
+  res = curl_easy_setopt(ch, CURLOPT_VERBOSE, 0);
+  if ( res != CURLE_OK ) { go_BYE(-1);  }
   res = curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS,     timeout_ms);
   if ( res != CURLE_OK ) { go_BYE(-1);  }
   res = curl_easy_setopt(ch, CURLOPT_DNS_CACHE_TIMEOUT,     100);

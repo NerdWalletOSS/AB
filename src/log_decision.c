@@ -4,6 +4,7 @@
 #include "post_url.h"
 #include "make_curl_payload.h"
 #include "log_decision.h"
+#include "kafka_add_to_queue.h"
 int
 log_decision(
     PAYLOAD_TYPE lcl_payload

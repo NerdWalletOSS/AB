@@ -159,10 +159,6 @@ zero_globals(
   g_ss_ch        = NULL;
   g_ss_curl_hdrs = NULL;
 
-#ifdef NW_SPECIFIC
-  memset(g_nw_x_caller_client_id, '\0', AB_MAX_LEN_HDR_VAL+1);
-  memset(g_nw_x_cookie_id, '\0', AB_MAX_LEN_HDR_VAL+1);
-#endif
   memset(g_redirect_url, '\0', AB_MAX_LEN_REDIRECT_URL+1);
   memset(g_err, '\0', AB_ERR_MSG_LEN+1);
   memset(g_buf, '\0', AB_ERR_MSG_LEN+1);
@@ -274,4 +270,5 @@ zero_log()
   g_log_bad_router_calls      = 0;
 
   g_log_num_probes     = 0;
+  g_log_response_time  = 0;
 }

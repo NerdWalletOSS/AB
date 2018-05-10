@@ -147,6 +147,7 @@ int alt_get_variant(
 
   PAYLOAD_TYPE lcl_payload;
   memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
+  strcpy(lcl_payload.in_tracer, in_tracer);
   strcpy(lcl_payload.out_tracer, g_out_tracer);
   lcl_payload.time       = curr_time;
   lcl_payload.test_id    = test_id;

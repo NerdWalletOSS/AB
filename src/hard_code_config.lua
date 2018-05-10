@@ -2,23 +2,26 @@ local ffi = require 'ab_ffi'
 local function l_hard_code_config(
   c_cfg
   )
-  local config = {
+  local config = {}
     -- For Database
-    config.AB.DB = {}
-    config.AB.DB.HOST = "localhost"
-    config.AB.DB.USER = "root"
-    config.AB.DB.PASS = ""
-    config.AB.DB.NAME = "abdb2"
-    --=====================================
-    -- For Decision Tree
-    config.DT.DT_DIR = {}
-    config.DT.DT_DIR.VALUE = "../DT/spam/"
-    config.DT.DT_DIR.COMMENT = "directory where decision tree configs are"
-  }
+  config.AB = {}
+  config.AB.DB = {}
+  config.AB.DB.SERVER = {}; config.AB.DB.SERVER.VALUE = "localhost"
+  config.AB.DB.USER = {}; config.AB.DB.USER.VALUE = "root"
+  config.AB.DB.PORT = {}; config.AB.DB.PORT.VALUE = "3306"
+  config.AB.DB.PASSWORD = {}; config.AB.DB.PASSWORD.VALUE = ""
+  config.AB.DB.DATABASE = {}
+  config.AB.DB.DATABASE.VALUE = "abdb2"
+  --=====================================
+  -- For Decision Tree
   -- Following is sample if you need stuff from C hard code to Lua hard cod
-  config.DT.MMDB_FILE = {}
-  config.DT.MMDB_FILE.VALUE = ffi.string(c_cfg.mmdb_file)
-  config.DT.MMDB_FILE.COMMENT = "maxmind database file"
+  c_cfg = ffi.cast("CFG_TYPE*", c_cfg)
+
+  config.DT = {}
+  config.DT.DT_DIR = {}
+  config.DT.DT_DIR.VALUE = ffi.string(c_cfg.dt_dir)
+  config.DT.DT_DIR.COMMENT = "directory where decision tree configs are"
+
   return config
 end
 return l_hard_code_config

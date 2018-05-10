@@ -49,10 +49,6 @@ EXTERN CURL  *g_ss_ch ; // For C: to talk to session service
 EXTERN struct curl_slist *g_ss_curl_hdrs; // For C: to talk to session service
 
 // Following initialized as needed
-#ifdef NW_SPECIFIC
-EXTERN char g_nw_x_caller_client_id[AB_MAX_LEN_HDR_VAL];
-EXTERN char g_nw_x_cookie_id[AB_MAX_LEN_HDR_VAL];
-#endif
 EXTERN char g_redirect_url[AB_MAX_LEN_REDIRECT_URL+1]; // For C: router()
 EXTERN char g_err[AB_ERR_MSG_LEN+1]; // For C: ab_process_req()
 EXTERN char g_buf[AB_ERR_MSG_LEN+1]; // For C: ab_process_req()

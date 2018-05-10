@@ -7,6 +7,7 @@
 #include "utm_kv.h"
 extern UTM_REC_TYPE g_utm_kv;
 #endif
+#include "get_utm_kv.h"
 extern char g_valid_chars_in_url[256];
 extern char g_rslt[AB_MAX_LEN_RESULT+1];
 

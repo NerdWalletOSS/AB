@@ -26,7 +26,7 @@ l_get_config(
 
   char* tests = (char *)lua_tostring(g_L, 1);
   if (AB_MAX_LEN_RESULT < strlen(tests)) {
-    sprintf(g_err, "{\"error\": Length of configs is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",
+    sprintf(g_err, "{\"error\": Length of configs is too much for buffer (max=%" PRIu32", actual=%" PRIu32 ")",
         AB_MAX_LEN_RESULT, strlen(tests));
     lua_pop(g_L, 1);
     go_BYE(-1);

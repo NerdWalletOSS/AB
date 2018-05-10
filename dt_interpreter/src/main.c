@@ -2,35 +2,10 @@
 #include "read_random_forest.h"
 #include "txt_to_F4.h"
 #include "eval_mdl.h"
+#include "auxil.h"
 
 uint64_t g_num_compares;
 uint64_t g_num_models;
-// START FUNC DECL
-static uint64_t get_time_usec(
-    void
-    )
-// STOP FUNC DECL
-{
-  struct timeval Tps;
-  struct timezone Tpf;
-  unsigned long long t = 0, t_sec = 0, t_usec = 0;
-
-  gettimeofday (&Tps, &Tpf);
-  t_sec  = (uint64_t )Tps.tv_sec;
-  t_usec = (uint64_t )Tps.tv_usec;
-  t = t_sec * 1000000 + t_usec;
-  return t;
-}
-
-
-/* assembly code to read the TSC */
-static uint64_t 
-RDTSC(void)
-{
-  unsigned int hi, lo;
-  __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
-  return ((uint64_t)hi << 32) | lo;
-}
 
 DT_REC_TYPE *dt = NULL;
 int n_dt = 0;

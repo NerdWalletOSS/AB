@@ -10,8 +10,8 @@ local function mk_test(x)
   if ( type(x) == "table" ) then
     T = x
   elseif ( type(x) == "string" ) then  
-    assert(plpath.isfile(infile) )
-    T = dofile(infile)
+    assert(plpath.isfile(x) )
+    T = dofile(x)
   else
     assert(nil, "bad type of input to mk_test")
   end
