@@ -1,6 +1,7 @@
-package.path = package.path .. ';../../?.lua'
-local cache = require 'lua_common.cache'
-local assertx = require 'lua_common.assertx'
+package.path = '../../?.lua;../?.lua;' .. package.path 
+
+local cache = require 'lua.cache'
+local assertx = require 'lua.assertx'
 
 local make_feature_vec = require 'make_feature_vector'
 function make_feature_vector(...)

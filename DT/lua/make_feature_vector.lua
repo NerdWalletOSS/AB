@@ -1,10 +1,10 @@
+package.path = '../../?.lua;../?.lua;' .. package.path 
 local one_hot_encoding = require 'one_hot_encoding'
 local get_num_features = require 'get_num_features'
-package.path = package.path .. ';../../?.lua'
 local json = require 'lua.json'
-local assertx = require 'lua_common.assertx'
+local assertx = require 'lua.assertx'
 local ffi = require 'ffi'
-local cache = require 'lua_common.cache'
+local cache = require 'lua.cache'
 
 
 local function make_feature_vector(

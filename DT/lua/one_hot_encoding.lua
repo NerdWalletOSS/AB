@@ -22,9 +22,9 @@ Therefore:
 3. If there is a value within the categorical variables that
    do not exist in dt_feature, none of the values will be encoded.
 ]]--
-package.path = package.path .. ';../../?.lua'
-local assertx = require 'lua_common.assertx'
-local cache = require 'lua_common.cache'
+package.path = '../../?.lua;../?.lua;' .. package.path 
+local assertx = require 'lua.assertx'
+local cache = require 'lua.cache'
 
 local function one_hot_encoding(feature_table)
 	--[[
