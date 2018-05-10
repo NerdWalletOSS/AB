@@ -21,7 +21,7 @@ OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY -DMINI
-CFLAGS= $(LFLAGS) 
+CFLAGS= $(LFLAGS)  -DRASPBERRY_PI
 
 CC= clang
 CC= gcc
@@ -37,7 +37,10 @@ all : test_dt dt.so
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
 
-XOBJS = mmap.o
+auxil.o :
+	$(CC) -c -o $@ ../../src/auxil.c $(CFLAGS)  $(INCS)
+
+XOBJS = mmap.o auxil.o
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)

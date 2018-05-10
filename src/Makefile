@@ -25,8 +25,10 @@ OPTFLAGS=
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DNW_SPECIFIC \
 	-DKAFKA \
 	-DMAXMIND \
-	-DGET_HOST_DOMAIN \
 	-DUTM_KV \
+	-DRASPBERRY_PI
+
+#	-DGET_HOST_DOMAIN \
 
 # set one of following 
 CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
@@ -137,6 +139,8 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src
 ./libs/libmaxminddb.so: ./libs ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	cp ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ./libs/libmaxminddb.so
 
+#	../registered-domain-libs/C/regdom.o 
+
 ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
@@ -145,7 +149,6 @@ ab_httpd : $(COBJS)  \
 	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
-	../registered-domain-libs/C/regdom.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so \
 	../librdkafka/src/librdkafka.so
@@ -154,7 +157,6 @@ ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
-	../registered-domain-libs/C/regdom.o \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
 	../utm_kv/src/utm_kv.so \

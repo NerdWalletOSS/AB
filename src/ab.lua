@@ -4,7 +4,7 @@ local x_load_config = require 'ab_load_config'
 local x_update_config = require 'ab_update_config'
 
 local tests = require 'add_test'
-local reload_tests = require 'reload'
+-- TODO P0 PUT BACK local reload_tests = require 'reload'
 
 function load_config(...)
   cache.put("config", x_load_config(...))
