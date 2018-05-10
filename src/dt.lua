@@ -1,5 +1,4 @@
 local cache = require 'cache'
--- local isdir = require '../lua/isdir'
 local x_load_config = require 'dt_load_config'
 local x_hard_code_config = require 'hard_code_config'
 local x_update_config = require 'dt_update_config'
