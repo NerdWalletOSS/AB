@@ -8,7 +8,7 @@
 
 #include "l_add_test.h"
 #include "chk_logger_conn.h"
-#include "chk_db_conn.h"
+#include "l_chk_db_conn.h"
 #include "diagnostics.h"
 #include "dump_log.h"
 #include "hard_code_config.h"

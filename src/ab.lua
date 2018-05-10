@@ -1,20 +1,17 @@
-local csv = require "csv"
-local json = require "json"
--- local ffi = require 'ffi' 
-local tests = require 'add_test'
 local cache = require 'cache'
-local reload_tests = require 'reload'
-
 local x_hard_code_config = require 'hard_code_config'
 local x_load_config = require 'ab_load_config'
 local x_update_config = require 'ab_update_config'
 
-function hard_code_config(...)
-  cache.put("config", x_hard_code_config(...))
-end
+local tests = require 'add_test'
+local reload_tests = require 'reload'
 
 function load_config(...)
   cache.put("config", x_load_config(...))
+end
+
+function hard_code_config(...)
+  cache.put("config", x_hard_code_config(...))
 end
 
 function update_config(...)
@@ -29,16 +26,12 @@ function list_tests()
   return json.encode(cache.get('tests'))
 end
 
-function get_config()
-  return cache.get('config')
-end
-
 function reload(...)
   return reload_tests.reload(...)
 end
 
 function check_db_conn()
-  local configs = cache.get('config').AB.MYSQL
+  local configs = cache.get('config').AB.DB
   local conn = load_config.db_connect(configs)
   assert(conn ~= nil, "must be a valid connection object")
 end
