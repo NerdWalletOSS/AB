@@ -1,6 +1,9 @@
 #include "kafka_close_conn.h"
 
-void kafka_close_conn() {
+void kafka_close_conn(
+    void
+    ) 
+{
   /* Wait for final messages to be delivered or fail.
    * rd_kafka_flush() is an abstraction over rd_kafka_poll() which
    * waits for all messages to be delivered. */

@@ -3,7 +3,7 @@ local cache = require 'cache'
 local consts = require 'ab_consts'
 local ffi = require 'ab_ffi'
 local json = require 'json'
-local sql = require 'sql'
+-- TODO P0 PUT BACK local sql = require 'sql'
 -- local dbg = require 'debugger'
 
 local function is_present(v_table)
@@ -115,7 +115,7 @@ function load_cfg.db_connect(mysql)
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
   -- print(host, user, pass, db, port)
-  local conn = sql:connect(host, user, pass, db, port)
+  -- TODO P0 local conn = sql:connect(host, user, pass, db, port)
   return conn
 end
 
