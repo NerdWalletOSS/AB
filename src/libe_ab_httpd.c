@@ -144,7 +144,8 @@ BYE:
   }
   evbuffer_free(opbuf);
   //--- Log time seen by clients
-  if ( ( req_type == GetVariant )  || ( req_type == GetVariants ) ) {
+  if ( ( req_type == Router ) ||  ( req_type == GetVariant )  || 
+       ( req_type == GetVariants ) ) {
     uint64_t t_stop = RDTSC();
     if ( t_stop > t_start ) { 
       uint64_t t_delta = t_stop - t_start;
@@ -154,6 +155,7 @@ BYE:
         char *key2 = (char *)"nw.metrics.ab.get_variant_ctr";
         statsd_inc(g_statsd_link, key2, 1);
       }
+      g_log_response_time += t_delta;
     }
   }
   //--------------------
