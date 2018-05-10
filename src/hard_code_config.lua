@@ -16,16 +16,14 @@ local function l_hard_code_config(
   config.AB.DB.NAME.VALUE = "abdb2"
   --=====================================
   -- For Decision Tree
+  -- Following is sample if you need stuff from C hard code to Lua hard cod
+  c_cfg = ffi.cast("CFG_TYPE*", c_cfg)
+
   config.DT = {}
   config.DT.DT_DIR = {}
-  config.DT.DT_DIR.VALUE = "../DT/spam/"
+  config.DT.DT_DIR.VALUE = ffi.string(c_cfg.dt_dir)
   config.DT.DT_DIR.COMMENT = "directory where decision tree configs are"
 
-  -- Following is sample if you need stuff from C hard code to Lua hard cod
-  config.DT.MMDB_FILE = {}
-  c_cfg = ffi.cast("CFG_TYPE*", c_cfg)
-  config.DT.MMDB_FILE.VALUE = ffi.string(c_cfg.mmdb_file)
-  config.DT.MMDB_FILE.COMMENT = "maxmind database file"
   return config
 end
 return l_hard_code_config

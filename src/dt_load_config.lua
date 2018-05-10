@@ -1,7 +1,7 @@
 local assertx = require 'assertx'
 local json = require 'json'
 
-function load_cfg.load_config(
+function load_config(
   config_file,
   g_cfg,  --- C data structure
   has_changed
@@ -16,3 +16,4 @@ function load_cfg.load_config(
 
   return config
 end
+return load_config

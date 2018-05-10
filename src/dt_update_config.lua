@@ -1,11 +1,11 @@
 local cache = require 'cache'
-local isdir = require '../lua/isdir'
 
 local function update_config()
   local config = assert(cache.get("config"))
   assert(config.DT)
-  local dt_dir = config.DT.DT_DIR
-  if ( dt_dir ) and ( isdir(dt_dir) ) then 
+  local dt_dir = config.DT.DT_DIR.VALUE
+  if ( ( dt_dir ) and ( #dt_dir > 0 ) ) then 
+    -- existence of dt_dir checked by C 
     
     local make_feature_vec = require(dt_dir .. '/make_feature_vector')
     function make_feature_vector(...)
