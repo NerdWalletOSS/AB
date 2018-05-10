@@ -165,18 +165,18 @@ local function update_rts_configs(g_cfg, config)
   return is_updated
 end
 
-local function update_ml_configs(g_cfg, config)
-  local is_updated = consts.FALSE
-  local c_struct = g_cfg[0]
-
-  is_updated = update_file_field(config.DT_DIR, c_struct.dt_dir, is_updated)
-  -- is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
-  -- is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
-  -- is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
-  is_updated = update_file_field(config.MMDB_FILE, c_struct.mmdb_file, is_updated)
-
-  return is_updated
-end
+-- local function update_ml_configs(g_cfg, config)
+--   local is_updated = consts.FALSE
+--   local c_struct = g_cfg[0]
+-- 
+--   is_updated = update_file_field(config.DT_DIR, c_struct.dt_dir, is_updated)
+--   -- is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
+--   -- is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
+--   -- is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
+--   is_updated = update_file_field(config.MMDB_FILE, c_struct.mmdb_file, is_updated)
+-- 
+--   return is_updated
+-- end
 
 local function update_ua_configs(g_cfg, config)
   local is_updated = consts.FALSE
@@ -199,7 +199,6 @@ local function update_kafka_configs(g_cfg, conf)
   is_updated = update_string_field(conf.TOPIC, kafka.topic, is_updated, 1, consts.AB_MAX_LEN_KAFKA_TOPIC)
   is_updated = update_string_field(conf.QUEUE_SIZE, kafka.queue_size, is_updated, 1, consts.AB_MAX_LEN_KAFKA_QUEUE_SIZE)
   is_updated = update_string_field(conf.RETRIES, kafka.retries, is_updated, 1, consts.AB_MAX_LEN_KAFKA_RETRIES)
-
   is_updated = update_string_field(conf.MAX_BUFFERING_TIME, kafka.max_buffering_time, is_updated, 1, consts.AB_MAX_LEN_BUF_TIME)
   return is_updated
 end
@@ -229,12 +228,12 @@ function load_cfg.load_config(
   has_changed[2] = update_config(g_cfg[0].ss, config.AB.SESSION_SERVICE)
   has_changed[3] = update_config(g_cfg[0].statsd, config.AB.STATSD)
   has_changed[4] = update_config(g_cfg[0].webapp, config.AB.WEBAPP)
-  has_changed[7] = update_kafka_configs(g_cfg, config.AB.KAFKA)
   -- As an example, if we wanted database info on C side, we would do
   -- has_changed[... = update_db(g_cfg, config.AB.DB)
 
   has_changed[5] = update_ua_configs(g_cfg, config.AB)
-  has_changed[6] = update_ml_configs(g_cfg, config.AB)
+  -- has_changed[6] = update_ml_configs(g_cfg, config.AB)
+  has_changed[6] = update_kafka_configs(g_cfg, config.AB.KAFKA)
   return config
   -- dbg()
 end

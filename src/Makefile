@@ -110,7 +110,8 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ../librdkafka/src/librdkafka.so
+$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ../librdkafka/src/librdkafka.so ../curl-7.51.0/lib/.libs/libcurl.so  
+
 
 ../statsd-c-client-master/libstatsdclient.so :
 	make -C ../statsd-c-client-master/

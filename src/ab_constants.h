@@ -33,7 +33,7 @@
 
 #define AB_NUM_BINS             1000 
 
-#define NUM_SERVICES 8
+#define NUM_SERVICES 7
 
 #define TEST_STATE_DRAFT        1 
 #define TEST_STATE_DORMANT      2 

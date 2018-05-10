@@ -10,6 +10,9 @@ usage(){
   echo "  -t  Builds AB and runs tests"
   echo "  -x  Builds a tarball of all the php companents for AB admin"
   echo "  -s  Builds and starts all support systems"
+  echo "  -o  Stops all support systems"
+  
+
   # echo "  -r  Builds and run AB with all other auxillary service"
   exit 1 ;
 }
@@ -60,7 +63,7 @@ clean_kafka_logs(){
 install_kafka(){
   sudo apt-get update
   sudo apt-get install default-jre -y
-  sudo apt-get install zookeeperd -y
+  sudo apt-get install zookeeperd zookeeper -y
   RES="`echo ruok | nc localhost 2181`"
   if [[ "$RES" != "imok" ]]
   then
