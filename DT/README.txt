@@ -10,7 +10,7 @@ In that directory, we have
   \verb+ { "age" : 50, "is_male" : true } +
   Output: writes to \verb+float *g_feature_vector // [g_n_feature_vector]
 
-3) get_num_featires.lua
+3) get_num_features.lua
   allows C server to figure out g_n_feature_vector at boot up time
 
 4) post_proc_preds.lua

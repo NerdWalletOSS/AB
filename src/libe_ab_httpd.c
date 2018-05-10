@@ -25,7 +25,6 @@
 #include "hard_code_config.h"
 #include "get_and_classify_ua.h"
 #include "post_from_log_q.h"
-#include "load_config.h"
 #include "update_config.h"
 #include "init.h"
 #include "ab_process_req.h"
@@ -37,6 +36,7 @@
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
+#include "l_load_config.h"
 #include "l_update_config.h"
 #include <sys/types.h>
 #include <sys/time.h>

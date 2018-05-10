@@ -7,7 +7,7 @@
 #include "kafka_add_to_queue.h"
 #endif
 
-  void
+void
 hard_code_config(void)
 {
   g_cfg.port = 8000;

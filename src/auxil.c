@@ -437,11 +437,17 @@ file_exists(
 
 /* assembly code to read the TSC */
 inline uint64_t 
-RDTSC(void)
+RDTSC(
+    void
+    )
 {
+#ifdef RASPBERRY_PI
+  return get_time_usec();
+#else
   unsigned int hi, lo;
   __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
   return ((uint64_t)hi << 32) | lo;
+#endif
 }
 
 #ifdef AUXIL_STAND_ALONE
