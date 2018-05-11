@@ -1,6 +1,6 @@
 -- local dbg = require 'debugger'
 local ffi = require 'lua/ab_ffi'
-local sql = require 'RTS/sql'
+local sql = require 'lua/sql'
 local consts = require 'lua/ab_consts'
 local cache = require 'lua/cache'
 local load_config = require 'RTS/ab_load_config'

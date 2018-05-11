@@ -51,11 +51,12 @@ build(){
   mkdir -p ../bin/libs
   cp ab_httpd ../bin
   cd ../
-  # find ./ -name "*.so*" -exec cp {} ../bin/libs \;
+ #  find ./ -name "*.so*" -exec cp {} ../bin/libs \;
   # find ./ -name "*.lua" -exec cp --parents {} ../bin \;
   find ./RTS -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./DT -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./lua -name '*.lua' -exec cp --parents \{\} ./bin/ \;
+  find ./ -name "*.so*" -exec cp \{\} ./bin/libs/ \;
   set +e
   cd bin
   echo "cd libs" > to_source

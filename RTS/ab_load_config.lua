@@ -2,7 +2,7 @@ local assertx = require 'lua/assertx'
 local cache = require 'lua/cache'
 local consts = require 'lua/ab_consts'
 local ffi = require 'lua/ab_ffi'
-local json = require 'iua/json'
+local json = require 'lua/json'
 local sql = require 'lua/sql'
 -- local dbg = require 'debugger'
 
