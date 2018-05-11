@@ -1,14 +1,14 @@
-require 'strict'
-local JSON = (loadfile "JSON.lua")() -- one-time load of the routines
+require 'lua/str'
+local JSON = require "lua/JSON"
 local cURL = require "cURL"
 local ltn12 = require("ltn12") 
 local plstr = require 'pl.stringx'
 local plpath = require 'pl.path'
-local get_test_id = require 'get_test_id'
-local get_error_code = require 'get_error_code'
-local test_compare = require 'test_compare'
-local get_url = require 'get_url'
-local reset_db = require 'reset_db'
+local get_test_id = require 'test_webapp/get_test_id'
+local get_error_code = require 'test_webapp/get_error_code'
+local test_compare = require 'test_webapp/test_compare'
+local get_url = require 'test_webapp/get_url'
+local reset_db = require 'test_webapp/reset_db'
 
 local suite_description = [[
   These tests verfy that basic addition and modification of a test

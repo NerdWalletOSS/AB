@@ -1,4 +1,4 @@
-local ffi = require 'ab_ffi'
+local ffi = require 'lua/ab_ffi'
 -- load libs 
 ffi.cdef([[
 extern int get_test_idx(

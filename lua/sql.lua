@@ -187,7 +187,7 @@ local mysql_connect = function( self, host, user, password, db, port)
   assert( port, tonumber(port) >= 0 and tonumber(port) <= 65535, "Valid port number must be given" )
 
   local out={}
-  local mysql = ffi.cast( "MYSQLwrap_t*",ffi.C.malloc( 1024*1024 ))
+  local mysql = ffi.cast( "MYSQLwrap_t*",ffi.gc(ffi.C.malloc( 1024*1024 ), ffi.C.free))
   local ret = ffi.C.mysql_init(mysql)
   self:log("mysql_init:", ret )
   local conn = ffi.C.mysql_real_connect( mysql, host, user, password, db, port, ffi.NULL, 0)

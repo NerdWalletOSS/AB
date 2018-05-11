@@ -1,15 +1,14 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local JSON = require 'JSON'
+require 'lua/str'
+local JSON = require 'lua/JSON'
 local plfile = require 'pl.file'
 local plpath = require 'pl.path'
-local curl = require 'curl'
-local mk_test = require 'mk_test'
-local reset_db = require 'reset_db'
-local get_test_id = require 'get_test_id'
-local get_test_info = require 'get_test_info'
-local get_error_code = require 'get_error_code'
-local states = require 'states'
+local curl = require 'lua/curl'
+local mk_test = require 'test_webapp/mk_test'
+local reset_db = require 'test_webapp/reset_db'
+local get_test_id = require 'test_webapp/get_test_id'
+local get_test_info = require 'test_webapp/get_test_info'
+local get_error_code = require 'test_webapp/get_error_code'
+local states = require 'test_webapp/states'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"

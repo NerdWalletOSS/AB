@@ -14,10 +14,9 @@ main(
   char *model_file_name     = NULL;
   char *coeff_file_name     = NULL;
   char *test_file_name      = NULL;
-  MODEL_REC_TYPE *M = NULL; int nM;
-  MODEL_NAME_TYPE *N = NULL; int num_models;
+  MODEL_REC_TYPE *M = NULL; int nM = -1;
+  MODEL_NAME_TYPE *N = NULL; int num_models = -1;
   FILE *fp = NULL;
-  double *scores = NULL;
   uint64_t *H = NULL; int nH = 0; // hashes
   uint64_t total_time = 0;
 
@@ -32,9 +31,6 @@ main(
   fprintf(stderr, "loaded %d rows \n", nM);
   //----- Start testing
   char url[MAX_LEN_URL+1];
-
-  scores = malloc(num_models * sizeof(double));
-  return_if_malloc_failed(scores);
 
   fp = fopen(test_file_name, "r");
   return_if_fopen_failed(fp, test_file_name, "r");
@@ -66,6 +62,5 @@ BYE:
   free_if_non_null(N); 
   fclose_if_non_null(fp);
   fclose_if_non_null(H);
-  free_if_non_null(scores);
   return status;
 }

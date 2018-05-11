@@ -1,5 +1,5 @@
-local cache = require 'cache'
-local load_config = require 'ab_load_config'
+local cache = require 'lua/cache'
+local load_config = require 'RTS/ab_load_config'
 
 local function update_config()
   local config = assert(cache.get("config"))
