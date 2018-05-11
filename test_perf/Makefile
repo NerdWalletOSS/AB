@@ -16,11 +16,11 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 # Uncomment below to capture server error 
@@ -45,7 +45,8 @@ all : sblaster
 sblaster : $(SBLASTER_OBJS) $(SBLASTER_INCS) \
 	../jansson-2.10/src/.libs/libjansson.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
-	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster -lcurl \
+	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
+	../src/libs/libcurl.so \
 	../jansson-2.10/src/.libs/libjansson.a \
 
 
