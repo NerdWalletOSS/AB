@@ -2,9 +2,9 @@
 # gen the doth with the #defines replaced
 echo '#include "ab_constants.h"' > ffi.h
 cat ab_types.h | grep -v "^#" >> ffi.h
-echo "local ffi = require 'ffi'"  > ab_ffi.lua
-echo "ffi.cdef([[" >>ab_ffi.lua
-gcc -E ffi.h | grep -v "^#">>ab_ffi.lua
+echo "local ffi = require 'ffi'"  > ../lua/ab_ffi.lua
+echo "ffi.cdef([[" >>../lua/ab_ffi.lua
+gcc -E ffi.h | grep -v "^#">>../lua/ab_ffi.lua
 echo "void *memset(void *s, int c, size_t n);
 void *memcpy(void *dest, const void *src, size_t n);
 size_t strlen(const char *str);
@@ -22,8 +22,8 @@ void free(void *ptr);
 FILE *fopen(const char *path, const char *mode);
 int fclose(FILE *stream);
 int fwrite(void *Buffer,int Size,int Count,FILE *ptr);
-int fflush(FILE *stream);">>ab_ffi.lua
+int fflush(FILE *stream);">>../lua/ab_ffi.lua
 
-echo "]])" >>ab_ffi.lua
-echo "return ffi" >>ab_ffi.lua
+echo "]])" >>../lua/ab_ffi.lua
+echo "return ffi" >>../lua/ab_ffi.lua
 rm ffi.h

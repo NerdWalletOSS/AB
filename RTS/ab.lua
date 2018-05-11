@@ -1,7 +1,7 @@
-local cache = require 'cache'
-local x_hard_code_config = require 'hard_code_config'
-local x_load_config = require 'ab_load_config'
-local x_update_config = require 'ab_update_config'
+local cache = require 'lua/cache'
+local x_hard_code_config = require 'ilua/hard_code_config'
+local x_load_config = require 'RTS/ab_load_config'
+local x_update_config = require 'RTS/ab_update_config'
 
 local tests = require 'add_test'
 local reload_tests = require 'reload'

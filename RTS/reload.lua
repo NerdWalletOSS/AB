@@ -1,11 +1,11 @@
 -- local dbg = require 'debugger'
-local ffi = require 'ab_ffi'
-local sql = require 'sql'
-local consts = require 'ab_consts'
-local cache = require 'cache'
-local load_config = require 'ab_load_config'
-local json = require 'json'
-local AddTest = require 'add_test'
+local ffi = require 'lua/ab_ffi'
+local sql = require 'RTS/sql'
+local consts = require 'lua/ab_consts'
+local cache = require 'lua/cache'
+local load_config = require 'RTS/ab_load_config'
+local json = require 'lua/json'
+local AddTest = require 'RTS/add_test'
 local reload = {}
 function reload.get_tests_from_db()
   local tests_ret = {}

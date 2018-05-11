@@ -38,7 +38,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ab_consts.lua ab_ffi.lua ../dt_interpreter/src/dt.so
+all : ab_httpd libspooky_hash.so ../lua/ab_consts.lua ../lua/ab_ffi.lua ../dt_interpreter/src/dt.so
 
 ./libs:
 	mkdir libs
@@ -170,10 +170,10 @@ ab_httpd : $(COBJS)  \
 libspooky_hash.so:
 	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
-ab_consts.lua:
+../lua/ab_consts.lua:
 	bash gen_consts.sh
 
-ab_ffi.lua:
+../lua/ab_ffi.lua:
 	bash gen_ab_ffi.sh
 
 
