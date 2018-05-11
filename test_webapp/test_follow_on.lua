@@ -9,7 +9,7 @@ local reset_db = require 'reset_db'
 local get_test_id = require 'get_test_id'
 local get_test_info = require 'get_test_info'
 local get_error_code = require 'get_error_code'
-local make_follow_on = require 'make_follow_on'
+local set_follow_on = require 'set_follow_on'
 
 local S = require 'state_change'
 
@@ -44,7 +44,7 @@ tests.t1 = function (
 
   -- Make T2 follow T1 
   local t2_id = get_test_id(hdrs)
-  assert(make_follow_on(t1_id, t2_id))
+  assert(set_follow_on(t2_id, t1_id))
 
   print("Completed test t1")
 end

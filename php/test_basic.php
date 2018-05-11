@@ -24,7 +24,7 @@ function test_basic(
 )
 {
   //-- START: For logging
-  $ret_val = start_log($str_inJ);
+  $ret_val = start_log($str_inJ, "insert_test_edit_test_basic");
   $created_at = $ret_val['created_at'];
   $updated_at = $ret_val['updated_at'];
   $t_create   = $ret_val['t_create'];
