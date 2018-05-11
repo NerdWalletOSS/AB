@@ -1,8 +1,8 @@
-package.path = '../../?.lua;../?.lua;' .. package.path 
+package.path = '../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;' .. package.path
 
+local cache = require 'cache'
 local ffi = require 'ffi'
 local assertx = require 'lua.assertx'
-local cache = require 'lua.cache'
 local json = require 'lua.json'
 
 

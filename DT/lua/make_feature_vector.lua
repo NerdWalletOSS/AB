@@ -1,11 +1,10 @@
-package.path = '../../?.lua;../?.lua;' .. package.path 
-local one_hot_encoding = require 'one_hot_encoding'
-local get_num_features = require 'get_num_features'
+package.path = '../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;' .. package.path
+local cache = require 'cache'
+local one_hot_encoding = require 'DT.lua.one_hot_encoding'
+local get_num_features = require 'DT.lua.get_num_features'
 local json = require 'lua.json'
 local assertx = require 'lua.assertx'
 local ffi = require 'ffi'
-local cache = require 'lua.cache'
-
 
 local function make_feature_vector(
   body, 
@@ -19,7 +18,7 @@ local function make_feature_vector(
     "did not get valid JSON input")
   -- does the conversions
   local generate_features = assert(cache.get("generate_features"),
-    'generate_features not in cache.'))
+    'generate_features not in cache.')
   local out_features = assert(generate_features(in_features))
   if ( is_debug ) then 
     local x = assert(json.encode(out_features))
