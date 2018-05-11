@@ -1,6 +1,6 @@
 package.path = '../../../?.lua;../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;../../../lua/?.lua;' .. package.path
 
-cache = require 'cache'
+local cache = require 'cache'
 local assertx = require 'lua.assertx'
 local dt_feature = require 'DT.spam.dt_feature'
 assert(dt_feature, 'loading dt_feature failed')
