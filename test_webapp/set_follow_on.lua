@@ -3,7 +3,7 @@ require 'str'
 local JSON = require 'JSON'
 local curl = require 'curl'
 
-local function make_follow_on(
+local function set_follow_on(
   tid,
   tid_to_follow
   )
@@ -21,4 +21,4 @@ local function make_follow_on(
   assert(status == 200)
   return true
 end
-return make_follow_on
+return set_follow_on
