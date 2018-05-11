@@ -16,8 +16,8 @@ local function make_follow_on(
   T.tid = tid
   T.tid_to_follow = tid_to_follow
   local hdrs, outbody, status = curl.post(furl, nil, JSON:encode(T))
-  print(outbody)
-  for k, v in pairs(hdrs) do print(k, v) end 
+  -- print(outbody)
+  -- for k, v in pairs(hdrs) do print(k, v) end 
   assert(status == 200)
   return true
 end
