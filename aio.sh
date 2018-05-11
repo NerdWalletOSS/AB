@@ -50,10 +50,20 @@ build(){
   make
   mkdir -p ../bin/libs
   cp ab_httpd ../bin
-  find ../ -name "*.so*" -exec cp {} ../bin/libs \;
-  find ./ -name "*.lua" -exec cp --parents {} ../bin \;
   cd ../
+ #  find ./ -name "*.so*" -exec cp {} ../bin/libs \;
+  # find ./ -name "*.lua" -exec cp --parents {} ../bin \;
+  find ./RTS -name '*.lua' -exec cp --parents \{\} ./bin/ \;
+  find ./DT -name '*.lua' -exec cp --parents \{\} ./bin/ \;
+  find ./lua -name '*.lua' -exec cp --parents \{\} ./bin/ \;
+  find ./ -name "*.so*" -exec cp \{\} ./bin/libs/ \;
   set +e
+  cd bin
+  echo "cd libs" > to_source
+  echo 'export LD_LIBRARY_PATH="`pwd`"' >> to_source
+  echo "cd .." >> to_source
+  echo 'export LUA_PATH="`pwd`/?.lua;;"' >> to_source
+  cd -
 }
 
 clean_kafka_logs(){

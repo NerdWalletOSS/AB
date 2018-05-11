@@ -18,6 +18,13 @@ score_url(
   double *scores = NULL; 
   // char *bak_url = NULL;
 
+
+  if ( url        == NULL ) { go_BYE(-1); } 
+  if ( M          == NULL ) { go_BYE(-1); }
+  if ( nM         == 0 )    { go_BYE(-1); }
+  if ( N          == NULL ) { go_BYE(-1); }
+  if ( num_models == 0 )    { go_BYE(-1); }
+
   *ptr_best_model = -1;
   scores = malloc(num_models * sizeof(double));
   return_if_malloc_failed(scores);

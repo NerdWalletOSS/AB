@@ -1,15 +1,15 @@
 -- local dbg = require 'debugger'
-local json = require 'json'
-local cache = require 'cache'
-local assertx = require 'assertx'
-local ffi = require 'ab_ffi'
+local json = require 'lua/json'
+local cache = require 'lua/cache'
+local assertx = require 'lua/assertx'
+local ffi = require 'lua/ab_ffi'
 local AddTests = {}
-local bins = require 'bins'
-local consts = require 'ab_consts'
-local assertx = require 'assertx'
+local bins = require 'RTS/bins'
+local consts = require 'lua/ab_consts'
+local assertx = require 'lua/assertx'
 local g_seed1 = 961748941 -- TODO remove manual copy
 AddTests.g_seed1 = g_seed1
-local spooky_hash = require 'spooky_hash'
+local spooky_hash = require 'RTS/spooky_hash'
 
 local function create_state_table(consts)
   local states = {}

@@ -1,9 +1,8 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local JSON = require 'JSON'
-local curl = require 'curl'
+require 'lua/str'
+local JSON = require 'lua/JSON'
+local curl = require 'lua/curl'
 
-local function make_follow_on(
+local function set_follow_on(
   tid,
   tid_to_follow
   )
@@ -21,4 +20,4 @@ local function make_follow_on(
   assert(status == 200)
   return true
 end
-return make_follow_on
+return set_follow_on

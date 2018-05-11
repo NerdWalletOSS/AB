@@ -1,7 +1,7 @@
 -- local dbg = require 'debugger'
-local assertx = require 'assertx'
-local ffi = require 'ab_ffi'
-local consts = require 'ab_consts'
+local assertx = require 'lua/assertx'
+local ffi = require 'lua/ab_ffi'
+local consts = require 'lua/ab_consts'
 local bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok = {}
 local function set_variants_per_bin(c_test, variant_count)
   -- No device specific routing here

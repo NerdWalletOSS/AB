@@ -22,8 +22,12 @@ is_uq(
 {
   int status = 0;
   for ( int i = 0; i < argc; i++ ) { 
-    for ( int j = i+1; i < argc; i++ ) { 
-      if ( strcmp(argv[i], argv[j]) == 0 ) { go_BYE(-1);
+    for ( int j = i+1; j < argc; j++ ) { 
+      if ( strcmp(argv[i], argv[j]) == 0 ) { 
+        printf("hello world\n"); 
+        fprintf(stderr, "Arguments %d and %d are same = %s\n", 
+            i, j, argv[i]);
+        go_BYE(-1);
       }
     }
   }
@@ -61,6 +65,22 @@ main(
   status = read_random_forest(random_forest_file_name, 
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
+  //  Write binary output files 
+  //---------------------------------------------------
+  ofp = fopen(dt_file_name, "wb");
+  return_if_fopen_failed(ofp, dt_file_name, "wb");
+  fwrite(dt, sizeof(DT_REC_TYPE), n_dt, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(rf_file_name, "wb");
+  return_if_fopen_failed(ofp, rf_file_name, "wb");
+  fwrite(rf, sizeof(RF_REC_TYPE), n_rf, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(mdl_file_name, "wb");
+  return_if_fopen_failed(ofp, mdl_file_name, "wb");
+  fwrite(mdl, sizeof(MDL_REC_TYPE), n_mdl, ofp);
+  fclose_if_non_null(ofp);
 
   if ( test_data_file_name == NULL ) { 
     fprintf(stderr, "NO test data provided. Quitting early\n"); goto BYE;
@@ -129,21 +149,6 @@ main(
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
   printf("Total time (1, 2) = %llu %llu \n", sum1, sum2);
   printf("COMPLETED\n");
-  //---------------------------------------------------
-  ofp = fopen(dt_file_name, "wb");
-  return_if_fopen_failed(ofp, dt_file_name, "wb");
-  fwrite(dt, sizeof(DT_REC_TYPE), n_dt, ofp);
-  fclose_if_non_null(ofp);
-  //---------------------------------------------------
-  ofp = fopen(rf_file_name, "wb");
-  return_if_fopen_failed(ofp, rf_file_name, "wb");
-  fwrite(rf, sizeof(RF_REC_TYPE), n_rf, ofp);
-  fclose_if_non_null(ofp);
-  //---------------------------------------------------
-  ofp = fopen(mdl_file_name, "wb");
-  return_if_fopen_failed(ofp, mdl_file_name, "wb");
-  fwrite(mdl, sizeof(MDL_REC_TYPE), n_mdl, ofp);
-  fclose_if_non_null(ofp);
 
 BYE:
   fclose_if_non_null(ofp);

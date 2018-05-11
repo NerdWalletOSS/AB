@@ -49,8 +49,11 @@ init_lua(
   if ( g_disable_lua ) { return status; }
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
-  status = luaL_loadfile(g_L, "./ab.lua"); cBYE(status);
-  status = lua_pcall(g_L, 0, 0, 0); cBYE(status);
+  status = luaL_dostring(g_L, "require 'RTS/ab'");
+  // status = luaL_loadfile(g_L, "./RTS/ab.lua"); cBYE(status);
+  // status = lua_pcall(g_L, 0, 0, 0); 
+  printf("My status in %d\n\n\n", status);
+  cBYE(status);
 
   g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L_DT);  
