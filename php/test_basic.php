@@ -24,7 +24,7 @@ function test_basic(
 )
 {
   //-- START: For logging
-  $ret_val = start_log($str_inJ);
+  $ret_val = start_log($str_inJ, "insert_test_edit_test_basic");
   $created_at = $ret_val['created_at'];
   $updated_at = $ret_val['updated_at'];
   $t_create   = $ret_val['t_create'];
@@ -45,9 +45,9 @@ function test_basic(
   $is_overwrite = false;
   $x         = get_json_element($inJ, 'OverWriteURL', false);
   if ( $x === "true" ) {
-    $is_over_write = true;
+    $is_overwrite = true;
   }
-  header("OverWrite: $is_over_write");
+  header("OverWrite: $is_overwrite");
   $state     = get_json_element($inJ, 'State', false);
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
@@ -134,7 +134,7 @@ function test_basic(
   $variant_names = $chk_rslt['variant_names'];
   $variant_urls  = $chk_rslt['variant_urls'];
   // STOP Check inputs
-  //----------------------------------------------------
+  //---------------------------------------------_-------
   $X1['request_webapp_id']  = $request_webapp_id;
   $X1['api_id']       = $api_id;
   $X2['request_webapp_id']  = $request_webapp_id;

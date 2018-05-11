@@ -10,24 +10,31 @@ require_once 'get_json_element.php';
 require_once 'mod_row.php';
 require_once 'mod_cell.php'; // UTPAL: Added this line
 require_once 'find_tests_to_follow.php';
+require_once 'start_log.php';
 
 function set_follow_on(
-  $tid,
-  $tid_to_follow
+  $str_inJ
 )
 {
-  //--- Logging 
-  $created_at =  $updated_at = get_date(); 
-  $t_create =  $t_update = get_time_usec(); 
-  $api_id   = lkp("api", "set_follow_on");
-  $X0['created_at'] = $created_at;
-  $X0['t_create'] = $t_create;
-  $X0['payload']  = " { \"tid\" : $tid, \"$tid_to_follow\" : $tid_to_follow } ";
-  $X0['api_id']   = $api_id;
-  $request_webapp_id = insert_row("request_webapp", $X0);
-  $_SESSION['REQUEST_WEBAPP_ID'] = $request_webapp_id;
+  //-- START: For logging
+  $ret_val = start_log($str_inJ, "set_follow_on");
+  $created_at = $ret_val['created_at'];
+  $updated_at = $ret_val['updated_at'];
+  $t_create   = $ret_val['t_create'];
+  $t_update   = $ret_val['t_update'];
+  $api_id     = $ret_val['api_id'];
+  $request_webapp_id = $ret_val['request_webapp_id'];
+  //-- STOP: For logging
 
-  // TODO: Handle case where tid_to_follow is null
+  // START Check inputs
+  rs_assert(!empty($str_inJ));
+  rs_assert(is_string($str_inJ), "input not string");
+  $inJ = json_decode($str_inJ); 
+  rs_assert(gettype($inJ) != "string");
+  rs_assert($inJ, "invalid JSON");
+  $tid = get_json_element($inJ, 'tid'); 
+  $tid_to_follow = get_json_element($inJ, 'tid_to_follow'); 
+  //-----------------------------------------------
   // START Check inputs
   rs_assert(is_numeric($tid));
   rs_assert(is_numeric($tid_to_follow));

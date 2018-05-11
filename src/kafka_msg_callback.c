@@ -11,8 +11,13 @@
  * The callback is triggered from rd_kafka_poll() and executes on
  * the application's thread.
  */
-void  kafka_msg_callback(rd_kafka_t *g_rk,
-    const rd_kafka_message_t *rkmessage, void *opaque) {
+// INDRAJEET TODO Why are we sending g_rk here? Not used. Also opaque?
+void  kafka_msg_callback(
+    rd_kafka_t *g_rk,
+    const rd_kafka_message_t *rkmessage, 
+    void *opaque
+    ) 
+{
   if (rkmessage->err){
     fprintf(stderr, "%% Message delivery failed: %s\n",
         rd_kafka_err2str(rkmessage->err));

@@ -82,4 +82,6 @@ EXTERN uint64_t g_log_bad_router_calls;
 
 EXTERN uint64_t g_log_num_probes; 
 /*C Number of probes to find test in hash table */
+EXTERN uint64_t g_log_response_time; 
+/*C Time taken to respond to GetVariant(s) or Router */
 
