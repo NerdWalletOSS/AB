@@ -1,9 +1,6 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local JSON = require 'JSON'
-local plfile = require 'pl.file'
-local plpath = require 'pl.path'
-local curl = require 'curl'
+require 'lua/str'
+local JSON = require 'lua/JSON'
+local curl = require 'lua/curl'
 --==========================
 local function mk_test(x)
   local T 

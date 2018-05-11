@@ -1,9 +1,6 @@
 -- Only does POST and GET
-
-package.path=package.path .. ";./../src/?.lua;./../test_integration/?.lua;../test_generator/?.lua"
--- require 'strict'
-require 'str'
-local JSON = require 'json' -- one-time load of the routines
+require 'lua/str'
+local JSON = require 'lua/json' -- one-time load of the routines
 local cURL = require "cURL"
 local ltn12 = require("ltn12") -- TODO What is this for?
 -- local dbg = require 'debugger'
