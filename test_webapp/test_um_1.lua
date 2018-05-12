@@ -1,4 +1,3 @@
-local set_follow_on = require 'set_follow_on'
 require 'lua/str'
 local JSON = require 'lua/JSON'
 local curl = require 'lua/curl'
@@ -8,6 +7,7 @@ local get_test_id = require 'test_webapp/get_test_id'
 local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
+local set_follow_on = require 'set_follow_on'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
@@ -38,15 +38,7 @@ tests.t1 = function (
   T1.NewState = "dormant"
   T1.Updater =  "joe" -- TODO Improve this hard coding
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
-  -- for k, v in pairs(T1) do print(k, v) end 
-
-  -- Create Another Test T2
-  T1.name = "T2"
-  T1.id = ""
-  local hdrs, outbody, status = mk_test(T1)
-  assert(status == 200)
-  chk_T = get_test_info(test_id_1)
-
+ chk_T = get_test_info(test_id_1)
   assert(chk_T.State == "dormant")
 
 -- SET STATE of T1 to started
