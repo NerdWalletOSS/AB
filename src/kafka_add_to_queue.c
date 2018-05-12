@@ -16,7 +16,7 @@ int kafka_add_to_queue(char* buf){
     go_BYE(-1);
   }
 
-  fprintf(stderr, "Adding %s\n", buf);
+  // fprintf(stderr, "Adding %s\n", buf);
   // rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
 
   size_t len = strlen(buf);
@@ -61,10 +61,12 @@ retry:
       rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
       goto retry;
     }
-  } else {
-    fprintf(stderr, "%% Enqueued message (%zd bytes) "
+  } 
+  else {
+    /* fprintf(stderr, "%% Enqueued message (%zd bytes) "
         "for topic %s\n",
         len, rd_kafka_topic_name(g_rkt));
+        */
   }
 
 

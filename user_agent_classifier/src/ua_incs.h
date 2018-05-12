@@ -1,3 +1,5 @@
+#ifndef __UA_INCS
+#define __UA_INCS
 #include <stdio.h>
 #include <time.h>
 #include <sys/mman.h>
@@ -18,3 +20,4 @@
 #include "ua_consts.h"
 #include "ua_macros.h"
 #include "ua_types.h"
+#endif

@@ -47,8 +47,9 @@ XOBJS = mmap.o auxil.o
 
 test_dt : $(COBJS) $(XOBJS) 
 
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  \
-	-lm  -lpthread -ldl  -lgomp
+	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  -lm
+
+#  -lpthread -ldl  -lgomp
 
 
 dt.so : $(SO_COBJS) 

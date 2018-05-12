@@ -1,4 +1,4 @@
-local ffi = require 'ab_ffi'
+local ffi = require 'lua/ab_ffi'
 local function l_hard_code_config(
   c_cfg
   )

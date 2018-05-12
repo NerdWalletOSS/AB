@@ -1,16 +1,13 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local JSON = require 'JSON'
-local plfile = require 'pl.file'
-local plpath = require 'pl.path'
-local curl = require 'curl'
-local mk_test = require 'mk_test'
-local reset_db = require 'reset_db'
-local get_test_id = require 'get_test_id'
-local get_test_info = require 'get_test_info'
-local get_error_code = require 'get_error_code'
-local states = require 'states'
 local set_follow_on = require 'set_follow_on'
+require 'lua/str'
+local JSON = require 'lua/JSON'
+local curl = require 'lua/curl'
+local mk_test = require 'test_webapp/mk_test'
+local reset_db = require 'test_webapp/reset_db'
+local get_test_id = require 'test_webapp/get_test_id'
+local get_test_info = require 'test_webapp/get_test_info'
+local get_error_code = require 'test_webapp/get_error_code'
+local states = require 'test_webapp/states'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
@@ -41,6 +38,12 @@ tests.t1 = function (
   T1.NewState = "dormant"
   T1.Updater =  "joe" -- TODO Improve this hard coding
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
+  -- for k, v in pairs(T1) do print(k, v) end 
+
+  -- Create Another Test T2
+  T1.name = "T2"
+  T1.id = ""
+  local hdrs, outbody, status = mk_test(T1)
   assert(status == 200)
   chk_T = get_test_info(test_id_1)
 

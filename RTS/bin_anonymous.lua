@@ -1,9 +1,9 @@
 -- local dbg = require 'debugger'
 local bin_anonymous = {}
-local assertx = require 'assertx'
-local consts = require 'ab_consts'
-local ffi = require 'ab_ffi'
-local spooky_hash = require 'spooky_hash'
+local assertx = require 'lua/assertx'
+local consts = require 'lua/ab_consts'
+local ffi = require 'lua/ab_ffi'
+local spooky_hash = require 'RTS/spooky_hash'
 
 local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 

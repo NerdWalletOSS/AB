@@ -173,7 +173,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_disable_lua = false; // NORMALLY FALSE. Just for testing
+  g_disable_lua = true; // NORMALLY FALSE. Just for testing
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   status = zero_globals(); cBYE(status); /* Done only on startup */
   status = init_lua(); cBYE(status);

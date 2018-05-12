@@ -11,9 +11,12 @@ function insert_row(
   $sql  = "insert into $tbl ( ";
   $first = true;
   $save_kvs = $kvs;
+  $kidx = 1; 
   foreach ( $kvs as $key => $val ) {
     if ( is_null($val) ) { continue; }
-    if ( $val == "__NULL__" ) { 
+    if ( ( $val == "__NULL__" ) && ( !is_numeric($val) ) ) {
+      // TODO P2 Why is the is_numeric check needed?
+      // I inserted it because percentage = 0 was being set to null
       $val = null;
     }
     if ( $first ) { 
@@ -23,7 +26,8 @@ function insert_row(
       $sql .= ", ";
     }
     $sql .= " $key ";
-    $X["$key"] = $val;
+    $X[$key] = $val;
+    $kidx++; 
   }
   $sql  .= " ) values ( ";
   $first = true;
