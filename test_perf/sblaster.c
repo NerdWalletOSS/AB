@@ -42,8 +42,8 @@ main(
   if ( ( itemp < 80 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
   uint16_t port = (uint16_t)itemp; 
   //----------------------------------------
-  int num_restarts = 1;
-  int num_outside_iters = 1;
+  int num_restarts = 2;
+  int num_outside_iters = 2;
   int num_tests = 16;
   int niter = 2; // TODO FIX P1
   int nU = 1024;  // TODO FIX P1
