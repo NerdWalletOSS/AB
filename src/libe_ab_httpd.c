@@ -38,6 +38,7 @@
 #include "dump_log.h"
 #include "l_load_config.h"
 #include "l_update_config.h"
+#include "l_hard_code_config.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/queue.h>
