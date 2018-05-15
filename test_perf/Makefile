@@ -16,11 +16,11 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 # Uncomment below to capture server error 
@@ -31,6 +31,13 @@ CFLAGS= $(LFLAGS)
 CC= clang
 CC= gcc
 
+PBLASTER_OBJS = \
+	 execute.o setup_curl.o pblaster.o  add_tests.o \
+	../src/auxil.o \
+	../src/mmap.o  \
+	../src/make_guid.o  \
+	../src/spooky_hash.o  \
+
 SBLASTER_OBJS = \
 	setup_curl.o sblaster.o  execute.o add_tests.o \
 	../src/auxil.o \
@@ -38,11 +45,15 @@ SBLASTER_OBJS = \
 	../src/make_guid.o  \
 	../src/spooky_hash.o  \
 
-SBLASTER_INCS = ../src/ab_incs.h
+BLASTER_INCS = ../src/ab_incs.h
 
-all : sblaster 
+all : sblaster pblaster
 
-sblaster : $(SBLASTER_OBJS) $(SBLASTER_INCS) \
+pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
+	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
+	../src/libs/libcurl.so -lpthread
+
+sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) \
 	../jansson-2.10/src/.libs/libjansson.a \
 	../libevent-2.0.22-stable/.libs/libevent.so 
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
