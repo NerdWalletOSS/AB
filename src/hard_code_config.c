@@ -43,15 +43,15 @@ hard_code_config(void)
   strcpy(g_cfg.browser_file,  "/opt/ab/browser.csv");
   strcpy(g_cfg.device_type_file,  "/opt/ab/device_type.csv");
 
-  // strcpy(g_cfg.dt_dir,  "DT/spam/");
+  strcpy(g_cfg.dt_dir,  "DT/spam/");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
-
+/*
   strcpy(g_cfg.kafka.brokers, "192.168.1.151");
   strcpy(g_cfg.kafka.topic, "ab");
   strcpy(g_cfg.kafka.queue_size, "1048576");
   strcpy(g_cfg.kafka.retries, "5");
   strcpy(g_cfg.kafka.max_buffering_time, "10");
-
+*/
 }
