@@ -36,6 +36,7 @@ l_reload_tests()
     WHEREAMI;
     go_BYE(-1);
   }
+  // TODO free all tests
   for(int i=0; i<num_entries[0]; i++){
     status = l_add_test(g_reload_tests[i]);
   }

@@ -7,6 +7,7 @@
 #include "post_from_log_q.h"
 
 #include "l_add_test.h"
+#include "l_reload_tests.h"
 #include "chk_logger_conn.h"
 #include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
@@ -196,6 +197,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
+      l_reload_tests();
     case Restart : /* done by Lua */
       // t1 = get_time_usec();
       g_halt = true;
