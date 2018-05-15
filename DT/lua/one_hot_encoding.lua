@@ -22,8 +22,8 @@ Therefore:
 3. If there is a value within the categorical variables that
    do not exist in dt_feature, none of the values will be encoded.
 ]]--
-local cache = require 'lua.cache'
-local assertx = require 'lua.assertx'
+local cache   = require 'lua/cache'
+local assertx = require 'lua/assertx'
 
 local function one_hot_encoding(feature_table)
 	--[[

@@ -169,6 +169,8 @@ update_config(
   if ( g_rf  != NULL ) { rs_munmap(g_rf,  g_len_rf_file); }
   if ( g_mdl != NULL ) { rs_munmap(g_mdl, g_len_mdl_file); }
   if ( *g_cfg.dt_dir != '\0' ) { 
+    fprintf(stderr, "WARNING!!!!! \n"); 
+    /*
     int buflen = strlen(g_cfg.dt_dir) + strlen("dt.bin") + 4 ;
     if ( buflen > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
     buf = malloc(buflen); return_if_malloc_failed(buf);
@@ -180,6 +182,8 @@ update_config(
     cBYE(status);
     status = load_mdl(g_mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
+    */
+    g_n_mdl = 1; // TODO P0 TO DELETE 
     g_predictions = malloc(g_n_mdl * sizeof(float));
 
     free_if_non_null(g_dt_feature_vector); 

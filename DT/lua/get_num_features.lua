@@ -1,4 +1,4 @@
-local cache = require 'lua.cache'
+local cache = require 'lua/cache'
 
 local function get_nested_length(table)
   --[[
