@@ -1,4 +1,5 @@
 #include "ab_incs.h"
+#include "ab_globals.h"
 #include "rdkafka.h"
 
 void kafka_msg_callback (rd_kafka_t *g_rk,

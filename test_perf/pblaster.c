@@ -81,6 +81,7 @@ void *
 {
   THREAD_INFO_TYPE *ptr_tinfo;
   ptr_tinfo = (THREAD_INFO_TYPE *)X;
+
   char url[AB_MAX_LEN_URL+1];
   long http_code;
 
@@ -92,6 +93,7 @@ void *
 
   int num_good = 0; int num_bad = 0;
   srandom(timestamp());
+
   for ( int iter = 0; iter < niter; iter++ ) {
     int status = 0;
     uint64_t uuid = abs(random());
@@ -148,6 +150,7 @@ main(
   strcpy(server, argv[1]); 
 
   int itemp; 
+  int num_ports = 10; // TODO FIX 
   status = stoI4(argv[2], &itemp); cBYE(status);
   if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
   uint16_t ab_port = (uint16_t)itemp; 
