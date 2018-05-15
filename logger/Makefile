@@ -16,11 +16,11 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/
 
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
 # Uncomment below to capture server error 

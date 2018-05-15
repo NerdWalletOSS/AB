@@ -212,9 +212,9 @@ update_config(
   if ( g_cfg.kafka.brokers[0] != '\0' ) { 
     // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
      kafka_open_conn(g_cfg.kafka);
-     sprintf(g_buf, "hey in hardcode for demo\0"); 
+     // sprintf(g_buf, "hey in hardcode for demo\0"); 
      // INDRAKEET TO DO take out null character if not needed. gcc complains
-     kafka_add_to_queue(g_buf);  
+     // kafka_add_to_queue(g_buf);  
   }
 #endif
   // ---------------------
