@@ -1,8 +1,8 @@
-local cache = require 'cache'
-local assertx = require 'assertx'
-local x_load_config = require 'dt_load_config'
-local x_hard_code_config = require 'hard_code_config'
-local x_update_config = require 'dt_update_config'
+local cache      = require 'lua/cache'
+local assertx = require 'lua/assertx'
+local x_load_config = require 'src/dt_load_config'
+local x_hard_code_config = require 'src/hard_code_config'
+local x_update_config = require 'src/dt_update_config'
 package.path = '../?.lua;' .. package.path 
 local make_feature_vec = require 'DT.lua.make_feature_vector'
 local get_num_feat = require 'DT.lua.get_num_features'
