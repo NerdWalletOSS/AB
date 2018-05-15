@@ -4,12 +4,11 @@
 #include "aux_zero.h"
 #include "l_reload_tests.h"
 
-// int cdata[1];
-  int
+int
 l_reload_tests()
 {
-   for(int i=0; i < AB_MAX_NUM_TESTS; i++){
-    g_reload_tests[i] = NULL;
+  for(int i=0; i < AB_MAX_NUM_TESTS; i++){
+    g_test_str[i] = NULL;
   }
   static int num_entries[1];
   int status = 0;
@@ -22,7 +21,7 @@ l_reload_tests()
   }
   num_entries[0] = -1;
   lua_pushlightuserdata(g_L, num_entries);
-  lua_pushlightuserdata(g_L, g_reload_tests);
+  lua_pushlightuserdata(g_L, g_test_str);
   status = lua_pcall(g_L, 2, 0, 0);
   if (status != 0) {
     WHEREAMI; 
@@ -32,18 +31,14 @@ l_reload_tests()
     // TODO memset the structure to 0 at num_entries, INDRAJEET+RAMESH
     go_BYE(-1);
   }
-  if (num_entries[0] <= 0){
-    WHEREAMI;
-    go_BYE(-1);
-  }
+  if ( num_entries[0] < 0 ) { go_BYE(-1); }
   // TODO free all tests
-  for(int i=0; i<num_entries[0]; i++){
-    status = l_add_test(g_reload_tests[i]);
+  for ( int i = 0; i < num_entries[0]; i++ ) {
+    status = l_add_test(g_test_str[i]);
   }
-  // printf("changed value: %d\n", cdata[0]);
 BYE:
-  for(int i=0; i < AB_MAX_NUM_TESTS; i++){
-    g_reload_tests[i] = NULL;
+  for ( int i=0; i < AB_MAX_NUM_TESTS; i++){
+    g_str_test[i] = NULL; // do not free. Done by Lua
   }
   return status;
 }

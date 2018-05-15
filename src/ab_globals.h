@@ -138,4 +138,3 @@ EXTERN uint8_t g_kafka_callback;
 EXTERN char g_errstr[512];       /* librdkafka API error reporting buffer */
 // char g_buf[512];          /* Message value temporary buffer */
 
-const char* g_reload_tests[AB_MAX_NUM_TESTS]; // To support reload with add tests through C

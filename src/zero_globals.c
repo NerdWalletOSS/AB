@@ -24,6 +24,7 @@ free_globals(
 {
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
     free_test(i); 
+    g_test_str[i] = NULL; // do not free. malloc/free is for Lua
   }
   free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
 
