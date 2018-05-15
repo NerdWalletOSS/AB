@@ -89,6 +89,7 @@ void *
   int start_uuid = ptr_tinfo->start_uuid;
   CURL*ch        = ptr_tinfo->ch;
 
+  printf("num_ports = %d \n", num_ports);
   // fprintf(stderr, "niter = %d \n", niter);
   // fprintf(stderr, "nU    = %d \n", nU);
   int num_hits = 0;
@@ -139,6 +140,7 @@ main(
   strcpy(server, argv[1]); 
 
   int itemp; 
+  int num_ports = 10; // TODO FIX 
   status = stoI4(argv[2], &itemp); cBYE(status);
   if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
   uint16_t ab_port = (uint16_t)itemp; 

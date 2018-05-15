@@ -37,6 +37,7 @@ EXTERN char g_my_name[AB_MAX_LEN_HOSTNAME+1]; // For C
 EXTERN bool g_halt; // For C TODO IS THIS NEEDED?
 //-----------------------------------------------------------------
 EXTERN TEST_META_TYPE g_tests[AB_MAX_NUM_TESTS];  // Set by Lua 
+EXTERN const char *g_test_str[AB_MAX_NUM_TESTS];  // Set by Lua 
 //--------------------------------------------------------
 EXTERN uint64_t g_seed1; // For C
 EXTERN uint64_t g_seed2; // For C
