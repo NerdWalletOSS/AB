@@ -1,5 +1,4 @@
-package.path = '../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;' .. package.path
-local cache = require 'cache'
+local cache = require 'lua/cache'
 
 local function get_nested_length(table)
   --[[
