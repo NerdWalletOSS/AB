@@ -34,7 +34,11 @@ l_reload_tests(
     go_BYE(-1);
   }
   if ( num_entries[0] < 0 ) { go_BYE(-1); }
-  // TODO free all tests
+
+  for(int i = 0; i < AB_MAX_NUM_TESTS; i++){
+    free_test(i);
+  }
+  memset(g_tests, '\0', sizeof(TEST_META_TYPE)*AB_MAX_NUM_TESTS);
   for ( int i = 0; i < num_entries[0]; i++ ) {
     status = l_add_test(g_test_str[i]);
   }
