@@ -140,7 +140,7 @@ main(
   pthread_t *threads = NULL;
   THREAD_INFO_TYPE *tinfo = NULL;
   CURL *ch = NULL;
-
+  int g_num_ports = 1; 
 
   g_chunk = NULL; g_chunk_size = 16384-1;
 
@@ -155,17 +155,31 @@ main(
   memset(server, '\0',MAX_LEN_SERVER_NAME+1);
   strcpy(server, argv[1]); 
 
-  int itemp; 
-  int num_ports = 10; // TODO FIX 
-  status = stoI4(argv[2], &itemp); cBYE(status);
-  if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
-  uint16_t ab_port = (uint16_t)itemp; 
-
+  // Set logger port 
   status = stoI4(argv[3], &itemp); cBYE(status);
   if ( itemp < 0 ) { go_BYE(-1); }
   uint16_t log_port = (uint16_t)itemp; 
 
-  if ( log_port == ab_port ) { go_BYE(-1); }
+  //--- START: Set ab ports
+  for ( char *cptr = argv[2]; *cptr != '\0''; cptr++ ) {
+    if ( *cptr == ':' ) { g_num_ports++; }
+  }
+  g_ports = malloc(g_num_ports * sizeof(int));
+  return_if_malloc_failed(g_ports);
+  for ( int i = 0; i < g_num_ports; i++ ) { 
+    int itemp; char *x;
+    if ( i == 0 ) { 
+      x = strtok(argv[2], ":");
+    }
+    else {
+      x = strtok(NULL, ":");
+    }
+    status = stoI4(x, &itemp); cBYE(status);
+    if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
+    g_ports[i] = itemp;
+    if ( itemp == log_port ) { go_BYE(-1); }
+  }
+  //-------------------------------
 
   // initialize globals
   g_num_iter   = 1024;
@@ -174,11 +188,13 @@ main(
   g_pch        = NULL;
   g_num_threads = 128; // TODO UNDO HARD CODING 
 
-  status = restart(ch, server, ab_port, "Restart"); go_BYE(-1); 
-  status = restart(ch, server, log_port, "Restart"); go_BYE(-1); 
-  //-- Add a bunch of tests 
-  status = add_tests(ch, server, ab_port, g_num_tests, &g_test_urls); 
-  cBYE(status);
+  for ( int i = 0; i < g_num_ports; i++ ) { 
+   status = restart(ch, server, g_ports[i], "Restart"); cBYE(status);
+    //-- Add a bunch of tests 
+    status = add_tests(ch, server, g_ports[i], g_num_tests, &g_test_urls); 
+    cBYE(status);
+  }
+  status = restart(ch, server, log_port, "Restart"); cBYE(status);
 
   threads = malloc(g_num_threads * sizeof(pthread_t));
   return_if_malloc_failed(threads);

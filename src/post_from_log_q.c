@@ -17,7 +17,6 @@ post_from_log_q(
   long http_code;
   PAYLOAD_REC_TYPE lcl_payload;
 
-   fprintf(stderr, "Reset called on this thread \n");
   for ( ; g_halt == false ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
@@ -26,7 +25,6 @@ post_from_log_q(
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
-      fprintf(stderr, "consumer waiting\n");
       pthread_cond_wait(&g_condc, &g_mutex);
       // fprintf(stderr, "consumer still waiting\n");
     }
