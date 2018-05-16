@@ -5,7 +5,9 @@
 #include "l_reload_tests.h"
 
 int
-l_reload_tests()
+l_reload_tests(
+    void
+    )
 {
   for(int i=0; i < AB_MAX_NUM_TESTS; i++){
     g_test_str[i] = NULL;
@@ -38,7 +40,7 @@ l_reload_tests()
   }
 BYE:
   for ( int i=0; i < AB_MAX_NUM_TESTS; i++){
-    g_str_test[i] = NULL; // do not free. Done by Lua
+    g_test_str[i] = NULL; // do not free. Done by Lua
   }
   return status;
 }

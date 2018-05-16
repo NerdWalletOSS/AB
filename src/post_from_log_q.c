@@ -15,10 +15,9 @@ post_from_log_q(
   int status = 0;
   CURLcode curl_res; 
   long http_code;
-  PAYLOAD_TYPE lcl_payload;
+  PAYLOAD_REC_TYPE lcl_payload;
 
   for ( ; ; ) {
-    memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
@@ -36,13 +35,23 @@ post_from_log_q(
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
+#ifdef AB_AS_KAFKA
+    XX lcl_payload = g_log_q[eff_rd_idx];
+    XX memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
+#else
     lcl_payload = g_log_q[eff_rd_idx];
     memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
+#endif
     g_q_rd_idx++; 
     g_n_log_q--;
     pthread_cond_signal(&g_condp);	/* wake up consumer */
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
     // Now that you are out of the critical section, do the POST
+#ifdef AB_AS_KAFKA
+    status = kafka_add_to_queue(XXXXXXX); 
+    if ( status != 0 ) { WHEREAMI; }
+    continue;
+#endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
     status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);

@@ -34,9 +34,15 @@ update_config(
   // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
+#ifdef AB_AS_KAFKA
+    g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
+    return_if_malloc_failed(g_log_q);
+    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
+#else
     g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 
     return_if_malloc_failed(g_log_q);
     memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)));
+#endif
     g_n_log_q = 0;
   }
   //---------------------------------------------------

@@ -9,17 +9,18 @@
 #include "l_add_test.h"
 #include "l_reload_tests.h"
 #include "chk_logger_conn.h"
-#include "kafka_check_conn.h"
+// TODO P0 #include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
 #include "diagnostics.h"
+#include "to_kafka.h"
 #include "dump_log.h"
 #include "add_fake_test.h"
 #include "route_get_variant.h"
-#include "list_tests.h"
+#include "l_list_tests.h"
 #include "ping_server.h"
 #include "router.h"
 #include "test_info.h"
-#include "get_config.h"
+#include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
@@ -80,7 +81,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckKafkaConnectivity :  /* done by C */
-      status = kafka_check_conn(g_rslt, AB_MAX_LEN_RESULT);
+      // TODO P0 status = kafka_check_conn(g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------
@@ -197,7 +198,6 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
-      l_reload_tests();
     case Restart : /* done by Lua */
       // t1 = get_time_usec();
       g_halt = true;
@@ -229,10 +229,12 @@ ab_process_req(
         pthread_cond_init(&g_condc, NULL);
         pthread_cond_init(&g_condp, NULL);
         status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
+        status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
         cBYE(status);
       }
+
       switch ( req_type ) {
-        case Reload: /* call Lua status = reload(false); */ break;
+        case Reload: status = l_reload_tests();  cBYE(status); break;
         case Restart : /* nothing to do  */ break;
         default : go_BYE(-1); break;
       }
@@ -255,6 +257,10 @@ ab_process_req(
       //--------------------------------------------------------
     case UTMKV : /* done by C */
       status = get_utm_kv(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case ToKafka : /* done by C */
+      status = to_kafka(g_body, g_sz_body); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */
