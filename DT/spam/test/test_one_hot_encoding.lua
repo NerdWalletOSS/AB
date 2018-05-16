@@ -1,26 +1,27 @@
-local assertx = require 'lua.assertx'
-local cache = require 'lua.cache'
-local one_hot_encoding = require 'DT.lua.one_hot_encoding'
-local json = require 'src.json'
-local test_data = 'ohe_data.json'
-local dt_feature = require 'DT.spam.dt_feature'
+local plfile = require 'pl.file'
+local plpath = require 'pl.path'
+local assertx = require 'lua/assertx'
+local cache = require 'lua/cache'
+local one_hot_encoding = require 'DT/lua/one_hot_encoding'
+local json = require 'lua/json'
+local dt_feature = require 'DT/spam/dt_feature'
 assert(dt_feature, 'dt_feature not loaded')
 cache.put("dt_feature", dt_feature)
-
 
 describe("Testing one_hot_encoding", function()
 
     it("should be able to return the correct one_hot_encoding for test data.", function()
-        local lines = {}
-        for line in io.lines(test_data) do 
-          lines[#lines + 1] = line
-        end
-        local json_dict = json.decode(lines[1])
+   local test_data = 'ohe_data.json'
+   assert(plpath.isfile(test_data))
+   local json_str = assert(plfile.read(test_data))
+   print("loading json")
+   local json_dict = assert(json.decode(json_str))
+   assert(type(json_dict) == "table")
 
-        for i, pair in ipairs(json_dict) do
-            local lua_ohe = one_hot_encoding(pair)
-            for k, v in pairs(pair) do outputs[tonumber(k)] = tonumber(v) end
-            assert.are.same(lua_ohe, outputs)
-        end
-    end)
+   for i, pair in ipairs(json_dict) do
+     local lua_ohe = one_hot_encoding(pair)
+     for k, v in pairs(pair) do outputs[tonumber(k)] = tonumber(v) end
+       assert.are.same(lua_ohe, outputs)
+     end
+  end)
 end)

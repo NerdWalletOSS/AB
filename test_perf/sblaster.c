@@ -1,5 +1,6 @@
 #include "incs.h"
 #include "ab_constants.h"
+#include "macros.h"
 #include "add_tests.h"
 #include "make_guid.h"
 #include "auxil.h"
@@ -8,6 +9,7 @@
 
 int g_chunk_size;
 char *g_chunk;
+char *g_base_url;
 
 int 
 main(
@@ -28,9 +30,13 @@ main(
   int *H = NULL; int nH = 1000; // histogram  for response times 
 
   // Set globals 
-  g_chunk_size = 16384; g_chunk = NULL;
+  g_chunk_size = 16384; 
+  g_chunk = NULL;
+  g_base_url = NULL;
   g_chunk = malloc(g_chunk_size * sizeof(char));
   return_if_malloc_failed(g_chunk);
+  g_base_url = malloc(1024 * sizeof(char));
+  return_if_malloc_failed(g_base_url);
 
   // process input parameters
   if ( argc != 3 ) { go_BYE(-1); }
@@ -159,5 +165,6 @@ BYE:
   free_if_non_null(test_urls);
   if ( ch != NULL ) { curl_easy_cleanup(ch); }
   free_if_non_null(g_chunk);
+  free_if_non_null(g_base_url);
   return status ;
 }

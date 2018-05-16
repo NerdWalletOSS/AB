@@ -1,5 +1,5 @@
-# For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
+# For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return
 INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \

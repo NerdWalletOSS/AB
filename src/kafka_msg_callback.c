@@ -23,6 +23,11 @@ void  kafka_msg_callback(
         rd_kafka_err2str(rkmessage->err));
     // count in statsd
   }
+  else {
+    if (opaque != NULL && g_kafka_callback == 1){ // this was a connectivity check
+      g_kafka_callback = 0;
+    }
+  }
   //else
   //        fprintf(stderr,
   //                "%% Message delivered (%zd bytes, "

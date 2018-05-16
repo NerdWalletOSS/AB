@@ -7,7 +7,9 @@
 #include "post_from_log_q.h"
 
 #include "l_add_test.h"
+#include "l_reload_tests.h"
 #include "chk_logger_conn.h"
+#include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
 #include "diagnostics.h"
 #include "dump_log.h"
@@ -41,14 +43,14 @@
 extern char g_config_file[AB_MAX_LEN_FILE_NAME+1];
 
 // START FUNC DECL
-int 
+  int
 ab_process_req(
     AB_REQ_TYPE req_type,
     const char *const api,
     const char *args,
     const char *body
     )
-// STOP FUNC DECL
+  // STOP FUNC DECL
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
@@ -58,7 +60,7 @@ ab_process_req(
   memset(g_buf,  '\0', AB_ERR_MSG_LEN+1);
   //-----------------------------------------
   switch ( req_type ) {
-    case Undefined : 
+    case Undefined :
       go_BYE(-1);
       break;
       //--------------------------------------------------------
@@ -73,7 +75,12 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckLoggerConnectivity :  /* done by C */
-      status = chk_logger_connectivity(g_rslt, AB_MAX_LEN_RESULT); 
+      status = chk_logger_connectivity(g_rslt, AB_MAX_LEN_RESULT);
+      cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case CheckKafkaConnectivity :  /* done by C */
+      status = kafka_check_conn(g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------
@@ -95,11 +102,11 @@ ab_process_req(
       //--------------------------------------------------------
     case DeleteTest : /* done by C */
       status = delete_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
     case Diagnostics : /* done by C and Lua */
       status = l_diagnostics(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
     case DumpLog : /* done by C */
@@ -122,9 +129,9 @@ ab_process_req(
     case Halt : /* done by C */
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       g_halt = true;
-      if ( g_cfg.sz_log_q > 0 ) { 
-        // Tell consumer ead nothing more is coming 
-        pthread_cond_signal(&g_condc);	/* wake up consumer */
+      if ( g_cfg.sz_log_q > 0 ) {
+        // Tell consumer ead nothing more is coming
+        pthread_cond_signal(&g_condc);  /* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
         pthread_join(g_con, NULL);
         fprintf(stderr, "Consumer finished \n");
@@ -156,26 +163,26 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case MakeFeatureVector : /* done by Lua */
-      status = l_make_feature_vector(body, true); 
+      status = l_make_feature_vector(body, true);
       cBYE(status);
       break;
       //--------------------------------------------------------
     case PingServer : /* done by C */
       memset(server, '\0', AB_MAX_LEN_SERVER_NAME);
-      status = extract_name_value(args, "Service=", '&', 
+      status = extract_name_value(args, "Service=", '&',
           server, AB_MAX_LEN_SERVER_NAME);
       cBYE(status);
       if ( *server == '\0' ) { go_BYE(-1); }
-      if ( strcmp(server, "logger") == 0 ) { 
-        status = ping_server("logger", g_cfg.logger.server, 
+      if ( strcmp(server, "logger") == 0 ) {
+        status = ping_server("logger", g_cfg.logger.server,
             g_cfg.logger.port, g_cfg.logger.health_url, g_rslt);
       }
-      else if ( strcmp(server, "logger") == 0 ) { 
-        status = ping_server("logger", g_cfg.ss.server, 
+      else if ( strcmp(server, "logger") == 0 ) {
+        status = ping_server("logger", g_cfg.ss.server,
             g_cfg.ss.port, g_cfg.ss.health_url, g_rslt);
       }
-      else if ( strcmp(server, "logger") == 0 ) { 
-        status = ping_server("logger", g_cfg.webapp.server, 
+      else if ( strcmp(server, "logger") == 0 ) {
+        status = ping_server("logger", g_cfg.webapp.server,
             g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
       }
       else {
@@ -184,18 +191,19 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */
-      status = l_post_proc_preds(g_predictions, g_n_mdl, 
+      status = l_post_proc_preds(g_predictions, g_n_mdl,
           g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
+      l_reload_tests();
     case Restart : /* done by Lua */
-      // t1 = get_time_usec(); 
+      // t1 = get_time_usec();
       g_halt = true;
-      if ( g_cfg.sz_log_q > 0 ) { 
-        // Tell consumer thread nothing more is coming 
-        pthread_cond_signal(&g_condc);	/* wake up consumer */
+      if ( g_cfg.sz_log_q > 0 ) {
+        // Tell consumer thread nothing more is coming
+        pthread_cond_signal(&g_condc);  /* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
         pthread_join(g_con, NULL);
         fprintf(stderr, "Consumer finished \n");
@@ -209,21 +217,21 @@ ab_process_req(
       status = zero_globals();  cBYE(status);
       status = init_lua(); cBYE(status);
       if ( g_config_file[0] == '\0' )  {
-        hard_code_config(); // only for testing 
-        status = l_hard_code_config(); cBYE(status); // only for testing 
+        hard_code_config(); // only for testing
+        status = l_hard_code_config(); cBYE(status); // only for testing
       }
       else {
         status = l_load_config(g_config_file); cBYE(status);
       }
       status = update_config(); cBYE(status);
-      if ( g_cfg.sz_log_q > 0 ) { 
-        pthread_mutex_init(&g_mutex, NULL);	
+      if ( g_cfg.sz_log_q > 0 ) {
+        pthread_mutex_init(&g_mutex, NULL);
         pthread_cond_init(&g_condc, NULL);
         pthread_cond_init(&g_condp, NULL);
         status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
         cBYE(status);
       }
-      switch ( req_type ) { 
+      switch ( req_type ) {
         case Reload: /* call Lua status = reload(false); */ break;
         case Restart : /* nothing to do  */ break;
         default : go_BYE(-1); break;
@@ -238,7 +246,7 @@ ab_process_req(
       //--------------------------------------------------------
     case StopTest : /* done by C */
       status = stop_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api); 
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
     case TestInfo : /* done by Lua and C */
@@ -253,7 +261,7 @@ ab_process_req(
       zero_log();
       break;
       //--------------------------------------------------------
-    default : 
+    default :
       go_BYE(-1);
       break;
   }

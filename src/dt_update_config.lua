@@ -1,6 +1,6 @@
-local cache = require 'lua.cache'
-local assertx = require 'lua.assertx'
-local dt_cache = require 'lua.cache'
+local cache    = require 'lua/cache'
+local assertx  = require 'lua/assertx'
+local dt_cache = require 'lua/cache'
 
 local function file_exists(name)
   local f=io.open(name,"r")
@@ -14,8 +14,8 @@ end
 
 
 local function load_into_cache(fname)
-  assertx(file_exists(fname .. '.lua'), 'File ', fname, ' invalid.')
-  local object = require (fname) -- if this crashes here it's fine
+  print("XXXXXXXXX load_into_cache ", fname)
+  local object = assertx(require(fname), "File not found " .. fname)
   -- because we are pcalling from C
   object_nm = fname:match("/([A-Za-z0-9_-]+)$") -- gets file name
   assertx(object, 'loading ', object_nm, ' failed')
@@ -24,6 +24,7 @@ end
 
 
 local function update_config()
+  print("XXXXXXXXX update_config() ");
   local config = assert(cache.get("config"))
   assert(config.DT)
   local dt_dir = config.DT.DT_DIR.VALUE
