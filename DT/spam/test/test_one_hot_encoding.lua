@@ -3,7 +3,7 @@ local cache = require 'lua.cache'
 local one_hot_encoding = require 'DT.lua.one_hot_encoding'
 local json = require 'src.json'
 local test_data = 'ohe_data.json'
-local dt_feature = require 'DT.cc_visitor_models.dt_feature'
+local dt_feature = require 'DT.spam.dt_feature'
 assert(dt_feature, 'dt_feature not loaded')
 cache.put("dt_feature", dt_feature)
 
