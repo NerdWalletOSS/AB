@@ -17,7 +17,8 @@ post_from_log_q(
   long http_code;
   PAYLOAD_REC_TYPE lcl_payload;
 
-  for ( ; ; ) {
+   fprintf(stderr, "Reset called on this thread \n");
+  for ( ; g_halt == false ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
@@ -25,7 +26,7 @@ post_from_log_q(
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
-      //  fprintf(stderr, "consumer waiting\n");
+      fprintf(stderr, "consumer waiting\n");
       pthread_cond_wait(&g_condc, &g_mutex);
       // fprintf(stderr, "consumer still waiting\n");
     }
@@ -37,10 +38,10 @@ post_from_log_q(
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
 #ifdef AB_AS_KAFKA
     XX lcl_payload = g_log_q[eff_rd_idx];
-    XX memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
+    XX memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_REC_TYPE));
 #else
     lcl_payload = g_log_q[eff_rd_idx];
-    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
+    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_REC_TYPE));
 #endif
     g_q_rd_idx++; 
     g_n_log_q--;
@@ -86,6 +87,6 @@ post_from_log_q(
 #endif
     }
   }
-  pthread_exit(NULL); 
+  // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 
   return NULL;
 }

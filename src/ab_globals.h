@@ -144,3 +144,4 @@ EXTERN char g_errstr[512];       /* librdkafka API error reporting buffer */
 
 EXTERN char g_body[AB_MAX_LEN_BODY+1];
 EXTERN int g_sz_body;
+

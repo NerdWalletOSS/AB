@@ -7,12 +7,6 @@
 #include <curl/curl.h>
 #include "ab_constants.h"
 
-typedef enum _payload_type {
-  Undefined_Payload,
-  AB_Payload,
-  Kafka_Payload
-} PAYLOAD_TYPE;
-
 typedef enum _ab_req_type {
   Undefined, // --- & ---
   AddFakeTest, // Read & C (for testing)

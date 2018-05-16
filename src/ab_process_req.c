@@ -131,11 +131,12 @@ ab_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       g_halt = true;
       if ( g_cfg.sz_log_q > 0 ) {
-        // Tell consumer ead nothing more is coming
+        // Tell consumer that nothing more is coming
+        g_halt = true;
         pthread_cond_signal(&g_condc);  /* wake up consumer */
-        fprintf(stderr, "Waiting for consumer to finish \n");
-        pthread_join(g_con, NULL);
-        fprintf(stderr, "Consumer finished \n");
+          fprintf(stderr, "Waiting for consumer to finish \n");
+          pthread_join(g_con, NULL);
+          fprintf(stderr, "Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
@@ -228,7 +229,6 @@ ab_process_req(
         pthread_mutex_init(&g_mutex, NULL);
         pthread_cond_init(&g_condc, NULL);
         pthread_cond_init(&g_condp, NULL);
-        status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
         status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
         cBYE(status);
       }
