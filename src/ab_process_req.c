@@ -9,7 +9,7 @@
 #include "l_add_test.h"
 #include "l_reload_tests.h"
 #include "chk_logger_conn.h"
-// TODO P0 #include "kafka_check_conn.h"
+#include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
 #include "diagnostics.h"
 #include "to_kafka.h"
@@ -81,7 +81,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckKafkaConnectivity :  /* done by C */
-      // TODO P0 status = kafka_check_conn(g_rslt, AB_MAX_LEN_RESULT);
+      status = kafka_check_conn(g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------
