@@ -17,6 +17,7 @@
 #include "add_fake_test.h"
 #include "route_get_variant.h"
 #include "l_list_tests.h"
+#include "l_get_num_features.h"
 #include "ping_server.h"
 #include "router.h"
 #include "test_info.h"
@@ -55,6 +56,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
+  int num_features;
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -120,6 +122,11 @@ ab_process_req(
       //--------------------------------------------------------
     case GetHost : /* done by Lua */
       status = ext_get_host(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case GetNumFeatures : /* done by Lua */
+      status = l_get_num_features(&num_features); cBYE(status);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \%d\" } \n", num_features, g_n_dt_feature_vector);
       break;
       //--------------------------------------------------------
     case GetVariant :  /* done by C */

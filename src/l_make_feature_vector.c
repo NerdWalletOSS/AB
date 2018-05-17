@@ -25,7 +25,7 @@ l_make_feature_vector(
   lua_pushboolean(g_L_DT, is_debug);
   status = lua_pcall(g_L_DT, 6, 0, 0);
   if ( status != 0 ) {
-    fprintf(stderr, "calling function set_dt_feature_vector failed: %s\n", lua_tostring(g_L_DT, -1));
+    fprintf(stderr, "calling function make_feature_vector failed: %s\n", lua_tostring(g_L_DT, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
     lua_pop(g_L_DT, 1);
     go_BYE(-1);

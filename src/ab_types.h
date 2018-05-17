@@ -24,6 +24,7 @@ typedef enum _ab_req_type {
   GetConfig, // Read &  Lua
   GetDomain, // Debugging &  Lua
   GetHost, // Debugging &  Lua
+  GetNumFeatures, // Read &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
   Halt, // Read &  C

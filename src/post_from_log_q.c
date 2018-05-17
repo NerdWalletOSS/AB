@@ -89,6 +89,8 @@ post_from_log_q(
     }
   }
 #ifdef AB_AS_KAFKA
+
+  fprintf(stderr, "Waiting for kafka to flush. \n");
   for ( ; ; ) { 
     rd_kafka_poll(g_rk, 50);
     int len = rd_kafka_outq_len(g_rk);
