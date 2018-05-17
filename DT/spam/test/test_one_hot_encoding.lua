@@ -3,7 +3,7 @@ local plpath           = require 'pl.path'
 local assertx          = require 'lua/assertx'
 local cache            = require 'lua/cache'
 local one_hot_encoding = require 'DT/lua/one_hot_encoding'
-local json             = require 'lua/json'
+local JSON             = require 'lua/JSON'
 local dt_feature       = require 'DT/spam/dt_feature'
 assert(dt_feature, 'dt_feature not loaded')
 cache.put("dt_feature", dt_feature)
@@ -14,8 +14,8 @@ describe("Testing one_hot_encoding", function()
    local test_data = 'ohe_data.json'
    assert(plpath.isfile(test_data))
    local json_str = assert(plfile.read(test_data))
-   print("loading json")
-   local json_dict = assert(json.decode(json_str))
+   print("loading JSON")
+   local json_dict = assert(JSON:decode(json_str))
    assert(type(json_dict) == "table")
 
    for i, pair in ipairs(json_dict) do
