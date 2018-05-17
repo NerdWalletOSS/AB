@@ -6,7 +6,14 @@ or some such
 In that directory, we have
 1) dt.csv ---  the decision tree as a CSV file
 2) dt_feature.lua --- a Lua table that has keys as feature names and 
-	values as either:
+	values are 1, 2, 3, ...
+        Example:
+        X = {}
+        X[0] = 1; X[1] = 2, ....
+        X = {}
+        X["abc"] = 1; X["def"] = 2, ....
+        X = {}
+        X["abc"] = 1; X["def"] = { g = 2, h = 3 }
 		1-indexed integer positions in g_dt_feature_vector
 		a Lua table with key: value as:
 			valid categorical value: 1-indexed integer position
@@ -177,6 +184,11 @@ via 'require'
 	- When inserting: "cache.put(VAR_NAME, var)"
 	- When dereferencing: "local var = cache.get(VAR_NAME)"
 	Now it is accessible from any other piece of code.
+
+5) Do not do any require_path or require_cpath ....
+6) Instead, any require must be relative to AB/ as an example
+  local assertx = require 'lua/assertx'
+  means that there is a file  AB/lua/assertx.lua
 
 
 ----- INITIALIZING DT / HOW IT WORKS -----

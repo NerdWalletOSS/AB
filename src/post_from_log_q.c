@@ -89,7 +89,12 @@ post_from_log_q(
     }
   }
 #ifdef AB_AS_KAFKA
-  // TODO P0 DO not return until done
+  for ( ; ; ) { 
+    rd_kafka_poll(g_rk, 50);
+    int len = rd_kafka_outq_len(g_rk);
+    if ( len == 0 ) { break; }
+    fprintf(stderr, "Waiting for kafka to flush. %d to go \n", len); 
+  }
 #endif
   // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 
   return NULL;
