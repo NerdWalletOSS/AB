@@ -1,7 +1,6 @@
 -- simple test for luajit-mysql
-package.path=package.path .. ";./../src/?.lua"
 -- local dbg = require 'debugger'
-local mysql = require( "sql" )
+local mysql = require( "lua/sql" )
 local table = require( "table")
 local string = require( "string")
 

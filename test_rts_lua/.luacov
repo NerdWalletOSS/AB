@@ -26,14 +26,14 @@ local config = {
   -- (exclude overrules include, do not include
   -- the .lua extension)
   ['include'] = {
-    '../src/add_test',
-    '../src/sql',
-    '../src/reload',
-    '../src/spooky_hash',
-    '../src/load_config',
-    '../src/bin*',
-    '../src/cache',
-    '../src/ab_*',
+    'RTS/add_test',
+    'lua/sql',
+    'RTS/reload',
+    'RTS/spooky_hash',
+    'RTS/ab_load_config',
+    'RTS/bin*',
+    'lua/cache',
+    'RTS/ab_*',
   },
   -- busted uses exclude so thats the way we will go too
   -- Patterns for files to exclude when reporting
@@ -42,8 +42,8 @@ local config = {
   -- the .lua extension)
   ['exclude'] = {
    '/usr/local/*',
-   './../src/src/json',
-   './../src/debugger',
+   './../lua/json',
+   './../lua/debugger',
   },
 
 

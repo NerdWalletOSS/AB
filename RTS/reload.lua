@@ -60,7 +60,7 @@ function reload.get_tests_from_db()
     test_json.BinType = bin_types[test.bin_type_id]
     test_json.State = states[test.state_id]
     -- TODO ask about channel stuff
-    local query = string.format('select * from variant where test_id=%s where is_del = false;', test.id)
+    local query = string.format('select * from variant where test_id=%s and is_del = false;', test.id)
     local variants = conn:query(query)
     local count = 0
     local variants_arr = {}
