@@ -1,5 +1,5 @@
-local assertx = require 'assertx'
-local json = require 'json'
+local assertx = require 'lua.assertx'
+local json = require 'lua.json'
 
 function load_config(
   config_file,
