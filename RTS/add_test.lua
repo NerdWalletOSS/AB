@@ -1,5 +1,5 @@
 -- local dbg = require 'debugger'
-local json = require 'lua/json'
+local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
 local ffi = require 'lua/ab_ffi'
@@ -83,7 +83,7 @@ end
 
 function AddTests.add(test_str, g_tests, c_index)
   -- print(test_str)
-  local test_data = json.decode(test_str)
+  local test_data = JSON:decode(test_str)
   -- dbg()
   local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
   assert(test_data.name ~= nil, "Test should have a name")
@@ -135,7 +135,7 @@ function AddTests.preproc(test_str, g_tests, o_arr)
   -- int num_variants     = rslt[2];
   -- int is_dev_specific = rslt[3];
   --
-  local j_table = json.decode(test_str)
+  local j_table = JSON:decode(test_str)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   o_arr = ffi.cast("int32_t*", o_arr)
   AddTests.get_test(g_tests, j_table, o_arr + 1) -- get test position iin 0 location or o_arr
