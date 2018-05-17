@@ -146,7 +146,7 @@ BYE:
   evbuffer_free(opbuf);
   //--- Log time seen by clients
   if ( ( req_type == Router ) ||  ( req_type == GetVariant )  || 
-       ( req_type == GetVariants ) ) {
+       ( req_type == GetVariants ) || ( req_type == ToKafka ) ) {
     uint64_t t_stop = RDTSC();
     if ( t_stop > t_start ) { 
       uint64_t t_delta = t_stop - t_start;

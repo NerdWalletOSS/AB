@@ -81,6 +81,7 @@ zero_globals(
 {
   int status = 0;
 
+  g_kafka_memory = 0;
   g_halt = false;
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
     zero_test(i); 

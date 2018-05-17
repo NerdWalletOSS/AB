@@ -80,6 +80,11 @@ typedef struct _test_meta_type {
 
 } TEST_META_TYPE;
 
+typedef struct _kafka_rec_type { 
+  char *data;
+  size_t sz;
+} KAFKA_REC_TYPE;
+
 typedef struct _payload_rec_type {
   char uuid[AB_MAX_LEN_UUID+1];
   char in_tracer[AB_MAX_LEN_TRACER+1];

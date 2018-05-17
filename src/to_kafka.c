@@ -10,14 +10,16 @@ to_kafka(
 {
   int status = 0;
   if ( ( body == NULL ) || ( sz_body == 0 ) ) { go_BYE(-1); }
+  KAFKA_REC_TYPE X;
 
-  void *x = malloc(sz_body+1);
-  return_if_malloc_failed(x);
-  memset(x, '\0', sz_body+1);
-  memcpy(x, body, sz_body);
-  printf("Allocated %8x \n", (unsigned int)x);
-
-  status = log_decision(x); cBYE(status);
+  g_log_kafka_calls++;
+  X.sz = sz_body + 1;
+  g_kafka_memory += X.sz;
+  X.data = (char *)malloc(X.sz);
+  return_if_malloc_failed(X.data);
+  memcpy(X.data, body, X.sz);
+  // printf("Allocated %8x \n", (unsigned int)x);
+  status = log_decision(&X); cBYE(status);
 BYE:
   return status;
 }
