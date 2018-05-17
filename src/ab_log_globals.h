@@ -77,6 +77,8 @@ EXTERN uint64_t g_log_get_variants_calls;
 /*C TODO */
 EXTERN uint64_t g_log_router_calls;
 /*C TODO */
+EXTERN uint64_t g_log_kafka_calls;
+/*C Number of calls to Kafka */
 EXTERN uint64_t g_log_bad_router_calls;
 /*C TODO */
 

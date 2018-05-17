@@ -16,7 +16,7 @@ post_from_log_q(
   CURLcode curl_res; 
   long http_code;
   PAYLOAD_REC_TYPE lcl_payload;
-  void *kafka_payload = NULL;
+  KAFKA_REC_TYPE kafka_payload;
 
   for ( ; g_halt == false ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
@@ -37,7 +37,7 @@ post_from_log_q(
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
 #ifdef AB_AS_KAFKA
     kafka_payload = g_log_q[eff_rd_idx];
-    g_log_q[eff_rd_idx] = NULL;
+    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(KAFKA_REC_TYPE));
 #else
     lcl_payload = g_log_q[eff_rd_idx];
     memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_REC_TYPE));
@@ -48,10 +48,10 @@ post_from_log_q(
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
-    status = kafka_add_to_queue((char *)kafka_payload); 
+    status = kafka_add_to_queue(kafka_payload.data); 
     if ( status != 0 ) { WHEREAMI; }
-    printf("Freed %8x \n", (unsigned int)kafka_payload);
-    free_if_non_null(kafka_payload); 
+    // printf("Freed %8x \n", (unsigned int)kafka_payload);
+    free_if_non_null(kafka_payload.data); 
     continue;
 #endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }

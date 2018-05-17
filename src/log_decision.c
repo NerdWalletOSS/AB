@@ -34,7 +34,8 @@ log_decision(
 
     int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
 #ifdef AB_AS_KAFKA
-    g_log_q[eff_wr_idx] = X;
+    memcpy(g_log_q+eff_wr_idx, (KAFKA_REC_TYPE *)X,
+        sizeof(KAFKA_REC_TYPE));
 #else
     memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
         sizeof(PAYLOAD_REC_TYPE));

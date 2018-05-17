@@ -126,7 +126,7 @@ ab_process_req(
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
       status = l_get_num_features(&num_features); cBYE(status);
-      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \%d\" } \n", num_features, g_n_dt_feature_vector);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
       break;
       //--------------------------------------------------------
     case GetVariant :  /* done by C */
