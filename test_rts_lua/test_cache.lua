@@ -1,5 +1,4 @@
-package.path=package.path .. ";./../src/?.lua"
-local cache = require 'cache'
+local cache = require 'lua/cache'
 
 local function is_same(a, b)
   local val = type(a) == type(b)
