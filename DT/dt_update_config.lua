@@ -1,6 +1,5 @@
 local cache    = require 'lua/cache'
 local assertx  = require 'lua/assertx'
-local dt_cache = require 'lua/cache'
 
 local function file_exists(name)
   local f=io.open(name,"r")
