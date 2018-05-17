@@ -250,16 +250,112 @@ In that (which is in src/dt_update_config.lua), it:
 So by this point, as a summary:
 
 3 C functions have been called:
-- init_lua() which initialises the g_L_DT Lua state and adds all 6 functions
-	in src/dt.lua into that state
-- EITHER l_hard_code_config() or l_load_config(), which adds the value of
-	the directory name XXXX (C's value of c_cfg.dt_dir i.e. Lua's value of
-	config.DT.DT_DIR.VALUE)
-- l_update_config(), which uses that value of XXXX to search for the 3 Lua
-	files (dt_feature.lua, mdl_map.lua, generate_features.lua) and adds
-	them into the cache.
+- init_lua() which initialises the g_L_DT Lua state and adds all 6 
+	functions in src/dt.lua into that state
+- EITHER l_hard_code_config() or l_load_config(), which adds the 
+	value of the directory name XXXX (C's value of c_cfg.dt_dir 
+	i.e. Lua's value of config.DT.DT_DIR.VALUE)
+- l_update_config(), which uses that value of XXXX to search for 
+	the 3 Lua files (dt_feature.lua, mdl_map.lua, 
+	generate_features.lua) and adds them into the cache.
 
 ----- USING DT -----
 
-	
+In the whole Decision Tree pipeline there are a few steps:
 
+1. Taking in a string containing the 'raw' inputs and processing
+	them into a float*
+	[src/ab_process_req.c calls the function l_make_feature_vector(), 
+	present in src/l_make_feature_vector.c, which calls the Lua
+	function make_feature_vector, whose source code is in 
+	DT/lua/make_feature_vector.lua]
+	- sub-step 1 of 2: Processing the raw inputs into variables
+	- sub-step 2 of 2: Putting these variables into the float* in 
+	the correct order
+
+	Note about DT/lua/make_feature_vector.lua: This function does 
+	not really change for different models, thus it is in the 
+	DT/lua (common Lua code for models) directory. How it works 
+	is as follows:
+		1. It takes in a C char* (body), which is to be a JSON 
+			string with raw inputs
+		2. It parses the C char* out of its JSON format into a
+			dictionary, in_features
+		3. It finds the function 'generate_features' (which was
+			to be provided in the model's directory) and runs it on
+			in_features, to get out_features (sub-step 1 of 2)
+		4. It runs one-hot-encoding (code in 
+			DT/lua/one_hot_encoding.lua, which requires the cache
+			to have dt_feature.lua) to figure out how to fill the
+			float* (fvec)
+		5. It then checks that the number of features in the vector
+			matches the number that was prescribed in the 
+			get_num_features function (code in 
+			DT/lua/get_num_features.lua, which requires the cache 
+			to have dt_feature.lua). 
+		6. It fills the float* and returns it
+
+2. Predicting using the Decision Tree
+	This will be done on the C side. It looks at the dt.csv file
+	(which has a few columns: 
+		- mdl_idx: a non-decreasing 0-indexed integer + 0 column
+			that describes the model number (most cases there
+			is only 1 model, only exception is if you are doing
+			prediction using the same set of variables for 
+			different products and you combine it together))
+			
+			This one has to match up with mdl_map.lua; each unique
+			integer in mdl_idx has to be present (as a key) in 
+			mdl_map.lua and vice versa
+
+		- tree_idx: a non-decreasing 0-indexed integer + 0 column
+			that describes the tree number for each model. Each
+			model could have a variable number of trees (e.g. a 
+			random forest that was set to 50 trees, versus 1 
+			decision tree, or an xgboost of 100 trees).
+
+		- node_idx: a unique increasing 0-indexed integer, gives 
+			unique node number
+		- lchild_idx: left child node number. If -1, is a leaf
+		- rchild_idx: right child node number. If -1, is a leaf
+		- feature_idx: 0-indexed feature index (corresponding to
+			the 1-indexed version in dt_feature.lua). If -2, is
+			 a leaf.
+		- threshold: value of that feature that determines 
+			whether to go to left or right child. If less than
+			or equal to, left child. Otherwise, right. If -2 
+			usually means a leaf (bad idea to use this to
+			determine leaf)
+		- neg: number of elements in this node that are negative
+		- pos: number of elements in this node that are positive
+
+	The final calculation of each model is:
+		- For each tree_idx in that model:
+			- At the leaf node, take prob := pos / pos + neg
+		- Return the mean of all prob for each tree_idx (not 
+			weighted)
+
+3. Returning these values as a JSON string
+	[src/ab_process_req.c calls C's l_post_proc_preds (code in 
+	src/l_post_proc_preds.c), which calls Lua's post_proc_preds 
+	(code in DT/lua/post_proc_preds.lua)]
+	
+	It takes in 
+	- the feature vector
+		(float* g_predictions in C, opvec in Lua), 
+	- the length of it 
+		(g_n_mdl in C - called n_opvec in Lua; g_n_mdl is set
+		in src/update_config.c, which calls code in 
+		src/load_mdl.c, which looks at the max of dt.csv's 
+		mdl_idx and uses that value as g_n_mdl)
+	and does the following:
+
+	- It takes all the name mapping in mdl_map.lua and fills 
+		up a new dictionary:
+	
+		(element 0 in mdl_map is key, with value mdl_map[0], 
+		element 2 in mdl_map is key, with value mdl_map[2] etc)
+
+	- It then converts the dictionary into a JSON string, and 
+		then writes it into (char* ) out_buf
+			(in Lua. In C it's called g_rslt)
