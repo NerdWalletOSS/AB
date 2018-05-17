@@ -53,6 +53,7 @@ post_from_log_q(
     // printf("Freed %8x \n", (unsigned int)kafka_payload);
     free_if_non_null(kafka_payload.data); 
     g_kafka_memory -= kafka_payload.sz;
+    rd_kafka_poll(g_rk, 10); // TODO P3 Why 10?
     continue;
 #endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
@@ -93,7 +94,7 @@ post_from_log_q(
 
   fprintf(stderr, "Waiting for kafka to flush. \n");
   for ( ; ; ) { 
-    rd_kafka_poll(g_rk, 50);
+    rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
     int len = rd_kafka_outq_len(g_rk);
     fprintf(stderr, "Waiting for kafka to flush. %d in queue, %d to go \n", g_n_log_q, len); 
     if ( len == 0 ) { break; }
