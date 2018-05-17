@@ -7,7 +7,7 @@
 #include "kafka_add_to_queue.h"
 int
 log_decision(
-    void *ptr_payload
+    void *X
     )
 {
   int status = 0;
@@ -34,8 +34,9 @@ log_decision(
 
     int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
 #ifdef AB_AS_KAFKA
+    g_log_q[eff_wr_idx] = X;
 #else
-    memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)ptr_payload,
+    memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
         sizeof(PAYLOAD_REC_TYPE));
     // OLD g_log_q[eff_wr_idx] = lcl_payload;
 #endif
@@ -45,7 +46,7 @@ log_decision(
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
   }
   else {
-    PAYLOAD_REC_TYPE *x = (PAYLOAD_REC_TYPE *)ptr_payload;
+    PAYLOAD_REC_TYPE *x = (PAYLOAD_REC_TYPE *)X;
     status = make_curl_payload(x[0], g_curl_payload, AB_MAX_LEN_PAYLOAD);
     cBYE(status);
     if ( g_rk == NULL ) { 

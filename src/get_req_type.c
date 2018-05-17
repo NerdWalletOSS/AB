@@ -97,6 +97,9 @@ get_req_type(
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
   }
+  else if (strcasecmp(api, "ToKafka") == 0) {
+    return ToKafka;
+  }
   else if (strcasecmp(api, "UTMKV") == 0) {
     return UTMKV;
   }

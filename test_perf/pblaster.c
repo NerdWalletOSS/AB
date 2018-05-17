@@ -141,6 +141,7 @@ main(
   THREAD_INFO_TYPE *tinfo = NULL;
   CURL *ch = NULL;
   int g_num_ports = 1; 
+  int *g_ports = NULL;
 
   g_chunk = NULL; g_chunk_size = 16384-1;
 
@@ -155,19 +156,20 @@ main(
   memset(server, '\0',MAX_LEN_SERVER_NAME+1);
   strcpy(server, argv[1]); 
 
+  int itemp;
   // Set logger port 
   status = stoI4(argv[3], &itemp); cBYE(status);
   if ( itemp < 0 ) { go_BYE(-1); }
   uint16_t log_port = (uint16_t)itemp; 
 
   //--- START: Set ab ports
-  for ( char *cptr = argv[2]; *cptr != '\0''; cptr++ ) {
+  for ( char *cptr = argv[2]; *cptr != '\0'; cptr++ ) {
     if ( *cptr == ':' ) { g_num_ports++; }
   }
   g_ports = malloc(g_num_ports * sizeof(int));
   return_if_malloc_failed(g_ports);
   for ( int i = 0; i < g_num_ports; i++ ) { 
-    int itemp; char *x;
+    char *x;
     if ( i == 0 ) { 
       x = strtok(argv[2], ":");
     }
@@ -235,7 +237,7 @@ main(
 #ifdef SEQUENTIAL
     hammer((void *)&(tinfo[tid]));
 #else
-    fprintf(stderr, "Forking thread %d \n", tid);
+    // fprintf(stderr, "Forking thread %d \n", tid);
     pthread_create(&(threads[tid]), NULL, hammer, (void *)&(tinfo[tid]));
 #endif
   }
@@ -244,24 +246,29 @@ main(
     pthread_join(threads[tid], NULL);
   }
 #endif
-  double total_time = 0; double total_hits = 0;
+  uint64_t total_time = 0; 
+  uint64_t total_hits = 0;
+  uint64_t total_errs = 0;
   for ( int tid = 0; tid < g_num_threads; tid++ ) { 
     total_time += tinfo[tid].time_taken;
     total_hits += tinfo[tid].num_good;
+    total_errs += tinfo[tid].num_bad;
   }
-  fprintf(stderr, "Time/hit = %lf \n", (total_time/1000.0)/total_hits);
+  fprintf(stderr, "Total time = %" PRIu64 "\n", total_time);
+  fprintf(stderr, "Total hits = %" PRIu64 "\n", total_hits);
+  fprintf(stderr, "Total errs = %" PRIu64 "\n", total_errs);
 BYE:
   if ( g_pch != NULL ) { 
     for ( int tid = 0; tid < g_num_threads; tid++ ) { 
       if ( g_pch[tid] != NULL ) { 
-        printf("cleaning %d \n", tid);
+        // printf("cleaning %d \n", tid);
         curl_easy_cleanup(g_pch[tid]); 
         g_pch[tid] = NULL;
       }
     }
     curl_global_cleanup();
   }
-  printf("Completed curl cleanup\n");
+  // printf("Completed curl cleanup\n");
   free_if_non_null(threads);
   free_if_non_null(tinfo);
   free_if_non_null(g_chunk);
@@ -271,6 +278,7 @@ BYE:
     }
   }
   free_if_non_null(g_test_urls);
+  free_if_non_null(g_ports);
   if ( ch != NULL ) { curl_easy_cleanup(ch); ch = NULL; }
   return status ;
 }
