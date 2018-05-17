@@ -1,4 +1,5 @@
 local assertx = require 'lua/assertx'
+
 local function generate_features(in_features)
   assert(type(in_features) == "table")
   local out_features = {}
@@ -8,4 +9,5 @@ local function generate_features(in_features)
   end
   return out_features
 end
+
 return generate_features

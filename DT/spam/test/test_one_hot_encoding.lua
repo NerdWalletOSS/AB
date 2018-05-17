@@ -1,10 +1,10 @@
-local plfile = require 'pl.file'
-local plpath = require 'pl.path'
-local assertx = require 'lua/assertx'
-local cache = require 'lua/cache'
+local plfile           = require 'pl.file'
+local plpath           = require 'pl.path'
+local assertx          = require 'lua/assertx'
+local cache            = require 'lua/cache'
 local one_hot_encoding = require 'DT/lua/one_hot_encoding'
-local json = require 'lua/json'
-local dt_feature = require 'DT/spam/dt_feature'
+local json             = require 'lua/json'
+local dt_feature       = require 'DT/spam/dt_feature'
 assert(dt_feature, 'dt_feature not loaded')
 cache.put("dt_feature", dt_feature)
 
