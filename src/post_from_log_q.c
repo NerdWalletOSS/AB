@@ -52,6 +52,7 @@ post_from_log_q(
     if ( status != 0 ) { WHEREAMI; }
     // printf("Freed %8x \n", (unsigned int)kafka_payload);
     free_if_non_null(kafka_payload.data); 
+    g_kafka_memory -= kafka_payload.sz;
     continue;
 #endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
@@ -94,8 +95,8 @@ post_from_log_q(
   for ( ; ; ) { 
     rd_kafka_poll(g_rk, 50);
     int len = rd_kafka_outq_len(g_rk);
+    fprintf(stderr, "Waiting for kafka to flush. %d in queue, %d to go \n", g_n_log_q, len); 
     if ( len == 0 ) { break; }
-    fprintf(stderr, "Waiting for kafka to flush. %d to go \n", len); 
   }
 #endif
   // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 

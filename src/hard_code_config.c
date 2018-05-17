@@ -50,8 +50,8 @@ hard_code_config(void)
 
   strcpy(g_cfg.kafka.brokers, "192.168.1.151");
   strcpy(g_cfg.kafka.topic, "ab");
-  strcpy(g_cfg.kafka.queue_size, "1048576");
+  strcpy(g_cfg.kafka.queue_size, "256*1048576");
   strcpy(g_cfg.kafka.retries, "5");
-  strcpy(g_cfg.kafka.max_buffering_time, "10");
+  strcpy(g_cfg.kafka.max_buffering_time, "100");
 
 }
