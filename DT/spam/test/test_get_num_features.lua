@@ -1,14 +1,12 @@
-package.path = '../../../?.lua;../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;../../../lua/?.lua;' .. package.path
-
-cache = require 'cache'
-local assertx = require 'lua.assertx'
-local dt_feature = require 'DT.spam.dt_feature'
+local cache      = require 'lua/cache'
+local assertx    = require 'lua/assertx'
+local dt_feature = require 'DT/spam/dt_feature'
 assert(dt_feature, 'loading dt_feature failed')
 cache.put("dt_feature", dt_feature)
 
 describe("Testing get_num_features", function()
 
-    local get_num_features = require 'DT.lua.get_num_features'
+    local get_num_features = require 'DT/lua/get_num_features'
     it("should get you correct numbers under visitor model (hardcoded)", function()
         assert.are.same(get_num_features(), 57)
     end)
