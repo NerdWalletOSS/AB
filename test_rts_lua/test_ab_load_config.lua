@@ -2,7 +2,7 @@
 -- require 'strict'
 local assertx = require 'lua/assertx'
 local ffi = require 'lua/ab_ffi'
-local json = require 'lua/json'
+local JSON = require 'lua/JSON'
 local consts = require 'lua/ab_consts'
 local load_config = require 'RTS/ab_load_config'
 local cache = require 'lua/cache'
