@@ -11,9 +11,9 @@
  * The callback is triggered from rd_kafka_poll() and executes on
  * the application's thread.
  */
-// INDRAJEET TODO Why are we sending g_rk here? Not used. Also opaque?
+// INDRAJEET TODO Why are we sending rk here? Not used. Also opaque?
 void  kafka_msg_callback(
-    rd_kafka_t *g_rk,
+    rd_kafka_t *rk,
     const rd_kafka_message_t *rkmessage, 
     void *opaque
     ) 

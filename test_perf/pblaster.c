@@ -14,23 +14,27 @@
 #include "add_tests.h"
 #include "setup_curl.h"
 #include "ab_constants.h"
+#include "restart.h"
+
+#undef SEQUENTIAL
 
 char *g_chunk;
 int g_chunk_size;
+int g_num_tests;
+int g_num_iter; 
+int g_num_threads; 
+char **g_test_urls;
+CURL **g_pch;
 
 #define WRITEBACK_BUF_SIZE 1023
 
 typedef struct _thread_info_type {
   int status;
   int tid;
-  int niter;
-  int num_tests;
   uint64_t time_taken;
   int num_good;
   int num_bad;
-  CURL *ch;
   void *writeback_buf;
-  char **test_urls;
 } THREAD_INFO_TYPE;
 
 
@@ -85,11 +89,15 @@ void *
   char url[AB_MAX_LEN_URL+1];
   long http_code;
 
+  int niter        = g_num_iter;
+  int num_tests    = g_num_tests; 
+
   int tid          = ptr_tinfo->tid;
-  int niter        = ptr_tinfo->niter;
-  int num_tests    = ptr_tinfo->num_tests;
-  char **test_urls = ptr_tinfo->test_urls;
-  CURL*ch          = ptr_tinfo->ch;
+  if ( ( tid < 0 ) || ( tid >= g_num_threads ) )  {
+    WHEREAMI; return NULL;
+  }
+  char **test_urls = g_test_urls;
+  CURL *ch         = g_pch[tid];
 
   int num_good = 0; int num_bad = 0;
   srandom(timestamp());
@@ -127,14 +135,13 @@ main(
     )
 {
   int status = 0;
-  CURL **pch = NULL;
 #define MAX_LEN_SERVER_NAME 511
   char server[MAX_LEN_SERVER_NAME+1];
   pthread_t *threads = NULL;
   THREAD_INFO_TYPE *tinfo = NULL;
-  char **test_urls = NULL;
   CURL *ch = NULL;
-
+  int g_num_ports = 1; 
+  int *g_ports = NULL;
 
   g_chunk = NULL; g_chunk_size = 16384-1;
 
@@ -149,94 +156,129 @@ main(
   memset(server, '\0',MAX_LEN_SERVER_NAME+1);
   strcpy(server, argv[1]); 
 
-  int itemp; 
-  int num_ports = 10; // TODO FIX 
-  status = stoI4(argv[2], &itemp); cBYE(status);
-  if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
-  uint16_t ab_port = (uint16_t)itemp; 
-
+  int itemp;
+  // Set logger port 
   status = stoI4(argv[3], &itemp); cBYE(status);
   if ( itemp < 0 ) { go_BYE(-1); }
   uint16_t log_port = (uint16_t)itemp; 
 
-  if ( log_port == ab_port ) { go_BYE(-1); }
+  //--- START: Set ab ports
+  for ( char *cptr = argv[2]; *cptr != '\0'; cptr++ ) {
+    if ( *cptr == ':' ) { g_num_ports++; }
+  }
+  g_ports = malloc(g_num_ports * sizeof(int));
+  return_if_malloc_failed(g_ports);
+  for ( int i = 0; i < g_num_ports; i++ ) { 
+    char *x;
+    if ( i == 0 ) { 
+      x = strtok(argv[2], ":");
+    }
+    else {
+      x = strtok(NULL, ":");
+    }
+    status = stoI4(x, &itemp); cBYE(status);
+    if ( ( itemp <= 1024 ) || ( itemp >= 65536 ) ) { go_BYE(-1); }
+    g_ports[i] = itemp;
+    if ( itemp == log_port ) { go_BYE(-1); }
+  }
+  //-------------------------------
 
-  int niter       = 1024;
-  int num_tests   = 16; // TODO UNDO HARD CODING 
-  int num_threads = 128;
-  //-- Add a bunch of tests 
-  status = add_tests(ch, server, ab_port, num_tests, &test_urls); 
-  cBYE(status);
-  threads = malloc(num_threads * sizeof(pthread_t));
+  // initialize globals
+  g_num_iter   = 1024;
+  g_num_tests  = 16; // TODO UNDO HARD CODING 
+  g_test_urls  = NULL;
+  g_pch        = NULL;
+  g_num_threads = 128; // TODO UNDO HARD CODING 
+
+  for ( int i = 0; i < g_num_ports; i++ ) { 
+   status = restart(ch, server, g_ports[i], "Restart"); cBYE(status);
+    //-- Add a bunch of tests 
+    status = add_tests(ch, server, g_ports[i], g_num_tests, &g_test_urls); 
+    cBYE(status);
+  }
+  status = restart(ch, server, log_port, "Restart"); cBYE(status);
+
+  threads = malloc(g_num_threads * sizeof(pthread_t));
   return_if_malloc_failed(threads);
-  tinfo = malloc(num_threads * sizeof(THREAD_INFO_TYPE));
+  memset(threads, '\0', g_num_threads * sizeof(pthread_t));
+
+  tinfo = malloc(g_num_threads * sizeof(THREAD_INFO_TYPE));
   return_if_malloc_failed(tinfo);
+  memset(tinfo, '\0', g_num_threads * sizeof(THREAD_INFO_TYPE));
 
-  for ( int tid = 0; tid < num_threads; tid++ ) { 
-    tinfo[tid].writeback_buf = malloc(WRITEBACK_BUF_SIZE+1);
-  }
-  pch = malloc(num_threads * sizeof(CURL *));
-  return_if_malloc_failed(pch);
-  for ( int tid = 0; tid < num_threads; tid++ ) {  pch[tid] = NULL; }
-  for ( int tid = 0; tid < num_threads; tid++ ) {
-    pch[tid] = curl_easy_init();
-    // insecure is okay
-    curl_easy_setopt(pch[tid], CURLOPT_SSL_VERIFYHOST, 0);
-    curl_easy_setopt(pch[tid], CURLOPT_SSL_VERIFYPEER, 0);
-    /* send all data to this function  */ 
-    curl_easy_setopt(pch[tid], CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-    /* we pass our 'chunk' struct to the callback function */ 
-    curl_easy_setopt(pch[tid], CURLOPT_WRITEDATA, 
-        (void *)&(tinfo[tid].writeback_buf));
-  }
+  g_pch = malloc(g_num_threads * sizeof(CURL *));
+  return_if_malloc_failed(g_pch);
+  memset(g_pch, '\0',  (g_num_threads * sizeof(CURL *)));
 
-#undef SEQUENTIAL
-  for ( int tid = 0; tid < num_threads; tid++ ) { 
+  for ( int tid = 0; tid < g_num_threads; tid++ ) { 
     tinfo[tid].tid        = tid;
     tinfo[tid].status     = 0;
-    tinfo[tid].num_tests  = num_tests;
-    tinfo[tid].niter      = niter;
     tinfo[tid].time_taken = 0;
     tinfo[tid].num_good   = 0;
     tinfo[tid].num_bad    = 0;
-    tinfo[tid].test_urls  = test_urls;
-    tinfo[tid].ch         = pch[tid];
+    tinfo[tid].writeback_buf = malloc(WRITEBACK_BUF_SIZE+1);
+    return_if_malloc_failed(tinfo[tid].writeback_buf);
+  }
+
+
+  for ( int tid = 0; tid < g_num_threads; tid++ ) {
+    g_pch[tid] = curl_easy_init();
+    // insecure is okay
+    curl_easy_setopt(g_pch[tid], CURLOPT_SSL_VERIFYHOST, 0);
+    curl_easy_setopt(g_pch[tid], CURLOPT_SSL_VERIFYPEER, 0);
+    /* send all data to this function  */ 
+    curl_easy_setopt(g_pch[tid], CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+    /* we pass our 'chunk' struct to the callback function */ 
+    curl_easy_setopt(g_pch[tid], CURLOPT_WRITEDATA, 
+        (void *)(tinfo[tid].writeback_buf));
+  }
+
+  for ( int tid = 0; tid < g_num_threads; tid++ ) { 
 #ifdef SEQUENTIAL
     hammer((void *)&(tinfo[tid]));
 #else
-    fprintf(stderr, "Forking thread %d \n", tid);
+    // fprintf(stderr, "Forking thread %d \n", tid);
     pthread_create(&(threads[tid]), NULL, hammer, (void *)&(tinfo[tid]));
 #endif
   }
-  for ( int tid = 0; tid < num_threads; tid++ ) { 
+#ifndef SEQUENTIAL 
+  for ( int tid = 0; tid < g_num_threads; tid++ ) { 
     pthread_join(threads[tid], NULL);
   }
-  double total_time = 0; double total_hits = 0;
-  for ( int tid = 0; tid < num_threads; tid++ ) { 
+#endif
+  uint64_t total_time = 0; 
+  uint64_t total_hits = 0;
+  uint64_t total_errs = 0;
+  for ( int tid = 0; tid < g_num_threads; tid++ ) { 
     total_time += tinfo[tid].time_taken;
     total_hits += tinfo[tid].num_good;
+    total_errs += tinfo[tid].num_bad;
   }
-  fprintf(stderr, "Time/hit = %lf \n", (total_time/1000.0)/total_hits);
+  fprintf(stderr, "Total time = %" PRIu64 "\n", total_time);
+  fprintf(stderr, "Total hits = %" PRIu64 "\n", total_hits);
+  fprintf(stderr, "Total errs = %" PRIu64 "\n", total_errs);
 BYE:
-  if ( pch != NULL ) { 
-    for ( int tid = 0; tid < num_threads; tid++ ) { 
-      if ( pch[tid] != NULL ) { 
-        printf("cleaning %d \n", tid);
-        curl_easy_cleanup(pch[tid]); 
-        pch[tid] = NULL;
+  if ( g_pch != NULL ) { 
+    for ( int tid = 0; tid < g_num_threads; tid++ ) { 
+      if ( g_pch[tid] != NULL ) { 
+        // printf("cleaning %d \n", tid);
+        curl_easy_cleanup(g_pch[tid]); 
+        g_pch[tid] = NULL;
       }
     }
     curl_global_cleanup();
   }
-  printf("Completed curl cleanup\n");
+  // printf("Completed curl cleanup\n");
   free_if_non_null(threads);
   free_if_non_null(tinfo);
   free_if_non_null(g_chunk);
-  if ( test_urls != NULL ) { 
-    for ( int test_id = 0; test_id < num_tests; test_id++ ) {
-      free_if_non_null(test_urls[test_id]);
+  if ( g_test_urls != NULL ) { 
+    for ( int test_id = 0; test_id < g_num_tests; test_id++ ) {
+      free_if_non_null(g_test_urls[test_id]);
     }
   }
-  free_if_non_null(test_urls);
+  free_if_non_null(g_test_urls);
+  free_if_non_null(g_ports);
+  if ( ch != NULL ) { curl_easy_cleanup(ch); ch = NULL; }
   return status ;
 }

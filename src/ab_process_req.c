@@ -12,14 +12,16 @@
 #include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
 #include "diagnostics.h"
+#include "to_kafka.h"
 #include "dump_log.h"
 #include "add_fake_test.h"
 #include "route_get_variant.h"
-#include "list_tests.h"
+#include "l_list_tests.h"
+#include "l_get_num_features.h"
 #include "ping_server.h"
 #include "router.h"
 #include "test_info.h"
-#include "get_config.h"
+#include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
@@ -54,6 +56,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
+  int num_features;
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -121,6 +124,11 @@ ab_process_req(
       status = ext_get_host(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
+    case GetNumFeatures : /* done by Lua */
+      status = l_get_num_features(&num_features); cBYE(status);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
+      break;
+      //--------------------------------------------------------
     case GetVariant :  /* done by C */
     case GetVariants :  /* done by C */
       status = route_get_variant(req_type, args);  cBYE(status);
@@ -130,11 +138,12 @@ ab_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       g_halt = true;
       if ( g_cfg.sz_log_q > 0 ) {
-        // Tell consumer ead nothing more is coming
+        // Tell consumer that nothing more is coming
+        g_halt = true;
         pthread_cond_signal(&g_condc);  /* wake up consumer */
-        fprintf(stderr, "Waiting for consumer to finish \n");
-        pthread_join(g_con, NULL);
-        fprintf(stderr, "Consumer finished \n");
+          fprintf(stderr, "Waiting for consumer to finish \n");
+          pthread_join(g_con, NULL);
+          fprintf(stderr, "Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
@@ -197,7 +206,6 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case Reload : /* done by Lua */
-      l_reload_tests();
     case Restart : /* done by Lua */
       // t1 = get_time_usec();
       g_halt = true;
@@ -231,8 +239,9 @@ ab_process_req(
         status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
         cBYE(status);
       }
+
       switch ( req_type ) {
-        case Reload: /* call Lua status = reload(false); */ break;
+        case Reload: status = l_reload_tests();  cBYE(status); break;
         case Restart : /* nothing to do  */ break;
         default : go_BYE(-1); break;
       }
@@ -255,6 +264,10 @@ ab_process_req(
       //--------------------------------------------------------
     case UTMKV : /* done by C */
       status = get_utm_kv(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case ToKafka : /* done by C */
+      status = to_kafka(g_body, g_sz_body); cBYE(status);
       break;
       //--------------------------------------------------------
     case ZeroCounters : /* done by C */

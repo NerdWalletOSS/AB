@@ -23,6 +23,9 @@ write_log(
     *ptr_buf_idx += len;
     strcat(buf, temp); 
   }
+  else {
+    WHEREAMI;
+  }
 }
 
 int
@@ -74,9 +77,12 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumGetVariantCalls", g_log_get_variant_calls);
   write_log(g_rslt, &ridx, n, "NumGetVariantsCalls", g_log_get_variant_calls);
   write_log(g_rslt, &ridx, n, "NumRouterCalls",     g_log_router_calls);
+  write_log(g_rslt, &ridx, n, "NumKafkaCalls",      g_log_kafka_calls);
+  write_log(g_rslt, &ridx, n, "KafkaMemory",        g_kafka_memory);
   write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
   write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
   write_log(g_rslt, &ridx, n, "ResponseTime",       g_log_response_time);
+  write_log(g_rslt, &ridx, n, "NumInQueue",         g_n_log_q);
   if ( strlen(g_rslt) > AB_MAX_LEN_RESULT - 32 ) { WHEREAMI; return -1; }
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
   return status;

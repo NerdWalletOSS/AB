@@ -6,7 +6,14 @@ or some such
 In that directory, we have
 1) dt.csv ---  the decision tree as a CSV file
 2) dt_feature.lua --- a Lua table that has keys as feature names and 
-	values as either:
+	values are 1, 2, 3, ...
+        Example:
+        X = {}
+        X[0] = 1; X[1] = 2, ....
+        X = {}
+        X["abc"] = 1; X["def"] = 2, ....
+        X = {}
+        X["abc"] = 1; X["def"] = { g = 2, h = 3 }
 		1-indexed integer positions in g_dt_feature_vector
 		a Lua table with key: value as:
 			valid categorical value: 1-indexed integer position
@@ -178,6 +185,11 @@ via 'require'
 	- When dereferencing: "local var = cache.get(VAR_NAME)"
 	Now it is accessible from any other piece of code.
 
+5) Do not do any package.path or package.cpath changes.
+6) Instead, any require must be relative to AB/ as an example
+  local assertx = require 'lua/assertx'
+  means that there is a file  AB/lua/assertx.lua
+
 
 ----- INITIALIZING DT / HOW IT WORKS -----
 
@@ -188,11 +200,11 @@ g_L_DT state, which is initialized in (AB) src/libe_ab_httpd.c, in the
 line that calls init_lua(), which comes from init.c (1st step of 3).
 
 In init.c's init_lua(), there is a stated requirement to have
-src/dt.lua in there. DT.lua will be 'require'd (basically a 
+DT/dt.lua in there. DT.lua will be 'require'd (basically a 
 set of global functions that are required for running, and it should
 not change.)
 
-The functions in src/dt.lua are as follows: 
+The functions in DT/dt.lua are as follows: 
 
 - load_config (loads the config file)
 - hard_code_config (for hard-coding/debugging)
@@ -219,7 +231,7 @@ will load the correct set of configs into the Lua state. This usually
 means defining the directory of the model being run.
 
 The corresponding file for this is:
-src/dt_load_config.lua
+DT/dt_load_config.lua
 
 OR
 
@@ -229,16 +241,16 @@ After that, the third step (of 3) will involve adding the files in that
 DT directory (which was loaded in step 2).
 
 In C (i.e. src/libe_ab_httpd.c) it is called right after, in the
-function l_update_config(), which calls src/dt.lua's update_config().
+function l_update_config(), which calls DT/dt.lua's update_config().
 
-In that (which is in src/dt_update_config.lua), it:
+In that (which is in DT/dt_update_config.lua), it:
 
 - adds the 3 files in the repo into the cache:
 	- dt_feature.lua (named in cache as dt_feature)
 	- mdl_map.lua (named in cache as mdl_map)
 	- generate_features.lua (named in cache as generate_features)
 	NOTE THAT it assumes that the path from which this is called is
-	from src/.
+	from AB/.
 	It searches through DT/XXXX/ (where XXXX is supplied by either
 	l_hard_code_config or l_load_config, in the global LUA variable 
 	config.DT.DT_DIR.VALUE or in the global C value c_cfg.dt_dir
@@ -251,7 +263,7 @@ So by this point, as a summary:
 
 3 C functions have been called:
 - init_lua() which initialises the g_L_DT Lua state and adds all 6 
-	functions in src/dt.lua into that state
+	functions in DT/dt.lua into that state
 - EITHER l_hard_code_config() or l_load_config(), which adds the 
 	value of the directory name XXXX (C's value of c_cfg.dt_dir 
 	i.e. Lua's value of config.DT.DT_DIR.VALUE)
@@ -359,3 +371,40 @@ In the whole Decision Tree pipeline there are a few steps:
 	- It then converts the dictionary into a JSON string, and 
 		then writes it into (char* ) out_buf
 			(in Lua. In C it's called g_rslt)
+
+---- TESTING AND DEBUGGING ----
+
+0. Before testing, ensure you have run `source to_source` at
+the AB directory.
+
+1. First, test if the AB state is loading. To do so, run 
+`luajit -e "require 'DT.dt'"`. It should not make noise.
+
+2. Next, add on loading configs:
+`luajit -e "require 'DT.dt'; hard_code_config()"`
+and
+`luajit -e "require 'DT.dt';hard_code_config(); update_config()"`
+should not complain.
+
+If any of them complain:
+
+- check if the spam folder has the 3 lua files mentioned above
+	(dt_feature.lua, mdl_map.lua, generate_features.lua)
+- check to see those files are properly formatted
+
+3. To test get_num_features:
+Run 
+`luajit -e "require 'DT.dt';hard_code_config(); update_config(); print(get_num_features())"`
+
+You should get a number at the very end.
+
+4. To test make_feature_vector:
+CD to /DT/lua/ and run 
+`luajit test_make_feature_vector.lua`
+
+5. To test post_proc_preds:
+Run 
+`luajit /DT/lua/test_post_proc_preds.lua`
+
+6. Make sure that in the directory you set your Lua scripts
+to (in load_config), you run all tests in there.

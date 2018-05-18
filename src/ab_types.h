@@ -24,6 +24,7 @@ typedef enum _ab_req_type {
   GetConfig, // Read &  Lua
   GetDomain, // Debugging &  Lua
   GetHost, // Debugging &  Lua
+  GetNumFeatures, // Read &  Lua
   GetVariant, // Read &  C
   GetVariants, // Read &  C
   Halt, // Read &  C
@@ -40,6 +41,7 @@ typedef enum _ab_req_type {
   Router, // Read &  C
   StopTest, // Write & C (for testing)
   TestInfo, // Read &  Lua
+  ToKafka, // Pass through & C
   UTMKV, // Read &  C
   ZeroCounters // Write &  C
 } AB_REQ_TYPE;
@@ -78,7 +80,12 @@ typedef struct _test_meta_type {
 
 } TEST_META_TYPE;
 
-typedef struct _payload_type {
+typedef struct _kafka_rec_type { 
+  char *data;
+  size_t sz;
+} KAFKA_REC_TYPE;
+
+typedef struct _payload_rec_type {
   char uuid[AB_MAX_LEN_UUID+1];
   char in_tracer[AB_MAX_LEN_TRACER+1];
   char out_tracer[AB_MAX_LEN_TRACER+1];
@@ -86,7 +93,7 @@ typedef struct _payload_type {
   uint64_t time;
   uint32_t test_id;
   uint32_t variant_id;
-} PAYLOAD_TYPE;
+} PAYLOAD_REC_TYPE;
 
 typedef struct _lkp_rec_type {
   uint32_t id;

@@ -1,12 +1,11 @@
-package.path=package.path .. ";./../src/?.lua"
-local assertx = require 'assertx'
+local assertx = require 'lua/assertx'
 -- local dbg = require 'debugger'
-local ffi = require 'ab_ffi'
-local json = require 'json'
-local consts = require 'ab_consts'
-local AddTest = require 'add_test'
-local spooky_hash = require 'spooky_hash'
-local cache = require 'cache'
+local ffi = require 'lua/ab_ffi'
+local JSON = require 'lua/JSON'
+local consts = require 'lua/ab_consts'
+local AddTest = require 'RTS/add_test'
+local spooky_hash = require 'RTS/spooky_hash'
+local cache = require 'lua/cache'
 -- os.execute('make -C ../src libaux_zero.so')
 -- local file = io.open("../src/aux_zero.h", "r")
 -- ffi.cdef(file:read("*a"))
@@ -168,9 +167,9 @@ describe('AddTest framework', function()
       end)
 
       it("should have a valid TestType", function()
-        local j_table = json.decode(valid_json)
+        local j_table = JSON:decode(valid_json)
         j_table.TestType = nil
-        local j_str = json.encode(j_table)
+        local j_str = JSON:encode(j_table)
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -179,9 +178,9 @@ describe('AddTest framework', function()
       end)
 
       it("should have a valid name", function()
-        local j_table = json.decode(valid_json)
+        local j_table = JSON:decode(valid_json)
         j_table.name = nil
-        local j_str = json.encode(j_table)
+        local j_str = JSON:encode(j_table)
         -- dbg()
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
         assertx(status == false, "Insert for invalid test should fail")
@@ -192,7 +191,7 @@ describe('AddTest framework', function()
 
 
         j_table.name = string.rep("a", consts.AB_MAX_LEN_TEST_NAME + 1)
-        j_str = json.encode(j_table)
+        j_str = JSON:encode(j_table)
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -202,7 +201,7 @@ describe('AddTest framework', function()
 
 
         j_table.name = string.rep("a", consts.AB_MAX_LEN_TEST_NAME)
-        j_str = json.encode(j_table)
+        j_str = JSON:encode(j_table)
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -213,7 +212,7 @@ describe('AddTest framework', function()
 
       it("should have a valid position", function()
         -- se default position 1 before and 1 after are only positions left
-        local j_table = json.decode(valid_json)
+        local j_table = JSON:decode(valid_json)
         local default_pos = spooky_hash.spooky_hash64(j_table.name, #j_table.name, AddTest.g_seed1) % consts.AB_MAX_NUM_TESTS
         fill_g_tests()
         g_tests[default_pos].name_hash = 0
@@ -258,7 +257,7 @@ describe('AddTest framework', function()
       end)
 
       it("should allow updates to a test", function()
-        local j_table = json.decode(valid_json)
+        local j_table = JSON:decode(valid_json)
         local status, res = pcall(do_malloc_if_needed, g_tests, valid_json)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
         local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
@@ -266,7 +265,7 @@ describe('AddTest framework', function()
         local old_index = c_index[0]
         local old_testtype = g_tests[c_index[0]].test_type
         j_table.TestType = "XYTest"
-        local j_str = json.encode(j_table)
+        local j_str = JSON:encode(j_table)
 
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
         assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
@@ -281,9 +280,9 @@ describe('AddTest framework', function()
       end)
       describe("for c_to_v_ok_v_to_c_ok_v_to_v_not_ok", function()
         it("should have a control type", function()
-          local j_table = json.decode(valid_json)
+          local j_table = JSON:decode(valid_json)
           j_table.Variants[1].name = 'failme'
-          local j_str = json.encode(j_table)
+          local j_str = JSON:encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
           local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -291,9 +290,9 @@ describe('AddTest framework', function()
           cleanup(g_tests, c_index)
         end)
         it('reordered variants should result in same ordering', function()
-          local j_table = json.decode(valid_json)
+          local j_table = JSON:decode(valid_json)
           table.sort(j_table.Variants, function(a,b) return a.name > b.name end)
-          local j_str = json.encode(j_table)
+          local j_str = JSON:encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
           local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -305,7 +304,7 @@ describe('AddTest framework', function()
           cleanup(g_tests, c_index)
 
           table.sort(j_table.Variants, function(a,b) return a.name < b.name end)
-          j_str = json.encode(j_table)
+          j_str = JSON:encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
           status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -315,10 +314,10 @@ describe('AddTest framework', function()
           end
         end)
         it("should not allow the variant proportions to be high", function()
-          local j_table = json.decode(valid_json)
+          local j_table = JSON:decode(valid_json)
           j_table.Variants[1].percentage = "10"
           j_table.Variants[2].percentage = "70"
-          local j_str = json.encode(j_table)
+          local j_str = JSON:encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
           local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -330,12 +329,12 @@ describe('AddTest framework', function()
 
       describe("for anonymous", function()
         it("should allow the variant proportions to be high", function()
-          local j_table = json.decode(valid_json)
+          local j_table = JSON:decode(valid_json)
           j_table.external_id="123456789"
           j_table.Variants[1].percentage = "10"
           j_table.Variants[2].percentage = "70"
           j_table.BinType = "anonymous"
-          local j_str = json.encode(j_table)
+          local j_str = JSON:encode(j_table)
           local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
           assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
           -- dbg()
@@ -347,14 +346,14 @@ describe('AddTest framework', function()
         -- This is about dev specific routing too:
         describe("should add device specific routes", function()
           it("Percentages should match with input", function()
-            local j_table = json.decode(valid_json2)
+            local j_table = JSON:decode(valid_json2)
             j_table.is_dev_specific = tostring(consts.TRUE)
             j_table.BinType = "anonymous"
             j_table.State = "started"
             for _,v in ipairs(j_table.Variants) do
               v.url = "www.google.com"
             end
-            local j_str = json.encode(j_table)
+            local j_str = JSON:encode(j_table)
             local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
             assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
             -- dbg()
@@ -455,11 +454,11 @@ describe('AddTest framework', function()
   end)
   describe("should not have any final_variant entries for a started test", function()
     it("Should have a no entry for device agnosticc anonymous tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.FALSE)
       j_table.BinType = "anonymous"
       j_table.State = "started"
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -470,11 +469,11 @@ describe('AddTest framework', function()
     end)
 
     it("Should have a no entry for device agnosticc c_to_v_ok_v_to_c_ok_v_to_v_not_ok tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.FALSE)
       j_table.BinType = "c_to_v_ok_v_to_c_ok_v_to_v_not_ok"
       j_table.State = "started"
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -485,11 +484,11 @@ describe('AddTest framework', function()
     end)
 
     it("Should have no  entries for device specific anonymous tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.TRUE)
       j_table.BinType = "anonymous"
       j_table.State = "started"
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -504,12 +503,12 @@ describe('AddTest framework', function()
 
   describe("should have any final_variant entries for a terminated test", function()
     it("for device agnostic anonymous tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.FALSE)
       j_table.BinType = "anonymous"
       j_table.State = "terminated"
       j_table.Variants[1].is_final = tostring(consts.TRUE)
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -524,12 +523,12 @@ describe('AddTest framework', function()
     end)
 
     it("for device agnostic c_to_v_ok_v_to_c_ok_v_to_v_not_ok tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.FALSE)
       j_table.BinType = "c_to_v_ok_v_to_c_ok_v_to_v_not_ok"
       j_table.State = "terminated"
       j_table.Variants[1].is_final = tostring(consts.TRUE)
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -545,12 +544,12 @@ describe('AddTest framework', function()
     end)
 
     it("for device specific anonymous tests", function()
-      local j_table = json.decode(valid_json2)
+      local j_table = JSON:decode(valid_json2)
       j_table.is_dev_specific = tostring(consts.TRUE)
       j_table.BinType = "anonymous"
       j_table.State = "terminated"
       j_table.Variants[1].is_final = tostring(consts.TRUE)
-      local j_str = json.encode(j_table)
+      local j_str = JSON:encode(j_table)
       local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
       assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
       local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
@@ -577,9 +576,9 @@ describe('AddTest framework', function()
     local status, res = pcall(AddTest.add, valid_json, g_tests, c_index)
     assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
     assert(c_index[0] ~= -1, "Entry should have a valid index")
-    local j_table = json.decode(valid_json)
+    local j_table = JSON:decode(valid_json)
     j_table.State = "archived"
-    local j_str = json.encode(j_table)
+    local j_str = JSON:encode(j_table)
     local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
     assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
     do_malloc_if_needed(g_tests, j_str)
@@ -593,9 +592,9 @@ describe('AddTest framework', function()
   -- end)
 
   describe("should fail for any other testtype", function()
-    local j_table = json.decode(valid_json)
+    local j_table = JSON:decode(valid_json)
     j_table.TestType = "InvalidTest"
-    local j_str = json.encode(j_table)
+    local j_str = JSON:encode(j_table)
     local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
     assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
     local status, res = pcall(AddTest.add, j_str, g_tests, c_index)

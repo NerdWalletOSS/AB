@@ -103,7 +103,7 @@ get_variant(
       g_tests[test_idx].id);
   if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
   //------------------------------------------------
-  PAYLOAD_TYPE lcl_payload;
+  PAYLOAD_REC_TYPE lcl_payload;
   zero_payload(&lcl_payload);
   strcpy(lcl_payload.uuid, g_uuid);
   strcpy(lcl_payload.in_tracer,  in_tracer);
@@ -111,7 +111,7 @@ get_variant(
   lcl_payload.test_id    = g_tests[test_idx].id;
   lcl_payload.variant_id = variant_id;
   lcl_payload.time       = curr_time;
-  status = log_decision(lcl_payload); cBYE(status);
+  status = log_decision(&lcl_payload); cBYE(status);
   //--------------------------------------------------------
 BYE:
   return status;

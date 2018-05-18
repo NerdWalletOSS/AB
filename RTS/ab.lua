@@ -23,7 +23,7 @@ function preproc(...)
 end
 
 function list_tests()
-  return json.encode(cache.get('tests'))
+  return JSON:encode(cache.get('tests'))
 end
 
 function reload(...)
@@ -37,11 +37,11 @@ function check_db_conn()
 end
 
 function get_config()
-  return json.encode(cache.get('config'))
+  return JSON:encode(cache.get('config'))
 end
 
 function get_test_info(args)
-  local j_table = json.decode(args)
+  local j_table = JSON:decode(args)
   local tests = cache.get('tests')
   local test = nil
   if j_table.id ~= nil then
@@ -55,7 +55,7 @@ function get_test_info(args)
       end
     end
   end
-  return json.encode(test)
+  return JSON:encode(test)
 end
 
 -- function add(c_str, c_data)

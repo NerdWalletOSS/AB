@@ -2,6 +2,7 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "halt_server.h"
+#include "zero_globals.h"
 #ifdef KAFKA
 #include "kafka_close_conn.h"
 #endif

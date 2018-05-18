@@ -1,7 +1,7 @@
 local ffi      = require 'ffi'
 local cache    = require 'lua/cache'
 local assertx  = require 'lua/assertx'
-local json     = require 'lua/json'
+local JSON     = require 'lua/JSON'
 
 
 local function get_mdl_ct(mdl_map)
@@ -27,17 +27,18 @@ local function post_proc_preds(
     tostring(n_opvec), ', but mdl_map says length is ', 
     tostring(n_mdl))
   for idx, mdl in pairs(mdl_map) do
-    mdl_n = assert(tonumber(mdl), 'mdl_map faulty')
     local pred = assertx(opvec[tonumber(idx)], 'Index ', tostring(idx),
       ' not present in opvec.')
     assertx(0 <= pred and pred <= 1, 'prediction ', tostring(pred), 
       ' not between 0 and 1 inclusive.')
-    out_features[mdl_n] = pred
+    out_features[mdl] = pred
   end
-  local x = assert(json.encode(out_features))
+  for k, v in pairs(out_features) do print(k, v) end
+  local x = assert(JSON:encode(out_features))
   assertx(#x <= sz_out_buf, 'len of string is ', #x,
     ', which is too long for the buffer with length ', sz_out_buf)
   ffi.copy(out_buf, x)
+  return true
 end
 
 return post_proc_preds

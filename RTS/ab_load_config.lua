@@ -2,7 +2,7 @@ local assertx = require 'lua/assertx'
 local cache = require 'lua/cache'
 local consts = require 'lua/ab_consts'
 local ffi = require 'lua/ab_ffi'
-local json = require 'lua/json'
+local JSON = require 'lua/JSON'
 local sql = require 'lua/sql'
 -- local dbg = require 'debugger'
 
@@ -115,7 +115,8 @@ function load_cfg.db_connect(mysql)
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
   -- print(host, user, pass, db, port)
-  -- TODO P0 local conn = sql:connect(host, user, pass, db, port)
+  -- TODO P0 
+  local conn = sql:connect(host, user, pass, db, port)
   return conn
 end
 
@@ -211,7 +212,7 @@ function load_cfg.load_config(
   local file = assert(io.open(config_file, 'r'), "Invalid filename given")
   local conf_str = file:read('*a')
   file:close()
-  local config = json.decode(conf_str)
+  local config = JSON:decode(conf_str)
 
   assert(g_cfg ~= ffi.NULL, "Config should not be null")
   g_cfg = ffi.cast("CFG_TYPE*", g_cfg)

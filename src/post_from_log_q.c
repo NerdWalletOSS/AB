@@ -5,7 +5,7 @@
 #include "post_from_log_q.h"
 #include "make_curl_payload.h"
 #include "kafka_add_to_queue.h"
-
+#include "kafka_close_conn.h"
 
 void *
 post_from_log_q(
@@ -15,10 +15,10 @@ post_from_log_q(
   int status = 0;
   CURLcode curl_res; 
   long http_code;
-  PAYLOAD_TYPE lcl_payload;
+  PAYLOAD_REC_TYPE lcl_payload;
+  KAFKA_REC_TYPE kafka_payload;
 
-  for ( ; ; ) {
-    memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
+  for ( ; g_halt == false ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
@@ -26,7 +26,6 @@ post_from_log_q(
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
-      //  fprintf(stderr, "consumer waiting\n");
       pthread_cond_wait(&g_condc, &g_mutex);
       // fprintf(stderr, "consumer still waiting\n");
     }
@@ -36,13 +35,27 @@ post_from_log_q(
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
+#ifdef AB_AS_KAFKA
+    kafka_payload = g_log_q[eff_rd_idx];
+    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(KAFKA_REC_TYPE));
+#else
     lcl_payload = g_log_q[eff_rd_idx];
-    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_TYPE));
+    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_REC_TYPE));
+#endif
     g_q_rd_idx++; 
     g_n_log_q--;
     pthread_cond_signal(&g_condp);	/* wake up consumer */
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
     // Now that you are out of the critical section, do the POST
+#ifdef AB_AS_KAFKA
+    status = kafka_add_to_queue(kafka_payload.data); 
+    if ( status != 0 ) { WHEREAMI; }
+    // printf("Freed %8x \n", (unsigned int)kafka_payload);
+    free_if_non_null(kafka_payload.data); 
+    g_kafka_memory -= kafka_payload.sz;
+    rd_kafka_poll(g_rk, 10); // TODO P3 Why 10?
+    continue;
+#endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
     status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
@@ -77,6 +90,16 @@ post_from_log_q(
 #endif
     }
   }
-  pthread_exit(NULL); 
+#ifdef AB_AS_KAFKA
+
+  fprintf(stderr, "Waiting for kafka to flush. \n");
+  for ( ; ; ) { 
+    rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
+    int len = rd_kafka_outq_len(g_rk);
+    fprintf(stderr, "Waiting for kafka to flush. %d in queue, %d to go \n", g_n_log_q, len); 
+    if ( len == 0 ) { break; }
+  }
+#endif
+  // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 
   return NULL;
 }

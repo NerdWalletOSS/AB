@@ -9,7 +9,7 @@
 //<hdr>
 void
 zero_payload(
-    PAYLOAD_TYPE *ptr_payload
+    PAYLOAD_REC_TYPE *ptr_payload
     )
 {
   memset(ptr_payload->uuid, '\0', AB_MAX_LEN_UUID+1);
@@ -27,7 +27,7 @@ zero_payload(
 //<hdr>
 int 
 make_curl_payload(
-    PAYLOAD_TYPE lcl_payload,
+    PAYLOAD_REC_TYPE lcl_payload,
     char *curl_payload,
     size_t sz_curl_payload
     )

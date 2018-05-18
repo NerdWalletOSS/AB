@@ -1,11 +1,11 @@
-package.path=package.path .. ";./../src/?.lua"
+-- package.path=package.path .. ";./../src/?.lua"
 -- require 'strict'
-local assertx = require 'assertx'
-local ffi = require 'ab_ffi'
-local json = require 'json'
-local consts = require 'ab_consts'
-local load_config = require 'ab_load_config'
-local cache = require 'cache'
+local assertx = require 'lua/assertx'
+local ffi = require 'lua/ab_ffi'
+local JSON = require 'lua/JSON'
+local consts = require 'lua/ab_consts'
+local load_config = require 'RTS/ab_load_config'
+local cache = require 'lua/cache'
 -- local dbg = require 'debugger'
 
 local config = "../src/ab.conf.json"

@@ -5,6 +5,7 @@
 #include "make_guid.h"
 #include "auxil.h"
 #include "execute.h"
+#include "restart.h"
 #include "setup_curl.h"
 
 int g_chunk_size;
@@ -73,10 +74,7 @@ main(
   int exp_num_hits = num_restarts * num_outside_iters * niter * nU * num_tests; 
   for ( int r = 0; r  < num_restarts; r++ ) {
     // Restart AB RTS
-    fprintf(stderr, "Restarting the ab server\n");
-    sprintf(url, "%s:%d/Restart", server, port);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { go_BYE(-1); }
+    status = restart(ch,server, port, "Restart"); cBYE(status);
     for ( int kk = 0; kk < num_outside_iters; kk++ ) {
       //-- Add a bunch of tests 
       status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
@@ -136,6 +134,9 @@ main(
   }
   sprintf(url, "%s:%d/Halt", server, port);
   status = execute(ch, url, &http_code); cBYE(status);
+  if ( http_code == 0 ) { 
+    fprintf(stderr, "Server busy restarting\n"); goto BYE;
+  }
   if ( http_code != 200 ) { go_BYE(-1); }
 DONE:
   fprintf(stderr, "num_over = %d \n", num_over);

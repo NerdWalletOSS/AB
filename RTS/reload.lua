@@ -5,7 +5,7 @@ local sql = require 'lua/sql'
 local consts = require 'lua/ab_consts'
 local cache = require 'lua/cache'
 local load_config = require 'RTS/ab_load_config'
-local json = require 'lua/json'
+local JSON = require 'lua/JSON'
 local AddTest = require 'RTS/add_test'
 local reload = {}
 function reload.get_tests_from_db()
@@ -60,7 +60,7 @@ function reload.get_tests_from_db()
     test_json.BinType = bin_types[test.bin_type_id]
     test_json.State = states[test.state_id]
     -- TODO ask about channel stuff
-    local query = string.format('select * from variant where test_id=%s where is_del = false;', test.id)
+    local query = string.format('select * from variant where test_id=%s and is_del = false;', test.id)
     local variants = conn:query(query)
     local count = 0
     local variants_arr = {}
@@ -82,7 +82,7 @@ function reload.get_tests_from_db()
       test_json.DeviceCrossVariant = dev_arr
     end
     -- TODO here is where we send this to add test
-    local str = json.encode(test_json)
+    local str = JSON:encode(test_json)
     tests_ret[#tests_ret + 1] = str
   end
   return tests_ret

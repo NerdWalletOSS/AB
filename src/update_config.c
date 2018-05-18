@@ -34,9 +34,15 @@ update_config(
   // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 
+#ifdef AB_AS_KAFKA
+    g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
     return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)));
+    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
+#else
+    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
+    return_if_malloc_failed(g_log_q);
+    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
+#endif
     g_n_log_q = 0;
   }
   //---------------------------------------------------
@@ -188,8 +194,11 @@ update_config(
     g_n_mdl = 1 ; // TODO P0 DELETE DELETE DELETE 
 
     g_predictions = malloc(g_n_mdl * sizeof(float));
+    return_if_malloc_failed(g_predictions);
+    for ( int i = 0; i < g_n_mdl; i++ ) { 
+      g_predictions[i] = 0.1 * (i+1);
+    }
 
-    free_if_non_null(g_dt_feature_vector); 
     status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
     g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
     return_if_malloc_failed(g_dt_feature_vector);

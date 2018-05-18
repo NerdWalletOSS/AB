@@ -24,6 +24,7 @@ free_globals(
 {
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
     free_test(i); 
+    g_test_str[i] = NULL; // do not free. malloc/free is for Lua
   }
   free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
 
@@ -80,6 +81,8 @@ zero_globals(
 {
   int status = 0;
 
+  g_kafka_memory = 0;
+  g_halt = false;
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
     zero_test(i); 
   }

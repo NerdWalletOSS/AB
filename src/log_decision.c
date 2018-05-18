@@ -7,7 +7,7 @@
 #include "kafka_add_to_queue.h"
 int
 log_decision(
-    PAYLOAD_TYPE lcl_payload
+    void *X
     )
 {
   int status = 0;
@@ -33,14 +33,22 @@ log_decision(
     if ( is_wait ) { fprintf(stderr, "Got space \n"); }
 
     int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
-    g_log_q[eff_wr_idx] = lcl_payload;
+#ifdef AB_AS_KAFKA
+    memcpy(g_log_q+eff_wr_idx, (KAFKA_REC_TYPE *)X,
+        sizeof(KAFKA_REC_TYPE));
+#else
+    memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
+        sizeof(PAYLOAD_REC_TYPE));
+    // OLD g_log_q[eff_wr_idx] = lcl_payload;
+#endif
     g_q_wr_idx++; 
     g_n_log_q++;
     pthread_cond_signal(&g_condc);	/* wake up consumer */
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
   }
   else {
-    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
+    PAYLOAD_REC_TYPE *x = (PAYLOAD_REC_TYPE *)X;
+    status = make_curl_payload(x[0], g_curl_payload, AB_MAX_LEN_PAYLOAD);
     cBYE(status);
     if ( g_rk == NULL ) { 
     status = post_url(g_ch, g_curl_payload, NULL);
