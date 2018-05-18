@@ -77,6 +77,7 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
   write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
   write_log(g_rslt, &ridx, n, "ResponseTime",       g_log_response_time);
+  write_log(g_rslt, &ridx, n, "NumInQueue",         g_n_log_q);
   if ( strlen(g_rslt) > AB_MAX_LEN_RESULT - 32 ) { WHEREAMI; return -1; }
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
   return status;

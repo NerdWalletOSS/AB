@@ -5,6 +5,7 @@
 #include "get_test_idx.h"
 #include "alt_get_variant.h"
 #include "get_variant.h"
+#include "log_decision.h"
 #include "dump_log.h"
 #include "make_guid.h"
 
@@ -145,15 +146,15 @@ int alt_get_variant(
     status = -1;
   }
 
-  PAYLOAD_TYPE lcl_payload;
-  memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
+  PAYLOAD_REC_TYPE lcl_payload;
+  memset(&lcl_payload, '\0', sizeof(PAYLOAD_REC_TYPE));
   strcpy(lcl_payload.in_tracer, in_tracer);
   strcpy(lcl_payload.out_tracer, g_out_tracer);
   lcl_payload.time       = curr_time;
   lcl_payload.test_id    = test_id;
   lcl_payload.variant_id = variant_id;
 
-  status = log_decision(lcl_payload); cBYE(status);
+  status = log_decision(&lcl_payload); cBYE(status);
   cBYE(status);
 BYE:
   return status;

@@ -1,12 +1,11 @@
-package.path=package.path .. ";./../src/?.lua"
-local assertx = require 'assertx'
+local assertx = require 'lua/assertx'
 -- local dbg = require 'debugger'
-local ffi = require 'ab_ffi'
-local json = require 'json'
-local consts = require 'ab_consts'
-local AddTest = require 'add_test'
-local spooky_hash = require 'spooky_hash'
-local cache = require 'cache'
+local ffi = require 'lua/ab_ffi'
+local json = require 'lua/json'
+local consts = require 'lua/ab_consts'
+local AddTest = require 'RTS/add_test'
+local spooky_hash = require 'RTS/spooky_hash'
+local cache = require 'lua/cache'
 -- os.execute('make -C ../src libaux_zero.so')
 -- local file = io.open("../src/aux_zero.h", "r")
 -- ffi.cdef(file:read("*a"))

@@ -1,13 +1,16 @@
 #include "incs.h"
 #include "ab_constants.h"
+#include "macros.h"
 #include "add_tests.h"
 #include "make_guid.h"
 #include "auxil.h"
 #include "execute.h"
+#include "restart.h"
 #include "setup_curl.h"
 
 int g_chunk_size;
 char *g_chunk;
+char *g_base_url;
 
 int 
 main(
@@ -28,9 +31,13 @@ main(
   int *H = NULL; int nH = 1000; // histogram  for response times 
 
   // Set globals 
-  g_chunk_size = 16384; g_chunk = NULL;
+  g_chunk_size = 16384; 
+  g_chunk = NULL;
+  g_base_url = NULL;
   g_chunk = malloc(g_chunk_size * sizeof(char));
   return_if_malloc_failed(g_chunk);
+  g_base_url = malloc(1024 * sizeof(char));
+  return_if_malloc_failed(g_base_url);
 
   // process input parameters
   if ( argc != 3 ) { go_BYE(-1); }
@@ -67,10 +74,7 @@ main(
   int exp_num_hits = num_restarts * num_outside_iters * niter * nU * num_tests; 
   for ( int r = 0; r  < num_restarts; r++ ) {
     // Restart AB RTS
-    fprintf(stderr, "Restarting the ab server\n");
-    sprintf(url, "%s:%d/Restart", server, port);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { go_BYE(-1); }
+    status = restart(ch,server, port, "Restart"); cBYE(status);
     for ( int kk = 0; kk < num_outside_iters; kk++ ) {
       //-- Add a bunch of tests 
       status = add_tests(ch, server, port, num_tests, &test_urls); cBYE(status);
@@ -130,6 +134,9 @@ main(
   }
   sprintf(url, "%s:%d/Halt", server, port);
   status = execute(ch, url, &http_code); cBYE(status);
+  if ( http_code == 0 ) { 
+    fprintf(stderr, "Server busy restarting\n"); goto BYE;
+  }
   if ( http_code != 200 ) { go_BYE(-1); }
 DONE:
   fprintf(stderr, "num_over = %d \n", num_over);
@@ -159,5 +166,6 @@ BYE:
   free_if_non_null(test_urls);
   if ( ch != NULL ) { curl_easy_cleanup(ch); }
   free_if_non_null(g_chunk);
+  free_if_non_null(g_base_url);
   return status ;
 }

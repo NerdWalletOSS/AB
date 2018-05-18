@@ -2,7 +2,7 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "get_test_idx.h"
-#include "list_tests.h"
+#include "l_list_tests.h"
 
 int
 l_list_tests(
@@ -33,7 +33,7 @@ l_list_tests(
 
     char* tests = (char *)lua_tostring(g_L, 1);
     if (AB_MAX_LEN_RESULT < strlen(tests)) {
-      sprintf(g_err, "{\"error\": Length of list tests is too much for buffer (max=%" PRIu32", actual=%" PRIu32 ")",
+      sprintf(g_err, "{\"error\": Length of list tests is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",
           AB_MAX_LEN_RESULT, strlen(tests));
       lua_pop(g_L, 1);
       go_BYE(-1);
@@ -64,6 +64,7 @@ c_list_tests(
   int status = 0;
   bool first = true;
   char buf[2*(AB_MAX_LEN_TEST_NAME+1)];
+  if ( ( X == NULL ) || ( nX <= 1024 ) ) { go_BYE(-1); }
   strcpy(X, " [ ");
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { continue; }

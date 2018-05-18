@@ -13,14 +13,14 @@ int chk_logger_connectivity(
   int status = 0;
   uint64_t time_taken = 0; size_t nw;
   char curl_payload[AB_MAX_LEN_PAYLOAD+1];
-  PAYLOAD_TYPE lcl_payload;
+  PAYLOAD_REC_TYPE lcl_payload;
 
   if ( nX < AB_MAX_LEN_PAYLOAD+1+32 ) { go_BYE(-1); }
   if ( g_ch == NULL ) { 
     strcpy(X, "{ \"CheckLoggerConnectivity\" : \"Logging Disabled\" } ");
     goto BYE;
   }
-  memset(&lcl_payload, '\0', sizeof(PAYLOAD_TYPE));
+  memset(&lcl_payload, '\0', sizeof(PAYLOAD_REC_TYPE));
   // START: Make a bogus UUID that is alphanumeric 
   strncpy(lcl_payload.uuid, "UUID_CHCKPIPE", g_cfg.max_len_uuid);
   strncpy(lcl_payload.in_tracer, "IN_CHCKPIPE", AB_MAX_LEN_TRACER);

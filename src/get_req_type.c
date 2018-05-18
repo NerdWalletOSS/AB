@@ -49,6 +49,9 @@ get_req_type(
   else if (strcasecmp(api, "GetHost") == 0) {
     return GetHost;
   }
+  else if (strcasecmp(api, "GetNumFeatures") == 0) {
+    return GetNumFeatures;
+  }
   else if (strcasecmp(api, "GetVariant") == 0) {
     return GetVariant;
   }
@@ -96,6 +99,9 @@ get_req_type(
   }
   else if (strcasecmp(api, "TestInfo") == 0) {
     return TestInfo;
+  }
+  else if (strcasecmp(api, "ToKafka") == 0) {
+    return ToKafka;
   }
   else if (strcasecmp(api, "UTMKV") == 0) {
     return UTMKV;

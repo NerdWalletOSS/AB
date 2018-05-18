@@ -1,9 +1,7 @@
-package.path = '../../?.lua;../?.lua;../lua/?.lua;../../lua/?.lua;' .. package.path
-
-local cache = require 'cache'
-local ffi = require 'ffi'
-local assertx = require 'lua.assertx'
-local json = require 'lua.json'
+local ffi      = require 'ffi'
+local cache    = require 'lua/cache'
+local assertx  = require 'lua/assertx'
+local json     = require 'lua/json'
 
 
 local function get_mdl_ct(mdl_map)

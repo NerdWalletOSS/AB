@@ -34,9 +34,15 @@ update_config(
   // sz_log_q
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q > 0 ) { 
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)); 
+#ifdef AB_AS_KAFKA
+    g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
     return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_TYPE)));
+    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
+#else
+    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
+    return_if_malloc_failed(g_log_q);
+    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
+#endif
     g_n_log_q = 0;
   }
   //---------------------------------------------------
@@ -169,6 +175,9 @@ update_config(
   if ( g_rf  != NULL ) { rs_munmap(g_rf,  g_len_rf_file); }
   if ( g_mdl != NULL ) { rs_munmap(g_mdl, g_len_mdl_file); }
   if ( *g_cfg.dt_dir != '\0' ) { 
+
+    fprintf(stderr, "WARNING!!!! Not loading dt_dir \n"); 
+    /*
     int buflen = strlen(g_cfg.dt_dir) + strlen("dt.bin") + 4 ;
     if ( buflen > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
     buf = malloc(buflen); return_if_malloc_failed(buf);
@@ -180,6 +189,10 @@ update_config(
     cBYE(status);
     status = load_mdl(g_mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
+    */
+
+    g_n_mdl = 1 ; // TODO P0 DELETE DELETE DELETE 
+
     g_predictions = malloc(g_n_mdl * sizeof(float));
 
     free_if_non_null(g_dt_feature_vector); 
@@ -208,9 +221,9 @@ update_config(
   if ( g_cfg.kafka.brokers[0] != '\0' ) { 
     // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
      kafka_open_conn(g_cfg.kafka);
-     sprintf(g_buf, "hey in hardcode for demo\0"); 
+     // sprintf(g_buf, "hey in hardcode for demo\0"); 
      // INDRAKEET TO DO take out null character if not needed. gcc complains
-     kafka_add_to_queue(g_buf);  
+     // kafka_add_to_queue(g_buf);  
   }
 #endif
   // ---------------------

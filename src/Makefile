@@ -1,5 +1,5 @@
-# For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
+# For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return
 INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
@@ -26,7 +26,9 @@ LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
 	-DMAXMIND \
 	-DUTM_KV \
-	-DRASPBERRY_PI
+	-DAB_AS_KAFKA \
+
+#	-DRASPBERRY_PI
 
 #	-DGET_HOST_DOMAIN \
 

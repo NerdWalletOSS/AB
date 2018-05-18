@@ -24,7 +24,11 @@ EXTERN int  g_sz_ss_response; // For C. Size of response
 EXTERN statsd_link *g_statsd_link; // For C to talk to statsd server
 
 EXTERN uint32_t g_n_log_q;   // For C
-EXTERN PAYLOAD_TYPE *g_log_q; // For C
+#ifdef AB_AS_KAFKA
+EXTERN void **g_log_q; // For C [g_cfg.sz_log_q] 
+#else
+EXTERN PAYLOAD_REC_TYPE *g_log_q; // For C
+#endif
 EXTERN uint32_t g_q_rd_idx; // For C: spot where producer is to write
 EXTERN uint32_t g_q_wr_idx; // For C: spot where consumer is to read
 
@@ -37,6 +41,7 @@ EXTERN char g_my_name[AB_MAX_LEN_HOSTNAME+1]; // For C
 EXTERN bool g_halt; // For C TODO IS THIS NEEDED?
 //-----------------------------------------------------------------
 EXTERN TEST_META_TYPE g_tests[AB_MAX_NUM_TESTS];  // Set by Lua 
+EXTERN const char *g_test_str[AB_MAX_NUM_TESTS];  // Set by Lua 
 //--------------------------------------------------------
 EXTERN uint64_t g_seed1; // For C
 EXTERN uint64_t g_seed2; // For C
@@ -133,7 +138,10 @@ EXTERN bool g_ignore_kafka_errors;
 EXTERN rd_kafka_t *g_rk;         /* Producer instance handle */
 EXTERN rd_kafka_topic_t *g_rkt;  /* Topic object */
 EXTERN rd_kafka_conf_t *g_kafka_conf;  /* Temporary configuration object */
+EXTERN uint8_t g_kafka_callback;
 EXTERN char g_errstr[512];       /* librdkafka API error reporting buffer */
 // char g_buf[512];          /* Message value temporary buffer */
 
+EXTERN char g_body[AB_MAX_LEN_BODY+1];
+EXTERN int g_sz_body;
 

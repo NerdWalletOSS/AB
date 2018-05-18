@@ -49,16 +49,15 @@ init_lua(
   if ( g_disable_lua ) { return status; }
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
-  status = luaL_dostring(g_L, "require 'RTS/ab'");
-  // status = luaL_loadfile(g_L, "./RTS/ab.lua"); cBYE(status);
-  // status = lua_pcall(g_L, 0, 0, 0); 
-  printf("My status in %d\n\n\n", status);
-  cBYE(status);
+  status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
+  // TODO DELETE status = luaL_loadfile(g_L, "./RTS/ab.lua"); cBYE(status);
+  // TODO DELETE status = lua_pcall(g_L, 0, 0, 0); 
 
   g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L_DT);  
-  status = luaL_loadfile(g_L_DT, "./dt.lua"); cBYE(status);
-  status = lua_pcall(g_L_DT, 0, 0, 0); cBYE(status);
+  status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+  // TODO DELETE status = luaL_loadfile(g_L_DT, "./dt.lua"); cBYE(status);
+  // TODO DELETE status = lua_pcall(g_L_DT, 0, 0, 0); cBYE(status);
 
 BYE:
   return status;
