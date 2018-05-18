@@ -56,7 +56,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
-  int num_features;
+  int num_features; int consumer_ret_val;
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -141,9 +141,9 @@ ab_process_req(
         // Tell consumer that nothing more is coming
         g_halt = true;
         pthread_cond_signal(&g_condc);  /* wake up consumer */
-          fprintf(stderr, "Waiting for consumer to finish \n");
-          pthread_join(g_con, NULL);
-          fprintf(stderr, "Consumer finished \n");
+        fprintf(stderr, "HALT: Waiting for consumer to finish \n");
+        pthread_join(g_con, NULL);
+        fprintf(stderr, "HALT: Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
@@ -208,18 +208,17 @@ ab_process_req(
     case Reload : /* done by Lua */
     case Restart : /* done by Lua */
       // t1 = get_time_usec();
-      g_halt = true;
       if ( g_cfg.sz_log_q > 0 ) {
         // Tell consumer thread nothing more is coming
         pthread_cond_signal(&g_condc);  /* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
-        pthread_join(g_con, NULL);
+        g_halt = true;
+        pthread_join(g_con, &consumer_ret_val);
         fprintf(stderr, "Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
       }
-      g_halt = false;
       // common to restart and reload
       free_globals();
       status = zero_globals();  cBYE(status);

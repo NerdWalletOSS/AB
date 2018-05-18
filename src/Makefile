@@ -16,18 +16,19 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
 	-DMAXMIND \
 	-DUTM_KV \
 	-DAB_AS_KAFKA \
-	-DRASPBERRY_PI
+	#
+#	-DRASPBERRY_PI
 
 #	-DGET_HOST_DOMAIN \
 

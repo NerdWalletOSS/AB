@@ -22,15 +22,18 @@ post_from_log_q(
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+      fprintf(stderr, "BREAK 1 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
       break; // get out of the loop and out of here
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
       pthread_cond_wait(&g_condc, &g_mutex);
-      // fprintf(stderr, "consumer still waiting\n");
+      fprintf(stderr, "XXXX %d %d \n", g_halt, g_n_log_q); 
+      fprintf(stderr, "consumer still waiting\n");
     }
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+      fprintf(stderr, "BREAK 2 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
       break; // get out of the loop and out of here
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);
@@ -53,7 +56,7 @@ post_from_log_q(
     // printf("Freed %8x \n", (unsigned int)kafka_payload);
     free_if_non_null(kafka_payload.data); 
     g_kafka_memory -= kafka_payload.sz;
-    rd_kafka_poll(g_rk, 10); // TODO P3 Why 10?
+    // TODO P1 rd_kafka_poll(g_rk, 10); // TODO P3 Why 10?
     continue;
 #endif
     if ( g_ch == NULL ) { /* Nothing to do */ continue; }
@@ -93,13 +96,13 @@ post_from_log_q(
 #ifdef AB_AS_KAFKA
 
   fprintf(stderr, "Waiting for kafka to flush. \n");
-  for ( ; ; ) { 
+  for ( ; g_rk != NULL; ) { 
     rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
     int len = rd_kafka_outq_len(g_rk);
     fprintf(stderr, "Waiting for kafka to flush. %d in queue, %d to go \n", g_n_log_q, len); 
     if ( len == 0 ) { break; }
   }
 #endif
-  // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 
+  pthread_exit(NULL); // TODO P0 IS THIS THE RIGHT THING TO DO 
   return NULL;
 }
