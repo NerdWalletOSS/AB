@@ -31,8 +31,7 @@
 #include "get_req_type.h"
 #include "get_body.h"
 #include "extract_api_args.h"
-#include "get_nw_hdrs.h"
-#include "get_date.h"
+#include "get_hdr_val.h"
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
@@ -97,7 +96,12 @@ generic_handler(
         &g_browser_id, &g_justin_cat_id);
     cBYE(status);
   }
+#ifdef AB_AS_KAFKA
+  status = get_hdr_val(req, "XXXXX", g_ip_address, AB_MAX_LEN_IP_ADDRESS); 
+  cBYE(status);
+#endif
   if ( ( req_type == Router ) || 
+       ( req_type == ToKafka ) || 
        ( req_type == GetVariant ) || 
        ( req_type == GetVariants ) ) {
     // status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);

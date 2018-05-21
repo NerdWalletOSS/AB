@@ -195,7 +195,7 @@ update_config(
 
     g_predictions = malloc(g_n_mdl * sizeof(float));
     return_if_malloc_failed(g_predictions);
-    for ( int i = 0; i < g_n_mdl; i++ ) { 
+    for ( unsigned int i = 0; i < g_n_mdl; i++ ) { 
       g_predictions[i] = 0.1 * (i+1);
     }
 

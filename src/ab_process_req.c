@@ -25,7 +25,7 @@
 #include "update_config.h"
 #include "zero_globals.h"
 #include "classify_ua.h"
-#include "classify_ip.h"
+#include "ext_classify_ip.h"
 #include "hard_code_config.h"
 
 #include "l_hard_code_config.h"
@@ -56,7 +56,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
-  int num_features; int consumer_ret_val;
+  int num_features; 
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -213,7 +213,7 @@ ab_process_req(
         pthread_cond_signal(&g_condc);  /* wake up consumer */
         fprintf(stderr, "Waiting for consumer to finish \n");
         g_halt = true;
-        pthread_join(g_con, &consumer_ret_val);
+        pthread_join(g_con, NULL);
         fprintf(stderr, "Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);

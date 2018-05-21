@@ -17,6 +17,7 @@ to_kafka(
   g_kafka_memory += X.sz;
   X.data = (char *)malloc(X.sz);
   return_if_malloc_failed(X.data);
+  strcpy(X.out_tracer, g_out_tracer);
   memcpy(X.data, body, X.sz);
   // printf("Allocated %8x \n", (unsigned int)x);
   status = log_decision(&X); cBYE(status);
