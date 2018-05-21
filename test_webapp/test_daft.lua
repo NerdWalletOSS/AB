@@ -9,6 +9,8 @@ local states = require 'states'
 local tests = {}
 tests.t1 = function(num_tests)
   reset_db()
+  if not num_tests then num_tests = 10 end 
+  assert(type(num_tests) == "number")
   math.randomseed( os.time() )
   local T1 = dofile("good_basic1.lua")
   for i = 1, num_tests do 
@@ -19,11 +21,11 @@ tests.t1 = function(num_tests)
     S.publish(t1_id)
     S.start(t1_id)
     local r = math.random()
-    print(r)
+    print(i, r)
     if ( r > 0.5 ) then 
       S.terminate(t1_id)
     end
   end
 end
-tests.t1(10) -- uncomment for quick and dirty testing
+-- tests.t1(10) -- uncomment for quick and dirty testing
 return tests
