@@ -15,8 +15,13 @@ if ( !$_POST ) {
 }
 $tid = $_POST['TestID'];
 $tid_to_follow = $_POST['tid_to_follow'];
+$X = array();
+$X['tid'] = $tid; 
+$X['tid_to_follow'] = $tid_to_follow; 
+$str_inJ = json_encode($X);
 //-------------------------------------
 // Set Follow On
-$rslt =  set_follow_on($tid, $tid_to_follow);
+$rslt =  set_follow_on($str_inJ);
+header("TestID: ".$rslt["TestID"]);
 ob_clean();
 ?>
