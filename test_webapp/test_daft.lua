@@ -25,5 +25,5 @@ tests.t1 = function(num_tests)
     end
   end
 end
--- tests.t1(10) -- uncomment for quick and dirty testing
+tests.t1(10) -- uncomment for quick and dirty testing
 return tests
