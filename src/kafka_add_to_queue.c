@@ -1,6 +1,15 @@
+#include "ab_incs.h"
 #include "kafka_add_to_queue.h"
 
-int kafka_add_to_queue(char* buf){
+int 
+kafka_add_to_queue(
+    const char* buf,
+    size_t len
+    )
+{
+  int status = 0;
+  if ( buf == NULL ) { go_BYE(-1); }
+  if ( len  == 0 ) { go_BYE(-1); }
   /*
    * Send/Produce message.
    * This is an asynchronous call, on success it will only
@@ -11,7 +20,6 @@ int kafka_add_to_queue(char* buf){
    * (dr_msg_cb) is used to signal back to the application
    * when the message has been delivered (or failed).
    */
-  int status = 0;
   if (g_rk == NULL) {
     go_BYE(-1);
   }
@@ -19,7 +27,6 @@ int kafka_add_to_queue(char* buf){
   // fprintf(stderr, "Adding %s\n", buf);
   // rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
 
-  size_t len = strlen(buf);
 retry:
   if (rd_kafka_produce(
         /* Topic object */
@@ -29,7 +36,7 @@ retry:
         /* Make a copy of the payload. */
         RD_KAFKA_MSG_F_COPY,
         /* Message payload (value) and length */
-        buf, len,
+        (void *)buf, len,
         /* Optional key and its length */
         NULL, 0,
         /* Message opaque, provided in

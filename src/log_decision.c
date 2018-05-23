@@ -61,7 +61,7 @@ log_decision(
     }
     else  {
 #ifdef KAFKA
-    status = kafka_add_to_queue(g_curl_payload); cBYE(status);
+    // TODO P1 status = kafka_add_to_queue(g_curl_payload); cBYE(status);
 #endif
     }
   }
