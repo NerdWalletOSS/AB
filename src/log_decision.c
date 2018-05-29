@@ -33,8 +33,9 @@ log_decision(
   memcpy(g_log_q+eff_wr_idx, (KAFKA_REC_TYPE *)X,
       sizeof(KAFKA_REC_TYPE));
 #else
-  memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
-      sizeof(PAYLOAD_REC_TYPE));
+  PAYLOAD_REC_TYPE payload;
+  payload = *((PAYLOAD_REC_TYPE *)X);
+  g_log_q[eff_wr_idx] = payload;
   // OLD g_log_q[eff_wr_idx] = lcl_payload;
 #endif
   g_q_wr_idx++; 

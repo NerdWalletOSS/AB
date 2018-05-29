@@ -5,7 +5,7 @@
 #include "post_from_log_q.h"
 #include "make_curl_payload.h"
 #include "kafka_add_to_queue.h"
-#include "kafka_close_conn.h"
+// #include "kafka_close_conn.h"
 
 void *
 post_from_log_q(
@@ -33,7 +33,7 @@ post_from_log_q(
     }
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-      fprintf(stderr, "unlock 2 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
+      fprintf(stderr, "unlock 2 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);

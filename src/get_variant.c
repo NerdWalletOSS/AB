@@ -6,10 +6,6 @@
 #include "log_decision.h"
 #include "get_ss_info.h"
 #include "get_variant.h"
-#include "make_curl_payload.h"
-#ifdef KAFKA
-#include "kafka_add_to_queue.h"
-#endif
 
 int 
 get_variant(
