@@ -27,7 +27,7 @@ add_tests(
   int num_variants = AB_MIN_NUM_VARIANTS;
   char url[AB_MAX_LEN_URL+1];
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000); 
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10000); 
   // allocate test URLs
   test_urls = malloc(num_tests * sizeof(char *));
   return_if_malloc_failed(test_urls);
@@ -99,7 +99,7 @@ del_tests(
   long http_code;
   char url[AB_MAX_LEN_URL+1];
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000);
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10000);
   fprintf(stderr, "\nDeleting %d tests T1, T2, .. \n", num_tests);
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     memset(url, '\0', AB_MAX_LEN_URL+1);
@@ -137,7 +137,7 @@ stop_tests(
   long http_code;
   char url[AB_MAX_LEN_URL+1];
 
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 1000);
+  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10000);
   fprintf(stderr, "\nStopping %d tests T1, T2, .. \n", num_tests);
   for ( int test_id = 0; test_id < num_tests; test_id++ ) {
     memset(url, '\0', AB_MAX_LEN_URL+1);

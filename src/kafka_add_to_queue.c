@@ -8,8 +8,11 @@ kafka_add_to_queue(
     )
 {
   int status = 0;
+  // Basic parameter and config checking
   if ( buf == NULL ) { go_BYE(-1); }
-  if ( len  == 0 ) { go_BYE(-1); }
+  if ( len  == 0 ) {  len = strlen(buf); }
+  if ( len == 0 ) { go_BYE(-1); }
+  if (g_rk == NULL) { go_BYE(-1); }
   /*
    * Send/Produce message.
    * This is an asynchronous call, on success it will only
@@ -20,9 +23,6 @@ kafka_add_to_queue(
    * (dr_msg_cb) is used to signal back to the application
    * when the message has been delivered (or failed).
    */
-  if (g_rk == NULL) {
-    go_BYE(-1);
-  }
 
   // fprintf(stderr, "Adding %s\n", buf);
   // rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
@@ -65,7 +65,9 @@ retry:
        * The internal queue is limited by the
        * configuration property
        * queue.buffering.max.messages */
-      rd_kafka_poll(g_rk, 10000/*block for max 1000ms*/);
+      // INDRAJEET TODO VERIFY BELOW 
+      rd_kafka_poll(g_rk, g_cfg.kafka.max_buffering_time);
+      /*block for max of xx msec */
       goto retry;
     }
   } 
@@ -75,7 +77,6 @@ retry:
         len, rd_kafka_topic_name(g_rkt));
         */
   }
-
 
   /* A producer application should continually serve
    * the delivery report queue by calling rd_kafka_poll()
@@ -88,7 +89,7 @@ retry:
    * to make sure previously produced messages have their
    * delivery report callback served (and any other callbacks
    * you register). */
-  rd_kafka_poll(g_rk, 0/*non-blocking*/);
+  rd_kafka_poll(g_rk, 0); /* 0 => non-blocking*/
   rd_kafka_flush(g_rk, -1);
 
 BYE:

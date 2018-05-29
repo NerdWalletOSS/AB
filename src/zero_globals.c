@@ -69,6 +69,7 @@ free_globals(
   }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
+  free_if_non_null(g_dt_feature_vector); g_n_dt_feature_vector = 0;
 #ifdef KAFKA
   kafka_close_conn();
 #endif

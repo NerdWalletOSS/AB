@@ -2,7 +2,7 @@
 require 'lua/str'
 local JSON = require 'lua/json' -- one-time load of the routines
 local cURL = require "cURL"
-local ltn12 = require("ltn12") -- TODO What is this for?
+-- local ltn12 = require("ltn12") -- TODO What is this for?
 -- local dbg = require 'debugger'
 local function trim1(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))

@@ -18,22 +18,22 @@ post_from_log_q(
   PAYLOAD_REC_TYPE lcl_payload;
   KAFKA_REC_TYPE kafka_payload;
 
-  for ( ; g_halt == false ; ) {
+  for ( ; ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-      fprintf(stderr, "BREAK 1 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
+      fprintf(stderr, "unlock 1 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
+      fprintf(stderr, "consumer waiting %d %d \n", g_halt, g_n_log_q);
       pthread_cond_wait(&g_condc, &g_mutex);
-      fprintf(stderr, "XXXX %d %d \n", g_halt, g_n_log_q); 
-      fprintf(stderr, "consumer still waiting\n");
+      fprintf(stderr, "consumer done waiting %d %d\n", g_halt, g_n_log_q);
     }
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-      fprintf(stderr, "BREAK 2 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
+      fprintf(stderr, "unlock 2 %d %d \n", g_halt, g_n_log_q); WHEREAMI;
       break; // get out of the loop and out of here
     }
     // fprintf(stderr, "consumer read %d\n", buf[ridx]);
@@ -47,7 +47,7 @@ post_from_log_q(
 #endif
     g_q_rd_idx++; 
     g_n_log_q--;
-    pthread_cond_signal(&g_condp);	/* wake up consumer */
+    pthread_cond_signal(&g_condp);	/* wake up producer */
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
@@ -59,10 +59,11 @@ post_from_log_q(
     rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
     continue;
 #endif
-    if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
-    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
-    if ( g_rk == NULL ) { // use logger 
+    status = make_curl_payload(lcl_payload, g_curl_payload, 
+        AB_MAX_LEN_PAYLOAD);
+    if ( status != 0 ) { WHEREAMI; }
+    if ( g_ch != NULL ) { // use logger 
       curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
       g_log_posts++;
       int retry_count = 0;
@@ -86,11 +87,9 @@ post_from_log_q(
         if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
       }
     }
-    else { // use kafka
-#ifdef KAFKA
-      // TODO P1 status = kafka_add_to_queue(g_curl_payload); 
+    if ( g_rk != NULL ) { 
+      status = kafka_add_to_queue(g_curl_payload, 0); 
       if ( status != 0 ) { WHEREAMI; }
-#endif
     }
   }
 #ifdef AB_AS_KAFKA

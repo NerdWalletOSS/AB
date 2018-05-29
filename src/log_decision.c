@@ -12,59 +12,36 @@ log_decision(
 {
   int status = 0;
   bool is_wait = false;
-  if ( g_cfg.sz_log_q > 0  ) {
-    if ( g_n_log_q >= g_cfg.sz_log_q ) { go_BYE(-1); }
-    if ( g_n_log_q > g_cfg.sz_log_q - 2 ) {
-      g_log_dropped_posts++; 
-      goto BYE; 
-    }
+  if ( g_n_log_q >= g_cfg.sz_log_q ) { go_BYE(-1); }
+  // Following if statement was put in to say that we would rather 
+  // drop messages on the floor, then stall the main thread
+  if ( g_n_log_q > g_cfg.sz_log_q - 2 ) {
+    g_log_dropped_posts++; 
+    goto BYE; 
+  }
 
-    pthread_mutex_lock(&g_mutex);	/* protect buffer */
-    if ( g_n_log_q == g_cfg.sz_log_q ) { 
-      // Control never comes here because of abandonment above
-      fprintf(stderr, "Waiting for space \n");
-      is_wait = true;
-    }
-    while ( g_n_log_q == g_cfg.sz_log_q ) {
-      /* If there is no space in the buffer, then wait */
-      // fprintf(stderr, "producer waiting\n");
-      pthread_cond_wait(&g_condp, &g_mutex);
-    }
-    if ( is_wait ) { fprintf(stderr, "Got space \n"); }
+  pthread_mutex_lock(&g_mutex);	/* protect buffer */
+  while ( g_n_log_q == g_cfg.sz_log_q ) {
+    /* If there is no space in the buffer, then wait */
+    fprintf(stderr, "producer waiting\n");
+    pthread_cond_wait(&g_condp, &g_mutex);
+    fprintf(stderr, "producer free to put in Q\n");
+  }
 
-    int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
+  int eff_wr_idx = g_q_wr_idx % g_cfg.sz_log_q;
 #ifdef AB_AS_KAFKA
-    memcpy(g_log_q+eff_wr_idx, (KAFKA_REC_TYPE *)X,
-        sizeof(KAFKA_REC_TYPE));
+  memcpy(g_log_q+eff_wr_idx, (KAFKA_REC_TYPE *)X,
+      sizeof(KAFKA_REC_TYPE));
 #else
-    memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
-        sizeof(PAYLOAD_REC_TYPE));
-    // OLD g_log_q[eff_wr_idx] = lcl_payload;
+  memcpy(g_log_q+eff_wr_idx, (PAYLOAD_REC_TYPE *)X,
+      sizeof(PAYLOAD_REC_TYPE));
+  // OLD g_log_q[eff_wr_idx] = lcl_payload;
 #endif
-    g_q_wr_idx++; 
-    g_n_log_q++;
-    pthread_cond_signal(&g_condc);	/* wake up consumer */
-    pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-  }
-  else {
-    PAYLOAD_REC_TYPE *x = (PAYLOAD_REC_TYPE *)X;
-    status = make_curl_payload(x[0], g_curl_payload, AB_MAX_LEN_PAYLOAD);
-    cBYE(status);
-    if ( g_rk == NULL ) { 
-    status = post_url(g_ch, g_curl_payload, NULL);
-    switch ( status ) {
-      case 0  : /* all is well */ break;
-      case -1 : go_BYE(-1); break;
-      case -2 : /* Not mission critical failure */ status = 0; break; 
-      default : go_BYE(-1); break;
-    }
-    }
-    else  {
-#ifdef KAFKA
-    // TODO P1 status = kafka_add_to_queue(g_curl_payload); cBYE(status);
-#endif
-    }
-  }
+  g_q_wr_idx++; 
+  g_n_log_q++;
+  // TODO P2 Does the order of the following 2 matter?
+  pthread_cond_signal(&g_condc);	/* wake up consumer */
+  pthread_mutex_unlock(&g_mutex);	/* release the buffer */
 BYE:
   return status;
 }

@@ -1,12 +1,17 @@
 #include "kafka_check_conn.h"
 
 
-int kafka_check_conn(char* buf, size_t len){
+int kafka_check_conn(
+    char* buf, 
+    size_t len
+    )
+{
   int status = 0;
+  if ( buf == NULL ) { go_BYE(-1); }
+  if ( len  == 0 ) {  len = strlen(buf); }
+  if ( len == 0 ) { go_BYE(-1); }
+  if (g_rk == NULL) { go_BYE(-1); }
 retry:
-  if (g_rk == NULL) {
-    go_BYE(-1);
-  }
   // TODO put some message in the g_buf
   g_kafka_callback = 0 ;
   if (rd_kafka_produce(
@@ -53,9 +58,9 @@ retry:
   } 
   else {
     /* fprintf(stderr, "%% Enqueued message (%zd bytes) "
-        "for topic %s\n",
-        len, rd_kafka_topic_name(g_rkt));
-        */
+       "for topic %s\n",
+       len, rd_kafka_topic_name(g_rkt));
+       */
   }
 
 

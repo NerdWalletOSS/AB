@@ -140,6 +140,7 @@ ab_process_req(
       if ( g_cfg.sz_log_q > 0 ) {
         // Tell consumer that nothing more is coming
         g_halt = true;
+        fprintf(stderr, "HALT: Signalling consumer \n");
         pthread_cond_signal(&g_condc);  /* wake up consumer */
         fprintf(stderr, "HALT: Waiting for consumer to finish \n");
         pthread_join(g_con, NULL);
@@ -210,11 +211,12 @@ ab_process_req(
       // t1 = get_time_usec();
       if ( g_cfg.sz_log_q > 0 ) {
         // Tell consumer thread nothing more is coming
-        pthread_cond_signal(&g_condc);  /* wake up consumer */
-        fprintf(stderr, "Waiting for consumer to finish \n");
         g_halt = true;
+        fprintf(stderr, "Restart: Signalling consumer \n");
+        pthread_cond_signal(&g_condc);  /* wake up consumer */
+        fprintf(stderr, "Restart: Waiting for consumer to finish \n");
         pthread_join(g_con, NULL);
-        fprintf(stderr, "Consumer finished \n");
+        fprintf(stderr, "Restart: Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
