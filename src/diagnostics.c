@@ -134,6 +134,28 @@ diagnostics(
       }
     }
     // TODO P3 Check that counter[] is similar to percentage
+    if(g_tests[i].is_dev_specific == false){
+        int bins_allocation = 0;
+	int total_allocated = 0;
+	VARIANT_REC_TYPE var = NULL;
+	for(int index = num_variants - 1; index > 0; index--){
+	 var = g_tests[i].variants[index];
+	 bins_allocation = floor(var.percentage * 0.01 * AB_NUM_BINS);
+	 if(bins_allocation != counter[index]){
+	  go_BYE(-1);
+	 }
+	 total_allocated = total_allocated + bins_allocation;
+	}
+	if(index == 0){
+	 if(strcmp(tolower(var.name),"control") != 0){
+          go_BYE(-1);
+         }
+	 if((AB_NUM_BINS - total_allocated) != counter[index]){
+	  go_BYE(-1);
+	 } 
+	}
+    }
+
     if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
     if ( test_type == AB_TEST_TYPE_AB ) { 
