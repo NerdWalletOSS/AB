@@ -52,8 +52,7 @@ post_from_log_q(
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
     status = kafka_add_to_queue( kafka_payload.data, kafka_payload.sz);
-    if ( status != 0 ) { WHEREAMI; }
-    // printf("Freed %8x \n", (unsigned int)kafka_payload);
+    if ( status != 0 ) { WHEREAMI; } // TODO P1. add statsd logging for this
     free_if_non_null(kafka_payload.data); 
     g_kafka_memory -= kafka_payload.sz;
     rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
@@ -89,7 +88,7 @@ post_from_log_q(
     }
     if ( g_rk != NULL ) { 
       status = kafka_add_to_queue(g_curl_payload, 0); 
-      if ( status != 0 ) { WHEREAMI; }
+      if ( status != 0 ) { WHEREAMI; } // TODO P2 add stattsd logging
     }
   }
 #ifdef AB_AS_KAFKA
