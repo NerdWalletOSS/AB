@@ -1,4 +1,5 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require_once "../utility_functions.php";
@@ -44,16 +45,16 @@ require_once "../utility_functions.php";
     </div>
     <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
-    <li ><a href="#" data-toggle="modal" data-target="#AddAdmin"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Admin</button></a></li>
-    <li><a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Channel</button></a></li>
+    <!--<li ><a href="#" data-toggle="modal" data-target="#AddAdmin"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Admin</button></a></li>
+    <li><a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Channel</button></a></li>-->
     <li ><a href="#" data-toggle="modal" data-target="#TestUrl"><button type="button" class="btn btn-sm btn-primary">Test Url</button></a></li>
     <li ><a href="show_config.php"><button type="button" class="btn btn-sm btn-info">Show Config</button></a></li>
-    <li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
+    <!--<li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
     <li ><a href="check_rts.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-check"></span> RTS</button></a></li>
     <li ><a href="chk_scn.php"><button type="button" class="btn btn-sm btn-info"> SCN</button></a></li>	
     <li ><a href="ui_monitor.php"><button type="button" class="btn btn-sm btn-info">AB Monitor</button></a></li>
     <li ><a href="ur_ui_monitor.php"><button type="button" class="btn btn-sm btn-info">UR Monitor</button></a></li>
-    <li ><a href="show_dump.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-download-alt"></span> Data</button></a></li>		
+    <li ><a href="show_dump.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-download-alt"></span> Data</button></a></li>-->	
     </ul>
     </div><!--/.nav-collapse -->
     </div>
