@@ -12,6 +12,9 @@ tests.t1 = function(
   if not num_tests then num_tests = 1 end 
   for i = 1, num_tests do 
     B.name = "Test_" .. i
+    B.id = i
+    B.external_id = i
+    B.seed = i
     jB = JSON:encode(B)
     print(jB)
     a, b, c = curl.get(U, H, jB)

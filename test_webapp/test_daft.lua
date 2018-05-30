@@ -21,11 +21,11 @@ tests.t1 = function(num_tests)
     S.publish(t1_id)
     S.start(t1_id)
     local r = math.random()
-    print(i, r)
     if ( r > 0.5 ) then 
       S.terminate(t1_id)
     end
   end
+  print("Test t1 succeeded")
 end
 tests.t1(10) -- uncomment for quick and dirty testing
 return tests
