@@ -1,6 +1,5 @@
-package.path=package.path .. ";./../src/?.lua"
 -- local dbg = require 'debugger'
-require 'str'
+require 'lua/str'
 math.randomseed(os.time())
 
 local gen_table = {}
@@ -52,7 +51,7 @@ function gen_table.add_set_entry(j_table, constraints)
   end
   -- dbg()
   for k,v in pairs(j_table.entry_fields) do
-    if constraints.sum[k] ~= nil then
+    if constraints.sum ~= nil and  constraints.sum[k] ~= nil then
       -- STRONG ASSUMPTION is that the lower value is 0
       assert(v.type == "number", "The sum constraint can only be applied to numbers")
       assert(v.value.random ~= nil, "Sum constraint can only be applied to random")
@@ -70,7 +69,7 @@ function gen_table.add_set_entry(j_table, constraints)
         constraints.sum[k] = tostring(tonumber(constraints.sum[k]) - val)
         entry[k] = n_v
       end
-    elseif constraints.exactly_one[k] ~= nil then
+    elseif constraints.exactly_one ~= nil and  constraints.exactly_one[k] ~= nil then
       -- Slightly different from unique as in only the listed values should
       -- occire only once, the rest can occur multiple times too
       -- TODO come up with better logic, but for now we take a 50% chance to
@@ -88,7 +87,7 @@ function gen_table.add_set_entry(j_table, constraints)
       else
         entry[k] = val
       end
-    elseif constraints.unique[k] ~= nil then
+    elseif constraints.unique ~= nil and constraints.unique[k] ~= nil then
       entry[k] = gen_table.get_unique(k,v, constraints)
     else
       entry[k] = gen_table.get_entry(v)
@@ -134,9 +133,11 @@ end
 
 function gen_table.is_done(constraints)
   -- Currently only works on sume constraints
-  for _,v in pairs(constraints.sum) do
-    if tonumber(v) ~= 0 then
-      return false
+  if constraints.sum ~= nil then
+    for _,v in pairs(constraints.sum) do
+      if tonumber(v) ~= 0 then
+        return false
+      end
     end
   end
   return true
@@ -202,12 +203,12 @@ end
 
 function hack_for_ab_tests(l_table)
   local j_res = gen_table.gen_table(l_table)
-  if j_res.State ~= "terminated" then 
+  if j_res.State ~= "terminated" then
     for _, entry in ipairs(j_res.Variants) do
       entry.is_final = "0"
     end
   end
-  
+
   if j_res.TestType == "ABTest" then
     -- Just a hack around the generator for ABTests 100/(nV-1)
     local nV = #j_res.Variants
@@ -225,7 +226,9 @@ function hack_for_ab_tests(l_table)
         control_entry = entry
       end
     end
-    control_entry.percentage = tostring(tonumber(control_entry.percentage) + percentage_left)
+    if control_entry ~= nil then
+      control_entry.percentage = tostring(tonumber(control_entry.percentage) + percentage_left)
+    end
   end
   return j_res
 end

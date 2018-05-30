@@ -1,4 +1,4 @@
--- local dbg = require 'debugger'
+-- local dbg = require 'lua/debugger'
 local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
@@ -96,6 +96,7 @@ function AddTests.add(
   )
   -- print(test_str)
   local test_data = JSON:decode(test_str)
+  assert(type(test_data) == "table", "Invalid JSON string given")
   -- dbg()
   local test_type = assert(test_data.TestType, "TestType cannot be nil")
   assert(test_data.name ~= nil, "Test should have a name")
@@ -107,7 +108,7 @@ function AddTests.add(
   assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
-  
+
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
@@ -137,6 +138,7 @@ function AddTests.add(
     end
     -- print(c_index[0])
     -- dbg()
+    assert(c_test.variants ~= nil, "Space must be allocated for variants")
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
     tests[test_data.id] = test_data
@@ -145,7 +147,7 @@ function AddTests.add(
 end
 
 function AddTests.preproc(test_str, g_tests, o_arr)
- -- o arr is the array that returns requirements to C
+  -- o arr is the array that returns requirements to C
   -- int what_to_do      = rslt[0];
   -- int test_idx        = rslt[1];
   -- int num_variants     = rslt[2];
