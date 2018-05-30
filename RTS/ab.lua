@@ -22,6 +22,11 @@ function preproc(...)
   tests.preproc(...)
 end
 
+function add(...)
+  tests.add(...)
+end
+
+
 function list_tests()
   return JSON:encode(cache.get('tests'))
 end
