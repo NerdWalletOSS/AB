@@ -1,11 +1,8 @@
-#include "incs.h"
-#include "ab_constants.h"
+#include "ab_incs.h"
 #include "macros.h"
-#include "add_tests.h"
 #include "make_guid.h"
 #include "auxil.h"
 #include "execute.h"
-#include "restart.h"
 #include "setup_curl.h"
 
 typedef struct _test_info_rec_type { 
@@ -75,13 +72,9 @@ main(
   FILE *ofp = NULL; // for timing measurements
   CURL *ch = NULL;
   long http_code; int itemp;
-#define MAX_LEN_SERVER_NAME 127
-#define MAX_LEN_URL 255
-  char base_url[MAX_LEN_SERVER_NAME+1+64]; 
   int *H = NULL; int nH = 1000; // histogram  for response times 
   TEST_INFO_REC_TYPE *T = NULL;
   int num_tests = 0;
-
 
   // Set globals 
   g_chunk_size = 16384; 
@@ -113,10 +106,9 @@ main(
   H = malloc(nH * sizeof(int)); return_if_malloc_failed(H);
 
   status = read_test_info(test_file_name, &T, &num_tests); cBYE(status);
+  if ( ( T == NULL ) || ( num_tests == 0 ) ) { go_BYE(-1); }
   status = setup_curl(&ch); cBYE(status);
   // Set base URL
-  memset(base_url, '\0', (MAX_LEN_SERVER_NAME+1+64));
-  sprintf(base_url, "%s:%d", server, port);
 
   double avg_time = 0;
   double min_time = INT_MAX;
@@ -133,17 +125,23 @@ main(
     // T is used to measure individual times 
     for ( int uid = 0; uid < num_users; uid++ ) {
       for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
-        char url[MAX_LEN_URL+1];
-        memset(url, '\0', AB_MAX_LEN_URL+1);
+        char url[AB_MAX_LEN_URL+1];
         char tracer[AB_MAX_LEN_TRACER+1];
-        memset(tracer, '\0', AB_MAX_LEN_TRACER+1);
+        for ( int i = 0; i < AB_MAX_LEN_URL+1; i++ ) {
+          url[i] = '\0';
+        }
+        for ( int i = 0; i < AB_MAX_LEN_TRACER+1; i++ ) { 
+          tracer[i] = '\0';
+        }
         status = make_guid(NULL, tracer, AB_MAX_LEN_TRACER); 
         cBYE(status);
-        sprintf(url, "GetVariant?TestName=%s&TestType=%s&UUID=%d&Tracer=%s", 
+        sprintf(url, "%s:%d/GetVariant?TestName=%s&TestType=%s&UUID=%d&Tracer=%s", 
+            server, port,
             T[test_id].test_name, 
             T[test_id].test_type, 
             start_uuid+uid, tracer);
         t1 = get_time_usec();
+        // fprintf(stderr, "%s\n", url);
         execute(ch, url, &http_code);
         if ( num_bad > 10000 ) { goto DONE; }
         if ( http_code != 200 ) { continue; num_bad++; }

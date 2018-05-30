@@ -44,9 +44,11 @@ free_test(
   if ( test_idx > AB_MAX_NUM_TESTS ) { go_BYE(-1); }
   TEST_META_TYPE *ptr_test = &(g_tests[test_idx]);
 
-  for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
-    free_if_non_null(ptr_test->variants[v].custom_data);
-    free_if_non_null(ptr_test->variants[v].url);
+  if ( ptr_test->variants ) { 
+    for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
+      free_if_non_null(ptr_test->variants[v].custom_data);
+      free_if_non_null(ptr_test->variants[v].url);
+    }
   }
   free_if_non_null(ptr_test->variants);
 

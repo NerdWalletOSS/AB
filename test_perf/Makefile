@@ -65,12 +65,9 @@ pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS)
 	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
 	../src/libs/libcurl.so -lpthread
 
-sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) \
-	../jansson-2.10/src/.libs/libjansson.a \
-	../libevent-2.0.22-stable/.libs/libevent.so 
+sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
-	../src/libs/libcurl.so \
-	../jansson-2.10/src/.libs/libjansson.a \
+	../src/libs/libcurl.so 
 
 
 ../jansson-2.10/src/.libs/libjansson.a :
