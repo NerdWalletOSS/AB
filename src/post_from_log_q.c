@@ -53,6 +53,7 @@ post_from_log_q(
     // fprintf(stderr, "CONSUMER: Released buffer \n");
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
+    g_log_kafka_calls++;
     status = kafka_add_to_queue( kafka_payload.data, kafka_payload.sz);
     if ( status != 0 ) { WHEREAMI; } // TODO P1. add statsd logging for this
     free_if_non_null(kafka_payload.data); 
@@ -89,6 +90,7 @@ post_from_log_q(
       }
     }
     if ( g_rk != NULL ) { 
+      g_log_kafka_calls++;
       status = kafka_add_to_queue(g_curl_payload, 0); 
       if ( status != 0 ) { WHEREAMI; } // TODO P2 add stattsd logging
     }
