@@ -17,13 +17,16 @@ add_tests(
     char *server,
     int port,
     int num_tests,
-    char ***ptr_test_urls
+    char *op_file_name
     )
 {
   int status = 0;
   long http_code;
   char **test_urls = NULL;
+  FILE *ofp = NULL;
 
+  ofp = fopen(op_file_name, "w");
+  return_if_fopen_failed(ofp,  op_file_name, "w");
   int num_variants = AB_MIN_NUM_VARIANTS;
   char url[AB_MAX_LEN_URL+1];
 
@@ -69,96 +72,20 @@ add_tests(
     if ( strcmp(test_type, "ABTest") == 0 ) { 
       is_dev_specific = 0;
     }
+    num_variants = (RDTSC() % (AB_MAX_NUM_VARIANTS - AB_MIN_NUM_VARIANTS) )
+      +AB_MIN_NUM_VARIANTS;
     //---------------------------------------------
-    sprintf(test_urls[test_id], 
-        "%s:%d/GetVariant?TestName=T%d&TestType=%s",
-        server, port, test_id, test_type);
+    fprintf(ofp,"T%d,%s,%s,%d,%d\n",
+        test_id, test_type, state, is_dev_specific, num_variants);
+    //---------------------------------------------
     memset(url, '\0', AB_MAX_LEN_URL+1);
     sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&State=%s&IsDevSpecific=%d&NumVariants=%d", 
         server, port, test_id, test_type, state, is_dev_specific, num_variants);
     fprintf(stderr, "%s\n", url);
     status = execute(ch, url, &http_code); cBYE(status);
     if ( http_code != 200 ) { go_BYE(-1); }
-    num_variants = (RDTSC() % (AB_MAX_NUM_VARIANTS - AB_MIN_NUM_VARIANTS) )
-      +AB_MIN_NUM_VARIANTS;
-  }
-  *ptr_test_urls = test_urls;
-BYE:
-  return status;
-}
-
-int
-del_tests(
-    CURL *ch,
-    char *server,
-    int port,
-    int num_tests
-    )
-{
-  int status = 0;
-  long http_code;
-  char url[AB_MAX_LEN_URL+1];
-
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10000);
-  fprintf(stderr, "\nDeleting %d tests T1, T2, .. \n", num_tests);
-  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
-    memset(url, '\0', AB_MAX_LEN_URL+1);
-    bool is_one_good = false;
-    sprintf(url, "%s:%d/DeleteTest?TestName=T%d&TestType=ABTest",
-        server, port, test_id);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { is_one_good = true; }
-
-    sprintf(url, "%s:%d/StopTest?TestName=T%d&TestType=XYTest",
-        server, port, test_id);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { is_one_good = true; }
-
-    if ( !is_one_good ) { 
-      fprintf(stderr, "Error on %s \n", url);
-    }
-    sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { go_BYE(-1); }
   }
 BYE:
-  return status;
-}
-
-int
-stop_tests(
-    CURL *ch,
-    char *server,
-    int port,
-    int num_tests
-    )
-{
-  int status = 0;
-  long http_code;
-  char url[AB_MAX_LEN_URL+1];
-
-  curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, 10000);
-  fprintf(stderr, "\nStopping %d tests T1, T2, .. \n", num_tests);
-  for ( int test_id = 0; test_id < num_tests; test_id++ ) {
-    memset(url, '\0', AB_MAX_LEN_URL+1);
-    bool is_one_good = false;
-    sprintf(url, "%s:%d/DeleteTest?TestName=T%d&TestType=ABTest",
-        server, port, test_id);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { is_one_good = true; }
-
-    sprintf(url, "%s:%d/DeleteTest?TestName=T%d&TestType=XYTest",
-        server, port, test_id);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { is_one_good = true; }
-
-    if ( !is_one_good ) { 
-      fprintf(stderr, "Error on %s \n", url);
-    }
-    sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
-    status = execute(ch, url, &http_code); cBYE(status);
-    if ( http_code != 200 ) { go_BYE(-1); }
-  }
-BYE:
+  fclose_if_non_null(ofp);
   return status;
 }

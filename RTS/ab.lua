@@ -19,7 +19,7 @@ function update_config(...)
 end
 --=================================================
 function preproc(...)
-  tests.preprco(...)
+  tests.preproc(...)
 end
 
 function list_tests()
