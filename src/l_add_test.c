@@ -75,7 +75,7 @@ l_add_test(
   //-------------------------------------
   lua_getglobal(g_L, "add");
   if ( !lua_isfunction(g_L, -1)) {
-    fprintf(stderr, "Function add does not exist in lua's global space\n");
+    fprintf(stderr, "Function add does not exist in lua's global space : %s\n", lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
