@@ -7,8 +7,10 @@ local AddTests = {}
 local bins = require 'RTS/bins'
 local consts = require 'lua/ab_consts'
 local assertx = require 'lua/assertx'
-local g_seed1 = 961748941 -- TODO remove manual copy
+local g_seed1 = 961748941 -- TODO remove manual copy from zero_globals.c
+local g_seed2 = 982451653 -- TODO remove manual copy from zero_globals.c
 AddTests.g_seed1 = g_seed1
+AddTests.g_seed2 = g_seed2
 local spooky_hash = require 'RTS/spooky_hash'
 
 local function create_state_table(consts)
@@ -36,12 +38,18 @@ local function match(c_test, test_data, name_hash)
   end
 end
 
-function AddTests.get_test(g_tests, test_data, c_index)
+function AddTests.get_test(
+  g_tests, 
+  test_data, 
+  c_index
+  )
   -- print("name is ", test_data.name)
   local name_hash = spooky_hash.spooky_hash64(test_data.name, #test_data.name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
   c_index = ffi.cast("int*", c_index)
+  local idx = c_index[0]
+  assert( ( ( idx >= 0 )  and (idx < consts.AB_MAX_NUM_TESTS) ) )
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local test = nil
   local stop = false
@@ -81,17 +89,22 @@ function AddTests.get_test(g_tests, test_data, c_index)
 end
 
 
-function AddTests.add(test_str, g_tests, c_index)
+function AddTests.add(
+  test_str, 
+  g_tests, 
+  c_index
+  )
   -- print(test_str)
   local test_data = JSON:decode(test_str)
   -- dbg()
-  local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
+  local test_type = assert(test_data.TestType, "TestType cannot be nil")
   assert(test_data.name ~= nil, "Test should have a name")
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   local c_test, name_hash = AddTests.get_test(g_tests, test_data, c_index)
   c_test.name_hash = name_hash
+  assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
   
@@ -109,6 +122,9 @@ function AddTests.add(test_str, g_tests, c_index)
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
     local seed = assert(test_data.seed, "Seed needs to be specified for test")
+    if ( type(seed) == "number" ) then 
+      seed = tostring(seed)
+    end
     c_test.seed = spooky_hash.convert_str_to_u64(seed)
     local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
     assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")

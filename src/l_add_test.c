@@ -79,9 +79,9 @@ l_add_test(
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
-  entry_position[0] = -1;
   lua_pushstring(g_L, args); // not pushing string as it causes a copy
   lua_pushlightuserdata(g_L, g_tests);
+  entry_position[0] = test_idx;
   lua_pushlightuserdata(g_L, entry_position);
   status = lua_pcall(g_L, 3, 0, 0);
   if (status != 0) {

@@ -4,6 +4,7 @@ return
   Channel =  "facebook",
   id =  1,
   seed =  1,
+  external_id = 1,
   BinType =  "anonymous",
   description =  "some bogus description 1",
   is_dev_specific = "0",
@@ -12,16 +13,19 @@ return
   name =  "Test1",
   Variants =  { {
     name =  "Control",
+    id =  "123",
     percentage =  "50",
     url =  "http://www.google.com"
   },
   {
     name =  "Variant_A",
+    id =  "456",
     percentage =  "30",
     url =  "http://www.yahoo.com"
   },
   {
     name =  "Variant_B",
+    id =  "789",
     percentage =  "20",
     url =  "http://www.cnn.com"
   }, }

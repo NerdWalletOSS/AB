@@ -22,22 +22,22 @@ post_from_log_q(
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-      fprintf(stderr, "unlock 1 %d %d \n", g_halt, g_n_log_q); 
+      // fprintf(stderr, "CONSUMER: unlock 1 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
-      fprintf(stderr, "consumer waiting %d %d \n", g_halt, g_n_log_q);
+      // fprintf(stderr, "CONSUMER: waiting %d %d \n", g_halt, g_n_log_q);
       pthread_cond_wait(&g_condc, &g_mutex);
-      fprintf(stderr, "consumer done waiting %d %d\n", g_halt, g_n_log_q);
+      // fprintf(stderr, "consumer done waiting %d %d\n", g_halt, g_n_log_q);
     }
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
-      fprintf(stderr, "unlock 2 %d %d \n", g_halt, g_n_log_q); 
+      // fprintf(stderr, "CONSUMER unlock 2 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
-    // fprintf(stderr, "consumer read %d\n", buf[ridx]);
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
+    // fprintf(stderr, "CONSUMER: read %d\n", eff_rd_idx);
 #ifdef AB_AS_KAFKA
     kafka_payload = g_log_q[eff_rd_idx];
     memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(KAFKA_REC_TYPE));
@@ -48,7 +48,9 @@ post_from_log_q(
     g_q_rd_idx++; 
     g_n_log_q--;
     pthread_cond_signal(&g_condp);	/* wake up producer */
+    // fprintf(stderr, "CONSUMER: Woke up producer\n");
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+    // fprintf(stderr, "CONSUMER: Released buffer \n");
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
     status = kafka_add_to_queue( kafka_payload.data, kafka_payload.sz);
