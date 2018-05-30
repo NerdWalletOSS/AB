@@ -1,4 +1,4 @@
-local dbg = require 'lua/debugger'
+-- local dbg = require 'lua/debugger'
 local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
@@ -173,9 +173,6 @@ function AddTests.preproc(test_str, g_tests, o_arr)
     else
       error("Invalid state present: " ..state)
     end
-    for i =0,3 do
-      `print("rslt" ,i, o_arr[i])
-    end
     return
   else
     local old_state = test.State:lower()
@@ -189,9 +186,6 @@ function AddTests.preproc(test_str, g_tests, o_arr)
       else
         error("Invalid state present: " ..state)
       end
-      for i =0,3 do
-        `print("rslt" ,i, o_arr[i])
-      end
       return
     elseif old_state == "terminated" then
       if state ==  "started" then
@@ -203,17 +197,11 @@ function AddTests.preproc(test_str, g_tests, o_arr)
       else
         error("Invalid state present: " ..state)
       end
-      for i =0,3 do
-        `print("rslt" ,i, o_arr[i])
-      end
       return
     else
       error("Invali old state " .. old_state)
     end
-    for i =0,3 do
-      `print("rslt" ,i, o_arr[i])
-    end
-    dbg()
+    -- dbg()
   end
   -- no change in num variants or is_dev_specific
 end
