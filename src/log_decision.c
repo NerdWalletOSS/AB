@@ -41,8 +41,8 @@ log_decision(
   g_q_wr_idx++; 
   g_n_log_q++;
   // TODO P2 Does the order of the following 2 matter?
-  pthread_cond_signal(&g_condc);	/* wake up consumer */
   pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+  pthread_cond_signal(&g_condc);	/* wake up consumer */
 BYE:
   return status;
 }
