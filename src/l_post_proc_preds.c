@@ -12,6 +12,7 @@ l_post_proc_preds(
     )
 {
   int status = 0;
+  if ( g_L_DT == NULL ) { go_BYE(-1); }
   lua_getglobal(g_L_DT, "post_proc_preds");
   if ( !lua_isfunction(g_L_DT, -1)) {
     fprintf(stderr, "Lua Function post_proc_preds undefined\n");

@@ -119,7 +119,7 @@ main(
   int hit_ctr = 0; // number of hits with valid responses
   int ndots = 0;
   int num_over = 0;
-  int exp_num_hits = num_iters * num_users;
+  int exp_num_hits = num_iters * num_users * num_tests;
   // Get variants for these tests for num_users users
   for ( int iter = 0; iter < num_iters; iter++ ) {
     // T is used to measure individual times 

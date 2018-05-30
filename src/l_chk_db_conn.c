@@ -9,6 +9,7 @@ l_chk_db_conn(
     )
 {
   int status = 0;
+  if ( g_L == NULL ) { go_BYE(-1); }
   lua_getglobal(g_L, "check_db_conn");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function add does not exist in lua's global space\n");
