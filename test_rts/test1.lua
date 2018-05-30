@@ -6,7 +6,14 @@ tests.t1 = function()
   U = "localhost:8000/AddTest"
   H = nil
   B = require 'test_webapp/good_basic1'
-  a, b, c = curl.get(U, H, JSON:encode(B))
+  --[[
+  --Did some debugging and realized that the post is being json 
+  --encoded twice.  One by curl and once by the program calling it. 
+  --Hence thew ab.lua calls decode and gets a string and not a table. 
+  --I will insert a check for this in ab, but we need to fix this too.
+  --]]
+  -- a, b, c = curl.get(U, H, JSON:encode(B))
+  a, b, c = curl.get(U, H, B)
   print("Test t1 succeeded")
 end
 tests.t1() -- TO COMMENT OUT
