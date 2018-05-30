@@ -1,4 +1,4 @@
--- local dbg = require 'lua/debugger'
+local dbg = require 'lua/debugger'
 local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
@@ -39,8 +39,8 @@ local function match(c_test, test_data, name_hash)
 end
 
 function AddTests.get_test(
-  g_tests, 
-  test_data, 
+  g_tests,
+  test_data,
   c_index
   )
   -- print("name is ", test_data.name)
@@ -90,8 +90,8 @@ end
 
 
 function AddTests.add(
-  test_str, 
-  g_tests, 
+  test_str,
+  g_tests,
   c_index
   )
   -- print(test_str)
@@ -123,7 +123,7 @@ function AddTests.add(
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
     local seed = assert(test_data.seed, "Seed needs to be specified for test")
-    if ( type(seed) == "number" ) then 
+    if ( type(seed) == "number" ) then
       seed = tostring(seed)
     end
     c_test.seed = spooky_hash.convert_str_to_u64(seed)
@@ -155,7 +155,7 @@ function AddTests.preproc(test_str, g_tests, o_arr)
   --
   local j_table = JSON:decode(test_str)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
-  o_arr = ffi.cast("int32_t*", o_arr)
+  o_arr = ffi.cast("int*", o_arr)
   AddTests.get_test(g_tests, j_table, o_arr + 1) -- get test position iin 0 location or o_arr
   o_arr[2] = #j_table.Variants
   o_arr[3] = tonumber(j_table.is_dev_specific)
@@ -173,6 +173,9 @@ function AddTests.preproc(test_str, g_tests, o_arr)
     else
       error("Invalid state present: " ..state)
     end
+    for i =0,3 do
+      `print("rslt" ,i, o_arr[i])
+    end
     return
   else
     local old_state = test.State:lower()
@@ -186,6 +189,9 @@ function AddTests.preproc(test_str, g_tests, o_arr)
       else
         error("Invalid state present: " ..state)
       end
+      for i =0,3 do
+        `print("rslt" ,i, o_arr[i])
+      end
       return
     elseif old_state == "terminated" then
       if state ==  "started" then
@@ -197,11 +203,17 @@ function AddTests.preproc(test_str, g_tests, o_arr)
       else
         error("Invalid state present: " ..state)
       end
+      for i =0,3 do
+        `print("rslt" ,i, o_arr[i])
+      end
       return
     else
       error("Invali old state " .. old_state)
     end
-
+    for i =0,3 do
+      `print("rslt" ,i, o_arr[i])
+    end
+    dbg()
   end
   -- no change in num variants or is_dev_specific
 end

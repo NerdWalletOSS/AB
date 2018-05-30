@@ -16,7 +16,7 @@ l_add_test(
   int status = 0;
   //-------------------------------------
   if ( g_L == NULL ) { go_BYE(-1); }
-  int32_t rslt[4]; 
+  int rslt[4]; 
   lua_getglobal(g_L, "preproc");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function preproc does not exist \n");
