@@ -4,6 +4,8 @@ return
   Channel =  "facebook",
   BinType =  "anonymous",
   description =  "some bogus description 1",
+  is_dev_specific = "0",
+  State = "started",
   Creator =  "joe",
   name =  "Test1",
   Variants =  { {
