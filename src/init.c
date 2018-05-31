@@ -150,3 +150,35 @@ BYE:
   free_if_non_null(full_url);
   return status;
 }
+
+int
+init_globals(
+    void
+    )
+{
+  int status = 0;
+
+  g_seed1 = 961748941; // large prime number
+  g_seed2 = 982451653; // some other large primenumber
+  spooky_init(&g_spooky_state, g_seed1, g_seed2);
+  srand48(g_seed1);
+
+  // TODO Check with Braad that this is good
+  const char *url_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
+  for ( char *cptr = (char *)url_str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_url[(uint8_t)(*cptr)] = true;
+  }
+
+  // TODO Check with Braad that this is good
+  const char *ua_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
+  for ( char *cptr = (char *)ua_str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_ua[(uint8_t)(*cptr)] = true;
+  }
+
+  const char *arg_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=";
+  for ( char *cptr = (char *)arg_str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
+  }
+BYE:
+  return status;
+}

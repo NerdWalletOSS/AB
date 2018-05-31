@@ -9,7 +9,7 @@ l_update_config(
     )
 {
   int status = 0;
-  if ( g_disable_lua ) { return status; }
+  if ( g_L == NULL ) { go_BYE(-1); }
   int num_lua_states = 2;
   for ( int i = 0; i <  num_lua_states; i++ ) {
     char state [4];

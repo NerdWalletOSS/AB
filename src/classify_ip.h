@@ -1,6 +1,5 @@
 extern int
-ext_classify_ip(
-    const char *args,
-    char *X,
-    size_t nX
+classify_ip(
+    const char *ip_address,
+    MAXMIND_REC_TYPE *ptr_maxmind
     );

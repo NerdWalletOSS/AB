@@ -32,18 +32,6 @@ function db_get_test(
   }
   $T['Variants'] = $Variants;
   //------------------------------------
-  $FC = db_get_rows("cat_attr_val_test", "test_id = $test_id");
-  if ( !is_null($FC) ) {
-    $T['CatAttrValTest'] = $FC;
-    // TODO Needs to be completed
-  }
-  //------------------------------------
-  $FB = db_get_rows("bool_attr_test", "test_id = $test_id");
-  if ( !is_null($FB) ) {
-    $T['BoolAttrTest'] = $FB;
-    // TODO Needs to be completed
-  }
-  //------------------------------------
   $DV = db_get_rows("device_x_variant", "test_id = $test_id ");
   if ( !is_null($DV) ) {
     $D  = $GLOBALS['device'];
@@ -54,32 +42,28 @@ function db_get_test(
     }
     $T['DeviceCrossVariant'] = $xxx;
   }
-  //--- boolean attributes as filters
-  $B = db_get_rows("bool_attr_test", 
-    " test_id = $test_id and is_on = true ");
-  if ( $B ) { 
-    $bidx = 0;
-    unset($xxx);
-    foreach ( $B as $b ) { 
-      $attr_id = $b['attr_id'];
-      $attr    = lkp("attr", $attr_id, "reverse");
-      $val     = $b['val'];
-      $xxx[$bidx++] = array("Attribute" => $attr, "Value" => $val);
-    }
-    $T['BooleanFilters'] = $xxx;
-  }
   //--- categorical attributes as filters
-  $CAV = db_get_rows("cat_attr_val_test", 
-    " test_id = $test_id and is_on = true ");
-  if ( $CAV ) { 
+  $CAVT = db_get_rows("cat_attr_val_test", " test_id = $test_id ");
+  if ( $CAVT ) { 
     $cavidx = 0;
     unset($xxx);
-    foreach ( $CAV as $cav ) { 
-      $attr_id = $cav['attr_id'];
-      $attr    = lkp("attr", $attr_id, "reverse");
-      $cat_attr_val_id = $cav['cat_attr_val_id'];
-      $val     = lkp("cat_attr_val", $cat_attr_val_id, "reverse");
-      $xxx[$cavidx++] = array("Attribute" => $attr, "Value" => $val);
+    foreach ( $CAVT as $cavt ) { 
+      $id              = $cavt['id'];
+      $attr_id         = $cavt['attr_id'];
+      $attr            = lkp("attr", $attr_id, "reverse");
+      $cat_attr_val_id = $cavt['cat_attr_val_id'];
+      $test_id         = $cavt['test_id'];
+      $is_on           = $cavt['is_on'];
+      $val             = lkp("cat_attr_val", $cat_attr_val_id, "reverse");
+      $xxx[$cavidx++] = array(
+        "Attribute" => $attr, 
+        "attr_id" => $attr_id, 
+        "test_id" => $test_id, 
+        "Value" => $val,
+        "cat_attr_val_id" => $cat_attr_val_id,
+        "id" => $id,
+        "is_on" => $is_on,
+      );
     }
     $T['CategoricalFilters'] = $xxx;
   }
@@ -93,6 +77,6 @@ function db_get_test(
 $x = db_get_test(1);
 $y = json_encode($x);
 print($y);
-*/
+ */
 
 ?>

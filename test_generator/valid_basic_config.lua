@@ -1,5 +1,4 @@
-package.path=package.path .. ";./../src/?.lua"
-local consts = require 'ab_consts'
+local consts = require 'lua/ab_consts'
 
 return {
   TestType = {

@@ -274,26 +274,16 @@ function test_basic(
         }
       }
       //------------------------------------------
-      //--- Insert into bool_attr_test table
-      $bool_attr_id = lkp("attr_type", "boolean");
-      rs_assert($bool_attr_id);
-      $A = db_get_rows("attr", "attr_type_id = $bool_attr_id");
-      if ( !empty($A) ) { 
-        foreach ( $A as $a ) { 
-          $X4['attr_id'] = $a['id'];
-          $X4['test_id'] = $test_id;
-          insert_row("bool_attr_test", $X4);
-        }
-      }
-      //------------------------------------------
       //--- Insert into cat_attr_val_test table
-      $cat_attr_id = lkp("attr_type", "categorical");
-      rs_assert($cat_attr_id);
-      $A = db_get_rows("attr", "attr_type_id = $cat_attr_id");
+      $attr_type_id = lkp("attr_type", "categorical");
+      rs_assert($attr_type_id);
+      $A = db_get_rows("attr", "((attr_type_id = $attr_type_id) and (is_del = false))");
       if ( !empty($A) ) { 
         foreach ( $A as $a ) { 
+          var_dump($a);
           $attr_id = $a['id'];
-          $CV = db_get_rows("cat_attr_val", "attr_id = $cat_attr_id");
+          $CV = db_get_rows("cat_attr_val", 
+            "((attr_id = $attr_id) and (is_del = false))");
           foreach ( $CV as $cv ) { 
             $X5['cat_attr_val_id'] = $cv['id'];
             $X5['test_id'] = $test_id;

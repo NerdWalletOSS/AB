@@ -1,4 +1,5 @@
 local cache = require 'lua/cache'
+local JSON  = require 'lua/JSON'
 local x_hard_code_config = require 'lua/hard_code_config'
 local x_load_config = require 'RTS/ab_load_config'
 local x_update_config = require 'RTS/ab_update_config'
@@ -19,8 +20,13 @@ function update_config(...)
 end
 --=================================================
 function preproc(...)
-  tests.preprco(...)
+  tests.preproc(...)
 end
+
+function add(...)
+  tests.add(...)
+end
+
 
 function list_tests()
   return JSON:encode(cache.get('tests'))

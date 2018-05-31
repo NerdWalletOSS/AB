@@ -8,5 +8,4 @@ curl -XPOST http://localhost:8000/ToKafka --data '{ "abtest_id": 342534, "ramp" 
   iter=`expr $iter + 1`
 
 done
-sleep 60
 curl --url "localhost:8000/Halt"

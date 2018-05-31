@@ -1,8 +1,7 @@
 -- Only does POST and GET
 require 'lua/str'
-local JSON = require 'lua/json' -- one-time load of the routines
 local cURL = require "cURL"
-local ltn12 = require("ltn12") -- TODO What is this for?
+-- local ltn12 = require("ltn12") -- TODO What is this for?
 -- local dbg = require 'debugger'
 local function trim1(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
@@ -35,7 +34,7 @@ function curl.get(c_url, hdrs, body)
     headerfunction = add_to_hdrs,
   }
   if body ~= nil then
-    request.postfields = JSON.encode(body)
+    request.postfields = body
   end
   local curl_handle = cURL.easy(request)
   local result = curl_handle:perform()

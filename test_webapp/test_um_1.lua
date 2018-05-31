@@ -7,6 +7,7 @@ local get_test_id = require 'test_webapp/get_test_id'
 local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
+local set_follow_on = require 'set_follow_on'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
@@ -33,73 +34,63 @@ tests.t1 = function (
   local T1 = get_test_info(test_id_1)
   assert(test_id_1 == tonumber(T1.id))
 
-  -- for k, v in pairs(T1) do print(k, v) end 
+-- SET STATE of T1 to dormant
+  T1.NewState = "dormant"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
+ chk_T = get_test_info(test_id_1)
+  assert(chk_T.State == "dormant")
+
+-- SET STATE of T1 to started
+  T1.NewState = "started"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
+  assert(status == 200)
+  chk_T = get_test_info(test_id_1)
+  assert(chk_T.State == "started")
+
+-- SET STATE of T1 to terminated
+  T1.NewState = "terminated"
+  T1.Winner = "Control"
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
+  assert(status == 200)
+  chk_T = get_test_info(test_id_1) 
+  assert(chk_T.State == "terminated")
+
+-- SET STATE of T1 to archived
+  T1.NewState = "archived"
+  T1.Updater =  "joe" -- TODO Improve this hard coding
+  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
+  assert(status == 200)
+  chk_T = get_test_info(test_id_1)
+  assert(chk_T.State == "archived")
 
   -- Create Another Test T2
   T1.name = "T2"
   T1.id = ""
   local hdrs, outbody, status = mk_test(T1)
-  -- for k, v in pairs(hdrs) do print(k, v) end
+  for k, v in pairs(hdrs) do print(k, v) end
   assert(status == 200)
   local test_id_2 = get_test_id(hdrs)
   local T2 = get_test_info(test_id_2)
   assert(test_id_2 == tonumber(T2.id))
 
--- SET STATE of T2 to dormant
-  T2.NewState = "dormant"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
+
+-- T2 to follow T1
+  assert(set_follow_on(test_id_2, test_id_1))
+
+
+-- T2 changes channel to "aol"
+  T2.Channel = "bing"
+  T2.Updater =  "joe"
+  local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T2))
   assert(status == 200)
-  chk_T = get_test_info(test_id_2)
-
-  assert(chk_T.State == "dormant")
-
--- SET STATE of T2 to started
-  T2.NewState = "started"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
-  assert(status == 200)
-  chk_T = get_test_info(test_id_2)
-  -- for k, v in pairs(chk_T) do print(k, v) end 
-  assert(chk_T.State == "started")
-
--- SET STATE of T2 to terminated
-  T2.NewState = "terminated"
-  T2.Winner = "Control"
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
-  assert(status == 200)
-  chk_T = get_test_info(test_id_2)
-  -- for k, v in pairs(chk_T) do print(k, v) end 
-  assert(chk_T.State == "terminated")
-
--- SET STATE of T2 to archived
-  T2.NewState = "archived"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
-  assert(status == 200)
-  chk_T = get_test_info(test_id_2)
-  -- for k, v in pairs(chk_T) do print(k, v) end 
-  assert(chk_T.State == "archived")
-
-
--- T1 to follow T2
--- TODO: HOW TO SET FOLLOW ON PROPERLY. TO TAKE GUIDANCE FROM RAMESH SIR
-  local T3 = test_id_1, test_id_2
-  local hdrs, outbody, status = curl.post(fourl, nil, JSON:encode(T3))
-  assert(status == 200)
-
-
--- T1 changes channel to "aol"
-  T1.Channel = "facebook"
-  local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T1))
-  for k, v in pairs(hdrs) do print(k, v) end
-  assert(status == 200)
-  local test_id_1 = get_test_id(hdrs)
-  local T1 = get_test_info(test_id_1)
-  assert(test_id_1 == tonumber(T1.id))
--- Predeccessor id of T1 to be null
--- how to check pred_id?
-  assert("" == tonumber(T1.pred_id))
+  local test_id_2 = get_test_id(hdrs)
+  local T2 = get_test_info(test_id_2)
+  assert(test_id_2 == tonumber(T2.id))
+-- Predeccessor id of T2 to be null
+  for k, v in pairs(T2) do print(k, v) end 
+  assert("" == tonumber(T2.pred_id))
 
 
 end

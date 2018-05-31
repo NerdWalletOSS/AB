@@ -69,6 +69,7 @@ free_globals(
   }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
+  free_if_non_null(g_dt_feature_vector); g_n_dt_feature_vector = 0;
 #ifdef KAFKA
   kafka_close_conn();
 #endif
@@ -152,11 +153,6 @@ zero_globals(
     status = zero_test(i); cBYE(status);
   }
 
-  g_seed1 = 961748941; // large prime number
-  g_seed2 = 982451653; // some other large primenumber
-  spooky_init(&g_spooky_state, g_seed1, g_seed2);
-  srand48(g_seed1);
-
   g_ch           = NULL;
   g_curl_hdrs    = NULL;
   g_ss_ch        = NULL;
@@ -185,25 +181,9 @@ zero_globals(
   g_dt_feature_vector = NULL;
   g_n_dt_feature_vector = 0;
 
-  // TODO Check with Braad that this is good
-  const char *url_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
   memset(g_valid_chars_in_url, '\0', 256);
-  for ( char *cptr = (char *)url_str; *cptr != '\0'; cptr++ ) {
-    g_valid_chars_in_url[(uint8_t)(*cptr)] = true;
-  }
-
-  // TODO Check with Braad that this is good
-  const char *ua_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=/:_-%,;[].?+() ";
   memset(g_valid_chars_in_ua, '\0', 256);
-  for ( char *cptr = (char *)ua_str; *cptr != '\0'; cptr++ ) {
-    g_valid_chars_in_ua[(uint8_t)(*cptr)] = true;
-  }
-
-  const char *arg_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=";
   memset(g_valid_chars_in_ab_args, '\0', 256);
-  for ( char *cptr = (char *)arg_str; *cptr != '\0'; cptr++ ) {
-    g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
-  }
 
 #ifdef KAFKA
   g_mmdb_in_use = false;
@@ -270,6 +250,7 @@ zero_log()
   g_log_get_variant_calls     = 0;
   g_log_get_variants_calls    = 0;
   g_log_router_calls          = 0;
+  g_log_kafka_calls           = 0;
   g_log_bad_router_calls      = 0;
 
   g_log_num_probes     = 0;

@@ -31,14 +31,14 @@
 #include "get_req_type.h"
 #include "get_body.h"
 #include "extract_api_args.h"
-#include "get_nw_hdrs.h"
-#include "get_date.h"
+#include "get_hdr_val.h"
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
 #include "l_load_config.h"
 #include "l_update_config.h"
 #include "l_hard_code_config.h"
+#include "setup.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/queue.h>
@@ -97,7 +97,12 @@ generic_handler(
         &g_browser_id, &g_justin_cat_id);
     cBYE(status);
   }
+#ifdef AB_AS_KAFKA
+  status = get_hdr_val(req, "XXXXX", g_ip_address, AB_MAX_LEN_IP_ADDRESS); 
+  cBYE(status);
+#endif
   if ( ( req_type == Router ) || 
+       ( req_type == ToKafka ) || 
        ( req_type == GetVariant ) || 
        ( req_type == GetVariants ) ) {
     // status = get_date(req, g_date, AB_MAX_LEN_DATE); cBYE(status);
@@ -175,23 +180,20 @@ main(
   struct event_base *base;
   //--------------------------------------------
   g_disable_lua = false; // NORMALLY FALSE. Just for testing
+  if ( g_disable_lua ) { 
+    fprintf(stderr, "\n\n\n");
+    fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
+    fprintf(stderr, "LUA DISABLED LUA DISABLED LUA DISABLED \n");
+    fprintf(stderr, "\n\n\n");
+  }
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  status = zero_globals(); cBYE(status); /* Done only on startup */
-  status = init_lua(); cBYE(status);
-  if ( argc == 1 )  { 
-    hard_code_config(); // only for testing 
-    status = l_hard_code_config(); cBYE(status); // only for testing 
+  if ( argc > 2 ) { go_BYE(-1); }
+  if ( argc == 2 ) { 
+    if ( strlen(argv[1]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    strcpy(g_config_file, argv[1]); 
   }
-  else {
-    if ( argc != 2 ) { go_BYE(-1); }
-    if ( strlen(argv[2]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
-    strcpy(g_config_file, argv[1]);
-    status = l_load_config(g_config_file); cBYE(status);
-  }
-  // IMPORTANT: Update lua before C: Order of following 2 lines matters
-  status = l_update_config(); cBYE(status);
-  status = update_config(); cBYE(status);
-  //---------------------------------------------
+  
+  status = setup(false); cBYE(status);
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);
