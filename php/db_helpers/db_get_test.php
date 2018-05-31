@@ -43,21 +43,25 @@ function db_get_test(
     $T['DeviceCrossVariant'] = $xxx;
   }
   //--- categorical attributes as filters
-  $CAV = db_get_rows("cat_attr_val_test", " test_id = $test_id ");
-  if ( $CAV ) { 
+  $CAVT = db_get_rows("cat_attr_val_test", " test_id = $test_id ");
+  if ( $CAVT ) { 
     $cavidx = 0;
     unset($xxx);
-    foreach ( $CAV as $cav ) { 
-      $attr_id         = $cav['attr_id'];
+    foreach ( $CAVT as $cavt ) { 
+      $id              = $cavt['id'];
+      $attr_id         = $cavt['attr_id'];
       $attr            = lkp("attr", $attr_id, "reverse");
-      $cat_attr_val_id = $cav['cat_attr_val_id'];
-      $is_on           = $cav['is_on'];
+      $cat_attr_val_id = $cavt['cat_attr_val_id'];
+      $test_id         = $cavt['test_id'];
+      $is_on           = $cavt['is_on'];
       $val             = lkp("cat_attr_val", $cat_attr_val_id, "reverse");
       $xxx[$cavidx++] = array(
         "Attribute" => $attr, 
         "attr_id" => $attr_id, 
+        "test_id" => $test_id, 
         "Value" => $val,
         "cat_attr_val_id" => $cat_attr_val_id,
+        "id" => $id,
         "is_on" => $is_on,
       );
     }
