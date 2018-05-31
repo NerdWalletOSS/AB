@@ -14,7 +14,7 @@ tests.t1 = function(
   assert(type(B) == "table")
   if not num_tests then num_tests = 1 end 
   --=======================================
-  -- TODO a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
+  -- TODO RS a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
   states = { "started", "terminated", "archived" }
   for _, state in ipairs(states) do
     for i = 1, num_tests do 
@@ -30,8 +30,8 @@ tests.t1 = function(
       B.state = state
       jB = JSON:encode(B)
       a, b, c = curl.get(U, H, jB); assert(c == 200)
-      -- TODO a, b, c = curl.get(dc_url);   -- assert(c == 200)
-      -- TODO a, b, c = curl.get(dl_url);   -- assert(c == 200)
+      -- TODO IS a, b, c = curl.get(dc_url);   -- assert(c == 200)
+      -- TODO IS a, b, c = curl.get(dl_url);   -- assert(c == 200)
       a, b, c = curl.get(lt_url);   assert(c == 200)
       local L = JSON:decode(b)
       if ( state == "started" ) then
@@ -40,7 +40,7 @@ tests.t1 = function(
         assert(#L == num_tests) 
       elseif ( state == "archived" ) then
         print(#L, state)
-        --TODO assert(#L == (num_tests - i))
+        --TODO IS assert(#L == (num_tests - i))
       else
         assert(nil)
       end
