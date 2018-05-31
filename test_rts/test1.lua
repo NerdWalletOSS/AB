@@ -1,7 +1,8 @@
 curl = require 'lua/curl'
 JSON = require 'lua/JSON'
 
-local lt_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
+local ltc_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
+local ltl_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
 local dc_url = "localhost:8000/Diagnostics?Source=C"
 local dl_url = "localhost:8000/Diagnostics?Source=Lua"
 local tests = {}
@@ -32,14 +33,20 @@ tests.t1 = function(
       a, b, c = curl.get(U, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
       a, b, c = curl.get(dl_url);   assert(c == 200)
-      a, b, c = curl.get(lt_url);   assert(c == 200)
-      local L = JSON:decode(b)
+
+      a, b, c = curl.get(ltc_url);   assert(c == 200)
+      local Lc = JSON:decode(b)
+
+      a, b, c = curl.get(ltl_url);   assert(c == 200)
+      local Ll = JSON:decode(b)
+      assert(#Ll == $Lc)
+
       if ( state == "started" ) then
-        assert(#L == i) 
+        assert(#Lc == i) 
       elseif ( state == "terminated" ) then
-        assert(#L == num_tests) 
+        assert(#Lc == num_tests) 
       elseif ( state == "archived" ) then
-        print(#L, state)
+        print(#Lc, state)
         --TODO IS assert(#L == (num_tests - i))
       else
         assert(nil)
