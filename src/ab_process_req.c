@@ -24,6 +24,7 @@
 #include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"
+#include "classify.h"
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
 #include "hard_code_config.h"
@@ -94,6 +95,10 @@ ab_process_req(
       //--------------------------------------------------------
     case CheckTest : /* done by Lua */
       status = l_chk_test(body); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case Classify : /* done by C */
+      status = classify(body, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case ClassifyIP : /* done by C */

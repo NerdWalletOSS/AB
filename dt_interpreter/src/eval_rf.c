@@ -9,7 +9,9 @@ eval_rf(
   DT_REC_TYPE *dt, // [n_dt] 
   int n_dt, /* number of nodes in decision tree */
   RF_REC_TYPE *rf, // [n_rf] 
-  int n_rf /* number of nodes in decision tree */
+  int n_rf, /* number of nodes in decision tree */
+  int *rf_pos, /* [n_rf] */
+  int *rf_neg /* [n_rf] */
   )
 {
   int status = 0;
@@ -18,13 +20,13 @@ eval_rf(
   if ( rf == NULL ) { go_BYE(-1); }
   if ( n_rf == 0 ) { go_BYE(-1); }
   for ( int i = 0; i < n_rf; i++ ) {
-    rf[i].npos = rf[i].nneg = -1;
+    rf_pos[i] = rf_neg[i] = -1;
   }
   for ( int i = 0; i < n_rf; i++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;
     status = eval_dt(features, n_features, dt, n_dt, dt_lb,
-        &(rf[i].npos), &(rf[i].nneg));
+        &(rf_pos[i]), &(rf_neg[i]));
     cBYE(status);
   }
 BYE:

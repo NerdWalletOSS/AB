@@ -128,9 +128,8 @@ EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */
-EXTERN char g_dt_file[AB_MAX_LEN_FILE_NAME+1];   
-EXTERN char g_rf_file[AB_MAX_LEN_FILE_NAME+1];   
-EXTERN char g_mdl_file[AB_MAX_LEN_FILE_NAME+1];   
+EXTERN int *g_rf_pos;  /* [g_n_rf] */
+EXTERN int *g_rf_neg;  /* [g_n_rf] */
 
 #include "utm_kv.h"
 EXTERN UTM_REC_TYPE g_utm_kv;

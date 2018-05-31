@@ -13,9 +13,9 @@ cwd=$PWD
 pushd .
 cd ../../dt_interpreter/src/
 bash mk_dt_bin.sh $cwd/dt.csv
-test -f dt.bin; mv dt.bin $cwd
-test -f rf.bin; mv rf.bin $cwd
-test -f mdl.bin; mv mdl.bin $cwd
+test -f _dt.bin;  mv _dt.bin  $cwd
+test -f _rf.bin;  mv _rf.bin  $cwd
+test -f _mdl.bin; mv _mdl.bin $cwd
 popd
 #------------------------
 cd test/

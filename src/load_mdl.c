@@ -14,11 +14,11 @@ load_mdl(
   char *X = NULL; size_t nX = 0;
   status = rs_mmap(mdl_file, &X, &nX, 0); cBYE(status);
   if ( nX == 0 ) { go_BYE(-1); }
-  uint32_t n_ua = nX / sizeof(MDL_REC_TYPE);
-  if ( ( n_ua * sizeof(MDL_REC_TYPE) ) != nX ) { go_BYE(-1); }
+  uint32_t num_mdl = nX / sizeof(MDL_REC_TYPE);
+  if ( ( num_mdl * sizeof(MDL_REC_TYPE) ) != nX ) { go_BYE(-1); }
   *ptr_mdl = (MDL_REC_TYPE *)X;
   *ptr_len_file = nX;
-  *ptr_num_mdl = n_ua;
+  *ptr_num_mdl = num_mdl;
 BYE:
   return status;
 }
