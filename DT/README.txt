@@ -1,5 +1,5 @@
 Execute "bash chk.sh <directory>" to run basic validations
-Once iC server is running
+Once C server is running
 Execute "bash test_make_feature_vector.sh <directory>
 If you do 
   bash test_make_feature_vector.sh spam
