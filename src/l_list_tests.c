@@ -77,7 +77,7 @@ c_list_tests(
     else {
       strcat(X, ", ");
     }
-    sprintf(buf, " %s ", g_tests[i].name); 
+    sprintf(buf, " \"%s\" ", g_tests[i].name); 
     strcat(X, buf);
   }
   strcat(X, " ]\n");

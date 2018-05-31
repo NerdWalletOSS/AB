@@ -84,14 +84,14 @@ local function populate_variants(
       assert(entry.url ~= ffi.NULL, "No space allocated for url")
       ffi.copy(entry.url, url)
     end
-    assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
     if value.custom_data ~= nil then
+      assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
       assert(type(value.custom_data) == "string")
       assert(#value.custom_data <= consts.AB_MAX_LEN_CUSTOM_DATA)
       -- TODO Assert custom data is valid JSON
       ffi.copy(entry.custom_data, value.custom_data)
     else
-      ffi.copy(entry.custom_data,"NULL")
+      entry.custom_data = ffi.NULL
     end
 
   end

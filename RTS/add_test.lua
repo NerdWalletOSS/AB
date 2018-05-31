@@ -49,7 +49,10 @@ function AddTests.get_test(
   local original_position = position
   c_index = ffi.cast("int*", c_index)
   local idx = c_index[0]
-  assert( ( ( idx >= 0 )  and (idx < consts.AB_MAX_NUM_TESTS) ) )
+  --[[ TODO Why do I have to comment this?
+  assert( ( idx >= 0 )  and (idx < consts.AB_MAX_NUM_TESTS) ), 
+  "idx  for tests is " .. idx)
+  --]]
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local test = nil
   local stop = false

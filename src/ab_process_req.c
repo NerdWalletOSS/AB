@@ -11,7 +11,7 @@
 #include "chk_logger_conn.h"
 #include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
-#include "diagnostics.h"
+#include "l_diagnostics.h"
 #include "to_kafka.h"
 #include "dump_log.h"
 #include "add_fake_test.h"

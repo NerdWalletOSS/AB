@@ -2,7 +2,7 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "get_test_idx.h"
-#include "diagnostics.h"
+#include "l_diagnostics.h"
 
 int
 l_diagnostics(
