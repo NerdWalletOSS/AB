@@ -30,8 +30,8 @@ tests.t1 = function(
       B.state = state
       jB = JSON:encode(B)
       a, b, c = curl.get(U, H, jB); assert(c == 200)
-      -- TODO IS a, b, c = curl.get(dc_url);   -- assert(c == 200)
-      -- TODO IS a, b, c = curl.get(dl_url);   -- assert(c == 200)
+      a, b, c = curl.get(dc_url);   assert(c == 200)
+      a, b, c = curl.get(dl_url);   assert(c == 200)
       a, b, c = curl.get(lt_url);   assert(c == 200)
       local L = JSON:decode(b)
       if ( state == "started" ) then

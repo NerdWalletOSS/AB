@@ -64,6 +64,10 @@ function get_test_info(args)
   return JSON:encode(test)
 end
 
+function diagnostics(...)
+
+
+end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)
 --    local x = ffi.cast("int*", c_data)

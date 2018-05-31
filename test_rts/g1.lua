@@ -2,9 +2,9 @@ return
 {
   TestType =  "XYTest",
   Channel =  "facebook",
-  id =  1,
-  seed =  1,
-  external_id = 1,
+  id =  "1",
+  seed =  "1",
+  external_id = "1",
   BinType =  "anonymous",
   description =  "some bogus description 1",
   is_dev_specific = "0",
