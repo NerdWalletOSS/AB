@@ -6,6 +6,7 @@
 #include "log_decision.h"
 #include "get_ss_info.h"
 #include "get_variant.h"
+#include "make_curl_payload.h"
 
 int 
 get_variant(

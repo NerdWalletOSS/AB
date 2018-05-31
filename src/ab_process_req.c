@@ -27,6 +27,7 @@
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
 #include "hard_code_config.h"
+#include "setup.h"
 
 #include "l_hard_code_config.h"
 #include "l_load_config.h"
@@ -222,31 +223,16 @@ ab_process_req(
         pthread_cond_destroy(&g_condp);
       }
       // common to restart and reload
-      free_globals();
-      status = zero_globals();  cBYE(status);
-      status = init_lua(); cBYE(status);
-      if ( g_config_file[0] == '\0' )  {
-        hard_code_config(); // only for testing
-        status = l_hard_code_config(); cBYE(status); // only for testing
-      }
-      else {
-        status = l_load_config(g_config_file); cBYE(status);
-      }
-      status = update_config(); cBYE(status);
-      if ( g_cfg.sz_log_q > 0 ) {
-        pthread_mutex_init(&g_mutex, NULL);
-        pthread_cond_init(&g_condc, NULL);
-        pthread_cond_init(&g_condp, NULL);
-        status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
-        cBYE(status);
-      }
-
-      switch ( req_type ) {
-        case Reload: status = l_reload_tests();  cBYE(status); break;
-        case Restart : /* nothing to do  */ break;
-        default : go_BYE(-1); break;
-      }
+      status = setup(false); cBYE(status);
+      pthread_mutex_init(&g_mutex, NULL);
+      pthread_cond_init(&g_condc, NULL);
+      pthread_cond_init(&g_condp, NULL);
+      status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
       cBYE(status);
+
+      if ( req_type == Reload ) { 
+        status = l_reload_tests();  cBYE(status); 
+      }
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------

@@ -1,3 +1,5 @@
+Execute "bash chk.sh <directory>" to run basic validations
+
 Each directory under here corresponds to one classification problem
 The name of the directory is the name of the problem e.g.,
 spam

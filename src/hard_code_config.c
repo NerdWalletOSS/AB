@@ -47,7 +47,6 @@ hard_code_config(void)
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
-
   // defaults taken from https://kafka.apache.org/08/documentation.html
 /*
   strcpy(g_cfg.kafka.brokers, "192.168.1.151");
