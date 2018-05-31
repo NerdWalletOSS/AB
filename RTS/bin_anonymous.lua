@@ -29,7 +29,7 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
 end
 
 local function populate_variants(
-  c_test, 
+  c_test,
   variants
   )
   -- dbg()
@@ -37,13 +37,13 @@ local function populate_variants(
   local final_variant_idx, final_variant_id
   assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
   local sum_perc = 0
-  for k1, v1 in pairs(variants) do 
+  for k1, v1 in pairs(variants) do
     local v1name = assert(v1.name)
     local v1id   = assert(tonumber(v1.id))
     local v1perc =  assert(tonumber(v1.percentage))
     assert( ( ( v1perc >= 0 ) and ( v1perc <= 100 ) ) )
     sum_perc = sum_perc + v1perc
-    for k2, v2 in pairs(variants) do 
+    for k2, v2 in pairs(variants) do
       local v2name = assert(v2.name)
       local v2id   = assert(tonumber(v2.id))
       if ( k1 ~= k2 ) then
@@ -54,7 +54,7 @@ local function populate_variants(
   end
   assert( ( ( sum_perc >= 99.99 ) and ( sum_perc <= 100.01 ) ) )
   c_test.num_variants = #variants -- TODO check for device specific too`
-  
+
   table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
   -- TODO removed as mallocs in C c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   -- ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
@@ -102,6 +102,7 @@ local function add_device_specific_terminated(c_test, test_data)
   local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
+  assert(num_devices > 1, "Must have more than one device")
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   c_test.variant_per_bin = nil
   -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
@@ -120,6 +121,7 @@ local function add_device_specific_started(c_test, test_data)
   local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end
+  assert(num_devices > 1, "Must have more than one device")
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
@@ -158,6 +160,7 @@ local function add_device_specific_started(c_test, test_data)
 end
 
 local function add_device_agnostic(c_test, test_data)
+  c_test.num_devices = 1
   local variants = test_data.Variants
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   local state = test_data.State:lower()
