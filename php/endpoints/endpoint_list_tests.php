@@ -34,8 +34,8 @@ if ( $l_test_type == "ABTest" ) {
 else if ( $l_test_type == "XYTest" ) {
   $where .= " and test_type_id = $xytest_id ";
 }
-else if ( $l_test_type == "" ) {
-  $where .= " and test_type_id = $xytest_id ";
+else if ( ( $l_test_type == "all" ) || ( $l_test_type == "" ) ) {
+  // no further restriction to the where
 }
 else {
   echo "{ \"ListTests\" : \"ERROR\", \"Message\" : \"Invalid TestType=[$l_test_type]\" }"; exit;
@@ -48,6 +48,7 @@ else {
   $i = 0;
   foreach ( $R as $r ) { 
     $R[$i]['State'] = lkp("state", $r['state_id'], "reverse");
+    $R[$i]['TestType'] = lkp("test_type", $r['test_type_id'], "reverse");
     $i++;
   }
   echo json_encode($R, JSON_PRETTY_PRINT);
