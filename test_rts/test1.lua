@@ -14,7 +14,7 @@ tests.t1 = function(
   assert(type(B) == "table")
   if not num_tests then num_tests = 1 end 
   --=======================================
-  -- TODO RS a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
+  a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
   states = { "started", "terminated", "archived" }
   for _, state in ipairs(states) do
     for i = 1, num_tests do 

@@ -18,8 +18,10 @@ setup(
   int status = 0;
 
   if ( is_free ) { 
-  status = zero_globals(); cBYE(status); /* Done only on startup */
+    free_globals(); 
   }
+  zero_globals();
+  init_globals();
   status = init_lua(); cBYE(status);
   if ( g_config_file[0] == '\0' ) { 
     hard_code_config(); // only for testing 

@@ -8,6 +8,16 @@ test -f dt.csv
 luajit dt_feature.lua
 luajit mdl_map.lua
 luajit generate_features.lua
+#------------------------
+cwd=$PWD
+pushd .
+cd ../../dt_interpreter/src/
+bash mk_dt_bin.sh $cwd/dt.csv
+test -f dt.bin; mv dt.bin $cwd
+test -f rf.bin; mv rf.bin $cwd
+test -f mdl.bin; mv mdl.bin $cwd
+popd
+#------------------------
 cd test/
 pwd
 ## Need to run all the scripts here

@@ -187,10 +187,12 @@ main(
     fprintf(stderr, "\n\n\n");
   }
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  if ( argc != 2 ) { 
-    if ( strlen(argv[2]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+  if ( argc > 2 ) { go_BYE(-1); }
+  if ( argc == 2 ) { 
+    if ( strlen(argv[1]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
     strcpy(g_config_file, argv[1]); 
   }
+  
   status = setup(false); cBYE(status);
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	

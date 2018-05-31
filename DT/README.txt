@@ -1,4 +1,7 @@
 Execute "bash chk.sh <directory>" to run basic validations
+Once iC server is running
+Execute "bash test_make_feature_vector.sh <directory>
+Execute "bash test_post_proc_preds.sh 
 
 Each directory under here corresponds to one classification problem
 The name of the directory is the name of the problem e.g.,
@@ -41,6 +44,8 @@ rf.bin
 mdl.bin
 which are loaded by the C server
 
+6) You must have a file called sample_input.json. This is used as an 
+input to the /MakeFeatureVector API as a debugging check
 
 -------
 

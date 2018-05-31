@@ -3,8 +3,8 @@ set -e
 S=localhost
 P=8000
 num_tests=16
-num_iters=256
-num_users=256
+num_iters=32
+num_users=32
 curl --url "$S:$P/Ignore"
 curl --url "$S:$P/Restart"
 ./add_tests $S $P $num_tests _test_file
