@@ -4,7 +4,7 @@ the output of any Python sklearn tree-based model,
 and converts it to csv.
 """
 
-from sklearn.externals import joblib
+import joblib
 import numpy as np
 import pandas as pd
 import os
@@ -71,6 +71,7 @@ if __name__ == '__main__':
                 past_tree_ct = past_tree_ct + model_op['n_trees']
                 model_idx_count = model_idx_count + 1
                 mdl_map[model_idx_count] = k
+                final_model_list.append(model_op['df'])
             final_df = pd.concat(final_model_list)
         else:
             final_df = generate_csv_indiv_model(model, model_idx_count, past_node_ct, past_tree_ct)['df']

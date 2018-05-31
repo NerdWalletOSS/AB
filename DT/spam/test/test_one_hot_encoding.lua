@@ -15,13 +15,13 @@ describe("Testing one_hot_encoding", function()
    assert(plpath.isfile(test_data))
    local json_str = assert(plfile.read(test_data))
    print("loading JSON")
-   local json_dict = assert(JSON:decode(json_str))
+   local json_dict = assert(JSON:decode(JSON:decode(json_str)))
    assert(type(json_dict) == "table")
 
    for i, pair in ipairs(json_dict) do
      local lua_ohe = one_hot_encoding(pair)
-     for k, v in pairs(pair) do outputs[tonumber(k)] = tonumber(v) end
-       assert.are.same(lua_ohe, outputs)
+     for k, v in pairs(pair) do lua_ohe[tonumber(k)] = tonumber(v) end
+     assert.are.same(lua_ohe, pair)
      end
   end)
 end)
