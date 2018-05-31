@@ -30,7 +30,7 @@ CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
 SO_SRCS := $(filter-out main.c, $(CSRCS))
-SO_COBJS = $(SOCSRCS:.c=.o)
+SO_OBJS = $(SO_SRCS:.c=.o)
 
 all : test_dt dt.so
 
@@ -52,12 +52,12 @@ test_dt : $(COBJS) $(XOBJS)
 #  -lpthread -ldl  -lgomp
 
 
-dt.so : $(SO_COBJS) 
-	$(CC) -shared $(CFLAGS) $(SO_COBJS) $(INCS) -o dt.so \
+dt.so : $(SO_OBJS) 
+	$(CC) -shared $(CFLAGS) $(SO_OBJS) $(INCS) -o dt.so \
 	-lm  -lpthread -ldl  -lgomp
 
 clean:
-	rm -r -f test_dt $(COBJS) 
+	rm -r -f test_dt $(COBJS)  *.so
 	echo "ALL CLEAN"
 
 qclean :

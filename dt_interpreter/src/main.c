@@ -49,6 +49,9 @@ main(
   float *invals = NULL;
   FILE *fp = NULL;
   FILE *ofp = NULL;
+  float *predictions = NULL;
+  int *rf_pos = NULL;
+  int *rf_neg = NULL;
   if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   dt_file_name            = argv[2];
@@ -65,6 +68,12 @@ main(
   status = read_random_forest(random_forest_file_name, 
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
+  predictions = malloc(n_mdl * sizeof(float));
+  return_if_malloc_failed(predictions);
+  rf_pos = malloc(n_rf * sizeof(int));
+  return_if_malloc_failed(rf_pos);
+  rf_neg = malloc(n_rf * sizeof(int));
+  return_if_malloc_failed(rf_neg);
   //  Write binary output files 
   //---------------------------------------------------
   ofp = fopen(dt_file_name, "wb");
@@ -125,7 +134,8 @@ main(
       }
       uint64_t t1a = RDTSC(); 
       uint64_t t2a = get_time_usec();
-      status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl); 
+      status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl,
+          predictions, rf_pos, rf_neg);
       uint64_t t1b = RDTSC(); 
       uint64_t t2b = get_time_usec();
       uint64_t d1 = (t1b - t1a);
@@ -157,5 +167,8 @@ BYE:
   free_if_non_null(rf);
   free_if_non_null(mdl);
   free_if_non_null(invals);
+  free_if_non_null(predictions);
+  free_if_non_null(rf_pos);
+  free_if_non_null(rf_neg);
   return status;
 }

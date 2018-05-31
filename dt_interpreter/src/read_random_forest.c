@@ -100,12 +100,12 @@ read_random_forest(
   //----------------------------------------------------
   status = rs_mmap(out_files[7], &X, &nX, 0); cBYE(status);
   iptr = (int *)X;
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].nneg = fptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].nneg = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   status = rs_mmap(out_files[8], &X, &nX, 0); cBYE(status);
   iptr = (int *)X; 
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].npos = fptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].npos = iptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   // calculate number of models, alloc and initialize

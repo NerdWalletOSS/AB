@@ -33,7 +33,7 @@ local function post_proc_preds(
       ' not between 0 and 1 inclusive.')
     out_features[mdl] = pred
   end
-  for k, v in pairs(out_features) do print(k, v) end
+  -- for k, v in pairs(out_features) do print(k, v) end
   local x = assert(JSON:encode(out_features))
   assertx(#x <= sz_out_buf, 'len of string is ', #x,
     ', which is too long for the buffer with length ', sz_out_buf)

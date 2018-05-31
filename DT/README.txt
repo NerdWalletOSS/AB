@@ -1,7 +1,19 @@
 Execute "bash chk.sh <directory>" to run basic validations
 Once iC server is running
 Execute "bash test_make_feature_vector.sh <directory>
+If you do 
+  bash test_make_feature_vector.sh spam
+You will get back something like 
+{"0":0,"1":0.64,"2":0.64,"3":0,"4":0.32,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0.64,"12":0,"13":0,"14":0,"15":0.32,"16":0,"17":1.29,"18":1.93,"19":0,"20":0.96,"21":0,"22":0,"23":0,"24":0,"25":0,"26":0,"27":0,"28":0,"29":0,"30":0,"31":0,"32":0,"33":0,"34":0,"35":0,"36":0,"37":0,"38":0,"39":0,"40":0,"41":0,"42":0,"43":0,"44":0,"45":0,"46":0,"47":0,"48":0,"49":0,"50":0,"51":0.778,"52":0,"53":0,"54":3.756,"55":61,"56":278}
+
 Execute "bash test_post_proc_preds.sh 
+If spam has been loaded, you will get back something like
+{"spam":0.97090911865234}
+Execute "bash test_classify.sh <directory>
+If you do
+  bash test_classify.sh spam
+You will get back something like 
+  {"spam":0.97090911865234}
 
 Each directory under here corresponds to one classification problem
 The name of the directory is the name of the problem e.g.,

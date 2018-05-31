@@ -9,9 +9,9 @@ test -f $dt_csv_file
 # testfile=../data/spam_data/test_1_10.csv
 # test -f $testfile
 # These are 3 binary files created by the process
-dtfile=dt.bin
-rffile=rf.bin
-mdlfile=mdl.bin
+dtfile=_dt.bin
+rffile=_rf.bin
+mdlfile=_mdl.bin
 VG=""
 VG="valgrind --leak-check=full"
 $VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 1>_out 2>&1

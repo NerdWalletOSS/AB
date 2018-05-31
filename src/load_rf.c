@@ -14,11 +14,11 @@ load_rf(
   char *X = NULL; size_t nX = 0;
   status = rs_mmap(rf_file, &X, &nX, 0); cBYE(status);
   if ( nX == 0 ) { go_BYE(-1); }
-  uint32_t n_ua = nX / sizeof(RF_REC_TYPE);
-  if ( ( n_ua * sizeof(RF_REC_TYPE) ) != nX ) { go_BYE(-1); }
+  uint32_t num_rf = nX / sizeof(RF_REC_TYPE);
+  if ( ( num_rf * sizeof(RF_REC_TYPE) ) != nX ) { go_BYE(-1); }
   *ptr_rf = (RF_REC_TYPE *)X;
   *ptr_len_file = nX;
-  *ptr_num_rf = n_ua;
+  *ptr_num_rf = num_rf;
 BYE:
   return status;
 }
