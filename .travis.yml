@@ -1,0 +1,35 @@
+language: erlang
+sudo: required
+dist: trusty
+
+group: edge  #  Add this
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+
+env:
+  - LUA="luajit"
+
+branches:
+  only:
+    - dev
+    - dev_ramesh
+    - dev_lumpy
+    - dev_inder
+
+install:
+  - bash aio.sh -b
+
+before_script:
+  - source to_source
+
+script:
+  - cd bin && source to_source && ./ab_httpd & && kill -0 %1
+  - sleep 1 & kill -9 %1
+  - cd bin && source to_source && find . -name "*.lua" | while read line; do luajit $line>/dev/null; RES="`echo $?`"; if [ "$RES" -ne "0" ] ; then echo $line; exit 1; fi; done
+
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

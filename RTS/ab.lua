@@ -3,6 +3,7 @@ local JSON  = require 'lua/JSON'
 local x_hard_code_config = require 'lua/hard_code_config'
 local x_load_config = require 'RTS/ab_load_config'
 local x_update_config = require 'RTS/ab_update_config'
+local x_diagnostics = require 'RTS/diagnostics'
 
 local tests = require 'RTS/add_test'
 local reload_tests = require 'RTS/reload'
@@ -65,7 +66,7 @@ function get_test_info(args)
 end
 
 function diagnostics(...)
-
+  x_diagnostics()
 
 end
 -- function add(c_str, c_data)

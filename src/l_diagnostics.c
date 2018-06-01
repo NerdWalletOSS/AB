@@ -22,7 +22,7 @@ l_diagnostics(
       fprintf(stderr, "Function [diagnostics] does not exist \n");
       lua_pop(g_L, 1); go_BYE(-1);
     }
-    status = lua_pcall(g_L, 0, 1, 0);
+    status = lua_pcall(g_L, 0, 0, 0);
     if (status != 0) {
       fprintf(stderr, "calling function [diagnostics] failed: %s\n", lua_tostring(g_L, -1));
       sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
