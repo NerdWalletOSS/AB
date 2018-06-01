@@ -28,7 +28,7 @@ before_script:
 script:
   - cd bin && source to_source && ./ab_httpd &
   - sleep 1 & kill -9 %1
-  - cd bin && source to_source && find . -name "*.lua" -exec luajit {} \;
+  - cd bin && source to_source && find . -name "*.lua" | while read line; do luajit $line>/dev/null; RES="`echo $?`"; if [ "$RES" -ne "0" ] ; then echo $line; exit 1; fi; done
 
 
 after_success:
