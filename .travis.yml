@@ -28,7 +28,7 @@ before_script:
 script:
   - cd bin && source to_source && ./ab_httpd &
   - sleep 1 & kill -9 %1
-  - cd bin && source to_source && luajit ./*.lua
+  - cd bin && source to_source && find . -name "*.lua" -exec luajit {} \;
 
 
 after_success:
