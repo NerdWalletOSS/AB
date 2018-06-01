@@ -56,5 +56,5 @@ tests.t2 = function(
   end
   print("Test t2 succeeded")
 end
-tests.t2(100, 100) -- uncomment for quick and dirty testing
+-- tests.t2(100, 100) -- uncomment for quick and dirty testing
 return tests
