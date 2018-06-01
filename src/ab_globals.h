@@ -25,7 +25,7 @@ EXTERN statsd_link *g_statsd_link; // For C to talk to statsd server
 
 EXTERN uint32_t g_n_log_q;   // For C
 #ifdef AB_AS_KAFKA
-EXTERN void **g_log_q; // For C [g_cfg.sz_log_q] 
+EXTERN KAFKA_REC_TYPE *g_log_q; // For C [g_cfg.sz_log_q] 
 #else
 EXTERN PAYLOAD_REC_TYPE *g_log_q; // For C
 #endif
@@ -77,7 +77,10 @@ EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
 
-EXTERN char g_date[AB_MAX_LEN_DATE+1];  // get date from browser headers
+// get ip address from browser headers
+EXTERN char g_ip_address[AB_MAX_LEN_IP_ADDRESS+1];  
+// get date from browser headers
+EXTERN char g_date[AB_MAX_LEN_DATE+1];  
 EXTERN char g_in_tracer[AB_MAX_LEN_TRACER+1];
 EXTERN char g_out_tracer[AB_MAX_LEN_TRACER+1];
 
@@ -125,9 +128,8 @@ EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */
-EXTERN char g_dt_file[AB_MAX_LEN_FILE_NAME+1];   
-EXTERN char g_rf_file[AB_MAX_LEN_FILE_NAME+1];   
-EXTERN char g_mdl_file[AB_MAX_LEN_FILE_NAME+1];   
+EXTERN int *g_rf_pos;  /* [g_n_rf] */
+EXTERN int *g_rf_neg;  /* [g_n_rf] */
 
 #include "utm_kv.h"
 EXTERN UTM_REC_TYPE g_utm_kv;
@@ -144,4 +146,5 @@ EXTERN char g_errstr[512];       /* librdkafka API error reporting buffer */
 
 EXTERN char g_body[AB_MAX_LEN_BODY+1];
 EXTERN int g_sz_body;
+EXTERN int g_kafka_memory; 
 

@@ -1,5 +1,5 @@
--- local dbg = require 'debugger'
-local json = require 'lua/json'
+-- local dbg = require 'lua/debugger'
+local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
 local ffi = require 'lua/ab_ffi'
@@ -7,8 +7,10 @@ local AddTests = {}
 local bins = require 'RTS/bins'
 local consts = require 'lua/ab_consts'
 local assertx = require 'lua/assertx'
-local g_seed1 = 961748941 -- TODO remove manual copy
+local g_seed1 = 961748941 -- TODO remove manual copy from zero_globals.c
+local g_seed2 = 982451653 -- TODO remove manual copy from zero_globals.c
 AddTests.g_seed1 = g_seed1
+AddTests.g_seed2 = g_seed2
 local spooky_hash = require 'RTS/spooky_hash'
 
 local function create_state_table(consts)
@@ -36,12 +38,21 @@ local function match(c_test, test_data, name_hash)
   end
 end
 
-function AddTests.get_test(g_tests, test_data, c_index)
+function AddTests.get_test(
+  g_tests,
+  test_data,
+  c_index
+  )
   -- print("name is ", test_data.name)
   local name_hash = spooky_hash.spooky_hash64(test_data.name, #test_data.name, g_seed1)
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
   c_index = ffi.cast("int*", c_index)
+  local idx = c_index[0]
+  --[[ TODO Why do I have to comment this?
+  assert( ( idx >= 0 )  and (idx < consts.AB_MAX_NUM_TESTS) ), 
+  "idx  for tests is " .. idx)
+  --]]
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local test = nil
   local stop = false
@@ -81,20 +92,26 @@ function AddTests.get_test(g_tests, test_data, c_index)
 end
 
 
-function AddTests.add(test_str, g_tests, c_index)
+function AddTests.add(
+  test_str,
+  g_tests,
+  c_index
+  )
   -- print(test_str)
-  local test_data = json.decode(test_str)
+  local test_data = JSON:decode(test_str)
+  assert(type(test_data) == "table", "Invalid JSON string given")
   -- dbg()
-  local test_type = assert(test_data.TestType, "TestType cannot be nil for test")
+  local test_type = assert(test_data.TestType, "TestType cannot be nil")
   assert(test_data.name ~= nil, "Test should have a name")
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
   " Expected max ", consts.AB_MAX_LEN_TEST_NAME)
   local c_test, name_hash = AddTests.get_test(g_tests, test_data, c_index)
   c_test.name_hash = name_hash
+  assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
-  
+
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
@@ -109,6 +126,9 @@ function AddTests.add(test_str, g_tests, c_index)
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
     local seed = assert(test_data.seed, "Seed needs to be specified for test")
+    if ( type(seed) == "number" ) then
+      seed = tostring(seed)
+    end
     c_test.seed = spooky_hash.convert_str_to_u64(seed)
     local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
     assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")
@@ -121,6 +141,7 @@ function AddTests.add(test_str, g_tests, c_index)
     end
     -- print(c_index[0])
     -- dbg()
+    assert(c_test.variants ~= nil, "Space must be allocated for variants")
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
     tests[test_data.id] = test_data
@@ -129,15 +150,15 @@ function AddTests.add(test_str, g_tests, c_index)
 end
 
 function AddTests.preproc(test_str, g_tests, o_arr)
- -- o arr is the array that returns requirements to C
+  -- o arr is the array that returns requirements to C
   -- int what_to_do      = rslt[0];
   -- int test_idx        = rslt[1];
   -- int num_variants     = rslt[2];
   -- int is_dev_specific = rslt[3];
   --
-  local j_table = json.decode(test_str)
+  local j_table = JSON:decode(test_str)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
-  o_arr = ffi.cast("int32_t*", o_arr)
+  o_arr = ffi.cast("int*", o_arr)
   AddTests.get_test(g_tests, j_table, o_arr + 1) -- get test position iin 0 location or o_arr
   o_arr[2] = #j_table.Variants
   o_arr[3] = tonumber(j_table.is_dev_specific)
@@ -183,7 +204,7 @@ function AddTests.preproc(test_str, g_tests, o_arr)
     else
       error("Invali old state " .. old_state)
     end
-
+    -- dbg()
   end
   -- no change in num variants or is_dev_specific
 end

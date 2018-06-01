@@ -1,28 +1,29 @@
 #include "ab_incs.h"
 #include "auxil.h"
-#include "get_date.h"
+#include "get_hdr_val.h"
 
 int 
-get_date(
+get_hdr_val(
     struct evhttp_request *req,
-    char *date,
-    size_t sz_date
+    const char *key,
+    char *val,
+    size_t sz
     )
 {
   int status = 0;
 
-  if ( date == NULL ) { go_BYE(-1); }
-  if ( sz_date <= 1 ) { go_BYE(-1); }
-  memset(date, '\0', sz_date+1);
+  if ( val == NULL ) { go_BYE(-1); }
+  if ( sz <= 1 ) { go_BYE(-1); }
+  memset(val, '\0', sz+1);
   struct evkeyvalq *headers = NULL;
   struct evkeyval  *header = NULL;
   headers = evhttp_request_get_input_headers (req);
   header = headers->tqh_first;
   for (header = headers->tqh_first; header; 
       header = header->next.tqe_next) {
-    if ( strcasecmp(header->key, "Date") == 0 ) { 
-      if ( strlen(header->value ) <= sz_date ) { 
-        strcpy(date, header->value);
+    if ( strcasecmp(header->key, key) == 0 ) { 
+      if ( strlen(header->value ) <= sz ) { 
+        strcpy(val, header->value);
       }
       break; 
     }

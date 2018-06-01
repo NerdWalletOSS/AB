@@ -1,5 +1,5 @@
-local assertx = require 'lua.assertx'
-local json = require 'lua.json'
+local assertx = require 'lua/assertx'
+local JSON    = require 'lua/JSON'
 
 function load_config(
   config_file,
@@ -9,7 +9,7 @@ function load_config(
   local file = assert(io.open(config_file, 'r'), "Invalid filename given")
   local conf_str = file:read('*a')
   file:close()
-  local config = json.decode(conf_str)
+  local config = JSON:decode(conf_str)
   -- If you want to update g_cfg, do this before you return
   -- as an example
   -- update_xxx_configs(g_cfg, config.DT)

@@ -113,6 +113,7 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
   else
     error("Unrecognized test state " .. test_data.State)
   end
+  c_test.num_devices = 1
 end
 
 return bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok

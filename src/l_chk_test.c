@@ -10,6 +10,7 @@ l_chk_test(
     )
 {
   int status = 0;
+  if ( g_L == NULL ) { go_BYE(-1); }
   // TODO INDRAJEET
 BYE:
   return status;

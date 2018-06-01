@@ -1,6 +1,7 @@
 #include "kafka_close_conn.h"
 
-void kafka_close_conn(
+void 
+kafka_close_conn(
     void
     ) 
 {
@@ -21,5 +22,3 @@ void kafka_close_conn(
     g_kafka_conf = NULL;
   }
 }
-
-

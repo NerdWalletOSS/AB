@@ -22,7 +22,10 @@ get_req_type(
   else if (strcasecmp(api, "CheckTest") == 0) {
     return CheckTest;
   }
-  else if (strcasecmp(api, "ClassifyIP") == 0) {
+  else if (strcasecmp(api, "Classify") == 0) {
+    return Classify;
+  }
+  else if (strcasecmp(api, "ClassifyUA") == 0) {
     return ClassifyIP;
   }
   else if (strcasecmp(api, "ClassifyUA") == 0) {

@@ -14,11 +14,11 @@ load_dt(
   char *X = NULL; size_t nX = 0;
   status = rs_mmap(dt_file, &X, &nX, 0); cBYE(status);
   if ( nX == 0 ) { go_BYE(-1); }
-  uint32_t n_ua = nX / sizeof(DT_REC_TYPE);
-  if ( ( n_ua * sizeof(DT_REC_TYPE) ) != nX ) { go_BYE(-1); }
+  uint32_t num_dt = nX / sizeof(DT_REC_TYPE);
+  if ( ( num_dt * sizeof(DT_REC_TYPE) ) != nX ) { go_BYE(-1); }
   *ptr_dt = (DT_REC_TYPE *)X;
   *ptr_len_file = nX;
-  *ptr_num_dt = n_ua;
+  *ptr_num_dt = num_dt;
 BYE:
   return status;
 }

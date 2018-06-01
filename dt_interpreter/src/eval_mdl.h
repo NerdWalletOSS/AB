@@ -6,6 +6,9 @@ eval_mdl(
   int n_dt, /* number of nodes in decision tree */
   RF_REC_TYPE *rf, // [n_rf] 
   int n_rf, /* number of decision trees in random forest */
-  MDL_REC_TYPE *mdl,
-  int n_mdl /* number of models */
+  MDL_REC_TYPE *mdl, /* [n_mdl] */
+  int n_mdl, /* number of models */
+  float *predictions, /* [n_mdl] */
+  int *rf_pos, /* [n_rf] */
+  int *rf_neg /* [n_rf] */
   );

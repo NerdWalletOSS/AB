@@ -15,7 +15,8 @@ l_add_test(
   // printf("original value: %d\n", cdata[0]);
   int status = 0;
   //-------------------------------------
-  int32_t rslt[4]; 
+  if ( g_L == NULL ) { go_BYE(-1); }
+  int rslt[4]; 
   lua_getglobal(g_L, "preproc");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function preproc does not exist \n");
@@ -74,13 +75,13 @@ l_add_test(
   //-------------------------------------
   lua_getglobal(g_L, "add");
   if ( !lua_isfunction(g_L, -1)) {
-    fprintf(stderr, "Function add does not exist in lua's global space\n");
+    fprintf(stderr, "Function add does not exist in lua's global space : %s\n", lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
     go_BYE(-1);
   }
-  entry_position[0] = -1;
   lua_pushstring(g_L, args); // not pushing string as it causes a copy
   lua_pushlightuserdata(g_L, g_tests);
+  entry_position[0] = test_idx;
   lua_pushlightuserdata(g_L, entry_position);
   status = lua_pcall(g_L, 3, 0, 0);
   if (status != 0) {
