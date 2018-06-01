@@ -14,7 +14,8 @@ INCS= -I. \
 	-I../registered-domain-libs/C/ \
 	-I../libyuarel/ \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
-	-I../librdkafka/src/
+	-I../librdkafka/src/ \
+	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 

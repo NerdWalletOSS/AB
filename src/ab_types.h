@@ -151,11 +151,14 @@ typedef struct _cfg_type {
   char os_file[AB_MAX_LEN_FILE_NAME+1];
   char browser_file[AB_MAX_LEN_FILE_NAME+1];
   char device_type_file[AB_MAX_LEN_FILE_NAME+1];
+  char ua_model_coeff_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
+  char ua_category_intercept_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
   // STOP: For classifying user agent
   // START: For decision tree
   char dt_dir[AB_MAX_LEN_FILE_NAME+1];
   // STOP: For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
+  // STOP: For run time user agent classifier
 
 } CFG_TYPE;
 

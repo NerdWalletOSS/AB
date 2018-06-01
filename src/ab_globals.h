@@ -148,3 +148,7 @@ EXTERN char g_body[AB_MAX_LEN_BODY+1];
 EXTERN int g_sz_body;
 EXTERN int g_kafka_memory; 
 
+#include "ua_types.h"
+EXTERN  MODEL_REC_TYPE *g_ua_M; int g_ua_nM;
+EXTERN  MODEL_NAME_TYPE *g_ua_N; int g_ua_num_models;
+EXTERN  uint64_t *g_ua_H; int g_ua_nH;
