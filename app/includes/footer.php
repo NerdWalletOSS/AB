@@ -1,9 +1,9 @@
 <?php
-if (isset($_GET['msg']) )
+if (isset($_GET['msg']))
 {
 ?>
 <script type="text/javascript" language="javascript">
-document.getElementById('msg').innerHTML='<?php echo ($_GET["msg"]);?>';
+document.getElementById('msg').innerHTML="<?php echo utf8_decode((urldecode($_GET['msg'])));?>";
 document.getElementById('msg').style.display='block';
 //$("div.msg").delay(5000).fadeOut();
 </script>

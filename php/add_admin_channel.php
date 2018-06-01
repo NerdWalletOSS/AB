@@ -2,7 +2,7 @@
 require_once "bye.php";
 require_once "dbconn.php";
 require_once "db_get_row.php";
-require_once "aux_check_name.php";
+require_once "aux_chk_name.php";
 require_once "load_configs.php";
 
 function add_admin_channel(
@@ -16,7 +16,7 @@ function add_admin_channel(
     $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
     return false; 
   }
-  $configs = $GLOBALS['CONFIGS'];
+  $configs = $GLOBALS['configs'];
   $key = "max_len_" . $tbl . "_name";
   $max_len = $configs[$key];
   //----------------------------------------------
@@ -26,7 +26,7 @@ function add_admin_channel(
     $GLOBALS["err"] .= "Name is null "; return false; 
   }
   //-----------------------------------------------
-  if ( !aux_check_name($name) ) {
+  if ( !aux_chk_name($name) ) {
     $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
     $GLOBALS["err"] .= "$tbl Name restricted to alphanumeric, underscore";
     return false;

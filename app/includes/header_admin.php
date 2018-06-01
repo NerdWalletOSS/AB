@@ -1,5 +1,4 @@
 <?php
-session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require_once "../utility_functions.php";
@@ -45,8 +44,8 @@ require_once "../utility_functions.php";
     </div>
     <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
-    <!--<li ><a href="#" data-toggle="modal" data-target="#AddAdmin"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Admin</button></a></li>
-    <li><a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Channel</button></a></li>-->
+    <li ><a href="#" data-toggle="modal" data-target="#AddAdmin"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Admin</button></a></li>
+    <li><a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Channel</button></a></li>
     <li ><a href="#" data-toggle="modal" data-target="#TestUrl"><button type="button" class="btn btn-sm btn-primary">Test Url</button></a></li>
     <li ><a href="show_config.php"><button type="button" class="btn btn-sm btn-info">Show Config</button></a></li>
     <!--<li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
@@ -67,7 +66,7 @@ require_once "../utility_functions.php";
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title" id="myModalLabel">Add admin</h4>
     </div>
-    <form class="test" name="test" action="gui_add_admin_process.php">
+    <form class="test" name="test" action="add_admin_process.php">
     <div class="modal-body">
     <div class="form-group">
     <label class="label" for="admin" >Admin Name:</label>
@@ -91,7 +90,7 @@ require_once "../utility_functions.php";
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title" id="myModalLabel">Add Channel</h4>
     </div>
-    <form class="test" name="test" action="gui_add_channel_process.php">
+    <form class="test" name="test" action="add_channel_process.php">
     <div class="modal-body">
     <div class="form-group">
     <label class="label" for="channel" >Channel:</label>
