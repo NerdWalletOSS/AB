@@ -1,5 +1,5 @@
 extern int
-score_url(
+score_ua(
     char *url, 
     MODEL_REC_TYPE *M,
     size_t nM,

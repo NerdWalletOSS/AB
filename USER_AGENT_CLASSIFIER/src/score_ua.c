@@ -17,13 +17,13 @@
 #include "ua_types.h"
 #include "macros.h"
 #include "auxil.h"
-#include "clean_url.h"
-#include "score_url.h"
+#include "clean_ua.h"
+#include "score_ua.h"
 
-#define MAX_LEN_URL 2047
+#define MAX_LEN_USER_AGENT 2047
 int
-score_url(
-    char *url, 
+score_ua(
+    char *ua, 
     MODEL_REC_TYPE *M,
     size_t nM,
     MODEL_NAME_TYPE *N,
@@ -32,12 +32,12 @@ score_url(
     )
 {
   int status = 0;
-  char out_url[MAX_LEN_URL+1];
+  char out_ua[MAX_LEN_USER_AGENT+1];
   double *scores = NULL; 
-  // char *bak_url = NULL;
+  // char *bak_ua = NULL;
 
 
-  if ( url        == NULL ) { go_BYE(-1); } 
+  if ( ua        == NULL ) { go_BYE(-1); } 
   if ( M          == NULL ) { go_BYE(-1); }
   if ( nM         == 0 )    { go_BYE(-1); }
   if ( N          == NULL ) { go_BYE(-1); }
@@ -48,14 +48,14 @@ score_url(
   return_if_malloc_failed(scores);
   for ( uint32_t i = 0; i < nM; i++ ) { M[i].is_seen = false; }
   for ( uint32_t i = 0; i < num_models; i++ ) { scores[i] = 0; }
-  status = clean_url(url, out_url, MAX_LEN_URL); cBYE(status);
-  // printf("out = %s \n", out_url);
-  // bak_url = strdup(out_url);
+  status = clean_ua(ua, out_ua, MAX_LEN_USER_AGENT); cBYE(status);
+  // printf("out = %s \n", out_ua);
+  // bak_ua = strdup(out_ua);
   // int num_words = 0;
   for ( int j = 0; ; j++ ) { 
     char *word = NULL;
     if ( j == 0 ) { 
-      word = strtok(out_url, " ");
+      word = strtok(out_ua, " ");
     }
     else {
       word = strtok(NULL, " ");
@@ -84,10 +84,10 @@ score_url(
       best_model = m;
     }
   }
-  // fprintf(stderr, "%d: %d: %s \n", i, num_words, bak_url);
+  // fprintf(stderr, "%d: %d: %s \n", i, num_words, bak_ua);
   *ptr_best_model = best_model;
 BYE:
-  // free_if_non_null(bak_url);
+  // free_if_non_null(bak_ua);
   free_if_non_null(scores);
   return status;
 }
