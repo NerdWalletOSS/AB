@@ -19,6 +19,10 @@ tests.t1 = function(
   reload_db(plpath.currentdir() .. "/abdb2_100.sql") -- TODO Improve path
 
   for i = 1, num_iters do 
+    local exp_tests = {}
+    for i = 1, 100 do 
+      exp_tests["Test_" .. i] = 0
+    end
     a, b, c = curl.get("localhost:8000/Reload"); assert(c == 200)
     a, b, c = curl.get(ltc_url);   assert(c == 200)
     local Lc = JSON:decode(b)
@@ -28,9 +32,18 @@ tests.t1 = function(
     assert(#Ll == #Lc)
     assert(#Ll == 100)
 
+    -- TODO P2 This is very basic checking. Can do better
+    for k, t in pairs(Lc) do
+      assert(type(t) == "table")
+      assert(exp_tests[t.name])
+      assert( exp_tests[t.name] == 0 ) 
+      exp_tests[t.name] = 1 
+      local tname = t.name
+    end
+
     a, b, c = curl.get(dl_url);   assert(c == 200)
     a, b, c = curl.get(dc_url);   assert(c == 200)
   end
 end
--- tests.t1()
+-- tests.t1(10)
 return tests

@@ -50,12 +50,13 @@ function set_filters(
   //-- START : Database updates
   foreach ( $cat_filters as $k => $v ) {
     $id = $v->{'id'};
-    $is_on = $v->{'is_on'};
+    $is_on = (int)($v->{'is_on'});
+    rs_assert( ( ( $is_on == 0 ) || ( $is_on == 1 ) ) );
+
     unset($X);
     $X['is_on'] = $is_on;
-    $is_on = 1;
-    rs_assert( ( ( $is_on == 0 ) || ( $is_on == 1 ) ) );
-    db_set_row("cat_attr_val_test", $id, $X);
+    $x = db_set_row("cat_attr_val_test", $id, $X);
+    rs_assert($x, "db_set_row failed");
   }
   //-- STOP : Database updates
   $http_code = 200;

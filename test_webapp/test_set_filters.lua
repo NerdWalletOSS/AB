@@ -12,10 +12,27 @@ tests.t1 = function ()
   local hdrs, outbody, status = mk_test(T1)
   assert(status == 200)
   local tid = get_test_id(hdrs)
+  -- check filters are off and then set them all on
   local T = get_test_info(tid)
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 0 )
+    f.is_on = "1"
+  end
   T.updater_id = T.creator_id;
   local hdrs = set_filters(T)
-  for k, v in pairs(hdrs) do print(k, v) end
+  -- check filters are on and set them off
+  local T = get_test_info(tid)
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 1 )
+    f.is_on = "0"
+  end
+  local hdrs = set_filters(T)
+  -- check filters are off
+  local T = get_test_info(tid)
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 0 )
+  end
+  local hdrs = set_filters(T)
   print("Test t1 succeeded")
 
 

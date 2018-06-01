@@ -26,6 +26,7 @@ function db_set_row(
 
   $stmt = $dbh->prepare($sql);
   $rslt = $stmt->execute($kvs); if ( !$rslt ) { return null; }
+  // var_dump($sql); var_dump($kvs);
   // TODO: Check number of affected rows is 1 */
   return true;
 }
