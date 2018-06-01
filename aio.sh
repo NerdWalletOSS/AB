@@ -11,7 +11,7 @@ usage(){
   echo "  -x  Builds a tarball of all the php companents for AB admin"
   echo "  -s  Builds and starts all support systems"
   echo "  -o  Stops all support systems"
-  
+
 
   # echo "  -r  Builds and run AB with all other auxillary service"
   exit 1 ;
@@ -29,6 +29,7 @@ buildall(){
   sudo apt-get install gcc python python-pip cmake -y
   sudo pip install pystatsd
   clean
+  install_luajit_from_source
   set -e
   build
 }
@@ -51,7 +52,7 @@ build(){
   mkdir -p ../bin/libs
   cp ab_httpd ../bin
   cd ../
- #  find ./ -name "*.so*" -exec cp {} ../bin/libs \;
+  #  find ./ -name "*.so*" -exec cp {} ../bin/libs \;
   # find ./ -name "*.lua" -exec cp --parents {} ../bin \;
   find ./RTS -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./DT -name '*.lua' -exec cp --parents \{\} ./bin/ \;
@@ -182,6 +183,32 @@ run_lua_tests(){
     exit 1
   fi
 }
+
+install_luajit_from_source() {
+  my_print "Installing luajit from source"
+  #wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+  wget http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+  #tar -xvf LuaJIT-2.0.4.tar.gz
+  tar -xvf LuaJIT-2.1.0-beta3.tar.gz
+  #cd LuaJIT-2.0.4/
+  cd LuaJIT-2.1.0-beta3/
+  sed -i '114s/#//' src/Makefile # to enable gc64
+  make TARGET_FLAGS=-pthread
+  sudo make install
+  cd /usr/local/bin
+  sudo ln -sf luajit-2.1.0-beta3 /usr/local/bin/L
+  sudo ln -sf luajit-2.1.0-beta3 /usr/local/bin/luajit
+
+  cd -
+  cd ../
+  rm -rf LuaJIT-2.1.0-beta3
+}
+
+install_travis(){
+  build
+
+}
+
 
 while getopts "sbochptx" opt;
 do

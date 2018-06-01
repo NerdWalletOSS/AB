@@ -16,6 +16,7 @@ l_list_tests(
   cBYE(status);
 
   if ( ( *buf == '\0' ) || ( strcmp(buf, "Lua") == 0 ) ) {
+    if ( g_L == NULL ) { go_BYE(-1); }
     lua_getglobal(g_L, "list_tests");
     if ( !lua_isfunction(g_L, -1)) {
       fprintf(stderr, "Function add does not exist in lua's global space\n");
@@ -76,7 +77,7 @@ c_list_tests(
     else {
       strcat(X, ", ");
     }
-    sprintf(buf, " %s ", g_tests[i].name); 
+    sprintf(buf, " \"%s\" ", g_tests[i].name); 
     strcat(X, buf);
   }
   strcat(X, " ]\n");

@@ -5,7 +5,7 @@
 #include "post_from_log_q.h"
 #include "make_curl_payload.h"
 #include "kafka_add_to_queue.h"
-#include "kafka_close_conn.h"
+// #include "kafka_close_conn.h"
 
 void *
 post_from_log_q(
@@ -16,48 +16,56 @@ post_from_log_q(
   CURLcode curl_res; 
   long http_code;
   PAYLOAD_REC_TYPE lcl_payload;
-  void *kafka_payload = NULL;
+  KAFKA_REC_TYPE kafka_payload;
 
-  for ( ; g_halt == false ; ) {
+  for ( ; ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+      // fprintf(stderr, "CONSUMER: unlock 1 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
     while ( (g_halt == false) && ( g_n_log_q == 0 ) ) {
       /* If there is nothing in the buffer then wait */
+      // fprintf(stderr, "CONSUMER: waiting %d %d \n", g_halt, g_n_log_q);
       pthread_cond_wait(&g_condc, &g_mutex);
-      // fprintf(stderr, "consumer still waiting\n");
+      // fprintf(stderr, "consumer done waiting %d %d\n", g_halt, g_n_log_q);
     }
     if ( (g_halt == true) && ( g_n_log_q == 0 ) ) {
       pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+      // fprintf(stderr, "CONSUMER unlock 2 %d %d \n", g_halt, g_n_log_q); 
       break; // get out of the loop and out of here
     }
-    // fprintf(stderr, "consumer read %d\n", buf[ridx]);
     int eff_rd_idx = g_q_rd_idx % g_cfg.sz_log_q;
+    // fprintf(stderr, "CONSUMER: read %d\n", eff_rd_idx);
 #ifdef AB_AS_KAFKA
     kafka_payload = g_log_q[eff_rd_idx];
-    g_log_q[eff_rd_idx] = NULL;
+    memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(KAFKA_REC_TYPE));
 #else
     lcl_payload = g_log_q[eff_rd_idx];
     memset(&(g_log_q[eff_rd_idx]), '\0', sizeof(PAYLOAD_REC_TYPE));
 #endif
     g_q_rd_idx++; 
     g_n_log_q--;
-    pthread_cond_signal(&g_condp);	/* wake up consumer */
+    pthread_cond_signal(&g_condp);	/* wake up producer */
+    // fprintf(stderr, "CONSUMER: Woke up producer\n");
     pthread_mutex_unlock(&g_mutex);	/* release the buffer */
+    // fprintf(stderr, "CONSUMER: Released buffer \n");
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
-    status = kafka_add_to_queue((char *)kafka_payload); 
-    if ( status != 0 ) { WHEREAMI; }
-    printf("Freed %8x \n", (unsigned int)kafka_payload);
-    free_if_non_null(kafka_payload); 
+    g_log_kafka_calls++;
+    status = kafka_add_to_queue( kafka_payload.data, kafka_payload.sz);
+    if ( status != 0 ) { WHEREAMI; } // TODO P1. add statsd logging for this
+    free_if_non_null(kafka_payload.data); 
+    g_kafka_memory -= kafka_payload.sz;
+    rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
     continue;
 #endif
-    if ( g_ch == NULL ) { /* Nothing to do */ continue; }
     // Now, here is the real work of this consumer - the POST
-    status = make_curl_payload(lcl_payload, g_curl_payload, AB_MAX_LEN_PAYLOAD);
-    if ( g_rk == NULL ) { // use logger 
+    status = make_curl_payload(lcl_payload, g_curl_payload, 
+        AB_MAX_LEN_PAYLOAD);
+    if ( status != 0 ) { WHEREAMI; }
+    if ( g_ch != NULL ) { // use logger 
       curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
       g_log_posts++;
       int retry_count = 0;
@@ -81,23 +89,22 @@ post_from_log_q(
         if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
       }
     }
-    else { // use kafka
-#ifdef KAFKA
-      status = kafka_add_to_queue(g_curl_payload); 
-      if ( status != 0 ) { WHEREAMI; }
-#endif
+    if ( g_rk != NULL ) { 
+      g_log_kafka_calls++;
+      status = kafka_add_to_queue(g_curl_payload, 0); 
+      if ( status != 0 ) { WHEREAMI; } // TODO P2 add stattsd logging
     }
   }
 #ifdef AB_AS_KAFKA
 
   fprintf(stderr, "Waiting for kafka to flush. \n");
-  for ( ; ; ) { 
-    rd_kafka_poll(g_rk, 50);
+  for ( ; g_rk != NULL; ) { 
+    rd_kafka_poll(g_rk, 50); // TODO P3 Why 50?
     int len = rd_kafka_outq_len(g_rk);
+    fprintf(stderr, "Waiting for kafka to flush. %d in queue, %d to go \n", g_n_log_q, len); 
     if ( len == 0 ) { break; }
-    fprintf(stderr, "Waiting for kafka to flush. %d to go \n", len); 
   }
 #endif
-  // pthread_exit(NULL); TODO P0 IS THIS THE RIGHT THING TO DO 
+  pthread_exit(NULL); // TODO P0 IS THIS THE RIGHT THING TO DO 
   return NULL;
 }

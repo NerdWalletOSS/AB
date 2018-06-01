@@ -5,5 +5,7 @@ eval_rf(
   DT_REC_TYPE *dt, // [n_dt] 
   int n_dt, /* number of nodes in decision tree */
   RF_REC_TYPE *rf, // [n_rf] 
-  int n_rf /* number of nodes in decision tree */
+  int n_rf, /* number of nodes in decision tree */
+  int *rf_pos, /* [n_rf] */
+  int *rf_neg /* [n_rf] */
   );

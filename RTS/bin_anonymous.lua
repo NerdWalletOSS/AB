@@ -1,4 +1,4 @@
--- local dbg = require 'debugger'
+-- local dbg = require 'lua/debugger'
 local bin_anonymous = {}
 local assertx = require 'lua/assertx'
 local consts = require 'lua/ab_consts'
@@ -28,18 +28,40 @@ local function set_variants_per_bin(bin, dev_variants, var_id_to_index_map)
   assertx(total_percentage == 100, "Total percentage should add up to 100 percent", total_percentage)
 end
 
-local function populate_variants(c_test, variants)
+local function populate_variants(
+  c_test,
+  variants
+  )
   -- dbg()
   local var_id_to_index_map = {}
   local final_variant_idx, final_variant_id
   assert(#variants >= consts.AB_MIN_NUM_VARIANTS and #variants <= consts.AB_MAX_NUM_VARIANTS, "invalid number of variants")
+  local sum_perc = 0
+  for k1, v1 in pairs(variants) do
+    local v1name = assert(v1.name)
+    local v1id   = assert(tonumber(v1.id))
+    local v1perc =  assert(tonumber(v1.percentage))
+    assert( ( ( v1perc >= 0 ) and ( v1perc <= 100 ) ) )
+    sum_perc = sum_perc + v1perc
+    for k2, v2 in pairs(variants) do
+      local v2name = assert(v2.name)
+      local v2id   = assert(tonumber(v2.id))
+      if ( k1 ~= k2 ) then
+        assert(v1id ~= v2id)
+        assert(v1name ~= v2name)
+      end
+    end
+  end
+  assert( ( ( sum_perc >= 99.99 ) and ( sum_perc <= 100.01 ) ) )
   c_test.num_variants = #variants -- TODO check for device specific too`
+
   table.sort(variants, function(a,b) return tonumber(a.id) < tonumber(b.id) end)
   -- TODO removed as mallocs in C c_test.variants = ffi.cast( "VARIANT_REC_TYPE*", ffi.gc(ffi.C.malloc(ffi.sizeof("VARIANT_REC_TYPE") * #variants), ffi.C.free)) -- ffi malloc array of variants
   -- ffi.fill(c_test.variants, ffi.sizeof("VARIANT_REC_TYPE") * #variants)
   -- TODO final variants, HELP
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]
+    assert(entry ~= ffi.NULL, "Null pointer sent from C")
     var_id_to_index_map[value.id] = index - 1
     entry.id = assert(tonumber(value.id), "Expected to have entry for id of variant")
     -- TODO check about final variant
@@ -53,21 +75,23 @@ local function populate_variants(c_test, variants)
     assertx(value.name and #value.name<= consts.AB_MAX_LEN_VARIANT_NAME, "Invalid name for variant at position " , index, " NAME:", value.name)
     ffi.copy(entry.name, value.name)
     if c_test.test_type == "ABTest" then
-      -- TODO ABTests cannpt ne anonymous
       assert("ABTest cannot be anonymous")
       -- entry.url = assertx(value.url, "Entry should have a url", " ID:", entry.id) -- TODO why do we have a max length?
     else
       local url = value.url
-      assert(#url >=0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
-      assert(entry.url ~= nil, "Space must have been allocated for url")
+      assert(type(url) == "string")
+      assert(#url > 0 and #url <= consts.AB_MAX_LEN_URL, "URL must have a valid length")
+      assert(entry.url ~= ffi.NULL, "No space allocated for url")
       ffi.copy(entry.url, url)
     end
-    -- RODO make checks 
-    assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
     if value.custom_data ~= nil then
+      assert(entry.custom_data ~= nil, "Space needs to be allocated for custom data")
+      assert(type(value.custom_data) == "string")
+      assert(#value.custom_data <= consts.AB_MAX_LEN_CUSTOM_DATA)
+      -- TODO Assert custom data is valid JSON
       ffi.copy(entry.custom_data, value.custom_data)
     else
-      ffi.copy(entry.custom_data,"NULL")
+      entry.custom_data = ffi.NULL
     end
 
   end
@@ -78,6 +102,7 @@ local function add_device_specific_terminated(c_test, test_data)
   local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end -- TODO this comes as a constant not based on count heret
+  assert(num_devices > 1, "Must have more than one device")
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   c_test.variant_per_bin = nil
   -- TODO removed as mallocs in C c_test.final_variant_idx = ffi.cast("uint32_t*", ffi.gc(ffi.C.malloc(ffi.sizeof("uint32_t")*num_devices), ffi.C.free))
@@ -96,6 +121,7 @@ local function add_device_specific_started(c_test, test_data)
   local variants = test_data.Variants
   local num_devices = 0
   for _ in pairs(test_data.DeviceCrossVariant) do num_devices = num_devices + 1 end
+  assert(num_devices > 1, "Must have more than one device")
 
   local var_id_to_index_map = populate_variants(c_test, variants)
 
@@ -134,6 +160,7 @@ local function add_device_specific_started(c_test, test_data)
 end
 
 local function add_device_agnostic(c_test, test_data)
+  c_test.num_devices = 1
   local variants = test_data.Variants
   local var_id_to_index_map, final_variant_idx, final_variant_id = populate_variants(c_test, variants)
   local state = test_data.State:lower()
@@ -163,7 +190,10 @@ end
 
 function bin_anonymous.add_bins_and_variants(c_test, test_data)
   local external_id = assert(test_data.external_id, "External id needs to be specified for test")
-  c_test.external_id = spooky_hash.convert_str_to_u64(external_id)
+  if ( type(external_id) == "string" ) then
+    external_id = assert(tonumber(external_id))
+  end
+  c_test.external_id = external_id
   local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific or not")
   assert(is_dev_spec == consts.FALSE or is_dev_spec == consts.TRUE, "Test canonly have TRUE or FALSE in  device specific routing")
   c_test.is_dev_specific = is_dev_spec

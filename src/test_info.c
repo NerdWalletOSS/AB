@@ -27,7 +27,7 @@ l_test_info(
 
 
   if ( ( *buf == '\0' ) || ( strcmp(buf, "Lua") == 0 ) ) {
-
+    if ( g_L == NULL ) { go_BYE(-1); }
     lua_getglobal(g_L, "get_test_info");
     if ( !lua_isfunction(g_L, -1)) {
       fprintf(stderr, "Function add does not exist in lua's global space\n");

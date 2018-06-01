@@ -1,5 +1,5 @@
 local cache            = require 'lua/cache'
-local json             = require 'lua/json'
+local JSON             = require 'lua/JSON' 
 local assertx          = require 'lua/assertx'
 local one_hot_encoding = require 'DT/lua/one_hot_encoding'
 local get_num_features = require 'DT/lua/get_num_features'
@@ -13,14 +13,14 @@ local function make_feature_vector(
   sz_out_buf, -- size of above
   is_debug -- boolean indicating whether to debug or not
   )
-  local in_features = assert(json.decode(body), 
+  local in_features = assert(JSON:decode(body), 
     "did not get valid JSON input")
   -- does the conversions
   local generate_features = assert(cache.get("generate_features"),
     'generate_features not in cache.')
   local out_features = assert(generate_features(in_features))
   if ( is_debug ) then 
-    local x = assert(json.encode(out_features))
+    local x = assert(JSON:encode(out_features))
     ffi.copy(out_buf, x)
     -- TODO P2 we need to make sure we do not overflow the buffer
   end
@@ -39,6 +39,7 @@ local function make_feature_vector(
     tostring(n_features), ' entries.')
     fvec[k-1] = v
   end
+  return true
 end
 
 return make_feature_vector

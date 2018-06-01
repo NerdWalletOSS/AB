@@ -3,8 +3,9 @@
 #include <event2/buffer.h>
 #include <event2/keyvalq_struct.h>
 extern int 
-get_date(
+get_hdr_val(
     struct evhttp_request *req,
-    char *date,
-    size_t sz_date
+    const char *key,
+    char *val,
+    size_t sz
     );

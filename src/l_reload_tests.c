@@ -9,11 +9,12 @@ l_reload_tests(
     void
     )
 {
-  for(int i=0; i < AB_MAX_NUM_TESTS; i++){
+  int status = 0;
+  if ( g_L == NULL ) { go_BYE(-1); }
+  for( int i=0; i < AB_MAX_NUM_TESTS; i++){
     g_test_str[i] = NULL;
   }
   static int num_entries[1];
-  int status = 0;
   num_entries[0] = -1;
   lua_getglobal(g_L, "reload");
   if ( !lua_isfunction(g_L, -1)) {
