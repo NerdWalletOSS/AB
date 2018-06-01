@@ -2,7 +2,7 @@ language: erlang
 sudo: required
 dist: trusty
 
-group: edge  # Add this
+group: edge  #  Add this
 
 notifications:
   email:
