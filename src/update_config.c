@@ -33,7 +33,7 @@ update_config(
   char *buf = NULL; 
   // sz_log_q
   free_if_non_null(g_log_q);
-  if ( g_cfg.sz_log_q > 0 ) { 
+  if ( g_cfg.sz_log_q <= 0 ) { go_BYE(-1); }
 #ifdef AB_AS_KAFKA
     g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
     return_if_malloc_failed(g_log_q);
@@ -44,7 +44,6 @@ update_config(
     memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
 #endif
     g_n_log_q = 0;
-  }
   //---------------------------------------------------
 
   // statsd.server 
@@ -176,26 +175,32 @@ update_config(
   if ( g_mdl != NULL ) { rs_munmap(g_mdl, g_len_mdl_file); }
   if ( *g_cfg.dt_dir != '\0' ) { 
 
-    fprintf(stderr, "WARNING!!!! Not loading dt_dir \n"); 
-    /*
-    int buflen = strlen(g_cfg.dt_dir) + strlen("dt.bin") + 4 ;
-    if ( buflen > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+    // fprintf(stderr, "WARNING!!!! Not loading dt_dir \n"); 
+
+    int buflen = 2 * (AB_MAX_LEN_FILE_NAME+1);
     buf = malloc(buflen); return_if_malloc_failed(buf);
     memset(buf, '\0', buflen); 
-    sprintf(g_dt_file, "%s/dt.bin", g_cfg.dt_dir); 
-    status = load_dt(g_dt_file, &g_dt, &g_len_dt_file, &g_n_dt);
-    cBYE(status);
-    status = load_rf(g_rf_file, &g_rf, &g_len_rf_file, &g_n_rf);
-    cBYE(status);
-    status = load_mdl(g_mdl_file, &g_mdl, &g_len_mdl_file, &g_n_mdl);
-    cBYE(status);
-    */
 
-    g_n_mdl = 1 ; // TODO P0 DELETE DELETE DELETE 
+    sprintf(buf, "%s/_dt.bin", g_cfg.dt_dir); 
+    status = load_dt(buf, &g_dt, &g_len_dt_file, &g_n_dt);
+    cBYE(status);
+
+    sprintf(buf, "%s/_rf.bin", g_cfg.dt_dir); 
+    status = load_rf(buf, &g_rf, &g_len_rf_file, &g_n_rf);
+    cBYE(status);
+
+    sprintf(buf, "%s/_mdl.bin", g_cfg.dt_dir); 
+    status = load_mdl(buf, &g_mdl, &g_len_mdl_file, &g_n_mdl);
+    cBYE(status);
 
     g_predictions = malloc(g_n_mdl * sizeof(float));
+    return_if_malloc_failed(g_predictions);
 
-    free_if_non_null(g_dt_feature_vector); 
+    g_rf_pos = malloc(g_n_rf * sizeof(int));
+    return_if_malloc_failed(g_rf_pos);
+    g_rf_neg = malloc(g_n_rf * sizeof(int));
+    return_if_malloc_failed(g_rf_neg);
+
     status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
     g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
     return_if_malloc_failed(g_dt_feature_vector);

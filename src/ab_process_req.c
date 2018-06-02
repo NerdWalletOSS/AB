@@ -11,7 +11,7 @@
 #include "chk_logger_conn.h"
 #include "kafka_check_conn.h"
 #include "l_chk_db_conn.h"
-#include "diagnostics.h"
+#include "l_diagnostics.h"
 #include "to_kafka.h"
 #include "dump_log.h"
 #include "add_fake_test.h"
@@ -24,9 +24,11 @@
 #include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"
+#include "classify.h"
 #include "classify_ua.h"
-#include "classify_ip.h"
+#include "ext_classify_ip.h"
 #include "hard_code_config.h"
+#include "setup.h"
 
 #include "l_hard_code_config.h"
 #include "l_load_config.h"
@@ -56,7 +58,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
-  int num_features;
+  int num_features; 
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -95,6 +97,10 @@ ab_process_req(
       status = l_chk_test(body); cBYE(status);
       break;
       //--------------------------------------------------------
+    case Classify : /* done by C */
+      status = classify(body, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+      break;
+      //--------------------------------------------------------
     case ClassifyIP : /* done by C */
       status = ext_classify_ip(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
@@ -126,7 +132,7 @@ ab_process_req(
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
       status = l_get_num_features(&num_features); cBYE(status);
-      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \%d\" } \n", num_features, g_n_dt_feature_vector);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
       break;
       //--------------------------------------------------------
     case GetVariant :  /* done by C */
@@ -140,10 +146,11 @@ ab_process_req(
       if ( g_cfg.sz_log_q > 0 ) {
         // Tell consumer that nothing more is coming
         g_halt = true;
+        fprintf(stderr, "HALT: Signalling consumer \n");
         pthread_cond_signal(&g_condc);  /* wake up consumer */
-          fprintf(stderr, "Waiting for consumer to finish \n");
-          pthread_join(g_con, NULL);
-          fprintf(stderr, "Consumer finished \n");
+        fprintf(stderr, "HALT: Waiting for consumer to finish \n");
+        pthread_join(g_con, NULL);
+        fprintf(stderr, "HALT: Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
@@ -208,44 +215,29 @@ ab_process_req(
     case Reload : /* done by Lua */
     case Restart : /* done by Lua */
       // t1 = get_time_usec();
-      g_halt = true;
       if ( g_cfg.sz_log_q > 0 ) {
         // Tell consumer thread nothing more is coming
+        g_halt = true;
+        fprintf(stderr, "Restart: Signalling consumer \n");
         pthread_cond_signal(&g_condc);  /* wake up consumer */
-        fprintf(stderr, "Waiting for consumer to finish \n");
+        fprintf(stderr, "Restart: Waiting for consumer to finish \n");
         pthread_join(g_con, NULL);
-        fprintf(stderr, "Consumer finished \n");
+        fprintf(stderr, "Restart: Consumer finished \n");
         pthread_mutex_destroy(&g_mutex);
         pthread_cond_destroy(&g_condc);
         pthread_cond_destroy(&g_condp);
       }
-      g_halt = false;
       // common to restart and reload
-      free_globals();
-      status = zero_globals();  cBYE(status);
-      status = init_lua(); cBYE(status);
-      if ( g_config_file[0] == '\0' )  {
-        hard_code_config(); // only for testing
-        status = l_hard_code_config(); cBYE(status); // only for testing
-      }
-      else {
-        status = l_load_config(g_config_file); cBYE(status);
-      }
-      status = update_config(); cBYE(status);
-      if ( g_cfg.sz_log_q > 0 ) {
-        pthread_mutex_init(&g_mutex, NULL);
-        pthread_cond_init(&g_condc, NULL);
-        pthread_cond_init(&g_condp, NULL);
-        status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
-        cBYE(status);
-      }
-
-      switch ( req_type ) {
-        case Reload: status = l_reload_tests();  cBYE(status); break;
-        case Restart : /* nothing to do  */ break;
-        default : go_BYE(-1); break;
-      }
+      status = setup(false); cBYE(status);
+      pthread_mutex_init(&g_mutex, NULL);
+      pthread_cond_init(&g_condc, NULL);
+      pthread_cond_init(&g_condp, NULL);
+      status = pthread_create(&g_con, NULL, &post_from_log_q, NULL);
       cBYE(status);
+
+      if ( req_type == Reload ) { 
+        status = l_reload_tests();  cBYE(status); 
+      }
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------

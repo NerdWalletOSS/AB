@@ -1,7 +1,9 @@
 local cache = require 'lua/cache'
+local JSON  = require 'lua/JSON'
 local x_hard_code_config = require 'lua/hard_code_config'
 local x_load_config = require 'RTS/ab_load_config'
 local x_update_config = require 'RTS/ab_update_config'
+local x_diagnostics = require 'RTS/diagnostics'
 
 local tests = require 'RTS/add_test'
 local reload_tests = require 'RTS/reload'
@@ -19,11 +21,16 @@ function update_config(...)
 end
 --=================================================
 function preproc(...)
-  tests.preprco(...)
+  tests.preproc(...)
 end
 
+function add(...)
+  tests.add(...)
+end
+
+
 function list_tests()
-  return json.encode(cache.get('tests'))
+  return JSON:encode(cache.get('tests'))
 end
 
 function reload(...)
@@ -37,11 +44,11 @@ function check_db_conn()
 end
 
 function get_config()
-  return json.encode(cache.get('config'))
+  return JSON:encode(cache.get('config'))
 end
 
 function get_test_info(args)
-  local j_table = json.decode(args)
+  local j_table = JSON:decode(args)
   local tests = cache.get('tests')
   local test = nil
   if j_table.id ~= nil then
@@ -55,9 +62,13 @@ function get_test_info(args)
       end
     end
   end
-  return json.encode(test)
+  return JSON:encode(test)
 end
 
+function diagnostics(...)
+  x_diagnostics()
+
+end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)
 --    local x = ffi.cast("int*", c_data)

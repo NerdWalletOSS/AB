@@ -30,7 +30,7 @@ hard_code_config(void)
   strcpy(g_cfg.statsd.server, "localhost");
   g_cfg.statsd.port = 8125;
 
-  g_cfg.sz_log_q = 1048576;
+  g_cfg.sz_log_q = 131072;
   g_cfg.num_post_retries = 1;
 
   strcpy(g_cfg.default_url, "http://localhost:8080/AB/test_webapp/index0.html");
@@ -43,15 +43,18 @@ hard_code_config(void)
   strcpy(g_cfg.browser_file,  "/opt/ab/browser.csv");
   strcpy(g_cfg.device_type_file,  "/opt/ab/device_type.csv");
 
-  strcpy(g_cfg.dt_dir,  "DT/spam/");
+  // strcpy(g_cfg.dt_dir,  "../DT/spam/");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
-
+  // defaults taken from https://kafka.apache.org/08/documentation.html
+/*
+  strcpy(g_cfg.kafka.brokers, "localhost");
   strcpy(g_cfg.kafka.brokers, "192.168.1.151");
   strcpy(g_cfg.kafka.topic, "ab");
   strcpy(g_cfg.kafka.queue_size, "1048576");
-  strcpy(g_cfg.kafka.retries, "5");
-  strcpy(g_cfg.kafka.max_buffering_time, "10");
+  strcpy(g_cfg.kafka.retries, "4");
+  strcpy(g_cfg.kafka.max_buffering_time, "5000");
+*/
 
 }

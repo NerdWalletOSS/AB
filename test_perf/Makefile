@@ -45,20 +45,29 @@ SBLASTER_OBJS = \
 	../src/make_guid.o  \
 	../src/spooky_hash.o  \
 
+ADD_TEST_OBJS = \
+	ut_add_tests.o setup_curl.o add_tests.o  execute.o \
+	../src/auxil.o \
+	../src/mmap.o  \
+	../src/make_guid.o  \
+	../src/spooky_hash.o  \
+
+
 BLASTER_INCS = ../src/ab_incs.h
 
-all : sblaster pblaster
+all : sblaster pblaster add_tests
+
+add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS) 
+	$(CC) $(LFLAGS) $(ADD_TEST_OBJS) -o add_tests  \
+	../src/libs/libcurl.so 
 
 pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
 	../src/libs/libcurl.so -lpthread
 
-sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) \
-	../jansson-2.10/src/.libs/libjansson.a \
-	../libevent-2.0.22-stable/.libs/libevent.so 
+sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
-	../src/libs/libcurl.so \
-	../jansson-2.10/src/.libs/libjansson.a \
+	../src/libs/libcurl.so 
 
 
 ../jansson-2.10/src/.libs/libjansson.a :

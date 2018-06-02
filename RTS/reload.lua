@@ -5,7 +5,7 @@ local sql = require 'lua/sql'
 local consts = require 'lua/ab_consts'
 local cache = require 'lua/cache'
 local load_config = require 'RTS/ab_load_config'
-local json = require 'lua/json'
+local JSON = require 'lua/JSON'
 local AddTest = require 'RTS/add_test'
 local reload = {}
 function reload.get_tests_from_db()
@@ -82,7 +82,7 @@ function reload.get_tests_from_db()
       test_json.DeviceCrossVariant = dev_arr
     end
     -- TODO here is where we send this to add test
-    local str = json.encode(test_json)
+    local str = JSON:encode(test_json)
     tests_ret[#tests_ret + 1] = str
   end
   return tests_ret

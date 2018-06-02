@@ -44,9 +44,11 @@ free_test(
   if ( test_idx > AB_MAX_NUM_TESTS ) { go_BYE(-1); }
   TEST_META_TYPE *ptr_test = &(g_tests[test_idx]);
 
-  for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
-    free_if_non_null(ptr_test->variants[v].custom_data);
-    free_if_non_null(ptr_test->variants[v].url);
+  if ( ptr_test->variants ) { 
+    for ( uint32_t v = 0; v < ptr_test->num_variants; v++ ) { 
+      free_if_non_null(ptr_test->variants[v].custom_data);
+      free_if_non_null(ptr_test->variants[v].url);
+    }
   }
   free_if_non_null(ptr_test->variants);
 
@@ -124,9 +126,13 @@ malloc_test(
   if ( p->final_variant_idx != NULL ) { go_BYE(-1); }
   //------------------------------------------
   variants = malloc(num_variants * sizeof(VARIANT_REC_TYPE));
-  free_if_non_null(variants);
+  return_if_malloc_failed(variants);
+  p->num_variants = num_variants;
   for ( uint32_t v = 0; v < p->num_variants; v++ ) { 
-    memset(variants, '\0', sizeof(VARIANT_REC_TYPE));
+    variants[v].id = 0;
+    variants[v].percentage = 0;
+    variants[v].separator = '\0';
+    memset(variants[v].name, '\0', AB_MAX_LEN_VARIANT_NAME+1);
   }
   for ( uint32_t v = 0; v < p->num_variants; v++ ) { 
     variants[v].custom_data = malloc(AB_MAX_LEN_CUSTOM_DATA+1);
@@ -138,7 +144,6 @@ malloc_test(
     memset(variants[v].url, '\0',  AB_MAX_LEN_URL+1);
   }
   p->variants     = variants;
-  p->num_variants = num_variants;
   //--- Determine number of devices
   if ( p->is_dev_specific ) {
     num_devices = g_n_justin_cat_lkp; 
