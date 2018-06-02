@@ -29,25 +29,37 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-SO_SRCS := $(filter-out main.c, $(CSRCS))
+filter := main.c mk_ua_to_dev_map.c use_ua_to_dev_map.c
+SO_SRCS := $(filter-out $(filter), $(CSRCS))
 SO_OBJS = $(SO_SRCS:.c=.o)
 
-all : test_ua ua.so
+all : test_ua ua.so mk_ua_to_dev_map use_ua_to_dev_map
 
 mmap.o :
 	$(CC) -c -o $@ ../../src/mmap.c $(CFLAGS)  $(INCS)
 
+spooky_hash.o :
+	$(CC) -c -o $@ ../../src/spooky_hash.c $(CFLAGS)  $(INCS)
+
 auxil.o :
 	$(CC) -c -o $@ ../../src/auxil.c $(CFLAGS)  $(INCS)
 
-XOBJS = mmap.o auxil.o
+XOBJS = mmap.o auxil.o spooky_hash.o
 
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
-test_ua : $(COBJS) $(XOBJS) 
+test_ua : $(SO_OBJS) $(XOBJS)  main.o
+	$(CC) $(CFLAGS) $(SO_OBJS) $(XOBJS) main.o $(INCS) -o test_ua  -lm
 
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_ua  -lm
+mk_ua_to_dev_map : $(SO_OBJS) $(XOBJS) mk_ua_to_dev_map.o
+	$(CC) $(CFLAGS) $(SO_OBJS) $(XOBJS) mk_ua_to_dev_map.o $(INCS) \
+	-o mk_ua_to_dev_map
+
+use_ua_to_dev_map : $(SO_OBJS) $(XOBJS) use_ua_to_dev_map.o
+	$(CC) $(CFLAGS) $(SO_OBJS) $(XOBJS) use_ua_to_dev_map.o $(INCS) \
+	-o use_ua_to_dev_map
+
 
 #  -lpthread -ldl  -lgomp
 

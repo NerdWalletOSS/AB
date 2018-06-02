@@ -8,11 +8,12 @@
 #include "load_names.h"
 #include "load_model.h"
 #include "score_ua.h"
+#include "classify_ua.h"
 #include "auxil.h"
 
-MODEL_REC_TYPE *g_ua_M; int g_ua_nM;
+MODEL_REC_TYPE *g_ua_M; int g_n_ua_M;
 MODEL_NAME_TYPE *g_ua_N; int g_ua_num_models;
-uint64_t *g_ua_H; int g_ua_nH;
+uint64_t *g_ua_H; int g_n_ua_H;
 
 #define MAXLINE 65535
 
@@ -25,9 +26,9 @@ main(
   int status = 0;
   FILE *fp = NULL;
 
-  g_ua_M = NULL; g_ua_nM = 0;
+  g_ua_M = NULL; g_n_ua_M = 0;
   g_ua_N = NULL; g_ua_num_models = 0;
-  g_ua_H = NULL; g_ua_nH = 0;
+  g_ua_H = NULL; g_n_ua_H = 0;
 
   if ( ( argc != 3 ) && ( argc != 4 ) ) { go_BYE(-1); }
 
@@ -39,7 +40,7 @@ main(
   }
   status = load_names(g_ua_category_intercept_file, &g_ua_N, &g_ua_num_models);
   status = load_model(g_ua_model_coeff_file, g_ua_num_models,
-      &g_ua_M, &g_ua_nM,  &g_ua_H, &g_ua_nH);
+      &g_ua_M, &g_n_ua_M,  &g_ua_H, &g_n_ua_H);
 
   fp = fopen(test_file, "r");
   return_if_fopen_failed(fp, test_file, "r");
@@ -50,10 +51,9 @@ main(
     char *cptr = fgets(user_agent, MAXLINE, fp);
     if ( feof(fp) ) { break; }
     if ( cptr == NULL ) { break; }
-    status = score_ua(user_agent, g_ua_M, g_ua_nM, g_ua_N, g_ua_num_models, &best_model); 
+    status = score_ua(user_agent, g_ua_M, g_n_ua_M, g_ua_N, g_ua_num_models, &best_model); 
     cBYE(status);
     if (( best_model < 0 )||( best_model >= g_ua_num_models ) ) { go_BYE(-1);}
-    fprintf(stderr, "%d:%s\n", best_model, user_agent);
     /*
     for ( unsigned int i = 0; i < g_n_devices; i++ ) { 
       if ( strcmp(g_N[best_model].model, g_devices[i].device) == 0 ) { 
@@ -64,7 +64,7 @@ main(
   }
 BYE:
   if ( g_ua_M != NULL ) { 
-    for ( int i = 0; i <  g_ua_nM; i++ ) { 
+    for ( int i = 0; i <  g_n_ua_M; i++ ) { 
       free_if_non_null(g_ua_M[i].coefficients);
     }
   }

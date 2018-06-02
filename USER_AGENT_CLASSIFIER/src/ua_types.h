@@ -13,4 +13,17 @@ typedef struct  _model_rec_type {
   double *coefficients;
 } MODEL_REC_TYPE;
 
+typedef struct _ua_rec_type{
+  uint32_t top_hash;
+  uint32_t bot_hash;
+  uint8_t device_type_id;
+  uint8_t os_id;
+  uint8_t browser_id;
+  uint8_t justin_cat_id;
+} UA_REC_TYPE;
+
+typedef struct _lkp_rec_type {
+  uint32_t id;
+  char *name;
+} LKP_REC_TYPE;
 #endif

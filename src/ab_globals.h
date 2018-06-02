@@ -73,6 +73,7 @@ EXTERN uint32_t g_os_id;
 EXTERN uint32_t g_browser_id; 
 EXTERN uint32_t g_device_type_id; 
 
+#include "ua_types.h"
 EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C

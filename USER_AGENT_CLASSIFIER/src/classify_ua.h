@@ -1,10 +1,4 @@
 extern int
-ext_classify_ua(
-    const char *args,
-    char *X,
-    size_t nX
-    );
-extern int
 classify_ua(
     char *user_agent, 
     UA_REC_TYPE *X, // classify_ua_map

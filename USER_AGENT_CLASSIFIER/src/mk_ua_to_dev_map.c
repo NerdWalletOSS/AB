@@ -10,6 +10,7 @@
 #include "auxil.h"
 #include "mmap.h"
 #include "load_lkp.h"
+#include "load_justin_map.h"
 #include "spooky_hash.h"
 
 //-------------------------------------------------------
@@ -37,53 +38,6 @@ UI8_srt_compare(
     return (-1);
   }
 }
-//------------------------------------------------------
-static int
-load_map(
-    const char *justin_map_file, 
-    JUSTIN_MAP_REC_TYPE **ptr_justin_map, 
-    int *ptr_n_justin_map
-    )
-{
-  int status = 0;
-  FILE *dmfp = NULL;
-  JUSTIN_MAP_REC_TYPE *justin_map = NULL;
-  int n_justin_map = 0;
-
-  dmfp = fopen(justin_map_file, "r");
-  return_if_fopen_failed(dmfp, justin_map_file, "r");
-
-  status = num_lines(justin_map_file, &n_justin_map); cBYE(status);
-  if ( n_justin_map == 0 ) { go_BYE(-1); }
-  justin_map = malloc(n_justin_map * sizeof(JUSTIN_MAP_REC_TYPE));
-  return_if_malloc_failed(justin_map);
-  for ( int i = 0; i < n_justin_map; i++ ) { 
-    char buf[MAX_LEN_NAME+1]; int bufsz = MAX_LEN_NAME;
-    char line[MAXLINE+1];
-    memset(line, '\0', MAXLINE+1);
-    char *cptr = fgets(line, MAXLINE, dmfp); 
-    if ( cptr == NULL ) {  break; }
-    strtolower(line);
-    cptr = line;
-    if ( line[strlen(line)-1] == '\n' ) { 
-      line[strlen(line)-1] = '\0';
-    }
-    status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(justin_map[i].justin_cat, buf); 
-    status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(justin_map[i].device, buf); 
-    status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(justin_map[i].device_type, buf); 
-    status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(justin_map[i].os, buf); 
-    status = read_to_chars(&cptr, ",\n", buf, bufsz);cBYE(status);
-    strcpy(justin_map[i].browser, buf); 
-  }
-  *ptr_justin_map = justin_map;
-  *ptr_n_justin_map = n_justin_map;
-BYE:
-  return status;
-}
 
 int
 main(
@@ -92,13 +46,14 @@ main(
     )
 {
   int status = 0;
-  FILE *afp = NULL; FILE *ofp = NULL; FILE *dmfp = NULL;
+  FILE *afp = NULL; FILE *ofp = NULL; 
   spooky_state g_spooky_state;
 
-  uint64_t g_seed1 = 961748941; // large prime number
-  uint64_t g_seed2 = 982451653; // some other large primenumber
+  uint64_t g_seed1 = AB_SEED_1;
+  uint64_t g_seed2 = AB_SEED_2;
   spooky_init(&g_spooky_state, g_seed1, g_seed2);
   char *X = NULL; size_t nX = 0;
+
   JUSTIN_MAP_REC_TYPE *justin_map = NULL; int n_justin_map = 0;
   LKP_REC_TYPE *justin_cat_lkp = NULL; int n_justin_cat_lkp = 0;
   LKP_REC_TYPE *os_lkp = NULL; int n_os_lkp = 0;
@@ -111,13 +66,13 @@ main(
   char *agent_file   = argv[1]; 
   char *output_file  = argv[2]; 
 
-  const char *justin_map_file = "justin_map.csv";
+  const char *justin_map_file = "../data/justin_map.csv";
 
-  const char *justin_cat_file = "justin_cat.csv";
-  const char *os_file         = "os.csv";
-  const char *browser_file    = "browser.csv";
-  const char *device_file     = "device.csv"; 
-  const char *device_type_file= "device_type.csv"; 
+  const char *justin_cat_file = "../data/justin_cat.csv";
+  const char *os_file         = "../data/os.csv";
+  const char *browser_file    = "../data/browser.csv";
+  const char *device_file     = "../data/device.csv"; 
+  const char *device_type_file= "../data/device_type.csv"; 
 
   afp = fopen(agent_file, "r");
   return_if_fopen_failed(afp, agent_file, "r");
@@ -135,10 +90,10 @@ main(
   status = load_lkp(device_type_file, &device_type_lkp, &n_device_type_lkp);
   cBYE(status);
   // read mapping between other lkps and justin category
-  status = load_map(justin_map_file, &justin_map, &n_justin_map);
+  status = load_justin_map(justin_map_file, &justin_map, &n_justin_map);
   cBYE(status);
   /* read user agent  */
-  int n_bad_user_agent = 0, n_good_user_agent = 0;
+  uint32_t n_bad_user_agent = 0, n_good_user_agent = 0;
   for ( int i = 0; ; i++ ) {
     int nw;
     char line[MAXLINE+1];
@@ -247,10 +202,10 @@ BYE:
   fclose_if_non_null(afp);
   fclose_if_non_null(ofp);
   free_if_non_null(justin_map);
-  free_if_non_null(justin_cat_lkp);
-  free_if_non_null(os_lkp);
-  free_if_non_null(browser_lkp);
-  free_if_non_null(device_lkp);
-  free_if_non_null(device_type_lkp);
+  free_lkp(justin_cat_lkp, n_justin_cat_lkp);
+  free_lkp(os_lkp, n_os_lkp);
+  free_lkp(browser_lkp, n_browser_lkp);
+  free_lkp(device_lkp, n_device_lkp);
+  free_lkp(device_type_lkp, n_device_type_lkp);
   return status;
 }

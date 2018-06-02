@@ -1,3 +1,4 @@
+#include "ua_types.h"
 extern int 
 lkp_name_to_id(
     LKP_REC_TYPE *lkp,
@@ -18,3 +19,8 @@ lkp_id_to_name(
     uint32_t id
     );
 
+extern int
+free_lkp(
+    LKP_REC_TYPE *lkp,
+    int n_lkp
+    );

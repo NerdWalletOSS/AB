@@ -1,9 +1,15 @@
-#include "ab_incs.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "macros.h"
+#include "ua_types.h"
 #include "auxil.h"
 #include "load_lkp.h"
 
 #define MAXLINE 1024
-#define MAX_LEN_NAME AB_MAX_LEN_LKP_NAME
+#define MAX_LEN_NAME 15
 //-------------------------------------------------------
 int 
 lkp_name_to_id(
@@ -31,6 +37,27 @@ BYE:
 }
 //-------------------------------------------------------
 int
+free_lkp(
+    LKP_REC_TYPE *lkp,
+    int n_lkp
+    )
+{
+  int status = 0;
+  if ( ( lkp == NULL ) || ( n_lkp == 0 ) ) { go_BYE(-1); }
+  if ( ( lkp != NULL ) && ( n_lkp != 0 ) ) { 
+    for ( int i = 0; i < n_lkp; i++ ) { 
+      free_if_non_null(lkp[i].name);
+    }
+    free_if_non_null(lkp);
+  }
+  else {
+    go_BYE(-1);
+  }
+BYE:
+  return status;
+}
+
+int
 load_lkp(
     const char *lkp_file,
     LKP_REC_TYPE **ptr_lkp,
@@ -41,6 +68,7 @@ load_lkp(
   FILE *dfp = NULL; 
   LKP_REC_TYPE *lkp = NULL; int n_lkp = 0;
 
+  *ptr_lkp = NULL; n_lkp = 0;
   dfp = fopen(lkp_file, "r");
   return_if_fopen_failed(dfp, lkp_file, "r");
   status = num_lines(lkp_file, &n_lkp); cBYE(status);
@@ -64,9 +92,8 @@ load_lkp(
     int lkp_id = 0;
     lkp_id = strtoll(str_idx, &endptr, 10);
     if ( lkp_id <= 0 ) { go_BYE(-1); }
-    memset(lkp[i].name, '\0', MAX_LEN_NAME+1);
     if ( strlen(name)> MAX_LEN_NAME ) { go_BYE(-1); }
-    strcpy(lkp[i].name, name);
+    lkp[i].name = strdup(name);
     lkp[i].id = lkp_id;
   }
   // id must be 1, 2, 3, ...

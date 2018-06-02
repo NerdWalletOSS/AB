@@ -1,4 +1,5 @@
 #/bin/bash
+# This is a test script to verify the run time classifier code
 set -e 
 make clean
 make

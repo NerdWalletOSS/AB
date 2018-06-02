@@ -97,20 +97,6 @@ typedef struct _payload_rec_type {
   uint32_t variant_id;
 } PAYLOAD_REC_TYPE;
 
-typedef struct _lkp_rec_type {
-  uint32_t id;
-  char name[AB_MAX_LEN_LKP_NAME+1];
-} LKP_REC_TYPE;
-
-typedef struct _ua_rec_type{
-  uint32_t top_hash;
-  uint32_t bot_hash;
-  uint8_t device_type_id;
-  uint8_t os_id;
-  uint8_t browser_id;
-  uint8_t justin_cat_id;
-} UA_REC_TYPE;
-
 typedef struct _service_type {
   uint16_t  port;
   char server[AB_MAX_LEN_SERVER_NAME+1];
