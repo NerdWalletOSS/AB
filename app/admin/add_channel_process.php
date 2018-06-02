@@ -1,4 +1,5 @@
 <?php
+error_reporting( E_ALL );
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
@@ -11,6 +12,7 @@ require_once "add_channel.php";
 $channel = $_GET['channel'];
 
 $rslt = add_channel($channel);
+echo $GLOBALS["err"];
 var_dump($rslt);
 if ( !$rslt ) { 
   header('Location: admin.php?msg='.urlencode($GLOBALS["err"]));
