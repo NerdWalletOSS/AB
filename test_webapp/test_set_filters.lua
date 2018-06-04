@@ -12,13 +12,38 @@ tests.t1 = function ()
   local hdrs, outbody, status = mk_test(T1)
   assert(status == 200)
   local tid = get_test_id(hdrs)
+  -- check filters are off and then set them all on
   local T = get_test_info(tid)
+  assert(tonumber(T.has_filters) == 0 )
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 0 )
+    f.is_on = "1"
+  end
   T.updater_id = T.creator_id;
   local hdrs = set_filters(T)
-  for k, v in pairs(hdrs) do print(k, v) end
+  -- check filters are on and set them off
+  local T = get_test_info(tid)
+  assert(tonumber(T.has_filters) == 0 )
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 1 )
+    f.is_on = "0"
+  end
+  local hdrs = set_filters(T)
+  -- check filters are off
+  local T = get_test_info(tid)
+  assert(tonumber(T.has_filters) == 0 )
+  for _, f in  pairs(T.CategoricalFilters) do 
+    assert(tonumber(f.is_on) == 0 )
+  end
+  -- Set has_filters on and off and verify that it worked
+  for i = 0, 1 do 
+    T = get_test_info(tid)
+    T.has_filters = tostring(1-i)
+    local hdrs = set_filters(T)
+    T = get_test_info(tid)
+    assert(tonumber(T.has_filters) == 1-i )
+  end
   print("Test t1 succeeded")
-
-
 end
 tests.t1() -- uncomment for quick and dirty testing
 return tests

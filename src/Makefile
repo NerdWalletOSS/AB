@@ -14,7 +14,8 @@ INCS= -I. \
 	-I../registered-domain-libs/C/ \
 	-I../libyuarel/ \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
-	-I../librdkafka/src/
+	-I../librdkafka/src/ \
+	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
@@ -42,7 +43,12 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : ab_httpd libspooky_hash.so ../lua/ab_consts.lua ../lua/ab_ffi.lua ../dt_interpreter/src/dt.so
+all : ab_httpd \
+	libspooky_hash.so \
+	../lua/ab_consts.lua \
+	../lua/ab_ffi.lua \
+	../dt_interpreter/src/dt.so  \
+	../USER_AGENT_CLASSIFIER/src/ua.so 
 
 ./libs:
 	mkdir libs
@@ -99,6 +105,9 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
+../USER_AGENT_CLASSIFIER/src/ua.so : 
+	make -C ../USER_AGENT_CLASSIFIER/src/
+
 ../utm_kv/src/utm_kv.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	make -C ../utm_kv/src/
 
@@ -149,6 +158,7 @@ ab_httpd : $(COBJS)  \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../USER_AGENT_CLASSIFIER/src/ua.so \
 	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
@@ -162,6 +172,7 @@ ab_httpd : $(COBJS)  \
 	../libyuarel/yuarel.o \
 	../luajit-2.0.5/src/libluajit.a \
 	../dt_interpreter/src/dt.so \
+	../USER_AGENT_CLASSIFIER/src/ua.so \
 	../utm_kv/src/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \

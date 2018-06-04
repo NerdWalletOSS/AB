@@ -73,6 +73,7 @@ EXTERN uint32_t g_os_id;
 EXTERN uint32_t g_browser_id; 
 EXTERN uint32_t g_device_type_id; 
 
+#include "ua_types.h"
 EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
@@ -148,3 +149,7 @@ EXTERN char g_body[AB_MAX_LEN_BODY+1];
 EXTERN int g_sz_body;
 EXTERN int g_kafka_memory; 
 
+#include "ua_types.h"
+EXTERN  MODEL_REC_TYPE *g_ua_M; int g_ua_nM;
+EXTERN  MODEL_NAME_TYPE *g_ua_N; int g_ua_num_models;
+EXTERN  uint64_t *g_ua_H; int g_ua_nH;
