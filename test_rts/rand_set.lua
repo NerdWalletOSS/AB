@@ -33,6 +33,7 @@ local rts_endpoints = {
 -- "reset_db",
 -- "test_info",
 -- "update_config",
+"diagnostics",
 }
 
 local function is_in_set(
