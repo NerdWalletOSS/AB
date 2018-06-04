@@ -1,4 +1,4 @@
-local new_timetable = require "luatz.timetable".new
+local new_timetable = require "lua.luatz.timetable".new
 
 --- Parse an RFC 3339 datetime at the given position
 -- Returns a time table and the `tz_offset`

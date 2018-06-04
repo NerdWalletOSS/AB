@@ -1,5 +1,5 @@
-local tz_info_mt = require "luatz.tzinfo".tz_info_mt
-local tt_info_mt = require "luatz.tzinfo".tt_info_mt
+local tz_info_mt = require "lua.luatz.tzinfo".tz_info_mt
+local tt_info_mt = require "lua.luatz.tzinfo".tt_info_mt
 
 local read_int32be, read_int64be
 
