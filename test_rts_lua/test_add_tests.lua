@@ -1,3 +1,4 @@
+require 'busted.runner'()
 local assertx = require 'lua/assertx'
 -- local dbg = require 'debugger'
 local ffi = require 'lua/ab_ffi'
