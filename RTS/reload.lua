@@ -1,4 +1,4 @@
--- local dbg = require 'debugger'
+-- local dbg = require 'lua/debugger'
 local assertx = require 'lua/assertx'
 local ffi = require 'lua/ab_ffi'
 local sql = require 'lua/sql'
@@ -89,12 +89,13 @@ function reload.get_tests_from_db()
 end
 
 function reload.reload(c_index, g_reload_tests)
+  assert(g_reload_tests ~= NIL, "Array should be given to be populated")
   local tests = reload.get_tests_from_db()
   assertx(#tests > 0 and #tests <= consts.AB_MAX_NUM_TESTS, "Should have at least one valid test and test less than ", consts.AB_MAX_NUM_TESTS, " , got ", #tests)
   -- empty the cache and the c_struct
   -- ffi.fill(g_tests, ffi.sizeof("TEST_META_TYPE") * consts.AB_MAX_NUM_TESTS)
   c_index = ffi.cast("int*", c_index)
-  g_reload_tests = ffi.cast("const char*", g_reload_tests)
+  g_reload_tests = ffi.cast("const char**", g_reload_tests)
   c_index[0] = 0
   cache.put("tests", {})
   -- Now clean the tables entires in the c structure.

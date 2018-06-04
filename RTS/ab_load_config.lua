@@ -115,12 +115,12 @@ function load_cfg.db_connect(mysql)
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
   -- print(host, user, pass, db, port)
-  -- TODO P0 
+  -- TODO P0
   local conn = sql:connect(host, user, pass, db, port)
   return conn
 end
 
-local function load_db_data(g_cfg, config, is_updated)
+function load_cfg.load_db_data(config)
   local conn = load_cfg.db_connect(config.MYSQL)
   -- TODO execute the sql
   local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
@@ -130,7 +130,6 @@ local function load_db_data(g_cfg, config, is_updated)
     devs[entry.id] = entry.name
   end
   cache.put("devices", devs)
-  return is_updated
 end
 
 local function update_rts_configs(g_cfg, config)
@@ -158,24 +157,24 @@ local function update_rts_configs(g_cfg, config)
   c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
   is_updated, c_struct.max_len_uuid = update_number_field(config.SZ_UUID_HT,
   c_struct.max_len_uuid, is_updated, 1, 2^32 -1)
-   is_updated, c_struct.xy_guid = update_number_field(config.XY_GUID,
+  is_updated, c_struct.xy_guid = update_number_field(config.XY_GUID,
   c_struct.xy_guid, is_updated, 0, 2^32 -1)
-  
-  
-  is_updated = load_db_data(g_cfg, config, is_updated)
+
+
+  load_cfg.load_db_data(config)
   return is_updated
 end
 
 -- local function update_ml_configs(g_cfg, config)
 --   local is_updated = consts.FALSE
 --   local c_struct = g_cfg[0]
--- 
+--
 --   is_updated = update_file_field(config.DT_DIR, c_struct.dt_dir, is_updated)
 --   -- is_updated = update_file_field(config.DT_BIN_FILE, c_struct.dt_file, is_updated)
 --   -- is_updated = update_file_field(config.RF_BIN_FILE, c_struct.rf_file, is_updated)
 --   -- is_updated = update_file_field(config.MDL_BIN_FILE, c_struct.mdl_file, is_updated)
 --   is_updated = update_file_field(config.MMDB_FILE, c_struct.mmdb_file, is_updated)
--- 
+--
 --   return is_updated
 -- end
 
