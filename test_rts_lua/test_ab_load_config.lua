@@ -1,3 +1,4 @@
+require 'busted.runner'()
 -- package.path=package.path .. ";./../src/?.lua"
 -- require 'strict'
 local assertx = require 'lua/assertx'

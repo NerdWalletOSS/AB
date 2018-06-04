@@ -5,13 +5,13 @@ local function l_hard_code_config(
   local config = {}
     -- For Database
   config.AB = {}
-  config.AB.DB = {}
-  config.AB.DB.SERVER = {}; config.AB.DB.SERVER.VALUE = "localhost"
-  config.AB.DB.USER = {}; config.AB.DB.USER.VALUE = "root"
-  config.AB.DB.PORT = {}; config.AB.DB.PORT.VALUE = "3306"
-  config.AB.DB.PASSWORD = {}; config.AB.DB.PASSWORD.VALUE = ""
-  config.AB.DB.DATABASE = {}
-  config.AB.DB.DATABASE.VALUE = "abdb2"
+  config.AB.MYSQL = {}
+  config.AB.MYSQL.SERVER = {}; config.AB.MYSQL.SERVER.VALUE = "127.0.0.1"
+  config.AB.MYSQL.USER = {}; config.AB.MYSQL.USER.VALUE = "root"
+  config.AB.MYSQL.PORT = {}; config.AB.MYSQL.PORT.VALUE = "3306"
+  config.AB.MYSQL.PASSWORD = {}; config.AB.MYSQL.PASSWORD.VALUE = ""
+  config.AB.MYSQL.DATABASE = {}
+  config.AB.MYSQL.DATABASE.VALUE = "abdb2"
   --=====================================
   -- For Decision Tree
   -- Following is sample if you need stuff from C hard code to Lua hard cod

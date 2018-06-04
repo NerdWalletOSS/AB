@@ -1,3 +1,4 @@
+require 'busted.runner'()
 local cache = require 'lua/cache'
 
 local function is_same(a, b)
