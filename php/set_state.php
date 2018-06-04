@@ -135,6 +135,7 @@ function set_state(
   $outJ["msg_stdout"] = "Changed state of Test $test_id from $old_state to $new_state";
   db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
   // Note it is possible for both msg_stdout and msg_stderr to be set
+  $rts_err_msg = "";
   $status = inform_rts($test_id, $rts_err_msg);
   if ( !$status ) { 
     $http_code = 400; 

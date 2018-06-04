@@ -1,0 +1,5 @@
+_*
+*.so
+test_ua
+use_ua_to_dev_map
+mk_ua_to_dev_map

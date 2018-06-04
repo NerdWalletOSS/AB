@@ -1,4 +1,8 @@
 #include "ab_incs.h"
+#include "rdkafka.h"
+extern rd_kafka_t *g_rk;         /* Producer instance handle */
+extern rd_kafka_topic_t *g_rkt;  /* Topic object */
+extern CFG_TYPE g_cfg;
 #include "kafka_add_to_queue.h"
 
 int 
@@ -12,7 +16,8 @@ kafka_add_to_queue(
   if ( buf == NULL ) { go_BYE(-1); }
   if ( len  == 0 ) {  len = strlen(buf); }
   if ( len == 0 ) { go_BYE(-1); }
-  if (g_rk == NULL) { go_BYE(-1); }
+  if ( g_rk == NULL) { go_BYE(-1); }
+  if ( g_rkt == NULL) { go_BYE(-1); }
   /*
    * Send/Produce message.
    * This is an asynchronous call, on success it will only

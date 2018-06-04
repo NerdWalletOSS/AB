@@ -158,8 +158,8 @@ init_globals(
 {
   int status = 0;
 
-  g_seed1 = 961748941; // large prime number
-  g_seed2 = 982451653; // some other large primenumber
+  g_seed1 = AB_SEED_1;
+  g_seed2 = AB_SEED_2;
   spooky_init(&g_spooky_state, g_seed1, g_seed2);
   srand48(g_seed1);
 

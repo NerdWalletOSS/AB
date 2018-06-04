@@ -89,6 +89,8 @@
 #define AB_MAX_LEN_KAFKA_BUF_TIME 7
 #define AB_MAX_LEN_KAFKA_QUEUE_SIZE 7
 
+#define AB_SEED_1 961748941; // large prime number
+#define AB_SEED_2 982451653; // some other large primenumber
 
 #define AB_MAX_LEN_KAFKA_TOPIC 63
 #endif

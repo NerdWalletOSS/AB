@@ -7,10 +7,9 @@ local function set_filters(
   )
   assert(type(T) == "table")
   local url = "http://localhost:8080/AB/php/endpoints/endpoint_set_filters.php"
+  local plfile = require 'pl.file'
+  plfile.write("/tmp/_x.json", JSON:encode(T))
   local hdrs, body, status = curl.post(url, nil, JSON:encode(T))
-  for k,v in pairs(hdrs) do print(k, v) end
-  print(body)
-  print(status)
   assert(status == 200)
   return hdrs
 end

@@ -30,7 +30,9 @@ function set_filters(
   $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $test_id    = get_json_element($inJ, 'id'); 
   $updater_id = get_json_element($inJ, 'updater_id');
-
+  $has_filters = get_json_element($inJ, 'has_filters');
+  $has_filters = (int)($has_filters);
+  rs_assert(( ( $has_filters == 1 ) || ( $has_filters == 0 ) ));
 
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
@@ -48,14 +50,20 @@ function set_filters(
 
   $cat_filters    = get_json_element($inJ, 'CategoricalFilters'); 
   //-- START : Database updates
+  unset($X);
+  $X['has_filters'] = $has_filters;
+  $x = db_set_row("test", $test_id, $X);
+  rs_assert($x, "db_set_row_failed");
+
   foreach ( $cat_filters as $k => $v ) {
     $id = $v->{'id'};
-    $is_on = $v->{'is_on'};
+    $is_on = (int)($v->{'is_on'});
+    rs_assert( ( ( $is_on == 0 ) || ( $is_on == 1 ) ) );
+
     unset($X);
     $X['is_on'] = $is_on;
-    $is_on = 1;
-    rs_assert( ( ( $is_on == 0 ) || ( $is_on == 1 ) ) );
-    db_set_row("cat_attr_val_test", $id, $X);
+    $x = db_set_row("cat_attr_val_test", $id, $X);
+    rs_assert($x, "db_set_row failed");
   }
   //-- STOP : Database updates
   $http_code = 200;
