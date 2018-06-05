@@ -13,7 +13,9 @@ function load_config(...)
 end
 
 function hard_code_config(...)
-  cache.put("config", x_hard_code_config(...))
+  local cfg = x_hard_code_config(...)
+  cache.put("config", cfg)
+  x_load_config.load_db_data(cfg.AB)
 end
 
 function update_config(...)

@@ -45,5 +45,5 @@ tests.t1 = function(
     a, b, c = curl.get(dc_url);   assert(c == 200)
   end
 end
--- tests.t1(10)
+tests.t1(10)
 return tests

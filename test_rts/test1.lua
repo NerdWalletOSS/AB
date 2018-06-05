@@ -1,10 +1,16 @@
-curl = require 'lua/curl'
-JSON = require 'lua/JSON'
+local curl              = require 'lua/curl'
+local JSON              = require 'lua/JSON'
+local compare_test_info = require 'test_rts/compare_test_info'
+
+local tic_url = "localhost:8000/TestInfo?Source=C&TestType=XYTest"
+local til_url = "localhost:8000/TestInfo?Source=Lua&TestType=XYTest"
 
 local ltc_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
 local ltl_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
+
 local dc_url = "localhost:8000/Diagnostics?Source=C"
 local dl_url = "localhost:8000/Diagnostics?Source=Lua"
+
 local tests = {}
 tests.t1 = function(
   num_tests
@@ -19,6 +25,7 @@ tests.t1 = function(
   states = { "started", "terminated", "archived" }
   for _, state in ipairs(states) do
     for i = 1, num_tests do 
+      print(i, state)
       local j = 1
       for k, v in pairs(B.Variants) do
         v.id = i*1000 + j
@@ -33,14 +40,48 @@ tests.t1 = function(
       a, b, c = curl.get(U, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
       a, b, c = curl.get(dl_url);   assert(c == 200)
+      -- Tc = test info using C
+      local Tc = nil
+      local url = tic_url .. "&TestName=" .. B.name
+      a, b, c = curl.get(url)
+      if ( state == "archived" ) then 
+        print(url)
+        assert(c ~= 200)
+      else
+        assert(c == 200)
+        local Tc = JSON:decode(b)
+        assert(Tc.State == state)
+      end
+      -- Tl = test info using Lua
+     
+      --[[ TODO PUT THIS BLOCK BACK IN
+      local Tl = nil
+      local url = til_url .. "&TestName=" .. B.name
+      a, b, c = curl.get(til_url .. "&TestName=" .. B.name);   
+      if ( state == "archived" ) then 
+        assert(c ~= 200)
+      else
+        assert(c == 200)
+        local Tl = JSON:decode(b)
+        assert(Tc.State == state)
+      end
+      --]]
+    
+      if ( Tl and Tc ) then 
+        assert(compare_test_info(Tl, Tc))
+      end
 
+      -- Lc = list tests using C 
       a, b, c = curl.get(ltc_url);   assert(c == 200)
       local Lc = JSON:decode(b)
 
+      -- Ll = list tests using C 
       a, b, c = curl.get(ltl_url);   assert(c == 200)
       local Ll = JSON:decode(b)
-      assert(#Ll == $Lc)
+      -- Lc should be same as Ll
+      assert(#Ll == #Lc)
 
+      -- check number of tests
       if ( state == "started" ) then
         assert(#Lc == i) 
       elseif ( state == "terminated" ) then
@@ -56,5 +97,5 @@ tests.t1 = function(
   end
   print("Test t1 succeeded")
 end
-tests.t1(100) -- TO COMMENT OUT
+tests.t1(10) -- TO COMMENT OUT
 return tests

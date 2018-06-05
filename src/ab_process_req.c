@@ -20,7 +20,7 @@
 #include "l_get_num_features.h"
 #include "ping_server.h"
 #include "router.h"
-#include "test_info.h"
+#include "l_test_info.h"
 #include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"

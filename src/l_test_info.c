@@ -1,7 +1,7 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "test_info.h"
+#include "l_test_info.h"
 #include "get_test_idx.h"
 
 #define mcr_chk_buflen(buf, Xlen, nX)  {\
@@ -88,7 +88,7 @@ c_test_info(
   strcpy(X, "{ \n");
   Xlen = strlen(X);
 
-  sprintf(buf, "  \"Name\" : \"%s\", \n", T->name);
+  sprintf(buf, "  \"name\" : \"%s\", \n", T->name);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
   switch ( T->test_type ) { 
@@ -102,10 +102,10 @@ c_test_info(
   sprintf(buf, "  \"InternalID\" : \"%d\", \n", test_idx);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-  sprintf(buf, "  \"ExternalTestID\" : \"%d\", \n", T->id);
+  sprintf(buf, "  \"id\" : \"%d\", \n", T->id);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-  sprintf(buf, "  \"ExternalID\" : \"%llu\", \n", 
+  sprintf(buf, "  \"external_id\" : \"%llu\", \n", 
       (unsigned long long)T->external_id);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
@@ -117,10 +117,10 @@ c_test_info(
   sprintf(buf, "  \"State\" : \"%s\", \n", buf2);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-  sprintf(buf, "  \"IsDevSpecific\" : \"%d\", \n", T->is_dev_specific);
+  sprintf(buf, "  \"is_dev_specific\" : \"%d\", \n", T->is_dev_specific);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-  sprintf(buf, "  \"Seed\" : \"%" PRIu64 "\", \n", T->seed);
+  sprintf(buf, "  \"seed\" : \"%" PRIu64 "\", \n", T->seed);
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
   if ( T->state == TEST_STATE_TERMINATED ) { 
@@ -140,29 +140,33 @@ c_test_info(
     sprintf(buf, "    { \n"); 
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-    sprintf(buf, "  \"VariantID\" : \"%d\", \n", 
+    sprintf(buf, "  \"id\" : \"%d\", \n", 
         g_tests[test_idx].variants[i].id);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-    sprintf(buf, "  \"Name\" : \"%s\", \n", 
+    sprintf(buf, "  \"name\" : \"%s\", \n", 
         g_tests[test_idx].variants[i].name);
+    mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+
+    sprintf(buf, "  \"percentage\" : \"%d\", \n", 
+        g_tests[test_idx].variants[i].percentage);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
     //------------------------------------------
     const char *url = g_tests[test_idx].variants[i].url;
     if ( url == NULL ) { 
-      sprintf(buf, "  \"URL\" : null, \n");
+      sprintf(buf, "  \"url\" : null, \n");
     }
     else {
-      sprintf(buf, "  \"URL\" : \"%s\", \n",  url);
+      sprintf(buf, "  \"url\" : \"%s\", \n",  url);
     }
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
     //------------------------------------------
     const char *cptr = g_tests[test_idx].variants[i].custom_data;
     if ( cptr == NULL ) { 
-      sprintf(buf, "  \"CustomData\" : null, \n");
+      sprintf(buf, "  \"custom_data\" : null, \n");
     }
     else {
-      sprintf(buf, "  \"CustomData\" : %s, \n",  cptr);
+      sprintf(buf, "  \"custom_data\" : %s, \n",  cptr);
     }
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
