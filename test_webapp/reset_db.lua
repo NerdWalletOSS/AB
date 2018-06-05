@@ -1,4 +1,4 @@
-require 'strict'
+require 'lua/strict'
 local function reset_db()
   local command = [[
     cd ../sql/ 1>/dev/null 2>&1; 

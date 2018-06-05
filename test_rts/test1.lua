@@ -53,17 +53,20 @@ tests.t1 = function(
         assert(Tc.State == state)
       end
       -- Tl = test info using Lua
-      --[[
+     
+      --[[ TODO PUT THIS BLOCK BACK IN
       local Tl = nil
       local url = til_url .. "&TestName=" .. B.name
       a, b, c = curl.get(til_url .. "&TestName=" .. B.name);   
       if ( state == "archived" ) then 
         assert(c ~= 200)
       else
-      assert(c == 200)
+        assert(c == 200)
         local Tl = JSON:decode(b)
+        assert(Tc.State == state)
       end
       --]]
+    
       if ( Tl and Tc ) then 
         assert(compare_test_info(Tl, Tc))
       end

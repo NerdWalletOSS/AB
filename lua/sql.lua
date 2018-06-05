@@ -5,7 +5,7 @@ local table = require("table")
 local string = require("string")
 local math = require( "math")
 
-ffi.cdef[[
+ffi.cdef([[
 typedef void MYSQLwrap_t;
 void free(void*ptr);
 void * malloc(size_t size);
@@ -102,10 +102,10 @@ unsigned long long TIME_to_ulonglong_date(const MYSQL_TIMEwrap_t *);
 unsigned long long TIME_to_ulonglong_time(const MYSQL_TIMEwrap_t *);
 unsigned long long TIME_to_ulonglong(const MYSQL_TIMEwrap_t *);
 
-]]
+]])
 
 -- TODO Change to log print("try to load libmysqlclient ..")
-local clib = pcall( function() ffi.load( "libmysqlclient.so", true ) end ) -- for normal luajit
+local clib = ffi.load( "libmysqlclient.so")
 if not clib then
   error( "cannot load libmysqlclient dynamic link library" )
 end
@@ -123,20 +123,20 @@ end
 
 local mysql_query = function( self, qstr )
   self:log("mysql_query:", qstr)
-  local ret = ffi.C.mysql_query( self.conn, qstr )
+  local ret = clib.mysql_query( self.conn, qstr )
   if ret ~= 0 then
-    error( "fatal:" .. ffi.string(ffi.C.mysql_error(self.mysql)))
+    error( "fatal:" .. ffi.string(clib.mysql_error(self.mysql)))
   end
-  local res = ffi.C.mysql_store_result(self.mysql)
+  local res = clib.mysql_store_result(self.mysql)
   local nullpo = ffi.cast( "MYSQL_RESwrap_t *", 0 )
   if res == nullpo then
     return nil
   end
-  local nrows = tonumber(ffi.C.mysql_num_rows( res ))
-  local nfields = tonumber(ffi.C.mysql_num_fields( res ) )
+  local nrows = tonumber(clib.mysql_num_rows( res ))
+  local nfields = tonumber(clib.mysql_num_fields( res ) )
 
   local fldtbl = {}
-  local flds = ffi.C.mysql_fetch_fields(res)
+  local flds = clib.mysql_fetch_fields(res)
   for i=0,nfields-1 do
     local f = { name = ffi.string(flds[i].name), type = tonumber(flds[i].type) }
     table.insert( fldtbl, f )
@@ -145,8 +145,8 @@ local mysql_query = function( self, qstr )
   local restbl={}
 
   for i=1,nrows do
-    local row = ffi.C.mysql_fetch_row( res )
-    local lens = ffi.C.mysql_fetch_lengths( res )
+    local row = clib.mysql_fetch_row( res )
+    local lens = clib.mysql_fetch_lengths( res )
     local rowtbl={}
     for i=1,nfields do
       local fdef = fldtbl[i]
@@ -171,7 +171,7 @@ local mysql_query = function( self, qstr )
     table.insert(restbl, rowtbl)
   end
 
-  ffi.C.mysql_free_result(res)
+  clib.mysql_free_result(res)
 
   return restbl
 end
@@ -186,12 +186,12 @@ local mysql_connect = function( self, host, user, password, db, port)
 
   local out={}
   local mysql = ffi.cast( "MYSQLwrap_t*",ffi.gc(ffi.C.malloc( 1024*1024 ), ffi.C.free))
-  local ret = ffi.C.mysql_init(mysql)
+  local ret = clib.mysql_init(mysql)
   self:log("mysql_init:", ret )
-  local conn = ffi.C.mysql_real_connect( mysql, host, user, password, db, port, ffi.NULL, 0)
+  local conn = clib.mysql_real_connect( mysql, host, user, password, db, port, ffi.NULL, 0)
   local nullpo = ffi.cast( "MYSQLwrap_t*",0)
   if conn == nullpo then
-    error( "fatal:" .. ffi.string(ffi.C.mysql_error(mysql)) )
+    error( "fatal:" .. ffi.string(clib.mysql_error(mysql)) )
     return nil
   end
 
@@ -203,7 +203,7 @@ local mysql_connect = function( self, host, user, password, db, port)
   out.doLog = false
   out.toggleLog = function(self,v) self.doLog = v end
   out.close = function(self) print("No need to close connection explicitly") end
-  ffi.gc(out.conn, function(conn) ffi.C.mysql_close( self.conn) end)
+  ffi.gc(out.conn, function(conn) clib.mysql_close( self.conn) end)
   return out
 end
 
@@ -211,7 +211,7 @@ local mysql_escape = function( self, orig )
   if not orig then return nil end
   local strsz = string.len(orig) * 2 + 1 + 1
   local cdata = ffi.new( "char[" .. strsz .. "]", {})
-  local ret = ffi.C.mysql_escape_string(cdata, orig, string.len(orig) )
+  local ret = clib.mysql_escape_string(cdata, orig, string.len(orig) )
   return ffi.string( cdata, ret )
 end
 

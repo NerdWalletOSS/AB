@@ -1,7 +1,7 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "test_info.h"
+#include "l_test_info.h"
 #include "get_test_idx.h"
 
 #define mcr_chk_buflen(buf, Xlen, nX)  {\
