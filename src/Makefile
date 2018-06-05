@@ -198,6 +198,9 @@ clean:
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
+	rm -r -f ../librdkafka/* # TODO P3 Check with Indrajeet
+	rm -r -f ../jansson-2.10/* # TODO P3 Check with Indrajeet
+	rm -r -f ../libmaxminddb-1.3.2/* # TODO P3 Check with Indrajeet
 	echo "ALL CLEAN"
 
 qclean :
