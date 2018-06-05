@@ -29,7 +29,7 @@ buildall(){
   sudo apt-get install gcc python python-pip cmake -y
   sudo pip install pystatsd
   clean
-  install_luajit_from_source
+  install_deps_from_source
   set -e
   build
 }
@@ -188,7 +188,7 @@ run_lua_tests(){
   fi
 }
 
-install_luajit_from_source() {
+install_deps_from_source() {
   my_print "Installing luajit from source"
   #wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
   wget http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
@@ -206,6 +206,8 @@ install_luajit_from_source() {
   cd -
   cd ../
   rm -rf LuaJIT-2.1.0-beta3
+  sudo apt-get install luarocks
+  sudo luarocks install busted Lua-cURL luasec
 }
 
 install_travis(){
