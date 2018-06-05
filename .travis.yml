@@ -22,13 +22,8 @@ branches:
 install:
   - bash aio.sh -b
 
-before_script:
-  - source to_source
-
 script:
-  - cd bin && source to_source && ./ab_httpd & && kill -0 %1
-  - sleep 1 & kill -9 %1
-
+  - cd bin
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
