@@ -112,6 +112,16 @@ typedef struct _kafka_cfg_type {
   char max_buffering_time[AB_MAX_LEN_KAFKA_BUF_TIME+1];
 } KAFKA_CFG_TYPE;
 
+typedef struct _ua_classify_cfg_type {
+  char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1];
+  char justin_cat_file[AB_MAX_LEN_FILE_NAME+1];
+  char os_file[AB_MAX_LEN_FILE_NAME+1];
+  char browser_file[AB_MAX_LEN_FILE_NAME+1];
+  char device_type_file[AB_MAX_LEN_FILE_NAME+1];
+  char ua_model_coeff_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
+  char ua_category_intercept_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
+} UA_CLASSIFY_CFG_TYPE;
+
 typedef struct _cfg_type {
 
   uint16_t  port;  // port on which AB RTS will run
@@ -139,9 +149,11 @@ typedef struct _cfg_type {
   char device_type_file[AB_MAX_LEN_FILE_NAME+1];
   char ua_model_coeff_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
   char ua_category_intercept_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
+  UA_CLASSIFY_CFG_TYPE ua;
   // STOP: For classifying user agent
   // START: For decision tree
   char dt_dir[AB_MAX_LEN_FILE_NAME+1];
+  char ua_dir[AB_MAX_LEN_FILE_NAME+1];
   // STOP: For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
   // STOP: For run time user agent classifier
