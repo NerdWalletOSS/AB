@@ -79,7 +79,7 @@ int kafka_open_conn(
 
 
   /* Set max retries before returning an error */
-  const char* retries = "0"; // max 10000000
+  const char* retries = "2"; // max 10000000
   /* Set message queue size */
   if (rd_kafka_conf_set(g_kafka_conf, "message.send.max.retries", retries,
         g_err, sizeof(g_err)) != RD_KAFKA_CONF_OK) {

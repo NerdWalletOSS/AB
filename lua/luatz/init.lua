@@ -1,9 +1,9 @@
 local _M = {
-	gettime = require "luatz.gettime";
-	parse = require "luatz.parse";
-	strftime = require "luatz.strftime";
-	timetable = require "luatz.timetable";
-	tzcache = require "luatz.tzcache";
+	gettime = require "lua.luatz.gettime";
+	parse = require "lua.luatz.parse";
+	strftime = require "lua.luatz.strftime";
+	timetable = require "lua.luatz.timetable";
+	tzcache = require "lua.luatz.tzcache";
 }
 
 --- Top-level aliases for common functions

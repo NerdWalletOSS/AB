@@ -1,4 +1,4 @@
-local strftime = require "luatz.strftime".strftime
+local strftime = require "lua.luatz.strftime".strftime
 local strformat = string.format
 local floor = math.floor
 local idiv do

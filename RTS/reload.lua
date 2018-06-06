@@ -96,6 +96,7 @@ function reload.reload(c_index, g_reload_tests)
   -- ffi.fill(g_tests, ffi.sizeof("TEST_META_TYPE") * consts.AB_MAX_NUM_TESTS)
   c_index = ffi.cast("int*", c_index)
   g_reload_tests = ffi.cast("const char**", g_reload_tests)
+  ffi.fill(g_reload_tests, consts.AB_MAX_NUM_TESTS)
   c_index[0] = 0
   cache.put("tests", {})
   -- Now clean the tables entires in the c structure.
@@ -103,6 +104,7 @@ function reload.reload(c_index, g_reload_tests)
     g_reload_tests[c_index[0]] = test
     c_index[0] = c_index[0] + 1
   end
+  cache.put("RELOAD_STRS", tests)
 end
 
 return reload
