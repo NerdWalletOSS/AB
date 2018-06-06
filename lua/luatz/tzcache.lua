@@ -1,4 +1,4 @@
-local read_tzfile = require "luatz.tzfile".read_tzfile
+local read_tzfile = require "lua.luatz.tzfile".read_tzfile
 
 local base_zoneinfo_path = "/usr/share/zoneinfo/"
 local local_zoneinfo_path = "/etc/localtime"
