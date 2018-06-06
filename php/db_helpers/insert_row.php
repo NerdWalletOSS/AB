@@ -45,8 +45,8 @@ function insert_row(
   $stmt = $dbh->prepare($sql);
   $rslt = $stmt->execute($X); 
   if ( !$rslt ) { 
-    var_dump($sql);
-    var_dump($X);
+    //var_dump($sql);
+    //var_dump($X);
   }
   rs_assert($rslt);
   $pk = $dbh->lastInsertId();

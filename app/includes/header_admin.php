@@ -44,8 +44,8 @@ require_once "../utility_functions.php";
     </div>
     <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
-    <li ><a href="#" data-toggle="modal" data-target="#AddAdmin"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Admin</button></a></li>
-    <li><a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span>Channel</button></a></li>
+    <li ><a href="list_admin.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Admin(s)</button></a></li>
+    <li><a href="list_channel.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Channel(s)</button></a></li>
     <!--<li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
     <li ><a href="check_rts.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-check"></span> RTS</button></a></li>
     <li ><a href="chk_scn.php"><button type="button" class="btn btn-sm btn-info"> SCN</button></a></li>	
@@ -56,53 +56,7 @@ require_once "../utility_functions.php";
     </div><!--/.nav-collapse -->
     </div>
     </nav>
-<!----------------------------------------->			
-    <div class="modal fade" id="AddAdmin" tabindex="-1" role="dialog" aria-labelledby="AddAdmin" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title" id="myModalLabel">Add admin</h4>
-    </div>
-    <form class="test" name="test" action="add_admin_process.php">
-    <div class="modal-body">
-    <div class="form-group">
-    <label class="label" for="admin" >Admin Name:</label>
-    <input class="form-control" id="admin" name="admin_name" required>
-    </div>					
-    </div>
-    <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <input class="btn btn-success" type="submit" value="Add Admin" id="submit">
-    </div>
-    </form>
-    </div>
-    </div>
-    </div>
-<!---------------------------------->
-<! -- add channel -->			
-    <div class="modal fade" id="AddChannel" tabindex="-1" role="dialog" aria-labelledby="AddChannel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title" id="myModalLabel">Add Channel</h4>
-    </div>
-    <form class="test" name="test" action="add_channel_process.php">
-    <div class="modal-body">
-    <div class="form-group">
-    <label class="label" for="channel" >Channel:</label>
-    <input class="form-control" id="channel" name="channel" required>
-    </div>					
-    </div>
-    <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <input class="btn btn-success" type="submit" value="Add Channel" id="submit">
-    </div>
-    </form>
-    </div>
-    </div>
-    </div>
+
 <!---------------------------------->
     <div class="modal fade" id="TestUrl" tabindex="-1" role="dialog" aria-labelledby="TestUrl" aria-hidden="true">
     <div class="modal-dialog modal-lg">
