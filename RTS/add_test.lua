@@ -99,6 +99,7 @@ function AddTests.add(
   )
   -- print(test_str)
   local test_data = JSON:decode(test_str)
+   assert(type(test_data) == "table", "Unable to decode json string")
   assert(type(test_data) == "table", "Invalid JSON string given")
   -- dbg()
   local test_type = assert(test_data.TestType, "TestType cannot be nil")
@@ -157,6 +158,7 @@ function AddTests.preproc(test_str, g_tests, o_arr)
   -- int is_dev_specific = rslt[3];
   --
   local j_table = JSON:decode(test_str)
+  assert(type(j_table) == "table", "Unable to decode json string")
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   o_arr = ffi.cast("int*", o_arr)
   AddTests.get_test(g_tests, j_table, o_arr + 1) -- get test position iin 0 location or o_arr

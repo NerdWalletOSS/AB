@@ -4,7 +4,7 @@
 #include "aux_zero.h"
 #include "l_reload_tests.h"
 
-int
+  int
 l_reload_tests(
     void
     )
@@ -27,7 +27,7 @@ l_reload_tests(
   lua_pushlightuserdata(g_L, g_test_str);
   status = lua_pcall(g_L, 2, 0, 0);
   if (status != 0) {
-    WHEREAMI; 
+    WHEREAMI;
     fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
     lua_pop(g_L, 1);
@@ -41,11 +41,19 @@ l_reload_tests(
   }
   memset(g_tests, '\0', sizeof(TEST_META_TYPE)*AB_MAX_NUM_TESTS);
   for ( int i = 0; i < num_entries[0]; i++ ) {
-    status = l_add_test(g_test_str[i]);
+    status = l_add_test(g_test_str[i]); cBYE(status);
   }
 BYE:
   for ( int i=0; i < AB_MAX_NUM_TESTS; i++){
     g_test_str[i] = NULL; // do not free. Done by Lua
+  }
+  // remove the lua strings too
+  int status2 = luaL_dostring(g_L, "require 'lua/cache'.delete('RELOAD_STRS')");
+  if (status2 != 0) {
+    WHEREAMI;
+    fprintf(stderr, "Removing reload strs from cache failed: %s\n", lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
+    lua_pop(g_L, 1);
   }
   return status;
 }
