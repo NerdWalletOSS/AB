@@ -63,6 +63,11 @@ describe('Reload ', function()
     -- dbg()
     assertx(#tests == #reload_entries, "Expected tests to have ",#tests, "entries, got", #reload_entries)
   end)
+  -- it('should match with direct results from db', function()
+  --   
+  --   dbg()
+
+  -- end)
   -- describe('should match the entries returned by php', function()
   -- end)
   -- now reload calls add tests in C lua just returns numbwer of tests

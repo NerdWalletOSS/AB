@@ -29,6 +29,8 @@ update_config(
     void
     )
 {
+  g_kafka_num = 0;
+  g_kafka_total_time = 0;
   int status = 0;
   char *buf = NULL; 
   // sz_log_q

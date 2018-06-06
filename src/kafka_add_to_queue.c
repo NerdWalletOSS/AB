@@ -11,6 +11,8 @@ kafka_add_to_queue(
     size_t len
     )
 {
+ static uint64_t start, stop;
+  start = RDTSC() ;
   int status = 0;
   // Basic parameter and config checking
   if ( buf == NULL ) { go_BYE(-1); }
@@ -98,5 +100,10 @@ retry:
   rd_kafka_flush(g_rk, -1);
 
 BYE:
+   stop = RDTSC() ;
+   if (status == 0) {
+     g_kafka_total_time += (stop - start)/(2.4*pow(10,9));
+     g_kafka_num += 1;
+  }
   return status;
 }

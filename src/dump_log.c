@@ -83,6 +83,8 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
   write_log(g_rslt, &ridx, n, "ResponseTime",       g_log_response_time);
   write_log(g_rslt, &ridx, n, "NumInQueue",         g_n_log_q);
+  write_log(g_rslt, &ridx, n, "NumKafkaMsgs",         g_kafka_num);
+  write_log(g_rslt, &ridx, n, "TotalKafkaTime",         g_kafka_total_time);
   if ( strlen(g_rslt) > AB_MAX_LEN_RESULT - 32 ) { WHEREAMI; return -1; }
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
   return status;

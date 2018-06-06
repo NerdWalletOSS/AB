@@ -153,3 +153,7 @@ EXTERN int g_kafka_memory;
 EXTERN  MODEL_REC_TYPE *g_ua_M; int g_ua_nM;
 EXTERN  MODEL_NAME_TYPE *g_ua_N; int g_ua_num_models;
 EXTERN  uint64_t *g_ua_H; int g_ua_nH;
+
+EXTERN uint64_t g_kafka_total_time;
+EXTERN uint64_t g_kafka_num;
+
