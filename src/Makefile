@@ -102,13 +102,13 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
 ../USER_AGENT_CLASSIFIER/src/ua.so : 
 	make -C ../USER_AGENT_CLASSIFIER/src/
 
-../utm_kv/src/utm_kv.so : ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
+../utm_kv/src/utm_kv.so : ./libs/libmaxminddb.so
 	make -C ../utm_kv/src/
 
 ../curl-7.51.0/lib/.libs/libcurl.so : 
@@ -123,7 +123,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ../librdkafka/src/librdkafka.so ../curl-7.51.0/lib/.libs/libcurl.so  
+$(COBJS) : ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so
 
 
 ../statsd-c-client-master/libstatsdclient.so :
@@ -151,32 +151,44 @@ $(COBJS) : ../libevent-2.0.22-stable/.libs/libevent.so ../libmaxminddb-1.3.2/src
 ./libs/libmaxminddb.so: ./libs ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so
 	cp ../libmaxminddb-1.3.2/src/.libs/libmaxminddb.so ./libs/libmaxminddb.so
 
+./libs/dt.so: ./libs ../dt_interpreter/src/dt.so
+	cp ../dt_interpreter/src/dt.so ./libs/dt.so
+
+./libs/ua.so: ./libs ../USER_AGENT_CLASSIFIER/src/ua.so
+	cp ../USER_AGENT_CLASSIFIER/src/ua.so ./libs/ua.so
+
+./libs/utm_kv.so: ./libs ../utm_kv/src/utm_kv.so
+	cp ../utm_kv/src/utm_kv.so ./libs/utm_kv.so
+
+./libs/librdkafka.so: ./libs ../librdkafka/src/librdkafka.so
+	cp ../librdkafka/src/librdkafka.so ./libs/librdkafka.so
+
 #	../registered-domain-libs/C/regdom.o 
 
 ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
-	../dt_interpreter/src/dt.so \
-	../USER_AGENT_CLASSIFIER/src/ua.so \
-	../utm_kv/src/utm_kv.so \
+	./libs/dt.so \
+	./libs/ua.so \
+	./libs/utm_kv.so \
 	./libs/libevent.so \
 	../libyuarel/yuarel.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so \
-	../librdkafka/src/librdkafka.so
+	./libs/librdkafka.so
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
 	../luajit-2.0.5/src/libluajit.a \
-	../dt_interpreter/src/dt.so \
-	../USER_AGENT_CLASSIFIER/src/ua.so \
-	../utm_kv/src/utm_kv.so \
+	./libs/dt.so \
+	./libs/ua.so \
+	./libs/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
-	../librdkafka/src/librdkafka.so \
+	./libs/librdkafka.so \
 	-lm  -lpthread -ldl   
 
 ../librdkafka/src/librdkafka.so:

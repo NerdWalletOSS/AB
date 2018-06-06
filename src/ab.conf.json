@@ -3,7 +3,7 @@
     "DT_DIR": {
       "VALUE": "../DT/spam/",
       "COMMENT": "Decision Tree folder"
-    },
+    }
   },
   "AB": {
     "SESSION_SERVICE" : {
@@ -44,10 +44,6 @@
       "NUM_POST_RETRIES": {
         "COMMENT": "Number of times it will attempt to POST to log server.",
         "VALUE": "1"
-      },
-      "SZ_LOG_Q": {
-        "COMMENT": "Size of queue of messages to Log Server.  Provides buffering so that POSTing to Log Server can be done by separate thread and does not slow down",
-        "VALUE": "1048576"
       }
     },
     "MYSQL": {
@@ -131,7 +127,10 @@
         "VALUE": "5"
       }
     },
-
+    "SZ_LOG_Q": {
+        "COMMENT": "Size of queue of messages for second thread",
+        "VALUE": "1048576"
+      },
     "DEFAULT_URL": {
       "COMMENT": "For URL Router",
       "VALUE": "https://www.nerdwallet.com"
@@ -139,7 +138,9 @@
     "DEV_FILE": {
       "VALUE": "\"./device.csv\""
     },
-
+    "UA_TO_DEV_MAP_FILE": {
+      "VALUE": "\"./ua_to_dev.bin\""
+    },
     "PORT": {
       "COMMENT": "Port on which A/B server will run",
       "VALUE": "8000"
@@ -148,26 +149,7 @@
       "COMMENT": "If true then Reload occurs when server comes up",
       "VALUE": "true"
     },
-    "SZ_UUID_HT": {
-      "COMMENT": "Number of unique UUIDs that can be supported.",
-      "VALUE": "4194304"
-    },
-    "TEST_UUID_LEN": {
-      "COMMENT": "If true",
-      "VALUE": "false"
-    },
-    "UA_TO_DEV_MAP_FILE": {
-      "VALUE": "\"./ua_to_dev.bin\""
-    },
-    "UDP_NODE": {
-      "COMMENT": "Only for local testing",
-      "VALUE": "localhost"
-    },
-    "UDP_SERVICE": {
-      "COMMENT": "Only for local testing",
-      "VALUE": "8012"
-    },
-    "UUID_LEN": {
+    "MAX_LEN_UUID": {
       "COMMENT": "Maximum Length of UUID. If test_uuid_len=true",
       "VALUE": "36"
     },
@@ -178,6 +160,10 @@
     "XY_GUID": {
       "COMMENT": "Used for testing.Set to 0 or omit this line in production",
       "VALUE": "1"
+    },
+    "MMDB_FILE": {
+      "COMMENT": "maxmind database for ip to geo",
+      "VALUE": "/opt/ab/GeoIP2-City_2017_12_08.mmdb"
     }
   }
 }
