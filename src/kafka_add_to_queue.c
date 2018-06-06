@@ -11,7 +11,6 @@ kafka_add_to_queue(
     size_t len
     )
 {
- static uint64_t start, stop;
   int status = 0;
   // Basic parameter and config checking
   if ( buf == NULL ) { go_BYE(-1); }
