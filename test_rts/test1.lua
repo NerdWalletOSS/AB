@@ -50,7 +50,8 @@ tests.t1 = function(
       else
         assert(c == 200)
         local Tc = JSON:decode(b)
-        assert(Tc.State == state)
+        assert(Tc.State == state, 
+        "expected " .. state .. " got " .. Tc.State)
       end
       -- Tl = test info using Lua
      
