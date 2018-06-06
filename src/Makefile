@@ -213,7 +213,9 @@ clean:
 	rm -r -f ../librdkafka/* # TODO P3 Check with Indrajeet
 	rm -r -f ../jansson-2.10/* # TODO P3 Check with Indrajeet
 	rm -r -f ../libmaxminddb-1.3.2/* # TODO P3 Check with Indrajeet
+	rm -f ../lua/ab_ffi.lua ../lua/ab_consts.lua
 	echo "ALL CLEAN"
 
 qclean :
 	rm -r -f ab_httpd $(COBJS) *.o _*
+	rm -f ../lua/ab_ffi.lua ../lua/ab_consts.lua

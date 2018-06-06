@@ -121,7 +121,8 @@ read_random_forest(
   //  Basic integrity testing
   int n_fixed = 0;
   for ( int i = 1; i < n_dt; i++ ) { 
-    if ( dt[i].node_idx != i ) { go_BYE(-1); }
+    if ( dt[i].node_idx != i ) { 
+      go_BYE(-1); }
     if ( dt[i].tree_idx < dt[i-1].tree_idx ) { go_BYE(-1); }
     if ( dt[i].tree_idx != dt[i-1].tree_idx ) { 
       if ( dt[i].tree_idx != dt[i-1].tree_idx+1 ) { 
