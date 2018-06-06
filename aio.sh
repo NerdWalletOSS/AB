@@ -10,8 +10,6 @@ usage(){
   echo "  -t  Builds AB and runs tests"
   echo "  -x  Builds a tarball of all the php companents for AB admin"
   echo "  -s  Builds and starts all support systems"
-  echo "  -o  Stops all support systems"
-
 
   # echo "  -r  Builds and run AB with all other auxillary service"
   exit 1 ;
