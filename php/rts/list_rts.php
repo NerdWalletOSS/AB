@@ -68,6 +68,5 @@ if ( $SP ) {
 else {
   echo "Not using RTS\n";
 }
-*/
-
+ */
 ?>
