@@ -5,6 +5,7 @@ require_once "bye.php";
 require_once "dbconn.php";
 require_once "insert_row.php";
 require_once "aux_chk_name.php";
+require_once "db_get_row.php";
 require_once "load_configs.php";
 require_once "get_json_element.php";
 require_once "lkp.php";
@@ -38,6 +39,9 @@ function add_admin_channel(
   rs_assert(aux_chk_name($name) );
   $name_len = strlen($name);
   // rs_sssert($name_len <= $max_len); TODO P4 PUT THIS BACK 
+  // Check that entry does not exist
+  $nR = db_get_row($tbl, "name", $name);
+  rs_assert($nR == 0, "Entry $name in table $tbl exists");
   $X['name']   = $name;
   $X['is_del'] = 0;
   $rslt = insert_row($tbl, $X);
