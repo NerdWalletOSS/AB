@@ -4,7 +4,7 @@ local consts = require 'lua/ab_consts'
 local ffi = require 'lua/ab_ffi'
 local JSON = require 'lua/JSON'
 local sql = require 'lua/sql'
--- local dbg = require 'debugger'
+-- local dbg = require 'lua/debugger'
 
 local function is_present(v_table)
   if v_table == nil then
@@ -208,8 +208,7 @@ function load_cfg.load_config(
   g_cfg,  --- C data structure
   has_changed
   )
-
-  local file = assert(io.open(ffi.string(config_file), 'r'), "Invalid filename given")
+  local file = assert(io.open(config_file, 'r'), "Invalid filename given")
   local conf_str = file:read('*a')
   file:close()
   local config = JSON:decode(conf_str)
