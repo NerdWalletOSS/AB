@@ -8,11 +8,20 @@ require_once "lkp.php";
 require_once "rs_assert.php";
 
 function db_get_test(
-  $test_id
+  $test_id,
+  $test_name,
+  $test_type
 )
 {
   // $dbh = dbconn();  rs_assert(isset($dbh));
-  $T = db_get_row("test", "id", $test_id);
+  if ( empty($test_id) ) { 
+    $test_type_id = lkp("test_type", $test_type);
+    $T = db_get_row("test", "name", $test_name,
+      " and test_type_id = $test_type_id ");
+  }
+  else {
+    $T = db_get_row("test", "id", $test_id);
+  }
   if ( is_null($T) ) { return null; }
   $T['Creator']  = lkp("admin",     $T['creator_id'],   "reverse");
   $T['TestType'] = lkp("test_type", $T['test_type_id'], "reverse");
