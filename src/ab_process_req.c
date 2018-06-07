@@ -207,7 +207,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */
-      status = l_post_proc_preds(g_predictions, g_n_mdl,
+      status = l_post_proc_preds(args, g_predictions, g_n_mdl,
           g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;
