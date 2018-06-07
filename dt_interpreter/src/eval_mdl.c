@@ -34,22 +34,24 @@ eval_mdl(
     int rf_lb = mdl[i].rf_lb;
     int rf_ub = mdl[i].rf_ub;
     int l_n_rf = rf_ub - rf_lb; 
-    int *rf_pos = malloc(l_n_rf * sizeof(int));
-    int *rf_neg = malloc(l_n_rf * sizeof(int));
+    // Below: Avoiding malloc but introducing some ugliness
+#define MAX_NUM_RF 1024 
+    if ( l_n_rf > MAX_NUM_RF ) { go_BYE(-1); } 
+    int rf_pos[MAX_NUM_RF];
+    int rf_neg[MAX_NUM_RF];
+    //-----------------------------
     l_status = eval_rf(features, n_features, dt, n_dt, 
-        rf+rf_lb, l_n_rf, rf_pos, rf_neg);
+        rf, n_rf, rf_lb, rf_ub, rf_pos, rf_neg);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
     double sum_prob = 0;
     for ( int j = 0; j < l_n_rf; j++ ) { 
       int npos = rf_pos[j];
       int nneg = rf_neg[j];
-      float prob = (double)npos/(double)(npos+nneg);
+      float prob = (float)npos/(float)(npos+nneg);
       sum_prob += prob;
     }
-    predictions[i] = sum_prob / n_rf;
-    free(rf_pos);
-    free(rf_neg);
+    predictions[i] = sum_prob / l_n_rf;
   }
   cBYE(status);
 BYE:

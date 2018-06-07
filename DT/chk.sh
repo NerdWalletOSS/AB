@@ -10,6 +10,8 @@ luajit mdl_map.lua
 luajit generate_features.lua
 test -f sample_input.json
 jq . sample_input.json
+test -f sample_output.json
+jq . sample_output.json
 #------------------------
 cwd=$PWD
 echo "XXXX $cwd"

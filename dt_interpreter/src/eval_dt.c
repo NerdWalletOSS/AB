@@ -7,24 +7,25 @@ eval_dt(
   float *features, /* [n_features] */
   int n_features,
   DT_REC_TYPE *dt,
-  int n_dt, /* number of nodes in decision tree */
-  int root_idx,
+  int n_dt,
+  int dt_lb,
+  int dt_ub,
   int *ptr_npos, // return values
   int *ptr_nneg // return values
   )
 {
   int status = 0;
   if ( dt == NULL ) { go_BYE(-1); }
-  if ( n_dt == 0 ) { go_BYE(-1); }
-  if ( ( root_idx < 0 ) || ( root_idx >= n_dt ) ) { go_BYE(-1); }
-
-  int tidx = root_idx; // start at root 
-  *ptr_npos = -1; // set to something clearly wrong
-  *ptr_npos = -1; // set to something clearly wrong
+  if ( n_dt <= 0 ) { go_BYE(-1); }
+  if ( dt_lb < 0 ) { go_BYE(-1); }
+  if ( dt_ub > n_dt ) { go_BYE(-1); }
+  if ( dt_ub <= dt_lb ) { go_BYE(-1); }
+  int tidx = dt_lb; // start at root 
+  *ptr_npos = *ptr_nneg = -1; // some clearly bad value
   for ( ; ; ) { /* infinite loop */
     // g_num_compares++;
 #ifdef DEBUG
-    if ( ( tidx < 0 ) || ( tidx >= n_dt ) ) { 
+    if ( ( tidx < dt_lb ) || ( tidx >= dt_ub ) ) { 
       go_BYE(-1); }
 #endif
     if ( ( dt[tidx].lchild_idx < 0 ) && ( dt[tidx].rchild_idx < 0 ) ) {
