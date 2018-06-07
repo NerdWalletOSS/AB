@@ -25,7 +25,8 @@ eval_rf(
   for ( int i = 0; i < n_rf; i++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;
-    status = eval_dt(features, n_features, dt, n_dt, dt_lb,
+    int l_n_dt = dt_ub - dt_lb;
+    status = eval_dt(features, n_features, dt+dt_lb, 0, l_n_dt,
         &(rf_pos[i]), &(rf_neg[i]));
     cBYE(status);
   }

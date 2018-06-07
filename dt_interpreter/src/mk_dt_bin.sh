@@ -1,9 +1,11 @@
 #!/bin/bash
 set -e
-make clean
-make
+if [ $# != 1 ]; then echo "Error. Usage is $0 <dt file>"; exit 1; fi 
+make clean 1>/dev/null 2>&1
+make       1>/dev/null 2>&1
 # This is the decision tree as a CSV file 
-dt_csv_file=../../DT/spam/dt.csv
+#dt_csv_file=../../DT/spam/dt.csv
+dt_csv_file=$1
 test -f $dt_csv_file
 # This is an optional test file 
 # testfile=../data/spam_data/test_1_10.csv

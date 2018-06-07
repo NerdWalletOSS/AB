@@ -9,6 +9,7 @@
 #include "ua_types.h"
 #include "auxil.h"
 #include "url.h"
+#include "ext_classify_ua.h"
 
 extern UA_REC_TYPE *g_classify_ua_map; // Set by C
 extern uint32_t g_num_classify_ua_map; // Set by C
