@@ -9,7 +9,7 @@ local tests = require 'RTS/add_test'
 local reload_tests = require 'RTS/reload'
 
 function load_config(...)
-  cache.put("config", x_load_config(...))
+  cache.put("config", x_load_config.load_config(...))
 end
 
 function hard_code_config(...)
