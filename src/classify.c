@@ -2,6 +2,8 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "classify.h"
+#include "l_make_feature_vector.h"
+#include "l_post_proc_preds.h"
 #include "eval_mdl.h"
 
 int 

@@ -27,6 +27,7 @@
 #include "classify.h"
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
+#include "ext_classify_ua.h"
 #include "hard_code_config.h"
 #include "setup.h"
 

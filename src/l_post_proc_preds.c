@@ -17,7 +17,7 @@ l_post_proc_preds(
   char buf[16];
   memset(buf, '\0', 16);
   if ( args != NULL ) { 
-  status = extract_name_value(args, "Testing=", "&", buf, 15); cBYE(status);
+  status = extract_name_value(args, "Testing=", '&', buf, 15); cBYE(status);
   if ( strcasecmp(buf, "true") == 0 ) { 
     for ( int i = 0; i < n_pred_vector; i++ ) {
       pred_vector[i] = 1.0 / ( 1 + n_pred_vector);
