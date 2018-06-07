@@ -32,7 +32,12 @@ end
 
 
 function list_tests()
-  return JSON:encode(cache.get('tests'))
+  local tests = cache.get('tests')
+  local o_table = {}
+  for _,v in pairs(tests) do
+    o_table[#o_table + 1] = v
+  end
+  return JSON:encode(o_table)
 end
 
 function reload(...)
