@@ -59,6 +59,9 @@ which are loaded by the C server
 6) You must have a file called sample_input.json. This is used as an 
 input to the /MakeFeatureVector API as a debugging check
 
+7) You must have a file called sample_output.json which is what 
+Classify will return when called with sample_input.json
+
 -------
 
 How to use:
