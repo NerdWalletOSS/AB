@@ -8,6 +8,7 @@ require_once "get_json_element.php";
 require_once "list_rts.php";
 require_once "db_get_test.php";
 
+
 function chk_test(
   $test_name,
   $test_type
@@ -15,6 +16,7 @@ function chk_test(
 {
   $rslt = "";
   $http_code = 0;
+
   $SP = list_rts(); 
   rs_assert($SP, "No RTS listening");
   foreach ($SP as $sp ) { 
@@ -32,6 +34,7 @@ function chk_test(
     //-- STOP :  error checking
     print(get_json_element($J, "name"));
   }
+
 }
 chk_test("Test_1", "XYTest");
 ?>
