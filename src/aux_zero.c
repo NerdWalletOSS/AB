@@ -203,3 +203,23 @@ free_variant_per_bin(
 BYE:
   return status;
 }
+
+int
+malloc_final_variant(
+    uint32_t test_idx
+    )
+{
+  int status = 0;
+  TEST_META_TYPE *p = &(g_tests[test_idx]);
+  int num_devices = p->num_devices;
+
+  p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
+  return_if_malloc_failed(p->final_variant_idx);
+  memset(p->final_variant_idx, '\0',  (num_devices * sizeof(uint32_t)));
+
+  p->final_variant_id = malloc(num_devices * sizeof(uint32_t));
+  return_if_malloc_failed(p->final_variant_id);
+  memset(p->final_variant_id, '\0',  (num_devices * sizeof(uint32_t)));
+BYE:
+  return status;
+}

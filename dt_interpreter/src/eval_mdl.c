@@ -14,9 +14,7 @@ eval_mdl(
   int n_rf, /* number of decision trees in random forest */
   MDL_REC_TYPE *mdl, /* [n_mdl] */
   int n_mdl, /* number of models */
-  float *predictions, /* [n_mdl] */
-  int *rf_pos, /* [n_rf] */
-  int *rf_neg /* [n_rf] */
+  float *predictions /* [n_mdl] */
   )
 {
   int status = 0;
@@ -35,19 +33,23 @@ eval_mdl(
     if ( l_status < 0 ) { status = -1; continue; }
     int rf_lb = mdl[i].rf_lb;
     int rf_ub = mdl[i].rf_ub;
-    int this_n_rf = rf_ub - rf_lb; 
+    int l_n_rf = rf_ub - rf_lb; 
+    int *rf_pos = malloc(l_n_rf * sizeof(int));
+    int *rf_neg = malloc(l_n_rf * sizeof(int));
     l_status = eval_rf(features, n_features, dt, n_dt, 
-        rf+rf_lb, this_n_rf, rf_pos+rf_lb, rf_neg+rf_lb);
+        rf+rf_lb, l_n_rf, rf_pos, rf_neg);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
     double sum_prob = 0;
-    for ( int j = rf_lb; j < rf_ub; j++ ) { 
+    for ( int j = 0; j < l_n_rf; j++ ) { 
       int npos = rf_pos[j];
       int nneg = rf_neg[j];
       float prob = (double)npos/(double)(npos+nneg);
       sum_prob += prob;
     }
     predictions[i] = sum_prob / n_rf;
+    free(rf_pos);
+    free(rf_neg);
   }
   cBYE(status);
 BYE:
