@@ -1,12 +1,12 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
-  $('#addAdmin').submit(function() {
+  $('#addChannel').submit(function() {
     $.ajax({
       type: "POST",
-      url: "processor/add_admin_processor.php",
+      url: "processor/add_channel_processor.php",
       data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
-          $("#AddAdmin .close").click(); 
+          $("#AddChannel .close").click(); 
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
@@ -20,8 +20,8 @@ $(document).ready(function() {
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
-          $("#error_message").html('Admin Added');
-        window.location = "list_admin.php";
+          $("#error_message").html('Channel Added');
+        window.location = "list_channel.php";
 
         }
       },
@@ -31,8 +31,8 @@ $(document).ready(function() {
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
-          $("#error_message").html('Admin Added');
-        window.location = "list_admin.php";
+          $("#error_message").html('Channel Added');
+        window.location = "list_channel.php";
 
       },
       beforeSend: function() {

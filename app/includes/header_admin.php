@@ -46,6 +46,7 @@ require_once "../utility_functions.php";
     <ul class="nav navbar-nav navbar-right">
     <li ><a href="list_admin.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Admin(s)</button></a></li>
     <li><a href="list_channel.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Channel(s)</button></a></li>
+    <li><a href="check_tests.php"><button type="button" class="btn btn-sm btn-primary"> Check Tests</button></a></li>
     <!--<li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
     <li ><a href="check_rts.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-check"></span> RTS</button></a></li>
     <li ><a href="chk_scn.php"><button type="button" class="btn btn-sm btn-info"> SCN</button></a></li>	

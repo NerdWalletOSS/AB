@@ -6,17 +6,19 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 require_once "../includes/header_admin.php"; 
 require_once "db_get_rows.php";
 ?>
+<script src="js/add_channel.js"></script>
 <div class="container">
 	<div class="row" >
          <!--<div class="col-xs-6">-->
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">LIST OF CHANNEL
+              <h3 class="panel-title">LIST OF CHANNEL &nbsp; &nbsp;
 <a href="#" data-toggle="modal" data-target="#AddChannel"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-plus"></span>Channel</button></a>
 </h3>
 
             </div>
             <div class="panel-body">
+<?php require_once "../includes/error_div.php"; ?>
 			<div class="table-responsive">
 <table class="table table-striped" >
 <tr><td><b>S.No.</b></td><td><b>CHANNEL NAME</b></td></tr>
@@ -39,7 +41,7 @@ $nR = count($admin); for ( $i = 0; $i < $nR; $i++ ) {
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title" id="myModalLabel">Add Channel</h4>
     </div>
-    <form class="test" name="test" action="add_channel_process.php">
+    <form class="test" type='post' id='addChannel'>
     <div class="modal-body">
     <div class="form-group">
     <label class="label" for="channel" >Channel:</label>
