@@ -7,6 +7,7 @@ cd $dir
 test -f dt.csv
 luajit dt_feature.lua
 luajit mdl_map.lua
+luajit mdl_meta.lua
 luajit generate_features.lua
 test -f sample_input.json
 jq . sample_input.json
