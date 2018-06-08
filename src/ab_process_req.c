@@ -27,6 +27,7 @@
 #include "classify.h"
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
+#include "ext_classify_ua.h"
 #include "hard_code_config.h"
 #include "setup.h"
 
@@ -207,7 +208,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */
-      status = l_post_proc_preds(g_predictions, g_n_mdl,
+      status = l_post_proc_preds(args, g_predictions, g_n_mdl,
           g_rslt, AB_MAX_LEN_RESULT);
       cBYE(status);
       break;

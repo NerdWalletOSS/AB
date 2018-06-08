@@ -14,9 +14,7 @@ eval_mdl(
   int n_rf, /* number of decision trees in random forest */
   MDL_REC_TYPE *mdl, /* [n_mdl] */
   int n_mdl, /* number of models */
-  float *predictions, /* [n_mdl] */
-  int *rf_pos, /* [n_rf] */
-  int *rf_neg /* [n_rf] */
+  float *predictions /* [n_mdl] */
   )
 {
   int status = 0;
@@ -29,25 +27,32 @@ eval_mdl(
   if ( n_rf == 0 ) { go_BYE(-1); }
   if ( mdl == NULL ) { go_BYE(-1); }
   if ( n_mdl == 0 ) { go_BYE(-1); }
-#pragma omp parallel for schedule(static, 1) num_threads(4)
+// #pragma omp parallel for schedule(static, 1) num_threads(4)
+#pragma omp parallel for 
   for ( int i = 0; i < n_mdl; i++ ) {
     int l_status = 0;
     if ( l_status < 0 ) { status = -1; continue; }
     int rf_lb = mdl[i].rf_lb;
     int rf_ub = mdl[i].rf_ub;
-    int this_n_rf = rf_ub - rf_lb; 
+    int l_n_rf = rf_ub - rf_lb; 
+    // Below: Avoiding malloc but introducing some ugliness
+#define MAX_NUM_RF 1024 
+    if ( l_n_rf > MAX_NUM_RF ) { l_status = -1; continue; }
+    int rf_pos[MAX_NUM_RF];
+    int rf_neg[MAX_NUM_RF];
+    //-----------------------------
     l_status = eval_rf(features, n_features, dt, n_dt, 
-        rf+rf_lb, this_n_rf, rf_pos+rf_lb, rf_neg+rf_lb);
+        rf, n_rf, rf_lb, rf_ub, rf_pos, rf_neg);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
     double sum_prob = 0;
-    for ( int j = rf_lb; j < rf_ub; j++ ) { 
+    for ( int j = 0; j < l_n_rf; j++ ) { 
       int npos = rf_pos[j];
       int nneg = rf_neg[j];
-      float prob = (double)npos/(double)(npos+nneg);
+      float prob = (float)npos/(float)(npos+nneg);
       sum_prob += prob;
     }
-    predictions[i] = sum_prob / n_rf;
+    predictions[i] = sum_prob / l_n_rf;
   }
   cBYE(status);
 BYE:

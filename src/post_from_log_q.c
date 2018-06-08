@@ -53,8 +53,14 @@ post_from_log_q(
     // fprintf(stderr, "CONSUMER: Released buffer \n");
     // Now that you are out of the critical section, do the POST
 #ifdef AB_AS_KAFKA
-    g_log_kafka_calls++;
+    uint64_t t_start = RDTSC();
     status = kafka_add_to_queue( kafka_payload.data, kafka_payload.sz);
+    uint64_t t_stop = RDTSC();
+    if ( t_stop > t_start ) { 
+      g_log_kafka_calls++;
+      g_log_kafka_total_time += t_stop - t_start;
+    }
+
     if ( status != 0 ) { WHEREAMI; } // TODO P1. add statsd logging for this
     free_if_non_null(kafka_payload.data); 
     g_kafka_memory -= kafka_payload.sz;

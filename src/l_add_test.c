@@ -52,23 +52,10 @@ l_add_test(
       break;
     case 4: // stared to started => Nothing to do
       break;
-    case 5: // stared to terminated
-      status = free_variant_per_bin(test_idx);
-      // Allocate space for final variant idx and id
-      TEST_META_TYPE *p = &(g_tests[test_idx]);
-      int num_devices = 1; 
-      if (is_dev_specific == 1){
-        num_devices = 6; // TODO IS remove
-      }
-
-      p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
-      return_if_malloc_failed(p->final_variant_idx);
-      memset(p->final_variant_idx, '\0',  (num_devices * sizeof(uint32_t)));
-
-      p->final_variant_id = malloc(num_devices * sizeof(uint32_t));
-      return_if_malloc_failed(p->final_variant_id);
-      memset(p->final_variant_id, '\0',  (num_devices * sizeof(uint32_t)));
- 
+    case 5: // started to terminated
+      status = free_variant_per_bin(test_idx); cBYE(status);
+      status = malloc_final_variant(test_idx); cBYE(status);
+>>>>>>> dev
       break;
     case 6: // started to archived
       status = free_test(test_idx); 

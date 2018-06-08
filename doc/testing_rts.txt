@@ -1,0 +1,31 @@
+1) There are times when you do not want to have WebApp talk to RTS. This is useful for standalone testing. In such cases, your /opt/abadmin/db2.json file looks like this
+
+  "ab_rts_server" : "",
+  "ab_rts_port"   : "8000",
+  "webapp_server" : "localhost",
+  "webapp_port"   : "8080",
+  "rts_finder_server" : "",
+  "rts_finder_port"   : "8020”,
+
+
+2) If you want to use the RTS on localhost but do NOT want to use the RTS finder, then it looks like 
+
+  "ab_rts_server" : "localhost",
+  "ab_rts_port"   : "8000",
+  "webapp_server" : "localhost",
+  "webapp_port"   : "8080",
+  "rts_finder_server" : "",
+  "rts_finder_port"   : "8020”,
+
+3) If you wan to use RTS on localhost but you want to ALSO use the RTS finder, then it looks like 
+
+  "ab_rts_server" : "",
+  "ab_rts_port"   : "8000",
+  "webapp_server" : "localhost",
+  "webapp_port"   : "8080",
+  "rts_finder_server" : “localhost",
+  "rts_finder_port"   : "8020”,
+
+Remember, that to use RTS finder,
+cd AB/rts_finder/
+python rts_server.py -T localhost:8000  &

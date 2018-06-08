@@ -5,7 +5,6 @@
 #include "auxil.h"
 
 uint64_t g_num_compares;
-uint64_t g_num_models;
 
 DT_REC_TYPE *dt = NULL;
 int n_dt = 0;
@@ -50,8 +49,6 @@ main(
   FILE *fp = NULL;
   FILE *ofp = NULL;
   float *predictions = NULL;
-  int *rf_pos = NULL;
-  int *rf_neg = NULL;
   if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   dt_file_name            = argv[2];
@@ -70,10 +67,6 @@ main(
   cBYE(status);
   predictions = malloc(n_mdl * sizeof(float));
   return_if_malloc_failed(predictions);
-  rf_pos = malloc(n_rf * sizeof(int));
-  return_if_malloc_failed(rf_pos);
-  rf_neg = malloc(n_rf * sizeof(int));
-  return_if_malloc_failed(rf_neg);
   //  Write binary output files 
   //---------------------------------------------------
   ofp = fopen(dt_file_name, "wb");
@@ -101,12 +94,13 @@ main(
   return_if_malloc_failed(invals);
   fp = fopen(test_data_file_name, "r");
   return_if_fopen_failed(fp,  test_data_file_name, "r");
+  // TODO P1 Need to be clear on what test_data_file looks like
 #define MAXLINE 65535
   char line [MAXLINE+1];
   int lno = 0;
   uint64_t sum1 = 0, sum2 = 0;
   int n_iters = 1; int n_trials = 0;
-  n_iters = 0; // TODO TODO TODO DELETE 
+  n_iters = 1;
   for ( int iters = 0; iters < n_iters; iters++ ) {
     bool is_hdr = true;
     for ( lno = 0; !feof(fp); lno++) { 
@@ -118,7 +112,7 @@ main(
       for ( uint32_t i = 0; i < strlen(line); i++ ) { 
         if ( line[i] == '\n' ) { line[i] = '\0' ; }
       }
-      for ( int i = 0; i < nF+1; i++ ) { 
+      for ( int i = 0; i < nF; i++ ) { 
         char *xptr;
         if ( i == 0 ) { 
           xptr = strtok(line, ","); 
@@ -132,10 +126,10 @@ main(
         }
         cBYE(status);
       }
-      uint64_t t1a = RDTSC(); 
       uint64_t t2a = get_time_usec();
+      uint64_t t1a = RDTSC(); 
       status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl,
-          predictions, rf_pos, rf_neg);
+          predictions);
       uint64_t t1b = RDTSC(); 
       uint64_t t2b = get_time_usec();
       uint64_t d1 = (t1b - t1a);
@@ -143,7 +137,7 @@ main(
       sum1 += d1;
       sum2 += d2;
       n_trials++;
-      // printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, n_trials, d1, d2);
+      printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, n_trials, d1, d2);
       cBYE(status);
     }
     fclose_if_non_null(fp);
@@ -153,11 +147,9 @@ main(
   }
   lno--; // remove header line 
   printf("Number of trials = %d \n", n_trials);
-  printf("Number of random forests = %d \n", g_num_models);
   printf("Number of compares = %d \n", g_num_compares);
-  printf("#Test = %d, time = %lf\n", lno, sum1 / (double)n_trials);
+  printf("#Test = %d, cycles = %lf\n", lno, sum1 / (double)n_trials);
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
-  printf("Total time (1, 2) = %llu %llu \n", sum1, sum2);
   printf("COMPLETED\n");
 
 BYE:
@@ -168,7 +160,5 @@ BYE:
   free_if_non_null(mdl);
   free_if_non_null(invals);
   free_if_non_null(predictions);
-  free_if_non_null(rf_pos);
-  free_if_non_null(rf_neg);
   return status;
 }
