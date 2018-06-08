@@ -1,5 +1,5 @@
-local gettime = require "luatz.gettime".gettime
-local timetable_mt = require "luatz.timetable".timetable_mt
+local gettime = require "lua.luatz.gettime".gettime
+local timetable_mt = require "lua.luatz.timetable".timetable_mt
 
 local function to_timestamp(o)
 	if type(o) == "number" then

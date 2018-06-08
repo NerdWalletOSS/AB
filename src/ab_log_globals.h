@@ -79,6 +79,8 @@ EXTERN uint64_t g_log_router_calls;
 /*C TODO */
 EXTERN uint64_t g_log_kafka_calls;
 /*C Number of calls to Kafka */
+EXTERN uint64_t g_log_kafka_total_time;
+/*C Total time spent talking to Kafka */
 EXTERN uint64_t g_log_bad_router_calls;
 /*C TODO */
 

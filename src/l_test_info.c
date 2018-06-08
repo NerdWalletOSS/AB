@@ -148,7 +148,7 @@ c_test_info(
         g_tests[test_idx].variants[i].name);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
-    sprintf(buf, "  \"percentage\" : \"%d\", \n", 
+    sprintf(buf, "  \"percentage\" : \"%f\", \n", 
         g_tests[test_idx].variants[i].percentage);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
     //------------------------------------------

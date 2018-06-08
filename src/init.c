@@ -151,13 +151,11 @@ BYE:
   return status;
 }
 
-int
+void
 init_globals(
     void
     )
 {
-  int status = 0;
-
   g_seed1 = AB_SEED_1;
   g_seed2 = AB_SEED_2;
   spooky_init(&g_spooky_state, g_seed1, g_seed2);
@@ -179,6 +177,4 @@ init_globals(
   for ( char *cptr = (char *)arg_str; *cptr != '\0'; cptr++ ) {
     g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
   }
-BYE:
-  return status;
 }

@@ -1,6 +1,7 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../helpers");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../db_helpers");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../rts");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../");
 require_once "rs_assert.php";
 require_once "load_configs.php";
@@ -13,16 +14,15 @@ function list_rts(
   $ports   = null;
   // Load configs 
   rs_assert(load_configs());
+  $conf_file = "/opt/abadmin/db2.json";
+  rs_assert(is_file($conf_file), "File not foudn $conf_file");
+  $configs = json_decode(file_get_contents($conf_file));
+  rs_assert($configs, "unable to JSON decode $conf_file");
   //-----------------------------------------------------------
-  $configs = $GLOBALS['configs'];
-  if ( ( !isset($configs['port']) ) ||  ( $configs['port'] == "" ) ) { 
-    return null;
-  }
-
   //--- Original case: just one server
-  if ( $configs['rts_finder_server'] == "" ) {
-    $server = $configs['server'];
-    $port   =  $configs['port'];
+  if ( $configs->{'rts_finder_server'} == "" ) {
+    $server = $configs->{'ab_rts_server'};
+    $port   =  $configs->{'ab_rts_port'};
 
     $SP = array(1);
     $SP[0] = array('server' => $server, 'port' => $port);
@@ -32,10 +32,11 @@ function list_rts(
     return $SP;
   }
   //-----------------------------------------------------------
-  if ( ( $configs['rts_finder_server'] != "" ) && ( $configs['rts_finder_port'] != "" ) )  {
+  if ( ( $configs->{'rts_finder_server'} != "" ) && 
+       ( $configs->{'rts_finder_port'} != "" ) )  {
     // do something 
-    $s = $configs['rts_finder_server'] ;
-    $p = $configs['rts_finder_port'] ;
+    $s = $configs->{'rts_finder_server'} ;
+    $p = $configs->{'rts_finder_port'} ;
     $http_code = 0; $rslt = "";
     get_url($s, $p, "DescribeInstances", $http_code, $rslt);
     if ( $http_code != 200 ) { return null; }
@@ -68,6 +69,5 @@ if ( $SP ) {
 else {
   echo "Not using RTS\n";
 }
-*/
-
+ */
 ?>

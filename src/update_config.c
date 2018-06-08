@@ -196,11 +196,6 @@ update_config(
     g_predictions = malloc(g_n_mdl * sizeof(float));
     return_if_malloc_failed(g_predictions);
 
-    g_rf_pos = malloc(g_n_rf * sizeof(int));
-    return_if_malloc_failed(g_rf_pos);
-    g_rf_neg = malloc(g_n_rf * sizeof(int));
-    return_if_malloc_failed(g_rf_neg);
-
     status = l_get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
     g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
     return_if_malloc_failed(g_dt_feature_vector);

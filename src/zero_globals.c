@@ -69,8 +69,6 @@ free_globals(
   }
 
   free_if_non_null(g_predictions); g_n_mdl = 0;
-  free_if_non_null(g_rf_pos);      g_n_rf = 0;
-  free_if_non_null(g_rf_neg);      g_n_rf = 0;
   free_if_non_null(g_dt_feature_vector); g_n_dt_feature_vector = 0;
 #ifdef KAFKA
   kafka_close_conn();
@@ -196,8 +194,6 @@ zero_globals(
   g_rf  = NULL; g_n_rf = 0;
   g_mdl = NULL; g_n_mdl = 0;
   g_predictions = NULL;
-  g_rf_pos = NULL;
-  g_rf_neg = NULL;
 
 #ifdef KAFKA
   g_ignore_kafka_errors = false; 
@@ -254,6 +250,7 @@ zero_log()
   g_log_get_variants_calls    = 0;
   g_log_router_calls          = 0;
   g_log_kafka_calls           = 0;
+  g_log_kafka_total_time      = 0;
   g_log_bad_router_calls      = 0;
 
   g_log_num_probes     = 0;

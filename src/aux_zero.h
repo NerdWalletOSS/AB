@@ -21,3 +21,7 @@ extern int
 free_variant_per_bin(
     uint32_t test_idx
     );
+extern int
+malloc_final_variant(
+    uint32_t test_idx
+    );

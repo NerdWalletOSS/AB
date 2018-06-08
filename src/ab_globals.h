@@ -41,6 +41,7 @@ EXTERN char g_my_name[AB_MAX_LEN_HOSTNAME+1]; // For C
 EXTERN bool g_halt; // For C TODO IS THIS NEEDED?
 //-----------------------------------------------------------------
 EXTERN TEST_META_TYPE g_tests[AB_MAX_NUM_TESTS];  // Set by Lua 
+// TODO P3 needs more documentation for following
 EXTERN const char *g_test_str[AB_MAX_NUM_TESTS];  // Set by Lua 
 //--------------------------------------------------------
 EXTERN uint64_t g_seed1; // For C
@@ -129,8 +130,6 @@ EXTERN MDL_REC_TYPE *g_mdl; /* models [g_n_mdl] */
 EXTERN uint32_t g_n_mdl;
 EXTERN size_t g_len_mdl_file; 
 EXTERN float *g_predictions;  /* [g_n_mdl] */
-EXTERN int *g_rf_pos;  /* [g_n_rf] */
-EXTERN int *g_rf_neg;  /* [g_n_rf] */
 
 #include "utm_kv.h"
 EXTERN UTM_REC_TYPE g_utm_kv;

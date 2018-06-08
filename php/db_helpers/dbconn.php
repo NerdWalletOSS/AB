@@ -64,7 +64,7 @@ function dbconn(
  */
 
   /*
-   * I got the following error which got dixed when I used
+   * I got the following error which got fixed when I used
    * 127.0.0.1 instead of localhost in dbhost
 atal error: Uncaught PDOException: SQLSTATE[HY000] [2002] No such file or directory in /home/subramon/WORK/OSS/AB/php/db_helpers/dbconn.php:57
 Stack trace:

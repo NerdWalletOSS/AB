@@ -1,5 +1,6 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "../");
+set_include_path(get_include_path() . PATH_SEPARATOR . "./db_helpers/");
 require_once 'bye.php';
 require_once 'dbconn.php';
 function db_get_rows(
