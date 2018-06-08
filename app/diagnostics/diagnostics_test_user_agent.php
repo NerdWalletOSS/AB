@@ -3,19 +3,17 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
-
-require_once "add_channel.php";
-
+require_once "chk_url.php";
 
 //-----------------------------------------------------------
-$channel = $_GET['channel'];
+$url = $_GET['url'];
 
-$rslt = add_channel($channel);
-var_dump($rslt);
+$rslt = chk_url( $url );
+
 if ( !$rslt ) { 
-  header('Location: admin.php?msg='.urlencode($GLOBALS["err"]));
+  header('Location: diagnostics.php?msg=BAD URL: '.$url.' '.$GLOBALS["err"]);
 }
 else {
-  header('Location: admin.php?msg='.urlencode($channel).' Added as a new Channel');
+  header('Location: diagnostics.php?msg=URL is OK: '.$url);
 }
 ?>

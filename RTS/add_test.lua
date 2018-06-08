@@ -98,6 +98,7 @@ function AddTests.add(
   c_index
   )
   -- print(test_str)
+  c_index = ffi.cast("int*", c_index)
   local test_data = JSON:decode(test_str)
    assert(type(test_data) == "table", "Unable to decode json string")
   assert(type(test_data) == "table", "Invalid JSON string given")
@@ -112,11 +113,11 @@ function AddTests.add(
   assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
-
+  print("TestState", test_data.State:lower())
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
-    -- ffi.fill( ffi.cast("TEST_META_TYPE*", g_tests) + c_index[0], ffi.sizeof("TEST_META_TYPE"))
+    ffi.fill( ffi.cast("TEST_META_TYPE*", g_tests) + c_index[0], ffi.sizeof("TEST_META_TYPE"))
     local tests = cache.get("tests") or {}
     tests[test_data.id] = nil
     cache.put("tests", tests)
@@ -143,6 +144,7 @@ function AddTests.add(
     -- print(c_index[0])
     -- dbg()
     assert(c_test.variants ~= nil, "Space must be allocated for variants")
+    -- dbg()
     bins[test_data.BinType].add_bins_and_variants(c_test, test_data)
     local tests = cache.get("tests") or {}
     tests[test_data.id] = test_data

@@ -20,9 +20,8 @@ local function l_hard_code_config(
   config.DT = {}
   config.DT.DT_DIR = {}
   config.DT.DT_DIR.VALUE = ffi.string(c_cfg.dt_dir)
-  print("XXXXX", ffi.string(c_cfg.dt_dir))
-  config.DT.DT_DIR.VALUE = 'cc_member_models'
-  print("XXXXX", config.DT.DT_DIR.VALUE)
+  -- TODO P1 UNDO HARD CODING BELOW 
+  -- config.DT.DT_DIR.VALUE = 'cc_member_models'
   config.DT.DT_DIR.COMMENT = "directory where decision tree configs are"
 
   return config
