@@ -7,21 +7,18 @@ WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-proto
 # else you will get 
 # ./test_dt: /usr/lib/x86_64-linux-gnu/libgomp.so.1: version `GOMP_4.0' not
 # found (required by ./test_dt)
-INCS= -I. \
-	-I../../src/  \
-	-I../../curl-7.51.0/include/ \
-	-I../../curl-7.51.0/include/curl/ \
+INCS= -I.  -I../../src/ 
 
-
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
 OPTFLAGS= -O4
-OPTFLAGS= -O4 -fopenmp
 OPTFLAGS= 
+OPTFLAGS= -O4 -fopenmp
 
-LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY -DMINI
-CFLAGS= $(LFLAGS)  -DRASPBERRY_PI
+LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY 
+# CFLAGS= $(LFLAGS)  -DRASPBERRY_PI
+CFLAGS= $(LFLAGS) 
 
 CC= clang
 CC= gcc
@@ -46,10 +43,8 @@ XOBJS = mmap.o auxil.o
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
 
 test_dt : $(COBJS) $(XOBJS) 
-
-	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  -lm
-
-#  -lpthread -ldl  -lgomp
+	$(CC) $(CFLAGS) $(COBJS) $(XOBJS) $(INCS) -o test_dt  -lm \
+	-lpthread -ldl  -lgomp
 
 
 dt.so : $(SO_OBJS) 

@@ -27,7 +27,8 @@ eval_mdl(
   if ( n_rf == 0 ) { go_BYE(-1); }
   if ( mdl == NULL ) { go_BYE(-1); }
   if ( n_mdl == 0 ) { go_BYE(-1); }
-#pragma omp parallel for schedule(static, 1) num_threads(4)
+// #pragma omp parallel for schedule(static, 1) num_threads(4)
+#pragma omp parallel for 
   for ( int i = 0; i < n_mdl; i++ ) {
     int l_status = 0;
     if ( l_status < 0 ) { status = -1; continue; }
@@ -36,7 +37,7 @@ eval_mdl(
     int l_n_rf = rf_ub - rf_lb; 
     // Below: Avoiding malloc but introducing some ugliness
 #define MAX_NUM_RF 1024 
-    if ( l_n_rf > MAX_NUM_RF ) { go_BYE(-1); } 
+    if ( l_n_rf > MAX_NUM_RF ) { l_status = -1; continue; }
     int rf_pos[MAX_NUM_RF];
     int rf_neg[MAX_NUM_RF];
     //-----------------------------
