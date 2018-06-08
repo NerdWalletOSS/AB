@@ -3,4 +3,5 @@ export LD_LIBRARY_PATH=../libmaxminddb-1.3.2/src/.libs/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=../librdkafka/src/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=../libevent-2.0.22-stable/.libs:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=../bin/libs/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 # Check that /opt/ab/ has all necessary config files

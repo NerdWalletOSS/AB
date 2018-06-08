@@ -35,5 +35,5 @@ do
   busted $line 1>_out
   grep "0 errors" _out 1>/dev/null 2>&1
 done < _x
-rm _x
+rm _*
 echo "Completed $0 in $PWD"
