@@ -9,12 +9,14 @@ require_once "rs_assert.php";
 
 function db_get_test(
   $test_id,
-  $test_name,
-  $test_type
+  $test_name="",
+  $test_type=""
 )
 {
   // $dbh = dbconn();  rs_assert(isset($dbh));
   if ( empty($test_id) ) { 
+    rs_assert($test_name != "", "No test name provided");
+    rs_assert($test_type != "", "No test type provided");
     $test_type_id = lkp("test_type", $test_type);
     $T = db_get_row("test", "name", $test_name,
       " and test_type_id = $test_type_id ");
