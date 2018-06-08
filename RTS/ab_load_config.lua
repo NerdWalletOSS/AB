@@ -4,7 +4,7 @@ local consts = require 'lua/ab_consts'
 local ffi = require 'lua/ab_ffi'
 local JSON = require 'lua/JSON'
 local sql = require 'lua/sql'
--- local dbg = require 'debugger'
+-- local dbg = require 'lua/debugger'
 
 local function is_present(v_table)
   if v_table == nil then

@@ -35,7 +35,7 @@ tests.t1 = function(
       B.id = i
       B.external_id = i
       B.seed = i
-      B.state = state
+      B.State = state
       jB = JSON:encode(B)
       a, b, c = curl.get(U, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)

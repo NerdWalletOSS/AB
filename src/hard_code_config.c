@@ -54,20 +54,19 @@ hard_code_config(void)
   strcpy(g_cfg.ua.ua_category_intercept_file,  "/opt/ab/category_intercept.csv");
   // STOP : For user agent classifier
 
-  strcpy(g_cfg.dt_dir,  "../DT/cc_member_models/");
+  // strcpy(g_cfg.dt_dir,  "../DT/cc_member_models/");
   // strcpy(g_cfg.ua_dir,  "../DT/spam/");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
   // defaults taken from https://kafka.apache.org/08/documentation.html
 
-  /*
   strcpy(g_cfg.kafka.brokers, "localhost");
   strcpy(g_cfg.kafka.topic, "ab");
   strcpy(g_cfg.kafka.retries, "4");
-  strcpy(g_cfg.kafka.max_buffering_time, "5000");
 
 
+  /*
      strcpy(g_cfg.kafka.brokers, "192.168.1.151");
      strcpy(g_cfg.kafka.topic, "ab");
      strcpy(g_cfg.kafka.queue_size, "1048576");

@@ -7,6 +7,7 @@ cd $dir
 test -f dt.csv
 luajit dt_feature.lua
 luajit mdl_map.lua
+luajit mdl_meta.lua
 luajit generate_features.lua
 test -f sample_input.json
 jq . sample_input.json
@@ -35,5 +36,5 @@ do
   busted $line 1>_out
   grep "0 errors" _out 1>/dev/null 2>&1
 done < _x
-rm _x
+rm _*
 echo "Completed $0 in $PWD"
