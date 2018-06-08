@@ -32,9 +32,8 @@ function chk_test(
     //-- START:  error checking UTPAL TODO P0
     rs_assert($T1->{'State'} == $T2->{'State'});
     //-- STOP :  error checking
-    print(get_json_element($J, "name"));
   }
-
+  return true;
 }
-chk_test("Test_1", "XYTest");
+// chk_test("Test_1", "XYTest");
 ?>
