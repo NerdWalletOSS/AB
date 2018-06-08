@@ -55,7 +55,6 @@ l_add_test(
     case 5: // started to terminated
       status = free_variant_per_bin(test_idx); cBYE(status);
       status = malloc_final_variant(test_idx); cBYE(status);
->>>>>>> dev
       break;
     case 6: // started to archived
       status = free_test(test_idx); 
