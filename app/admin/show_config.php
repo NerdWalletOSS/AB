@@ -1,6 +1,10 @@
 <?php session_start();
-require_once "../includes//header_admin.php"; 
-require_once "../../php/load_configs.php";
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
+require_once "../includes/header_admin.php"; 
+require_once "load_configs.php";
 ?>
 <div class="container">
 	<div class="row" >
@@ -15,7 +19,7 @@ require_once "../../php/load_configs.php";
 <tr><td><b>KEY</b></td><td><b>VALUE</b></td></tr>
 <?php
 if ( !load_configs() ) { echo "ERROR"; }
-$c = $GLOBALS['CONFIGS'];
+$c = $GLOBALS['configs'];
   foreach ($c as $k => $v) {
         if ( $k == 'dbpass') { // Do Nothing 
         } else {
