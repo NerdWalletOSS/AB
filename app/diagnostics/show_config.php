@@ -3,7 +3,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
-require_once "../includes/header_admin.php"; 
+require_once "../includes/header_diagnostics.php"; 
 require_once "load_configs.php";
 ?>
 <div class="container">

@@ -12,6 +12,7 @@ l_list_tests(
   int status = 0;
   int bufsz = 7;
   char buf[bufsz+1]; 
+  memset(buf, 0, bufsz+1);
   status = extract_name_value(args, "Source=", '&', buf, bufsz);
   cBYE(status);
 

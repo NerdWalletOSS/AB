@@ -15,18 +15,22 @@ return
     name =  "Control",
     id =  "123",
     percentage =  "50",
-    url =  "http://www.google.com"
+    url =  "http://www.google.com",
+    is_final = "1"
   },
   {
     name =  "Variant_A",
     id =  "456",
     percentage =  "30",
-    url =  "http://www.yahoo.com"
+    url =  "http://www.yahoo.com",
+    is_final = "0"
   },
   {
     name =  "Variant_B",
     id =  "789",
     percentage =  "20",
-    url =  "http://www.cnn.com"
-  }, }
+    url =  "http://www.cnn.com",
+    is_final = "0"
+   }, 
+  }
 }

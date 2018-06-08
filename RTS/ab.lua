@@ -9,7 +9,7 @@ local tests = require 'RTS/add_test'
 local reload_tests = require 'RTS/reload'
 
 function load_config(...)
-  cache.put("config", x_load_config(...))
+  cache.put("config", x_load_config.load_config(...))
 end
 
 function hard_code_config(...)
@@ -32,7 +32,12 @@ end
 
 
 function list_tests()
-  return JSON:encode(cache.get('tests'))
+  local tests = cache.get('tests')
+  local o_table = {}
+  for _,v in pairs(tests) do
+    o_table[#o_table + 1] = v
+  end
+  return JSON:encode(o_table)
 end
 
 function reload(...)
