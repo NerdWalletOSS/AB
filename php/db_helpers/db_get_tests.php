@@ -10,7 +10,7 @@ function db_get_tests(
 { 
   $test_type_id = lkp("test_type", $test_type);
   rs_assert($test_type_id);
-  $where_clause = " where test_type_id = $test_type_id and ";
+  $where_clause = " test_type_id = $test_type_id and ";
   if ( is_string($states) )  {
     $state_id = lkp("state", $states);
     rs_assert($state_id);

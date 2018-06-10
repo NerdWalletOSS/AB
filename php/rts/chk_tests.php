@@ -12,12 +12,16 @@ function chk_tests(
   $states = array( "started", "terminated");
   $test_types = array( "XYTest", "ABTest");
   foreach ( $test_types as $test_type ) { 
-    $T = db_get_tests(null, $test_type, $states);
+    $T = db_get_tests($test_type, $states);
     if (empty($T) ) { continue; }
     foreach ( $T as $t ) { 
-      $rslt = chk_test($t['name'], $test_type);
+      $test_name = $t['name'];
+      $json_str  = " { \"TestName\" : \"$test_name\", "; 
+      $json_str .= " \"TestType\" : \"$test_type\"} "; 
+      $rslt = chk_test($json_str);
       rs_assert($rslt);
     }
   }
+  return true;
 }
 ?>
