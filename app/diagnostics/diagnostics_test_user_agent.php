@@ -2,8 +2,9 @@
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
-require_once "chk_url.php";
+require_once "get_url.php";
 require_once "includes/header_diagnostics.php"; 
 //-----------------------------------------------------------
 ?>
@@ -20,9 +21,12 @@ require_once "includes/header_diagnostics.php";
             <div class="panel-body">
 <?php
 $UserAgent = $_GET['UserAgent'];
-$rslt = chk_url( $UserAgent );
-var_dump($rslt);
-if (!$rslt) {
+$url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
+$http_code = 0;
+$rslt = "";
+$data = get_url( 'localhost', '8000',$url, $http_code, $rslt );
+print("<pre>".print_r($rslt,true)."</pre>");
+if (!$data) {
 echo "User Agent unavailable";
 }
 ?>
