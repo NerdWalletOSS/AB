@@ -7,6 +7,7 @@
 #include "post_from_log_q.h"
 
 #include "l_add_test.h"
+#include "l_mdl_meta.h"
 #include "l_reload_tests.h"
 #include "chk_logger_conn.h"
 #include "kafka_check_conn.h"
@@ -182,6 +183,10 @@ ab_process_req(
     case MakeFeatureVector : /* done by Lua */
       status = l_make_feature_vector(body, true);
       cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case MdlMeta : /* done by Lua */
+      status = l_mdl_meta(); cBYE(status);
       break;
       //--------------------------------------------------------
     case PingServer : /* done by C */
