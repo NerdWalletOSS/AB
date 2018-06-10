@@ -4,10 +4,9 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
-require_once "../includes/header_admin.php"; 
-require_once "check_tests.php";
+require_once "includes/header_admin.php"; 
+require_once "chk_tests.php";
 ?>
-<script src="js/add_admin.js"></script>
 <div class="container">
 	<div class="row" >
          <!--<div class="col-xs-6">-->

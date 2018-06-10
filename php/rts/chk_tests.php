@@ -10,7 +10,7 @@ function chk_tests(
 )
 {
   $states = array( "started", "terminated");
-  $test_types = array( "ABTest", "XYTest");
+  $test_types = array( "XYTest", "ABTest");
   foreach ( $test_types as $test_type ) { 
     $T = db_get_tests($test_type, $states);
     if (empty($T) ) { continue; }
