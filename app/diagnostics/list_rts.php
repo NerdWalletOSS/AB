@@ -6,7 +6,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php");
 
 require_once "../../php/rts/list_rts.php";
-require_once "../includes/header_diagnostics.php"; 
+require_once "includes/header_diagnostics.php"; 
 ?>
 
 <div class="container">

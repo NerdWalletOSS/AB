@@ -1,5 +1,5 @@
 <?php 
-require_once "../includes/header_diagnostics.php"; 
+require_once "includes/header_diagnostics.php"; 
 ?>
     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
