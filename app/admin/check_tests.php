@@ -18,7 +18,7 @@ require_once "chk_test.php"
             <div class="panel-body">
 <?php
 $X = array();
-$X['name'] = 'Test1';
+$X['TestName'] = 'Test1';
 $X['TestType'] = 'XYTest';
 $str_inJ = json_encode($X);
 $data = chk_test($str_inJ);
