@@ -82,6 +82,9 @@ get_req_type(
   else if (strcasecmp(api, "MakeFeatureVector") == 0) {
     return MakeFeatureVector;
   }
+  else if (strcasecmp(api, "MdlMeta") == 0) {
+    return MdlMeta;
+  }
   else if (strcasecmp(api, "PingServer") == 0) {
     return PingServer;
   }
