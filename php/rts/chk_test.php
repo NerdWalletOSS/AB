@@ -17,6 +17,7 @@ function chk_test(
   $http_code = 0;
 
   $inJ = json_decode($str_inJ);
+  rs_assert($inJ);
   $test_name = get_json_element($inJ, 'TestName');
   $test_type = get_json_element($inJ, 'TestType');
 
@@ -39,7 +40,7 @@ function chk_test(
   return true;
 }
 /*
-$x = chk_test("Test1", "XYTest");
+$x = chk_test(' { "TestName" : "Test1", "TestType" : "XYTest" } ');
 var_dump($x);
  */
 ?>
