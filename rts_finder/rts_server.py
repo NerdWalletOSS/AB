@@ -77,4 +77,5 @@ if __name__ == '__main__':
             help="Set the path of the config file")
     options = parser.parse_args()
     host, port = load_config(options)
+    print(port)
     app.run(host='0.0.0.0', port=int(port))
