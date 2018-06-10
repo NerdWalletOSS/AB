@@ -17,7 +17,7 @@ function chk_test(
   $http_code = 0;
 
   $inJ = json_decode($str_inJ);
-  $test_name = get_json_element($inJ, 'name');
+  $test_name = get_json_element($inJ, 'TestName');
   $test_type = get_json_element($inJ, 'TestType');
 
   $SP = list_rts(); 
