@@ -14,7 +14,6 @@ function db_get_test(
 )
 {
   // $dbh = dbconn();  rs_assert(isset($dbh));
-
   if ( empty($test_id) ) { 
     rs_assert($test_name != "", "No test name provided");
     rs_assert($test_type != "", "No test type provided");  
