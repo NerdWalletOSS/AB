@@ -10,10 +10,6 @@ $url = $_GET['url'];
 
 $rslt = chk_url( $url );
 
-if ( !$rslt ) { 
-  header('Location: diagnostics.php?msg=BAD URL: '.$url.' '.$GLOBALS["err"]);
-}
-else {
-  header('Location: diagnostics.php?msg=URL is OK: '.$url);
-}
+
+
 ?>

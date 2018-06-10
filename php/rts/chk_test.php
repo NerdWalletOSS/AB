@@ -30,10 +30,11 @@ function chk_test(
     $T2 = db_get_test(null, $test_name, $test_type);
     rs_assert($T2, "test not found");
     //-- START:  error checking UTPAL TODO P0
-    rs_assert($T1->{'State'} == $T2->{'State'});
+    rs_assert($T1->{'State'} == $T2['State']);
     //-- STOP :  error checking
   }
   return true;
 }
-// chk_test("Test_1", "XYTest");
+$x = chk_test("Test1", "XYTest");
+var_dump($x);
 ?>

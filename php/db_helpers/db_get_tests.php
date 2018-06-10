@@ -34,8 +34,8 @@ function db_get_tests(
     }
     $where_clause .= " ) ";
   }
-  var_dump($where_clause);
-  exit;
+  //var_dump($where_clause);
+  //exit;
   $T = db_get_rows("test", $where_clause);
   return $T;
 }

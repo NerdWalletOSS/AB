@@ -1,3 +1,5 @@
+sudo pip install boto
+sudo pip install flask
 
 The -f option allows one to specify a config file (JSON format) for the 
 sever to use. The default is /opt/abadmin/db.json.
