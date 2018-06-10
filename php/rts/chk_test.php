@@ -10,12 +10,15 @@ require_once "db_get_test.php";
 
 
 function chk_test(
-  $test_name,
-  $test_type
+  $str_inJ
 )
 {
   $rslt = "";
   $http_code = 0;
+
+  $inJ = json_decode($str_inJ);
+  $test_name = get_json_element($inJ, 'TestName');
+  $test_type = get_json_element($inJ, 'TestType');
 
   $SP = list_rts(); 
   rs_assert($SP, "No RTS listening");
@@ -35,6 +38,8 @@ function chk_test(
   }
   return true;
 }
+/*
 $x = chk_test("Test1", "XYTest");
 var_dump($x);
+ */
 ?>
