@@ -17,11 +17,11 @@ INCS= -I. \
 	-I../librdkafka/src/ \
 	-I../USER_AGENT_CLASSIFIER/src/
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
@@ -166,6 +166,8 @@ $(COBJS) : ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs
 #	../registered-domain-libs/C/regdom.o 
 
 ab_httpd : $(COBJS)  \
+	../lua/ab_consts.lua \
+	../lua/ab_ffi.lua \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../luajit-2.0.5/src/libluajit.a \
