@@ -37,6 +37,7 @@ tests.t1 = function(num_iters, num_hits)
     end
 
   end
+  print("Test t1 succeeded")
 end
-tests.t1(100)
+tests.t1(10000)
 return tests

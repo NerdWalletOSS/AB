@@ -35,6 +35,7 @@ typedef enum _ab_req_type {
   ListTests, // Read &  Lua
   LoadConfig, // Write &  Lua
   MakeFeatureVector, // Read &  Lua
+  MdlMeta, // Read & Lua 
   PingServer, // Read &  C
   PostProcPreds, // Read &  C
   Reload, // Write &  Lua

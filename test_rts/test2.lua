@@ -9,21 +9,20 @@ local ltl_url = "localhost:8000/ListTests?Source=Lua&TestType=XYTest"
 local dc_url = "localhost:8000/Diagnostics?Source=C"
 local dl_url = "localhost:8000/Diagnostics?Source=Lua"
 
+local php_url = "localhost:8080/AB/php/endpoints/endpoint_chk_tests.php"
+
 local tests = {}
 tests.t1 = function(
-  num_iters
+  num_iters,
+  test_php
   )
   --=======================================
   if ( not num_iters) then num_iters = 10 end 
-  x = plpath.currentdir()
-  print(x)
+  if ( not test_php) then test_php = true end 
+
   reload_db(plpath.currentdir() .. "/abdb2_100.sql") -- TODO Improve path
 
   for i = 1, num_iters do 
-    local exp_tests = {}
-    for i = 1, 100 do 
-      exp_tests["Test_" .. i] = 0
-    end
     local a, b, c = curl.get("localhost:8000/Reload"); assert(c == 200)
     a, b, c = curl.get(ltc_url);   assert(c == 200)
     local Lc = JSON:decode(b)
@@ -31,20 +30,16 @@ tests.t1 = function(
     a, b, c = curl.get(ltl_url);   assert(c == 200)
     local Ll = JSON:decode(b)
     assert(#Ll == #Lc)
-    -- assert(#Ll == 100)
-
-    -- TODO P2 This is very basic checking. Can do better
-    for k, t in pairs(Ll) do
-      assert(type(t) == "table")
-      assert(exp_tests[t.name])
-      assert( exp_tests[t.name] == 0 ) 
-      exp_tests[t.name] = 1 
-      local tname = t.name
-    end
+    assert(#Ll == 25)
 
     a, b, c = curl.get(dl_url);   assert(c == 200)
     a, b, c = curl.get(dc_url);   assert(c == 200)
+
+    if ( test_php )  then
+      a, b, c = curl.get(php_url);   assert(c == 200)
+    end
   end
+  print("Test t1 terminated")
 end
-tests.t1(10)
+tests.t1(100, true) -- COMMENT once LJT starts working
 return tests

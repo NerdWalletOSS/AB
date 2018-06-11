@@ -6,13 +6,9 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../rts/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../php/helpers/");
 require_once 'chk_tests.php';
 //-----------------------------------------------------------
-  
-$body = file_get_contents('php://input');
-if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "ChkTest" : "ERROR", "Message" : "No payload" }'; exit;
-}
-$rslt =  chk_tests($body);
-foreach ( $rslt as $key=> $val ) {
-  header("$key: $val");
+$rslt =  chk_tests();
+if ( !$rslt ) { 
+  header("Error-Code: 400"); 
+  echo '{ "ChkTests" : "ERROR", "Message" : "test failed " }'; exit;
 }
 ?>

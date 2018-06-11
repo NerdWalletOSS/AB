@@ -33,6 +33,9 @@ else
          </a>
         </li>
         <li>
+          <a href="diagnostics/diagnostics.php"><button class="btn btn-sm btn-warning" type="button">Diagnostics</button></a>
+        </li>
+        <li>
           <a href="logout.php"><button class="btn btn-sm btn-danger" type="button">Log Out</button></a>
         </li>
       </ul>

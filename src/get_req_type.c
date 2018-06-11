@@ -25,7 +25,7 @@ get_req_type(
   else if (strcasecmp(api, "Classify") == 0) {
     return Classify;
   }
-  else if (strcasecmp(api, "ClassifyUA") == 0) {
+  else if (strcasecmp(api, "ClassifyIP") == 0) {
     return ClassifyIP;
   }
   else if (strcasecmp(api, "ClassifyUA") == 0) {
@@ -81,6 +81,9 @@ get_req_type(
   }
   else if (strcasecmp(api, "MakeFeatureVector") == 0) {
     return MakeFeatureVector;
+  }
+  else if (strcasecmp(api, "MdlMeta") == 0) {
+    return MdlMeta;
   }
   else if (strcasecmp(api, "PingServer") == 0) {
     return PingServer;

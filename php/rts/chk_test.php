@@ -10,12 +10,16 @@ require_once "db_get_test.php";
 
 
 function chk_test(
-  $test_name,
-  $test_type
+  $str_inJ
 )
 {
   $rslt = "";
   $http_code = 0;
+
+  $inJ = json_decode($str_inJ);
+  rs_assert($inJ);
+  $test_name = get_json_element($inJ, 'TestName');
+  $test_type = get_json_element($inJ, 'TestType');
 
   $SP = list_rts(); 
   rs_assert($SP, "No RTS listening");
@@ -30,10 +34,13 @@ function chk_test(
     $T2 = db_get_test(null, $test_name, $test_type);
     rs_assert($T2, "test not found");
     //-- START:  error checking UTPAL TODO P0
-    rs_assert($T1->{'State'} == $T2->{'State'});
+    rs_assert($T1->{'State'} == $T2['State']);
     //-- STOP :  error checking
   }
   return true;
 }
-// chk_test("Test_1", "XYTest");
+/*
+$x = chk_test(' { "TestName" : "Test1", "TestType" : "XYTest" } ');
+var_dump($x);
+ */
 ?>

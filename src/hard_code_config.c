@@ -54,7 +54,7 @@ hard_code_config(void)
   strcpy(g_cfg.ua.ua_category_intercept_file,  "/opt/ab/category_intercept.csv");
   // STOP : For user agent classifier
 
-  strcpy(g_cfg.dt_dir,  "../DT/cc_member_models/");
+  // strcpy(g_cfg.dt_dir,  "../DT/cc_member_models/");
   // strcpy(g_cfg.ua_dir,  "../DT/spam/");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
