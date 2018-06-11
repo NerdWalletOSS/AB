@@ -12,7 +12,8 @@ if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "ChkTest" : "ERROR", "Message" : "No payload" }'; exit;
 }
 $rslt =  chk_test($body);
-foreach ( $rslt as $key=> $val ) {
-  header("$key: $val");
+if ( !$rslt ) { 
+  header("Error-Code: 400"); 
+  echo '{ "ChkTest" : "ERROR", "Message" : "test failed " }'; exit;
 }
 ?>
