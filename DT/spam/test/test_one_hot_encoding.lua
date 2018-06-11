@@ -15,7 +15,7 @@ describe("Testing one_hot_encoding", function()
    assert(plpath.isfile(test_data))
    local json_str = assert(plfile.read(test_data))
    print("loading JSON")
-   local json_dict = assert(JSON:decode(JSON:decode(json_str)))
+   local json_dict = assert(JSON:decode(json_str))
    assert(type(json_dict) == "table")
 
    for i, pair in ipairs(json_dict) do
