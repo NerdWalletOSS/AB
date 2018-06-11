@@ -67,7 +67,7 @@ if __name__ == '__main__':
             final_model_list = []
             for k, v in model.iteritems():
                 model_op = generate_csv_indiv_model(v, model_idx_count, past_node_ct, past_tree_ct)
-                past_node_ct = past_node_ct + model_op['nodes']
+                past_node_ct = model_op['nodes']
                 past_tree_ct = past_tree_ct + model_op['n_trees']
                 model_idx_count = model_idx_count + 1
                 mdl_map[model_idx_count] = k

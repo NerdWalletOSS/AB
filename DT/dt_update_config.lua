@@ -31,12 +31,14 @@ local function update_config()
     -- existence of dt_dir checked by C 
     dir_path = 'DT/' .. tostring(dt_dir)
     MDL_MAP = dir_path .. '/mdl_map'
+    MDL_META = dir_path .. '/mdl_meta'
     DT_FEATURE = dir_path .. '/dt_feature'
     GENERATE_FEATURES = dir_path .. '/generate_features'
     --- goes through the same check for all three of them
     load_into_cache(MDL_MAP)
     load_into_cache(DT_FEATURE)
     load_into_cache(GENERATE_FEATURES)
+    load_into_cache(MDL_META)
   end
 end
 return update_config

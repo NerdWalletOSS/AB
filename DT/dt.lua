@@ -6,6 +6,7 @@ local x_update_config    = require 'DT/dt_update_config'
 local make_feature_vec   = require 'DT/lua/make_feature_vector'
 local get_num_feat       = require 'DT/lua/get_num_features'
 local post_proc          = require 'DT/lua/post_proc_preds'
+local get_model_meta       = require 'DT/lua/get_mdl_meta'
 
 
 function load_config(...)
@@ -30,4 +31,8 @@ end
 
 function post_proc_preds(...)
   return post_proc(...)
+end
+
+function get_mdl_meta(...)
+  return get_model_meta(...)
 end
