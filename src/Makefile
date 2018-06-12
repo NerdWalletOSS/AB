@@ -105,7 +105,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so
 	make -C ../dt_interpreter/src/
 
-../USER_AGENT_CLASSIFIER/src/ua.so : 
+../USER_AGENT_CLASSIFIER/SRC/ua.so : 
 	make -C ../USER_AGENT_CLASSIFIER/src/
 
 ../utm_kv/src/utm_kv.so : ./libs/libmaxminddb.so
