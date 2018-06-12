@@ -1,4 +1,4 @@
-<?php
+<?php session_start();
 error_reporting( E_ALL );
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers");
@@ -20,16 +20,29 @@ require_once "includes/header_diagnostics.php";
 
             </div>
             <div class="panel-body">
+<?php
+if (isset($_SESSION['test_status'])) {
+?>
+<div> <?php echo $_SESSION['test_status'];?></div>
+<?php
+}
+unset($_SESSION['test_status']);
+?>
 
 			<div class="table-responsive">
 <table class="table table-striped" >
-<tr><td><b>SERVER</b></td><td><b>PORT</b></td></tr>
+<tr><td><b>SERVER</b></td><td><b>PORT</b></td><td><b>Check RTS</b></td></tr>
 <?php
 $SP = list_rts();
 if ( $SP ) { 
    foreach ( $SP as $sp ) { 
        $server = $sp['server']; $port = $sp['port'];
-	echo "<tr><td>".$server."</td><td>".$port."</td></tr>";
+	echo "<tr><td>".$server."</td><td>".$port."</td>
+     <td>
+  <a href='test_rts_processor.php?server=$server&port=$port' >
+<button type='button' class='btn btn-warning btn-xs'>Check RTS</button>
+</a>
+  </td></tr>";
     }
 }
 ?>
