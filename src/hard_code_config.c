@@ -61,12 +61,12 @@ hard_code_config(void)
 
   // defaults taken from https://kafka.apache.org/08/documentation.html
 
-  /*
   strcpy(g_cfg.kafka.brokers, "localhost");
   strcpy(g_cfg.kafka.topic, "ab");
   strcpy(g_cfg.kafka.retries, "4");
 
 
+  /*
      strcpy(g_cfg.kafka.brokers, "192.168.1.151");
      strcpy(g_cfg.kafka.topic, "ab");
      strcpy(g_cfg.kafka.queue_size, "1048576");
