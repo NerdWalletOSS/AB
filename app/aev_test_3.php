@@ -4,7 +4,7 @@ require_once "set_path.php";
 
 // -- CALL REQUIRED FILES
 require_once "header.php"; ?>
-<script src="js/page_3.js"></script>
+<script src="js/page_3_<?php echo $TestType; ?>.js"></script>
 <?php 
 require_once "navbar.php";
 require_once "config_html.php";

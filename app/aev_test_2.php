@@ -70,11 +70,11 @@ $config = config_html($TestType);
  
 <tr>
 <td><button onclick="location.href = 'aev_test_1.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-primary btn-block" >Previous</button></td>
-<?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+<?php //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <td> <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
-<?php } else { ?>
-<td> <button onclick="location.href = 'home.php'"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
-<?php } ?>
+<?php //} else { ?>
+<!--<td> <button onclick="location.href = 'home.php'"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>-->
+<?php //} ?>
 </tr>
   </tbody>
   </table>

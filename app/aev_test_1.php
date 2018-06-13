@@ -10,16 +10,13 @@ if (!isset($_GET['TestID'])) {
 }
 
 # -- Get Tests
-require_once "db_get_test.php";
-$T = db_get_test($id);
-
+if (isset($id) && ($id != "")) {
+  require_once "db_get_test.php";
+  $T = db_get_test($id);
+}
 // -- STANDARD HEADER INFORMATION
 require_once "header.php"; 
 require_once "display_logic_aev_test.php";
-# -- CHECK IF TEST ID IS SET
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-
-
 ?>
 <script src="js/insert_test.js"></script>
 <?php 
