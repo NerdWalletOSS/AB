@@ -65,9 +65,11 @@ function set_filters(
     $x = db_set_row("cat_attr_val_test", $id, $X);
     rs_assert($x, "db_set_row failed");
   }
+
   //-- STOP : Database updates
   $http_code = 200;
   $outJ["status_code"] = $http_code;
+  $outJ["TestID"] = $test_id; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
   $outJ["msg_stdout"] = "Changed filter for Test $test_id ";
   db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
   header("Error-Code: $http_code");

@@ -106,7 +106,7 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 <tr>
 <td > <button onclick="window.location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
 <?php if (($T['State'] == "draft") && ( $nF != 0 ) ) { ?>
-<td><input class="btn btn-lg btn-success btn-block" type="submit" form="follow_on" id='fol_on' value="Set Follow On"></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" form="follow_on" id='fol_on' value="Save"></td>
 <?php } ?>
 <td >  <button onclick="window.location.href='home.php'" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>

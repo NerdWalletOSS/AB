@@ -9,7 +9,7 @@
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
   <!-- ADD/EDIT FORM START  -->
-  <form class="form-signin" id='setting_filters' method='post'>
+  <form class="form-signin" id='set_filters' method='post'>
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -18,46 +18,56 @@
 		<td>Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
 		<td>Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
-    <td></td>
+ <td colspan="2">Has Filters? :&nbsp;&nbsp; 
+<?php if ( $mode == "View" ) 
+  { ?>
+<?php if (isset($T['has_filters']) && ( $T['has_filters'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php } else { ?>
+<input type="checkbox" name="has_filters" value="1"  
+<?php if (isset($T['has_filters']) && ( $T['has_filters'] == "1")) { echo "checked"; } else { // Do Nothing
+} 
+?>
+>
+<?php } ?>
+</td>
 	</tr>
 <tr>
 <td>
 <tr>
-<td>Attribute</td>
-<td>Value</td>
-<td>Checkbox</td>
+<td><b>Attribute</b></td>
+<td><b>description</b></td>
+<td><b>Set</b></td>
 </tr>
+<?php 
+$cat_attr_val = db_get_rows('cat_attr_val');
+$cat_count = count($cat_attr_val);
+for ($i = 0; $i < $cat_count; $i++) {
+if (($cat_attr_val[$i]['name'] == "true") || ($cat_attr_val[$i]['name'] == "false")) { $is_paid = "1";} else { $is_paid = "0";}
+?>
 <tr>
-<td>Platform</td>
-<td>Desktop</td>
-<td><input type="checkbox" name="attribute" value="Desktop"></td>
-</tr>
-<tr>
-<td>Platform</td>
-<td>Tablet</td>
-<td><input type="checkbox" name="attribute" value="Tablet"></td>
-</tr>
-<tr>
-<td>Platform</td>
-<td>Mobile</td>
-<td><input type="checkbox" name="attribute" value="Mobile"></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<tr>
-<tr>
-<td>Is Paid</td>
-<td>true</td>
-<td><input type="checkbox" name="is_paid" value="true"></td>
-</tr>
-<tr>
-<td>Is Paid</td>
-<td>False</td>
-<td><input type="checkbox" name="is_paid" value="false"></td>
-</tr>
+<td><?php  if ($is_paid == "1"){echo "<span style='color:blue;font-weight:bold'>IsPaid</span>";} else {echo "<span style='color:green;font-weight:bold'>Platform</span>"; }?></td>
+<td><?php echo $cat_attr_val[$i]['name'];?></td>
+<td>
+<?php if ( $mode == "View" ) 
+  { ?>
+<?php if (isset($T['CategoricalFilters'][$i]['is_on']) && ( $T['CategoricalFilters'][$i]['is_on'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php } else { ?>
+<input type="checkbox" name="is_on_<?php echo $i; ?>" value="1"  
+<?php if (isset($T['CategoricalFilters'][$i]['is_on']) && ( $T['CategoricalFilters'][$i]['is_on'] == "1")) { echo "checked "; } else { // Do Nothing
+} 
+?>
+>
+<?php } ?>
 
+</td>
+</tr>
+<?php } ?>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<input type="hidden" name="cat_count" value="<?php echo $cat_count;?>">
 <tr>
 <td> <button onclick="location.href = 'aev_test_2.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-primary btn-block" >Previous</button></td>
 <?php 
@@ -68,7 +78,7 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><button class="btn btn-lg btn-success btn-block" type="submit" id="dev_x_var">Next</button></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" form="set_filters" id="setFilters" value="Save"></td>
 <?php } ?>
 <td> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>

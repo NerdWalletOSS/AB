@@ -10,16 +10,13 @@ if (!isset($_GET['TestID'])) {
 }
 
 # -- Get Tests
-require_once "db_get_test.php";
-$T = db_get_test($id);
-
+if (isset($id) && ($id != "")) {
+  require_once "db_get_test.php";
+  $T = db_get_test($id);
+}
 // -- STANDARD HEADER INFORMATION
 require_once "header.php"; 
 require_once "display_logic_aev_test.php";
-# -- CHECK IF TEST ID IS SET
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-
-
 ?>
 <script src="js/insert_test.js"></script>
 <?php 
@@ -203,7 +200,7 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><input class="btn btn-lg btn-success btn-block" type="submit" form="addTest" id="add_test" value="Next"></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" form="addTest" id="add_test" value="Save"></td>
 
 <?php } ?>
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>

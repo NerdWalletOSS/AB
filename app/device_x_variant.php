@@ -69,7 +69,7 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td colspan="3"><input class="btn btn-lg btn-success btn-block" type="submit" form="device_x_variant" id="dev_x_var" value="Next"></td>
+<td colspan="3"><input class="btn btn-lg btn-success btn-block" type="submit" form="device_x_variant" id="dev_x_var" value="Save"></td>
 <?php } ?>
 <td colspan="2"> <button onclick="window.location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
