@@ -3,7 +3,7 @@ local JSON    = require 'lua/JSON'
 
 function load_config(
   config_file,
-  g_cfg,  --- C data structure
+  g_cfg, -- C data structure
   has_changed
   )
   local file = assert(io.open(config_file, 'r'), "Invalid filename given")
@@ -13,7 +13,7 @@ function load_config(
   -- If you want to update g_cfg, do this before you return
   -- as an example
   -- update_xxx_configs(g_cfg, config.DT)
-
   return config
 end
+
 return load_config
