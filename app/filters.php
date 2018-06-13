@@ -34,9 +34,9 @@
 <tr>
 <td>
 <tr>
-<td>Attribute</td>
-<td>description</td>
-<td>Set</td>
+<td><b>Attribute</b></td>
+<td><b>description</b></td>
+<td><b>Set</b></td>
 </tr>
 <?php 
 $cat_attr_val = db_get_rows('cat_attr_val');
@@ -45,7 +45,7 @@ for ($i = 0; $i < $cat_count; $i++) {
 if (($cat_attr_val[$i]['name'] == "true") || ($cat_attr_val[$i]['name'] == "false")) { $is_paid = "1";} else { $is_paid = "0";}
 ?>
 <tr>
-<td><?php  if ($is_paid == "1"){echo "<strong>IsPaid</strong>";} else {echo "Platform"; }?></td>
+<td><?php  if ($is_paid == "1"){echo "<span style='color:blue;font-weight:bold'>IsPaid</span>";} else {echo "<span style='color:green;font-weight:bold'>Platform</span>"; }?></td>
 <td><?php echo $cat_attr_val[$i]['name'];?></td>
 <td>
 <?php if ( $mode == "View" ) 

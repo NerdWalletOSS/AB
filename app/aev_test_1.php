@@ -200,7 +200,7 @@ if ( $mode == "View" )
 else
   { 
 ?>
-<td><input class="btn btn-lg btn-success btn-block" type="submit" form="addTest" id="add_test" value="Next"></td>
+<td><input class="btn btn-lg btn-success btn-block" type="submit" form="addTest" id="add_test" value="Save"></td>
 
 <?php } ?>
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
