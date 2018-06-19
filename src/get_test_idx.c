@@ -12,6 +12,7 @@
 #include "auxil.h"
 #include "spooky_hash.h"
 #include "get_test_idx.h"
+#include "statsd.h"
 
 #include "ab_globals.h"
 
@@ -48,6 +49,7 @@ int get_test_idx(
   int start = name_hash % AB_MAX_NUM_TESTS;
   for ( int i = start; i < AB_MAX_NUM_TESTS; i++ ) {
     g_log_num_probes++;
+    STATSD_COUNT("num_probes", 1);
     if ( name_hash == g_tests[i].name_hash ) {
       if ( strcmp(g_tests[i].name, name) == 0 ) { 
         if ( g_tests[i].test_type == test_type ) { 
@@ -60,6 +62,7 @@ int get_test_idx(
   if ( *ptr_test_idx < 0 ) { 
     for ( int i = 0; i < start; i++ ) {
       g_log_num_probes++;
+      STATSD_COUNT("num_probes", 1);
       if ( name_hash == g_tests[i].name_hash ) {
         if ( strcmp(g_tests[i].name, name) == 0 ) { 
           if ( g_tests[i].test_type == test_type ) { 
@@ -71,6 +74,7 @@ int get_test_idx(
   }
   if ( *ptr_test_idx < 0 ) { 
     g_log_missing_test++;
+    STATSD_COUNT("missing_test", 1);
     go_BYE(-1);
   }
 
@@ -122,6 +126,7 @@ get_test_type(
   }
   else { 
     g_log_bad_test_type++;
+    STATSD_COUNT("bad_test_type", 1);
     go_BYE(-1); 
   }
 BYE:
@@ -140,10 +145,10 @@ get_test_name(
   memset(test_name, '\0', AB_MAX_LEN_TEST_NAME+1);
   status = extract_name_value(args, "TestName=", '&', 
       test_name, AB_MAX_LEN_TEST_NAME);
-  if ( status < 0 ) { g_log_no_test_name++; }
+  if ( status < 0 ) { g_log_no_test_name++; STATSD_COUNT("no_test_name", 1);}
   cBYE(status); // ADDED DEC 2016
   status = chk_test_name(test_name); 
-  if ( status < 0 ) { g_log_bad_test_name++; }
+  if ( status < 0 ) { g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1);}
   cBYE(status);
 BYE:
   return status;

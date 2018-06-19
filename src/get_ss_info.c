@@ -11,6 +11,7 @@
 #include "get_ss_info.h"
 #include "ab_globals.h"
 #include "dump_log.h"
+#include "statsd.h"
 
 /* TODO P3 Verify that g_ss_response does not overflow */
 int
@@ -41,9 +42,13 @@ get_ss_info(
   double ss_resp_time = 0;
   curl_res = curl_easy_perform(g_ss_ch);
   t_stop = RDTSC();
+  STATSD_COUNT("ss_calls", 1);
 
   // check response and exit early if needed
-  if ( curl_res != CURLE_OK ) { g_log_ss_bad_code++; go_BYE(-2); } 
+  if ( curl_res != CURLE_OK ) {
+    g_log_ss_bad_code++; 
+    STATSD_COUNT("ss_bad_code", 1); go_BYE(-2); 
+  } 
   curl_easy_getinfo(g_ss_ch, CURLINFO_RESPONSE_CODE, &http_code);
   if ( http_code != 200 )  {  
     fprintf(stderr, "url = %s, uuid = %s \n", url, uuid);
@@ -52,7 +57,10 @@ get_ss_info(
   // check ascii and lower case as you go 
   int idx = 0;
   for ( char *cptr = g_ss_response; *cptr != '\0'; cptr++ ) { 
-    if ( !isascii(*cptr) ) { g_log_ss_non_ascii++; go_BYE(-2); }
+    if ( !isascii(*cptr) ) { 
+      g_log_ss_non_ascii++;
+       STATSD_COUNT("ss_non_ascii", 1); go_BYE(-2);
+    }
     else {
       g_ss_response[idx++] = tolower(*cptr);
     }

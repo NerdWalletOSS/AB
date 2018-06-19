@@ -2,6 +2,8 @@
 #include "ab_globals.h"
 #include "log_decision.h"
 #include "to_kafka.h"
+#include "statsd.h"
+
 int
 to_kafka(
     char *body,
@@ -13,6 +15,7 @@ to_kafka(
   KAFKA_REC_TYPE X;
 
   g_log_kafka_calls++;
+  STATSD_COUNT("kafka_calls", 1);
   X.sz = sz_body + 1;
   g_kafka_memory += X.sz;
   X.data = (char *)malloc(X.sz);

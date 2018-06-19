@@ -5,6 +5,8 @@
 #include "make_curl_payload.h"
 #include "log_decision.h"
 #include "kafka_add_to_queue.h"
+#include "statsd.h"
+  
 int
 log_decision(
     void *X
@@ -17,6 +19,7 @@ log_decision(
   // drop messages on the floor, then stall the main thread
   if ( g_n_log_q > g_cfg.sz_log_q - 2 ) {
     g_log_dropped_posts++; 
+    STATSD_COUNT("dropped_posts", 1);
     goto BYE; 
   }
 
