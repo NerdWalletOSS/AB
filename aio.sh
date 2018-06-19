@@ -7,7 +7,8 @@ usage(){
   echo "  -o  Same as -b but doesn't install packages build"
   echo "  -c  Cleans out all the binary files"
   echo "  -p  Builds tarballs for AB and abadmin in addition to building everything"
-  echo "  -t  Builds AB and runs tests"
+  echo "  -t  Installs testing utils"
+  echo "  -r  Builds AB and runs tests"
   echo "  -x  Builds a tarball of all the php companents for AB admin"
   echo "  -s  Builds and starts all support systems"
 
@@ -28,35 +29,34 @@ buildall(){
   sudo pip install pystatsd
   clean
   install_deps_from_source
+  install_librdkafka
   set -e
   build
+}
+
+install_librdkafka(){
+  rm -rf ./librdkafka
+  tar -xvzf librdkafka.tar.gz
+  cd librdkafka/
+  ./configure
+  make
+  cd ../
 }
 
 build(){
   rm -rf bin
   mkdir bin
-  cd ./curl-7.51.0/
-  ./configure
-  make
-  cd ../
-  rm -rf ./librdkafka
-  git clone https://github.com/edenhill/librdkafka.git
-  cd librdkafka/
-  ./configure
-  make
-  cd ../
+  # cd ./curl-7.51.0/
+  # ./configure
+  # make
+  # cd ../
   cd ./src
   make
   mkdir -p ../bin/libs
   cp ab_httpd ../bin
   cd ../
-  #  find ./ -name "*.so*" -exec cp {} ../bin/libs \;
-  # find ./ -name "*.lua" -exec cp --parents {} ../bin \;
-  # find ./RTS -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./RTS -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
-  # find ./DT -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./DT -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
-  # find ./lua -name '*.lua' -exec cp --parents \{\} ./bin/ \;
   find ./lua -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
 
   find ./ -name "*.so*" -exec cp \{\} ./bin/libs/ \;
