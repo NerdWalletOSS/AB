@@ -143,7 +143,10 @@ get_test_name(
   if ( status < 0 ) { g_log_no_test_name++; }
   cBYE(status); // ADDED DEC 2016
   status = chk_test_name(test_name); 
-  if ( status < 0 ) { g_log_bad_test_name++; }
+  if ( status < 0 ) { 
+    g_log_bad_test_name++; 
+    status = AB_ERROR_CODE_BAD_TEST;
+  }
   cBYE(status);
 BYE:
   return status;
