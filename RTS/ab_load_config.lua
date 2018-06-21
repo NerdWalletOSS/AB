@@ -100,6 +100,21 @@ local function update_config(c_struct, config)
   return is_updated
 end
 
+local function update_statsd(c_struct, config)
+  local is_updated = update_config(c_struct.statsd, config)
+  if config ~= nil then
+    is_updated = update_string_field(config.STATSD_INC, c_struct.statsd_inc,
+      is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+    is_updated = update_string_field(config.STATSD_COUNT, c_struct.statsd_count,
+      is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+    is_updated = update_string_field(config.STATSD_TIMING, c_struct.statsd_timing,
+      is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+    is_updated = update_string_field(config.STATSD_GAUGE, c_struct.statsd_gauge,
+      is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
+  end
+  return is_updated
+end
+
 local load_cfg = {}
 
 function load_cfg.db_connect(mysql)
@@ -197,9 +212,9 @@ local function update_kafka_configs(g_cfg, conf)
   local kafka = g_cfg[0].kafka
   is_updated = update_string_field(conf.BROKERS, kafka.brokers, is_updated, 1, consts.AB_MAX_LEN_SERVER_NAME)
   is_updated = update_string_field(conf.TOPIC, kafka.topic, is_updated, 1, consts.AB_MAX_LEN_KAFKA_TOPIC)
-  is_updated = update_string_field(conf.QUEUE_SIZE, kafka.queue_size, is_updated, 1, consts.AB_MAX_LEN_KAFKA_QUEUE_SIZE)
+  -- is_updated = update_string_field(conf.QUEUE_SIZE, kafka.queue_size, is_updated, 1, consts.AB_MAX_LEN_KAFKA_QUEUE_SIZE)
   is_updated = update_string_field(conf.RETRIES, kafka.retries, is_updated, 1, consts.AB_MAX_LEN_KAFKA_RETRIES)
-  is_updated = update_string_field(conf.MAX_BUFFERING_TIME, kafka.max_buffering_time, is_updated, 1, consts.AB_MAX_LEN_BUF_TIME)
+  -- is_updated = update_string_field(conf.MAX_BUFFERING_TIME, kafka.max_buffering_time, is_updated, 1, consts.AB_MAX_LEN_BUF_TIME)
   return is_updated
 end
 
@@ -226,7 +241,7 @@ function load_cfg.load_config(
   has_changed[0] = update_rts_configs(g_cfg, config.AB)
   has_changed[1] = update_config(g_cfg[0].logger, config.AB.LOGGER)
   has_changed[2] = update_config(g_cfg[0].ss, config.AB.SESSION_SERVICE)
-  has_changed[3] = update_config(g_cfg[0].statsd, config.AB.STATSD)
+  has_changed[3] = update_statsd(g_cfg[0], config.AB.STATSD)
   has_changed[4] = update_config(g_cfg[0].webapp, config.AB.WEBAPP)
   -- As an example, if we wanted database info on C side, we would do
   -- has_changed[... = update_db(g_cfg, config.AB.DB)

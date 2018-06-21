@@ -57,7 +57,8 @@ update_config(
     fprintf(stderr, "WARNING! Not logging to statsd \n");
   }
   else {
-    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
+    int port = g_cfg.statsd.port;
+    g_statsd_link = statsd_init(g_cfg.statsd.server, port);
     if ( g_statsd_link == NULL ) { go_BYE(-1); }
   }
   
