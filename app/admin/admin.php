@@ -1,5 +1,5 @@
 <?php 
-require_once "../includes/header_admin.php"; 
+require_once "includes/header_admin.php"; 
 ?>
     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 

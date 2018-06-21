@@ -32,9 +32,19 @@ function chk_test(
     $T1 = json_decode($rslt);
     rs_assert($T1, "bad JSON from RTS");
     $T2 = db_get_test(null, $test_name, $test_type);
+    //print("<pre>".print_r($T2,true)."</pre>");
     rs_assert($T2, "test not found");
     //-- START:  error checking UTPAL TODO P0
     rs_assert($T1->{'State'} == $T2['State']);
+    rs_assert($T1->{'id'} == $T2['id']);
+    if ($test_type == "XYTest") {
+    rs_assert($T1->{'is_dev_specific'} == $T2['is_dev_specific']);
+    }
+    if ($test_type == "ABTest") {
+    rs_assert($T1->{'has_filters'} == $T2['has_filters']);
+    }
+    
+    
     //-- STOP :  error checking
   }
   return true;
