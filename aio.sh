@@ -129,7 +129,7 @@ run_lua_tests(){
 install_deps_from_source() {
   my_print "Installing luajit from source"
   #wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
-  wget http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+  # wget http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
   #tar -xvf LuaJIT-2.0.4.tar.gz
   tar -xvf LuaJIT-2.1.0-beta3.tar.gz
   #cd LuaJIT-2.0.4/
