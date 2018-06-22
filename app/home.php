@@ -30,6 +30,7 @@ if (isset($TestType))
   <link href="css/dataTables.min.css" rel="stylesheet">
   <script src="js/dataTables.min.js"></script>
   <script src="js/filter_test.js"></script>
+    <script src="js/check_test.js"></script>
 </head>
 <body>
 <!-- STANDARD HEADER INFORMATION -->
@@ -58,13 +59,10 @@ echo $TestType;
   </h3>
 </div>
 <div class="panel-body">
+  <!-- AJAX ERROR DIV START -->
+  <?php require_once "error_div.php"; ?>
+  <!-- AJAX ERROR DIV END -->
 <?php
-if (isset($_SESSION['test_status'])) {
-?>
-<div> <?php echo $_SESSION['test_status'];?></div>
-<?php
-}
-unset($_SESSION['test_status']);
 if (isset($TestType))
 	{
 		require_once "test_table.php";

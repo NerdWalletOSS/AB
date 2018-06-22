@@ -21,14 +21,14 @@ function chk_test(
   $test_name = get_json_element($inJ, 'TestName');
   $test_type = get_json_element($inJ, 'TestType');
 
-  $SP = list_rts(); 
-  rs_assert($SP, "No RTS listening");
+  $SP = list_rts();  
+  rs_assert($SP, "No RTS listening"); 
   foreach ($SP as $sp ) { 
     $S = $sp['server']; 
     $P = $sp['port']; 
     $url  = "TestInfo?Source=C&TestName=$test_name&TestType=$test_type";
-    get_url($S, $P, $url, $http_code, $rslt);
-    rs_assert($http_code == 200, "Bad http code from RTS");
+    get_url($S, $P, $url, $http_code, $rslt); 
+    rs_assert($http_code == 200, "Bad http code from RTS"); 
     $T1 = json_decode($rslt);
     rs_assert($T1, "bad JSON from RTS");
     $T2 = db_get_test(null, $test_name, $test_type);
