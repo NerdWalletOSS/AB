@@ -23,7 +23,7 @@ clean(){
 
 buildall(){
   sudo apt-get update
-  sudo apt-get install gcc python python-pip cmake -y
+  sudo apt-get install gcc cmake g++ -y
   sudo pip install pystatsd
   clean
   install_test_deps
@@ -67,7 +67,7 @@ install_test_deps() {
   cd -
   cd ../
   rm -rf LuaJIT-2.1.0-beta3
-  sudo apt-get install luarocks
+  sudo apt-get install luarocks python python-pip cmake -y
   sudo luarocks install busted Lua-cURL luasec
 }
 
