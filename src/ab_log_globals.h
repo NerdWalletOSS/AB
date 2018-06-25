@@ -19,17 +19,17 @@ EXTERN uint64_t g_log_ss_calls;
 /*C number of calls to session service */
 EXTERN uint64_t g_log_ss_bad_code;
 /*C number of times session service returned bad HTTP code */
-EXTERN uint64_t g_log_ss_timeout;
+EXTERN uint64_t g_log_ss_timeout; // TODO IS RS not used
 /*C number of times session service timed out */
 EXTERN uint64_t g_log_ss_non_ascii;
 /*C number of times session service response had non ascii characters */
 EXTERN uint64_t g_log_ss_null_data;
 /*C number of times session service response was null */
-EXTERN uint64_t g_log_ss_bad_json;
+EXTERN uint64_t g_log_ss_bad_json; // TODO IS RS not used
 /*C number of times session service response was invalid JSON */
-EXTERN uint64_t g_log_ss_no_session;
+EXTERN uint64_t g_log_ss_no_session; // TODO IS RS not used
 /*C number of times session service did not have info for UUID */
-EXTERN uint64_t g_log_ss_bad_calls;
+EXTERN uint64_t g_log_ss_bad_calls; // TODO IS RS not used
 /*C number of times \verb+l_chk_exclude()+ failed */
 
 EXTERN uint64_t g_log_missing_test;
@@ -40,7 +40,7 @@ EXTERN uint64_t g_log_no_test_names;
 /*C TODO */
 EXTERN uint64_t g_log_no_uuid; 
 /*C number of times no UUID in GetVariant(s) call */
-EXTERN uint64_t g_log_no_test_type; 
+EXTERN uint64_t g_log_no_test_type; // TODO IS RS unused
 /*C number of times no TestType in GetVariant(s) call */
 EXTERN uint64_t g_log_no_tracer; 
 /*C number of times no Tracer in GetVariant(s) call */
@@ -73,13 +73,13 @@ EXTERN uint64_t g_log_get_alt_variant_calls;
 /*C TODO */
 EXTERN uint64_t g_log_get_variant_calls; 
 /*C TODO */
-EXTERN uint64_t g_log_get_variants_calls; 
+EXTERN uint64_t g_log_get_variants_calls; // TODO RS IS not used 
 /*C TODO */
 EXTERN uint64_t g_log_router_calls;
 /*C TODO */
 EXTERN uint64_t g_log_kafka_calls;
 /*C Number of calls to Kafka */
-EXTERN uint64_t g_log_kafka_total_time;
+EXTERN uint64_t g_log_kafka_total_time; // TODO IS RS not sent to statsd
 /*C Total time spent talking to Kafka */
 EXTERN uint64_t g_log_bad_router_calls;
 /*C TODO */

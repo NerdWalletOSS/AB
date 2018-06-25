@@ -7,6 +7,7 @@
 #include "get_ss_info.h"
 #include "get_variant.h"
 #include "make_curl_payload.h"
+#include "statsd.h"
 
 int 
 get_variant(
@@ -28,18 +29,21 @@ get_variant(
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   cBYE(status);
   T = &(g_tests[test_idx]);
-  g_log_get_variant_calls++; 
+  g_log_get_variant_calls++;
+  STATSD_COUNT("get_variant_calls", 1);
   // Extract UUID
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_cfg.max_len_uuid);
   if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { 
     status = -1;
     g_log_no_uuid++;
+    STATSD_COUNT("no_uuid", 1);
   }
   cBYE(status);
   status = chk_uuid(g_uuid, g_cfg.max_len_uuid); 
   if ( status < 0 ) {
     status = AB_ERROR_CODE_BAD_UUID;
     g_log_bad_uuid++;
+    STATSD_COUNT("bad_uuid", 1);
   }
   cBYE(status);
   get_tracer(args, in_tracer);

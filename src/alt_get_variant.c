@@ -8,6 +8,7 @@
 #include "log_decision.h"
 #include "dump_log.h"
 #include "make_guid.h"
+#include "statsd.h"
 
 //<hdr>
 static int
@@ -80,6 +81,7 @@ int alt_get_variant(
   status = find_test(args, &test_idx);cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
   uint32_t test_id = g_tests[test_idx].id;
+  STATSD_COUNT("get_alt_variant_calls", 1);
   g_log_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
 

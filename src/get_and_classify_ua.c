@@ -4,6 +4,7 @@
 #include "url.h"
 #include "classify_ua.h"
 #include "get_and_classify_ua.h"
+#include "statsd.h"
 
 int 
 get_and_classify_ua(
@@ -44,13 +45,18 @@ get_and_classify_ua(
         g_classify_ua_map, g_num_classify_ua_map,
         ptr_device_type_id, ptr_os_id,
         ptr_browser_id, ptr_justin_cat_id);
-    if ( *ptr_justin_cat_id == 0 ) { g_log_bad_user_agent++; }
+    if ( *ptr_justin_cat_id == 0 ) { 
+      g_log_bad_user_agent++;
+      STATSD_COUNT("bad_user_agent", 1);
+    }
     free_if_non_null(decoded_ua); 
     // Don't have this be a catastrophic failure
     if ( status < 0 ) { WHEREAMI; status = 0; }
   }
   else {
-    g_log_no_user_agent++; 
+    g_log_no_user_agent++;
+    STATSD_COUNT("no_user_agent", 1);
+
   }
 BYE:
   return status;

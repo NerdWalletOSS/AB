@@ -6,6 +6,7 @@
 #include "auxil.h"
 #include "alt_get_variant.h"
 #include "route_get_variant.h"
+#include "statsd.h"
 
 //<hdr>
 int
@@ -21,7 +22,8 @@ route_get_variant(
   if ( ( args == NULL ) || ( *args == '\0' ) ) { go_BYE(-1); }
   for ( const char *cptr = args; *cptr != '\0'; cptr++ ) { 
     if ( !g_valid_chars_in_ab_args[(uint8_t)*cptr] ) { 
-      g_log_bad_ab_args++; go_BYE(-1);
+      g_log_bad_ab_args++; 
+      STATSD_COUNT("bad_ab_args", 1); go_BYE(-1);
     }
   }
 

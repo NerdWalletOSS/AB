@@ -7,6 +7,7 @@
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
 #include "l_get_num_features.h"
+#include "statsd.h"
 
 #include "load_dt.h"
 #include "load_rf.h"
@@ -56,9 +57,12 @@ update_config(
     fprintf(stderr, "WARNING! Not logging to statsd \n");
   }
   else {
-    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
+    int port = g_cfg.statsd.port;
+    g_statsd_link = statsd_init(g_cfg.statsd.server, port);
     if ( g_statsd_link == NULL ) { go_BYE(-1); }
   }
+  
+    STATSD_GAUGE("start_time", g_log_start_time);
   // log_server
   // log_port
   // log_url
