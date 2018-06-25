@@ -27,8 +27,8 @@ hard_code_config(void)
   g_cfg.webapp.port = 8080;
   strcpy(g_cfg.webapp.health_url, "AB/php/index.html");
 
-  strcpy(g_cfg.statsd.server, "localhost");
-  g_cfg.statsd.port = 8125;
+  // strcpy(g_cfg.statsd.server, "localhost");
+  // g_cfg.statsd.port = 8125;
 
   g_cfg.sz_log_q = 131072;
   g_cfg.num_post_retries = 1;
