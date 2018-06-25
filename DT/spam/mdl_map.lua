@@ -1,1 +1,1 @@
-return {[0]='spam'}
+return {[0]="spam"}

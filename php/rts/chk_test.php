@@ -24,8 +24,8 @@ function chk_test(
   $SP = list_rts(); 
   rs_assert($SP, "No RTS listening");
   foreach ($SP as $sp ) { 
-    $S = $sp['server'];
-    $P = $sp['port'];
+    $S = $sp['server']; 
+    $P = $sp['port']; 
     $url  = "TestInfo?Source=C&TestName=$test_name&TestType=$test_type";
     get_url($S, $P, $url, $http_code, $rslt);
     rs_assert($http_code == 200, "Bad http code from RTS");

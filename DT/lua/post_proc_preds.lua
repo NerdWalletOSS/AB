@@ -1,8 +1,7 @@
-local ffi      = require 'ffi'
-local cache    = require 'lua/cache'
 local assertx  = require 'lua/assertx'
+local cache    = require 'lua/cache'
+local ffi      = require 'ffi'
 local JSON     = require 'lua/JSON'
-
 
 local function get_mdl_ct(mdl_map)
   assert(mdl_map[0], 'mdl_map must be 0-indexed')
@@ -11,7 +10,6 @@ local function get_mdl_ct(mdl_map)
   return count
 end
 
-
 local function post_proc_preds(
   opvec, -- feature vector, now a float* of n_opvec length
   n_opvec, -- number of elements in feature vector. should be 21
@@ -19,27 +17,38 @@ local function post_proc_preds(
   sz_out_buf -- size of above
   )
   opvec = ffi.cast("float*", opvec)
-  -- for i = 1, n_opvec do print("Lua " .. i .. " = " .. opvec[i-1]) end
   local out_features = {}
-  local mdl_map = assert(cache.get('mdl_map'),
-    'mdl_map missing from cache.')
-  local n_mdl = assert(get_mdl_ct(mdl_map), 'mdl_map failed.')
-  assertx(n_opvec == n_mdl, 'feature vector length is ',
-    tostring(n_opvec), ', but mdl_map says length is ', 
+  local mdl_map = assert(cache.get("mdl_map"),
+    "mdl_map missing from cache.")
+  local n_mdl = assert(get_mdl_ct(mdl_map), "mdl_map failed.")
+  assertx(n_opvec == n_mdl,
+    "feature vector length is ",
+    tostring(n_opvec),
+    ", but mdl_map says length is ", 
     tostring(n_mdl))
   ctr = 1
-  for idx, mdl in pairs(mdl_map) do
-    local pred = assertx(opvec[tonumber(idx)], 'Index ', tostring(idx),
-      ' not present in opvec.')
-    assertx(0 <= pred and pred <= 1, 'prediction ', tostring(pred), 
-      ' not between 0 and 1 inclusive.')
+  for idx,mdl in pairs(mdl_map) do
+    local pred = assertx(
+      opvec[tonumber(idx)],
+      "Index ",
+      tostring(idx),
+      " not present in opvec.")
+    assertx(
+      0 <= pred and pred <= 1,
+      "prediction ",
+      tostring(pred), 
+      " not between 0 and 1 inclusive.")
     out_features[tostring(mdl)] = pred
     assert(ctr <= n_mdl)
-    ctr = ctr + 1 
+    ctr = ctr + 1
   end
   local x = assert(JSON:encode(out_features))
-  assertx(#x <= sz_out_buf, 'len of string is ', #x,
-    ', which is too long for the buffer with length ', sz_out_buf)
+  assertx(
+    #x <= sz_out_buf,
+    "len of string is ",
+    #x,
+    ", which is too long for the buffer with length ",
+    sz_out_buf)
   ffi.copy(out_buf, x)
   return true
 end

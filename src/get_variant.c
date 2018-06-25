@@ -41,6 +41,7 @@ get_variant(
   cBYE(status);
   status = chk_uuid(g_uuid, g_cfg.max_len_uuid); 
   if ( status < 0 ) {
+    status = AB_ERROR_CODE_BAD_UUID;
     g_log_bad_uuid++;
     STATSD_COUNT("bad_uuid", 1);
   }
@@ -74,12 +75,26 @@ get_variant(
     const char *vname = g_tests[test_idx].variants[final_variant_idx].name;
     int vid = g_tests[test_idx].variants[final_variant_idx].id;
     if ( cd == NULL ) { cd = "null"; }
-    int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",
-        vname, 
-        vid,
-        cd,
-        test_name, 
-        g_tests[test_idx].id); if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
+    int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, 
+"{ \
+\"Variant\" : \"%s\", \ 
+\"variant\" : \"%s\", \
+\"VariantID\" :  %d, \
+\"variant_id\" :  %d, \
+\"CustomData\" : %s, \
+\"custom_data\" : %s, \
+\"Test\" : \"%s\", \
+\"test\" : \"%s\", \
+\"TestID\" : %d,  \
+\"test_id\" : %d  \
+}",
+        vname,  vname,
+        vid, vid,
+        cd, cd,
+        test_name,  test_name,
+        g_tests[test_idx].id, g_tests[test_idx].id
+        ); 
+    if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
     goto BYE; // Nothing more to do. Early exit
   }
   //-----------------------------------------------------------

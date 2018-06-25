@@ -93,5 +93,8 @@
 #define AB_SEED_2 982451653; // some other large primenumber
 
 #define AB_MAX_LEN_KAFKA_TOPIC 63
+
+#define AB_ERROR_CODE_BAD_UUID -2
+#define AB_ERROR_CODE_BAD_TEST -3
 #endif
 

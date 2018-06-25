@@ -45,9 +45,10 @@ In that directory, we have
 			keys in dt_feature.lua and all values must be either numeric
 			or (categorical) appear as the nested Lua table's keys in 
 			dt_feature.lua
-
-5) A directory called test. Inside this, all tests that need to be 
+5) mdl_meta.lua --- a Lua table that has relevant metadata in it
+6) A directory called test. Inside this, all tests that need to be 
 executed will be in files called test_*.lua
+ 
 
 Currently, we have a script that takes dt.csv and converts it into 3 binary
 files called
@@ -56,10 +57,10 @@ rf.bin
 mdl.bin
 which are loaded by the C server
 
-6) You must have a file called sample_input.json. This is used as an 
+7) You must have a file called sample_input.json. This is used as an 
 input to the /MakeFeatureVector API as a debugging check
 
-7) You must have a file called sample_output.json which is what 
+8) You must have a file called sample_output.json which is what 
 Classify will return when called with sample_input.json
 
 -------

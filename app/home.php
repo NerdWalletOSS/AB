@@ -59,6 +59,12 @@ echo $TestType;
 </div>
 <div class="panel-body">
 <?php
+if (isset($_SESSION['test_status'])) {
+?>
+<div> <?php echo $_SESSION['test_status'];?></div>
+<?php
+}
+unset($_SESSION['test_status']);
 if (isset($TestType))
 	{
 		require_once "test_table.php";

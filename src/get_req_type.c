@@ -58,7 +58,13 @@ get_req_type(
   else if (strcasecmp(api, "GetVariant") == 0) {
     return GetVariant;
   }
+  else if (strcasecmp(api, "get_variant") == 0) {
+    return GetVariant;
+  }
   else if (strcasecmp(api, "GetVariants") == 0) {
+    return GetVariants;
+  }
+  else if (strcasecmp(api, "get_variants") == 0) {
     return GetVariants;
   }
   else if (strcasecmp(api, "Halt") == 0) {
