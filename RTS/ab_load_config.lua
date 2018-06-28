@@ -178,7 +178,9 @@ local function update_rts_configs(g_cfg, config)
   c_struct.xy_guid, is_updated, 0, 2^32 -1)
 
 
-  load_cfg.load_db_data(config)
+  if config.MYSQL ~= nil then
+    load_cfg.load_db_data(config)
+  end
   return is_updated
 end
 
