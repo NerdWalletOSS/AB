@@ -166,8 +166,10 @@ local function update_rts_configs(g_cfg, config)
   end
   is_updated, c_struct.sz_log_q = update_number_field(config.SZ_LOG_Q, c_struct.sz_log_q, is_updated, 0,
   2^32-1)
-  is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
-  c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  if config.LOGGER ~= nil then
+    is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
+    c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  end
   is_updated = update_string_field(config.DEFAULT_URL,
   c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
   is_updated, c_struct.max_len_uuid = update_number_field(config.SZ_UUID_HT,
