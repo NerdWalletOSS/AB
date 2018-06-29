@@ -1,4 +1,5 @@
 <?php session_start();
+error_reporting( E_ALL );
 # -- PARSE SESSION VARIABLES
 if (isset($_SESSION['User'])) { $User = $_SESSION['User'];}
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");

@@ -29,8 +29,11 @@ if (isset($TestType))
 <!-- PAGE SPECIFIC FILE CALLS -->
   <link href="css/dataTables.min.css" rel="stylesheet">
   <script src="js/dataTables.min.js"></script>
+<!--
   <script src="js/filter_test.js"></script>
     <script src="js/check_test.js"></script>
+-->
+    <script src="js/home.js"></script>
 </head>
 <body>
 <!-- STANDARD HEADER INFORMATION -->
