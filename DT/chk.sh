@@ -24,6 +24,7 @@ test -f _dt.bin;  mv _dt.bin  $cwd
 test -f _rf.bin;  mv _rf.bin  $cwd
 test -f _mdl.bin; mv _mdl.bin $cwd
 popd
+echo PREMATURE
 exit
 #------------------------
 cd test/
