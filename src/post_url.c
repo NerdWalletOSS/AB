@@ -9,6 +9,7 @@
 #include "post_url.h"
 
 #include "ab_globals.h"
+#include "statsd.h"
 
 int
 post_url(
@@ -26,6 +27,7 @@ post_url(
   // ----------------------------------------
   /* Now specify the POST data */ 
   g_log_posts++;
+  STATSD_COUNT("posts", 1);
   curl_easy_setopt(ch, CURLOPT_POSTFIELDS, str_payload);
   if ( ptr_time_taken != NULL ) { t_start = get_time_usec(); }
   int num_tries = 0;
@@ -36,17 +38,20 @@ post_url(
     num_tries++;
     if ( curl_res != CURLE_OK ) { 
       g_log_failed_posts++; good_post = false; 
+      STATSD_COUNT("failed_posts", 1);
     }
     else {
       curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &http_code);
       if ( http_code != 200 )  {  
         g_log_failed_posts++; good_post = false; 
+        STATSD_COUNT("failed_posts", 1);
       }
     }
     if ( good_post ) { break;}
   } while ( num_tries < g_cfg.num_post_retries );
   if ( !good_post ) { 
-    g_log_bad_posts++; status = -2; 
+    g_log_bad_posts++; status = -2;
+    STATSD_COUNT("bad_posts", 1);
   }
   // Note that the return is -2, not -1 which will be treated 
   // differently by caller

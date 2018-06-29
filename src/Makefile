@@ -5,7 +5,7 @@ INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
 	-I../statsd-c-client-master/ \
-	-I../luajit-2.0.5/src/ \
+	-I../LuaJIT-2.1.0-beta3/src/ \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 	-I../dt_interpreter/src/  \
@@ -53,8 +53,13 @@ all : ab_httpd \
 ./libs:
 	mkdir libs
 
-../luajit-2.0.5/src/libluajit.a :
-	make -C ../luajit-2.0.5
+../LuaJIT-2.1.0-beta3/src/libluajit.a:
+		cd ../ && \
+		rm -rf LuaJIT-2.1.0-beta3 && \
+	 	tar -xvzf LuaJIT-2.1.0-beta3.tar.gz && \
+	 	cd LuaJIT-2.1.0-beta3/ && \
+		sed -i '114s/#//' src/Makefile && \
+		make TARGET_FLAGS=-pthread
 
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
@@ -97,7 +102,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 
 
 .c.o : ../curl-7.51.0/lib/.libs/libcurl.so  
-	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS)
+	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS) $(DBGFLAGS)
 
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
@@ -123,7 +128,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so
+$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so
 
 
 ../statsd-c-client-master/libstatsdclient.so :
@@ -170,7 +175,7 @@ ab_httpd : $(COBJS)  \
 	../lua/ab_ffi.lua \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
-	../luajit-2.0.5/src/libluajit.a \
+	../LuaJIT-2.1.0-beta3/src/libluajit.a \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
@@ -184,7 +189,7 @@ ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
-	../luajit-2.0.5/src/libluajit.a \
+	../LuaJIT-2.1.0-beta3/src/libluajit.a \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
@@ -208,7 +213,7 @@ libspooky_hash.so:
 
 clean:
 	rm -r -f ab_httpd $(COBJS) libspooky_hash.so ab_consts.lua ab_ffi.lua
-	make -i -C ../luajit-2.0.5/src/ clean 
+	make -i -C ../LuaJIT-2.1.0-beta3/src/ clean 
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
