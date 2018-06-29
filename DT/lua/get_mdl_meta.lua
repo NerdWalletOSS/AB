@@ -7,9 +7,9 @@ local function get_mdl_meta(
   out_buf, -- output buffer for debugging 
   sz_out_buf -- size of above
   )
-  local mdl_meta = assert(cache.get("mdl_meta")),
+  local mdl_meta = assert(cache.get("mdl_meta"),
     "mdl_meta missing from cache.")
-  mdl_meta = assert(JSON:encode(out_feature))
+  mdl_meta = assert(JSON:encode(mdl_meta))
   assertx(#mdl_meta <= sz_out_buf, 
     "len of model metadata string is ",
     #mdl_meta,
