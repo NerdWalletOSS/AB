@@ -14,7 +14,6 @@ sudo apt-get install libmysqlclient-dev
 
 bunzip2 httpd-2.4.29.tar.bz2 
 tar -xvf httpd-2.4.29.tar 
-cd httpd-2.4.29/
 
 bunzip2 apr-util-1.6.1.tar.bz2 
 tar -xvf apr-util-1.6.1.tar 
@@ -43,8 +42,7 @@ make install
 --=================================
 bunzip2 php-7.1.11.tar.bz2 
 tar -xvf php-7.1.11.tar 
-cd php-7.1.11//
-
+cd php-7.1.11/
 
 options=" --prefix=$HOME/local/ \
 --with-apxs2=$HOME/local/bin/apxs \
@@ -62,7 +60,8 @@ make install
 libtool --finish ./libs
 #-====================================
 Modifications to httpd.conf
-1. Set port to 8080 or something that is user accessible
+1. Set port to 8080 or something that is user accessible e.g., 
+Listen 8080 
 2. Make sure that you have a line like 
 LoadModule php7_module        modules/libphp7.so
 
