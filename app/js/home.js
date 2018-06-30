@@ -94,11 +94,10 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
             } 
             if (value['state_id'] == 4) {
-            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button></td>";
-  }      
-						 else {
-						TableRow += "<td><strong>No Action</strong></td>";
-						}
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button></td>";}      
+						// else {
+						//TableRow += "<strong>No Action</strong></td>";
+						//}
             TableRow += "</tr>";
 
             $(table).append(TableRow);
@@ -124,13 +123,14 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         $("#error_message").html("Loading...")
       }
     });
-    option.prop('checked', true);
-    return false;
+    //option.prop( "checked" );//option.prop('checked', true);
+    return true;
   });
 
-  $(".check_test").click(function(e) {
+
+ $(".check_test").click(function() {
     var name = $(this).attr('data-key'); // $(this) refers to button that was clicked
-    e.preventDefault();
+    //e.preventDefault();
     $.ajax({
       type: "POST",
       url: "processor/check_test_processor.php?TestName="+name,
@@ -166,6 +166,5 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
     });
     return false;
   });
-
 
 });
