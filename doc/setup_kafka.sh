@@ -13,7 +13,8 @@ usage(){
 
 install_kafka(){
 	sudo apt-get update
-	sudo apt-get install default-jre -y
+	# sudo apt-get install default-jre -y
+	sudo apt-get install openjdk-8-jdk
 	sudo apt-get install zookeeperd zookeeper -y
 	# RES="`echo ruok | nc localhost 2181`"
 	# if [[ "$RES" != "imok" ]]

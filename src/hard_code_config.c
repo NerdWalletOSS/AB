@@ -50,8 +50,9 @@ hard_code_config(void)
   strcpy(g_cfg.statsd_count,  "nw.metrics.ab.counts");
   strcpy(g_cfg.statsd_timing,  "nw.metrics.ab.request_time");
 
-  strcpy(g_cfg.dt_dir,  "../DT/cc_member_models/");
-  // strcpy(g_cfg.ua_dir,  "../DT/spam/");
+  strcpy(g_cfg.dt_dir,  "../DT/");
+  // strcpy(g_cfg.model_name,  "spam");
+  strcpy(g_cfg.model_name,  "cc_member_models");
 
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 

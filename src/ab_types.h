@@ -154,6 +154,7 @@ typedef struct _cfg_type {
   // STOP: For classifying user agent
   // START: For decision tree
   char dt_dir[AB_MAX_LEN_FILE_NAME+1];
+  char model_name[AB_MAX_LEN_FILE_NAME+1];
   char ua_dir[AB_MAX_LEN_FILE_NAME+1];
   // STOP: For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind

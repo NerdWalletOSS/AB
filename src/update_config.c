@@ -181,19 +181,19 @@ update_config(
 
     // fprintf(stderr, "WARNING!!!! Not loading dt_dir \n"); 
 
-    int buflen = 2 * (AB_MAX_LEN_FILE_NAME+1);
+    int buflen = strlen(g_cfg.dt_dir) + strlen(g_cfg.model_name) + 32;
     buf = malloc(buflen); return_if_malloc_failed(buf);
     memset(buf, '\0', buflen); 
 
-    sprintf(buf, "%s/_dt.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_dt.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_dt(buf, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
 
-    sprintf(buf, "%s/_rf.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_rf.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_rf(buf, &g_rf, &g_len_rf_file, &g_n_rf);
     cBYE(status);
 
-    sprintf(buf, "%s/_mdl.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_mdl.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_mdl(buf, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
 
