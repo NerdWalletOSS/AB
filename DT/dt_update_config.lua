@@ -29,14 +29,13 @@ local function update_config()
   print("Lua: update_config()");
   local config = assert(cache.get("config"))
   assert(config.DT, "DT hard-coded values in C not in Lua cache.")
-  local dt_dir = config.DT.DT_DIR.VALUE
-  if ( ( dt_dir ) and ( #dt_dir > 0 ) ) then 
+  local model_name = config.DT.MODEL_NAME.VALUE
+  if ( ( model_name ) and ( #model_name > 0 ) ) then 
     -- existence of dt_dir checked by C 
-    dir_path = "DT/" .. tostring(dt_dir)
-    DT_FEATURE = dir_path .. "/dt_feature"
-    GENERATE_FEATURES = dir_path .. "/generate_features"
-    MDL_MAP = dir_path .. "/mdl_map"
-    MDL_META = dir_path .. "/mdl_meta"
+    DT_FEATURE        = "DT/" .. model_name .. "/dt_feature"
+    GENERATE_FEATURES = "DT/" .. model_name .. "/generate_features"
+    MDL_MAP           = "DT/" .. model_name .. "/mdl_map"
+    MDL_META          = "DT/" .. model_name .. "/mdl_meta"
     load_into_cache(DT_FEATURE)
     load_into_cache(MDL_MAP)
     load_into_cache(MDL_META)

@@ -18,11 +18,9 @@ local function l_hard_code_config(
   c_cfg = ffi.cast("CFG_TYPE*", c_cfg)
 
   config.DT = {}
-  config.DT.DT_DIR = {}
-  config.DT.DT_DIR.VALUE = ffi.string(c_cfg.dt_dir)
-  -- TODO P1 UNDO HARD CODING BELOW 
-  -- config.DT.DT_DIR.VALUE = 'cc_member_models'
-  config.DT.DT_DIR.COMMENT = "directory where decision tree configs are"
+  config.DT.MODEL_NAME = {}
+  config.DT.MODEL_NAME.VALUE = ffi.string(c_cfg.model_name)
+  print(" config.DT.MODEL_NAME.VALUE = ", config.DT.MODEL_NAME.VALUE )
 
   return config
 end

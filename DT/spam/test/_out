@@ -1,7 +1,0 @@
-loading JSON
-*
-0 successes / 0 failures / 1 error / 0 pending : 0.008258 seconds
-
-Error -> test_one_hot_encoding.lua @ 13
-Testing one_hot_encoding should be able to return the correct one_hot_encoding for test data.
-/home/scrabble/local/htdocs/AB/bin/lua/JSON.lua:783: expected string argument to JSON:decode(), got table
