@@ -55,7 +55,7 @@ ADD_TEST_OBJS = \
 
 BLASTER_INCS = ../src/ab_incs.h
 
-all : sblaster pblaster add_tests
+all : sblaster pblaster add_tests test_dt
 
 add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(ADD_TEST_OBJS) -o add_tests  \
@@ -69,14 +69,18 @@ sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS)
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
 	../src/libs/libcurl.so 
 
+test_dt : test_dt.o mmap.o
+	$(CC) $(LFLAGS) mmap.o test_dt.o -o test_dt \
+	../src/libs/libcurl.so 
+
 
 ../jansson-2.10/src/.libs/libjansson.a :
 	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
-auxil.o : ab_incs.h
+auxil.o : 
 	$(CC) ../src/auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)
 
-mmap.o : ab_incs.h
+mmap.o : 
 	$(CC) ../src/mmap.c -c -o mmap.o $(CFLAGS)  $(INCS)
 
 make_guid.o : 
