@@ -30,20 +30,20 @@
     },
     "LOGGER": {
       "HEALTH_URL": {
-        "COMMENT": "Health check URL for DP",
-        "VALUE": "/health_check/"
+        "COMMENT": "Health check URL for Logger",
+        "VALUE": "api/v1/health_check/"
       },
       "PORT": {
-        "COMMENT": "Port on which DP is listening",
-        "VALUE": "80"
+        "COMMENT": "Port on which Logger is listening",
+        "VALUE": "8004"
       },
       "SERVER": {
-        "COMMENT": " Name of Server running DP",
-        "VALUE": "logger"
+        "COMMENT": " Name of Server running Logger",
+        "VALUE": "localhost"
       },
       "URL": {
-        "COMMENT": "URL on which DP needs data POSTed",
-        "VALUE": "/abserver/ABLog/"
+        "COMMENT": "URL on which Logger needs data POSTed",
+        "VALUE": "Log"
       },
       "NUM_POST_RETRIES": {
         "COMMENT": "Number of times it will attempt to POST to log server.",

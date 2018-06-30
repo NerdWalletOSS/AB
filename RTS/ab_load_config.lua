@@ -150,6 +150,7 @@ end
 local function update_rts_configs(g_cfg, config)
   local c_struct = g_cfg[0]
   local is_updated = consts.FALSE
+  print("XXXX",   config.PORT.VALUE, c_struct.port)
   is_updated,  c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
   2^16-1)
   if is_present(config.VERBOSE) then
