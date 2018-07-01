@@ -115,7 +115,6 @@ zero_globals(
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  g_cfg.max_len_uuid+1);
-  g_xy_guid = 0;
 
   memset(g_cfg.ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
   memset(g_cfg.justin_cat_file, '\0', AB_MAX_LEN_FILE_NAME+1);
