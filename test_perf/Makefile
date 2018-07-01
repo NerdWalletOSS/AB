@@ -33,6 +33,7 @@ CC= gcc
 
 PBLASTER_OBJS = \
 	 restart.o execute.o setup_curl.o pblaster.o  add_tests.o \
+	 read_test_info.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
@@ -40,6 +41,7 @@ PBLASTER_OBJS = \
 
 SBLASTER_OBJS = \
 	restart.o setup_curl.o sblaster.o  execute.o add_tests.o \
+	 read_test_info.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
