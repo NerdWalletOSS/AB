@@ -4,63 +4,7 @@
 #include "auxil.h"
 #include "execute.h"
 #include "setup_curl.h"
-
-typedef struct _test_info_rec_type { 
-  char test_name[AB_MAX_LEN_TEST_NAME+1];
-  char test_type[16];
-  char state[16];
-  int is_dev_specific;
-  int num_variants;
-} TEST_INFO_REC_TYPE;
-
-static int
-read_test_info(
-    const char *file_name,
-    TEST_INFO_REC_TYPE **ptr_T,
-    int *ptr_num_T
-    )
-{
-  int status = 0;
-  TEST_INFO_REC_TYPE *T = NULL;
-  int num_T = 0;
-  FILE *fp = NULL;
-#define MAXLINE 65535
-  char line[MAXLINE+1];
-  char *cptr, *xptr;
-
-  status = num_lines(file_name, &num_T); cBYE(status);
-  T = malloc(num_T * sizeof(TEST_INFO_REC_TYPE));
-  return_if_malloc_failed(T);
-  fp = fopen(file_name, "r");
-  return_if_fopen_failed(fp,  file_name, "r");
-  for ( int i = 0; i < num_T; i++ ) { 
-    if ( feof(fp) ) { go_BYE(-1); }
-     cptr = fgets(line, MAXLINE, fp);
-     if ( cptr == NULL ) { go_BYE(-1); }
-     cptr = strtok(line, ",");
-     strcpy(T[i].test_name, cptr);
-
-     xptr = strtok(NULL, ",");
-     strcpy(T[i].test_type, xptr);
-
-     xptr = strtok(NULL, ",");
-     strcpy(T[i].state, xptr);
-     
-     xptr = strtok(NULL, ",");
-     status = stoI4(xptr, &(T[i].is_dev_specific)); cBYE(status); 
-
-     xptr = strtok(NULL, ",");
-     status = stoI4(xptr, &(T[i].num_variants)); cBYE(status); 
-  }
-  *ptr_T = T;
-  *ptr_num_T = num_T;
-BYE:
-  fclose_if_non_null(fp);
-  return status;
-}
-
-int g_chunk_size;
-char *g_chunk;
+#include "read_test_info.h"
 
 int 
 main(
@@ -77,10 +21,6 @@ main(
   int num_tests = 0;
 
   // Set globals 
-  g_chunk_size = 16384; 
-  g_chunk = NULL;
-  g_chunk = malloc(g_chunk_size * sizeof(char));
-  return_if_malloc_failed(g_chunk);
 
   // process input parameters
   if ( argc != 6 ) { go_BYE(-1); }
@@ -127,12 +67,8 @@ main(
       for ( int test_id = 0; test_id < num_tests; test_id++ ) { 
         char url[AB_MAX_LEN_URL+1];
         char tracer[AB_MAX_LEN_TRACER+1];
-        for ( int i = 0; i < AB_MAX_LEN_URL+1; i++ ) {
-          url[i] = '\0';
-        }
-        for ( int i = 0; i < AB_MAX_LEN_TRACER+1; i++ ) { 
-          tracer[i] = '\0';
-        }
+        for ( int i = 0; i < AB_MAX_LEN_URL+1; i++ ) { url[i] = '\0'; }
+        for ( int i = 0; i < AB_MAX_LEN_TRACER+1; i++ ) { tracer[i] = '\0';}
         status = make_guid(NULL, tracer, AB_MAX_LEN_TRACER); 
         cBYE(status);
         sprintf(url, "%s:%d/GetVariant?TestName=%s&TestType=%s&UUID=%d&Tracer=%s", 
@@ -190,7 +126,6 @@ DONE:
 BYE:
   fclose_if_non_null(ofp);
   if ( ch != NULL ) { curl_easy_cleanup(ch); }
-  free_if_non_null(g_chunk);
   free_if_non_null(T);
   return status ;
 }
