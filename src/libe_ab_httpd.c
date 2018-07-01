@@ -202,7 +202,7 @@ main(
     strcpy(g_config_file, argv[1]); 
   }
   
-  status = setup(false); cBYE(status);
+  status = setup(); cBYE(status);
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);

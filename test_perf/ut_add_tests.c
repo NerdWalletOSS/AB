@@ -5,9 +5,6 @@
 #include "setup_curl.h"
 #include "auxil.h"
 
-int g_chunk_size;
-char *g_chunk;
-
 int 
 main(
     int argc,
@@ -21,11 +18,6 @@ main(
   int itemp;
 
   // Set globals 
-  g_chunk_size = 16384; 
-  g_chunk = NULL;
-  g_chunk = malloc(g_chunk_size * sizeof(char));
-  return_if_malloc_failed(g_chunk);
-
   // process input parameters
   if ( argc != 5 ) { go_BYE(-1); }
   server       = argv[1];

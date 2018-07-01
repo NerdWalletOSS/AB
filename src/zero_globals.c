@@ -34,17 +34,18 @@ free_globals(
   }
 
   free_if_non_null(g_log_q); g_n_log_q = 0;
+  fprintf(stderr, "Freeing g_log_q\n");
   g_q_rd_idx = 0; g_q_wr_idx = 0;
 
   free_if_non_null(g_uuid);
 
   shutdown_curl(); // for g_ch and g_ss_ch
 
-  free_if_non_null(g_justin_cat_lkp);  g_n_justin_cat_lkp = 0;
-  free_if_non_null(g_os_lkp);  g_n_os_lkp = 0;
-  free_if_non_null(g_browser_lkp);  g_n_justin_cat_lkp = 0;
-  free_if_non_null(g_device_type_lkp);  g_n_device_type_lkp = 0;
-  free_if_non_null(g_referer_class_lkp);  g_n_referer_class_lkp = 0;
+  free_lkp("justin", &g_justin_cat_lkp, &g_n_justin_cat_lkp);
+  free_lkp("os", &g_os_lkp, &g_n_os_lkp);
+  free_lkp("browser", &g_browser_lkp, &g_n_browser_lkp);
+  free_lkp("device_type", &g_device_type_lkp, &g_n_device_type_lkp);
+  free_lkp("referer", &g_referer_class_lkp, &g_n_referer_class_lkp);
 
   if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
     munmap(g_classify_ua_map, g_len_classify_ua_file);

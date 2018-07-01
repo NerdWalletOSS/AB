@@ -6,6 +6,16 @@
 #include "init.h"
 #include "ping_server.h"
 
+static size_t write_data(
+    void *buffer, 
+    size_t size, 
+    size_t nmemb, 
+    void *userp
+    )
+{
+  // basically do nothing with response
+  return size * nmemb;
+}
 
 size_t 
 WriteMemoryCallback(
@@ -118,6 +128,8 @@ setup_curl(
   if ( strcmp(method, "POST") == 0 ) { 
     res = curl_easy_setopt(ch, CURLOPT_POST, 1L);
     if ( res != CURLE_OK ) { go_BYE(-1);  }
+    //  we do not want any response for POST . See write_data()
+    curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, write_data);
   }
   else {
     res = curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
