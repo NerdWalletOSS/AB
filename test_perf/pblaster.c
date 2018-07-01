@@ -51,6 +51,7 @@ main(
   THREAD_INFO_TYPE *tinfo = NULL;
   g_ch = NULL;
   g_T = NULL;
+  int *tids = NULL;
 
   g_num_threads = 8; // TODO UNDO HARD CODING 
   if ( argc != 6 ) { go_BYE(-1); }
@@ -74,6 +75,10 @@ main(
   status = read_test_info(test_file_name, &g_T, &g_num_tests); cBYE(status);
   if ( ( g_T == NULL ) || ( g_num_tests == 0 ) ) { go_BYE(-1); }
 
+  tids = malloc(g_num_threads * sizeof(int));
+  return_if_malloc_failed(tids);
+  for ( int i = 0; i < g_num_threads; i++ ) {  tids[i] = i; }
+
   g_ch = malloc(g_num_threads * sizeof(CURL *));
   return_if_malloc_failed(g_ch);
   for ( int tid = 0; tid < g_num_threads; tid++ ) { 
@@ -96,9 +101,9 @@ main(
     tinfo[tid].num_bad    = 0;
   }
 
-
+ 
   for ( int tid = 0; tid < g_num_threads; tid++ ) { 
-    pthread_create(&(threads[tid]), NULL, hammer, (void *)(&tid));
+    pthread_create(&(threads[tid]), NULL, hammer, (void *)(tids+tid));
   }
   fprintf(stderr, "forked all threads\n");
   for ( int tid = 0; tid < g_num_threads; tid++ ) { 
@@ -118,5 +123,6 @@ BYE:
   free_if_non_null(threads);
   free_if_non_null(tinfo);
   free_if_non_null(g_T);
+  free_if_non_null(tids);
   return status ;
 }

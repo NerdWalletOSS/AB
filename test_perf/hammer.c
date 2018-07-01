@@ -14,7 +14,7 @@ extern int32_t g_port;
 extern TEST_INFO_REC_TYPE *g_T; /* [g_num_tests] */
 extern int g_num_tests;
 
-void
+void *
 hammer(
     void *arg
     )
@@ -30,6 +30,7 @@ hammer(
   double min_time = DBL_MAX;
   double max_time = -1.0 * DBL_MAX;
 
+  fprintf(stderr, "Hammer started %d \n", tid);
   for ( int iter = 0; iter < g_num_iters; iter++ ) {
     // T is used to measure individual times 
     for ( int uid = 0; uid < g_num_users; uid++ ) {
@@ -74,5 +75,6 @@ hammer(
     }
   }
 BYE:
-  return;
+  fprintf(stderr, "Hammer Finished %d \n", tid);
+  return NULL;
 }

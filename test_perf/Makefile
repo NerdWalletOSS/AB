@@ -65,7 +65,7 @@ add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS)
 
 pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) -fopenmp $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
-	../src/libs/libcurl.so -lgomp
+	../src/libs/libcurl.so -lpthread
 
 sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
