@@ -151,8 +151,11 @@ local function update_rts_configs(g_cfg, config)
   local c_struct = g_cfg[0]
   local is_updated = consts.FALSE
   print("XXXX",   config.PORT.VALUE, c_struct.port)
+  -- print(ffi.sizeof(g_cfg[0]))
+  -- dbg()
   is_updated,  c_struct.port = update_number_field(config.PORT, c_struct.port, is_updated, 0,
   2^16-1)
+  print("XXXX",   config.PORT.VALUE, c_struct.port)
   if is_present(config.VERBOSE) then
     local verbose = -1
     if config.VERBOSE.VALUE:lower() == "false" then
@@ -167,8 +170,10 @@ local function update_rts_configs(g_cfg, config)
   end
   is_updated, c_struct.sz_log_q = update_number_field(config.SZ_LOG_Q, c_struct.sz_log_q, is_updated, 0,
   2^32-1)
-  is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
-  c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  if config.LOGGER ~= nil then
+    is_updated, c_struct.num_post_retries = update_number_field(config.LOGGER.NUM_POST_RETRIES,
+    c_struct.num_post_retries, is_updated, 0, 2^32-1)
+  end
   is_updated = update_string_field(config.DEFAULT_URL,
   c_struct.default_url, is_updated, 1, consts.AB_MAX_LEN_REDIRECT_URL)
   is_updated, c_struct.max_len_uuid = update_number_field(config.SZ_UUID_HT,
@@ -177,7 +182,11 @@ local function update_rts_configs(g_cfg, config)
   c_struct.xy_guid, is_updated, 0, 2^32 -1)
 
 
-  load_cfg.load_db_data(config)
+  if config.MYSQL ~= nil then
+    load_cfg.load_db_data(config)
+  else
+    print("MYSQL config absent, continuing without") 
+  end
   return is_updated
 end
 
@@ -230,7 +239,7 @@ function load_cfg.load_config(
   local config = JSON:decode(conf_str)
 
   assert(g_cfg ~= ffi.NULL, "Config should not be null")
-  g_cfg = ffi.cast("CFG_TYPE*", g_cfg)
+  local cfg = ffi.cast("CFG_TYPE*", g_cfg)
   -- Has changed in an array of chars - where
   -- pos 0 = RTS
   -- pos 1 = logger
@@ -239,17 +248,36 @@ function load_cfg.load_config(
   has_changed = ffi.cast("unsigned char*", has_changed)
   ffi.fill(has_changed, ffi.sizeof("unsigned char")*7)
   -- The update functions are responsible for setting g_cfg
-  has_changed[0] = update_rts_configs(g_cfg, config.AB)
-  has_changed[1] = update_config(g_cfg[0].logger, config.AB.LOGGER)
-  has_changed[2] = update_config(g_cfg[0].ss, config.AB.SESSION_SERVICE)
-  has_changed[3] = update_statsd(g_cfg[0], config.AB.STATSD)
-  has_changed[4] = update_config(g_cfg[0].webapp, config.AB.WEBAPP)
+  has_changed[0] = update_rts_configs(cfg, config.AB)
+  if config.AB.LOGGER ~= nil then
+    has_changed[1] = update_config(cfg[0].logger, config.AB.LOGGER)
+  else
+    print("LOGGER config absent, continuing without") 
+  end
+  
+  if config.AB.SESSION_SERVICE~= nil then
+    has_changed[2] = update_config(cfg[0].ss, config.AB.SESSION_SERVICE)
+   else
+    print("LSESSION_SERVICE config absent, continuing without") 
+  end
+   
+  if config.AB.STATSD ~= nil then
+    has_changed[3] = update_statsd(cfg[0], config.AB.STATSD)
+    else
+    print("STATSD config absent, continuing without") 
+  end
+  
+  if config.AB.WEBAPP ~= nil then
+    has_changed[4] = update_config(cfg[0].webapp, config.AB.WEBAPP)
   -- As an example, if we wanted database info on C side, we would do
   -- has_changed[... = update_db(g_cfg, config.AB.DB)
-
-  has_changed[5] = update_ua_configs(g_cfg, config.AB)
+  else
+    print("WEBAPP config absent, continuing without") 
+  end
+ 
+  has_changed[5] = update_ua_configs(cfg, config.AB)
   -- has_changed[6] = update_ml_configs(g_cfg, config.AB)
-  has_changed[6] = update_kafka_configs(g_cfg, config.AB.KAFKA)
+  has_changed[6] = update_kafka_configs(cfg, config.AB.KAFKA)
   return config
   -- dbg()
 end

@@ -6,7 +6,7 @@ INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
 	-I../statsd-c-client-master/ \
-	-I../luajit-2.0.5/src/ \
+	-I../LuaJIT-2.1.0-beta3/src/ \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 	-I../dt_interpreter/src/  \
