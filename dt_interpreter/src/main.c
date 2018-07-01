@@ -2,6 +2,13 @@
 #include "read_random_forest.h"
 #include "txt_to_F4.h"
 #include "eval_mdl.h"
+
+static uint64_t RDTSC( void)
+{
+  unsigned int lo, hi;
+  asm volatile("rdtsc" : "=a" (lo), "=d" (hi));
+  return ((uint64_t)hi << 32) | lo;
+}
 #include "auxil.h"
 
 uint64_t g_num_compares;
