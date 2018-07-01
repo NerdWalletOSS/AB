@@ -12,6 +12,9 @@ l_get_num_features(
     )
 {
   int status = 0;
+  if ( g_disable_lua ) { 
+    *ptr_num_features = 1; return status; 
+  }
   if ( g_L == NULL ) { go_BYE(-1); }
   if ( *g_cfg.dt_dir == '\0' ) { go_BYE(-1); }
   *ptr_num_features = 0;

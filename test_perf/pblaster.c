@@ -47,14 +47,6 @@ WriteMemoryCallback(
     )
 {
   size_t realsize = size * nmemb;
-  memcpy(userp, contents, realsize);
-  // fprintf(stderr, "Copied %d bytes. First 32 bytes = ", (int)realsize);
-  /*
-  for ( int i = 0; i < 64; i++ ) { 
-    fprintf(stderr, "%c", ((char *)userp)[i]);
-  }
-  fprintf(stderr, "\n");
-  */
   return realsize;
 }
 
