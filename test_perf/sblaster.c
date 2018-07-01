@@ -6,6 +6,7 @@
 #include "setup_curl.h"
 #include "read_test_info.h"
 
+CURL **g_ch;
 int 
 main(
     int argc,
@@ -14,7 +15,7 @@ main(
 {
   int status = 0;
   FILE *ofp = NULL; // for timing measurements
-  CURL **ch = NULL;
+  g_ch = NULL;
   long http_code; int itemp;
   int *H = NULL; int nH = 1000; // histogram  for response times 
   TEST_INFO_REC_TYPE *T = NULL;
@@ -49,9 +50,9 @@ main(
   if ( ( T == NULL ) || ( num_tests == 0 ) ) { go_BYE(-1); }
   // Note that we allocate an array of 1 to keep this similar to 
   // parallel blaster code
-  ch = malloc(1 * sizeof(CURL *));
-  return_if_malloc_failed(ch);
-  status = setup_curl(&(ch[0])); cBYE(status);
+  g_ch = malloc(1 * sizeof(CURL *));
+  return_if_malloc_failed(g_ch);
+  status = setup_curl(&(g_ch[0])); cBYE(status);
   // Set base URL
 
   double avg_time = 0;
@@ -83,7 +84,7 @@ main(
               start_uuid+uid, tracer);
           t1 = get_time_usec();
           // fprintf(stderr, "%s\n", url);
-          execute(ch[tid], url, &http_code);
+          execute(g_ch[tid], url, &http_code);
           if ( num_bad > 10000 ) { goto DONE; }
           if ( http_code != 200 ) { continue; num_bad++; }
           t2 = get_time_usec();
@@ -98,7 +99,7 @@ main(
           H[t]++;
           if ( ( hit_ctr % 500 ) == 0 ) {
             sprintf(url, "%s:%d/Diagnostics?Source=C", server, port);
-            status = execute(ch[tid], url, &http_code); cBYE(status);
+            status = execute(g_ch[tid], url, &http_code); cBYE(status);
             if ( http_code != 200 ) { go_BYE(-1); }
             ndots++; 
             fprintf(stderr, ".");
@@ -130,10 +131,10 @@ DONE:
   fclose_if_non_null(ofp);
 BYE:
   fclose_if_non_null(ofp);
-  if ( ch != NULL ) { 
-    if ( ch[0] != NULL ) { curl_easy_cleanup(ch[0]); }
+  if ( g_ch != NULL ) { 
+    if ( g_ch[0] != NULL ) { curl_easy_cleanup(g_ch[0]); }
   }
-  free_if_non_null(ch);
+  free_if_non_null(g_ch);
   free_if_non_null(T);
   return status ;
 }
