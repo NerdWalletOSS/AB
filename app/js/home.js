@@ -46,6 +46,7 @@ $(document).ready(function() {
   });
   $("#error").css('display', 'none', 'important');
   $('input[type="radio"]').click(function() {
+  $("#error").css('display', 'none', 'important');
     var option = $(this).val();
     $.ajax({
       type: "POST",
