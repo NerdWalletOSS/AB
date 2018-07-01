@@ -33,6 +33,8 @@ function action_state($state_id) {
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>
 <button class='check_test' data-key ='".$result[$i]['name']."'>Check Test</button></td>";
 } else {  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";}
+
+
   if ($result[$i]['state_id'] == 3) {
 echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button type='button' class='btn btn-primary btn-xs'>".action_state($result[$i]['state_id'])."</button></a>";
   } else {

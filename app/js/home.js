@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
   function confirm() {
-    confirm("Are you sure, you wnat to change the state?");
+    confirm("Are you sure, you want to change the state?");
   }
 
   function action_state(state_id) {
@@ -117,18 +117,18 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             [0, "asc"]
           ]
         });
-      },
-      beforeSend: function() {
+      }
+      /*beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
         $("#error_message").html("Loading...")
-      }
+      }*/
     });
-    //option.prop( "checked" );//option.prop('checked', true);
-    return true;
+    option.attr( "checked" );//option.prop('checked', true);
+    return false;
   });
 
 
- $(".check_test").click(function() {
+ $(document).on("click", ".check_test", function() {
     var name = $(this).attr('data-key'); // $(this) refers to button that was clicked
     //e.preventDefault();
     $.ajax({
