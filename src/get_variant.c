@@ -77,7 +77,7 @@ get_variant(
     if ( cd == NULL ) { cd = "null"; }
     int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, 
 "{ \
-\"Variant\" : \"%s\", \ 
+\"Variant\" : \"%s\", \
 \"variant\" : \"%s\", \
 \"VariantID\" :  %d, \
 \"variant_id\" :  %d, \

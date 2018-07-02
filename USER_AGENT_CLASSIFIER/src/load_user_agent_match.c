@@ -37,24 +37,24 @@ load_user_agent_match(
 
   // justin cat file 
   if ( *justin_cat_file != '\0' ) { 
-    status = load_lkp(justin_cat_file, ptr_justin_cat_lkp, 
+    status = load_lkp("justin", justin_cat_file, ptr_justin_cat_lkp, 
         ptr_n_justin_cat_lkp);
     cBYE(status);
   }
   //--------------------------------------------------------
   // os file 
   if ( *os_file != '\0' ) { 
-    status = load_lkp(os_file, ptr_os_lkp, ptr_n_os_lkp); cBYE(status);
+    status = load_lkp("os", os_file, ptr_os_lkp, ptr_n_os_lkp); cBYE(status);
   }
   //--------------------------------------------------------
   // browser file 
   if ( *browser_file != '\0' ) { 
-    status = load_lkp(browser_file, ptr_browser_lkp, ptr_n_browser_lkp);
+    status = load_lkp("browser", browser_file, ptr_browser_lkp, ptr_n_browser_lkp);
     cBYE(status);
   }
   //--------------------------------------------------------
   if ( *device_type_file != '\0' ) { 
-    status = load_lkp(device_type_file, ptr_device_type_lkp, 
+    status = load_lkp("device_type", device_type_file, ptr_device_type_lkp, 
         ptr_n_device_type_lkp);
     cBYE(status);
   }

@@ -8,6 +8,7 @@ lkp_name_to_id(
     );
 extern int
 load_lkp(
+    const char *name,
     const char *lkp_file,
     LKP_REC_TYPE **ptr_lkp,
     int *ptr_n_lkp
@@ -21,6 +22,7 @@ lkp_id_to_name(
 
 extern int
 free_lkp(
-    LKP_REC_TYPE *lkp,
-    int n_lkp
+    const char *name,
+    LKP_REC_TYPE **ptr_lkp,
+    int *ptr_n_lkp
     );

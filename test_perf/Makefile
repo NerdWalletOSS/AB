@@ -1,6 +1,6 @@
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -fopenmp
 INCS= -I. \
 	-I../src/ \
 	-I../libevent-2.0.22-stable/include/event2/ \
@@ -33,6 +33,7 @@ CC= gcc
 
 PBLASTER_OBJS = \
 	 restart.o execute.o setup_curl.o pblaster.o  add_tests.o \
+	 read_test_info.o hammer.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
@@ -40,6 +41,7 @@ PBLASTER_OBJS = \
 
 SBLASTER_OBJS = \
 	restart.o setup_curl.o sblaster.o  execute.o add_tests.o \
+	read_test_info.o hammer.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
@@ -55,28 +57,32 @@ ADD_TEST_OBJS = \
 
 BLASTER_INCS = ../src/ab_incs.h
 
-all : sblaster pblaster add_tests
+all : sblaster pblaster add_tests test_dt
 
 add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(ADD_TEST_OBJS) -o add_tests  \
 	../src/libs/libcurl.so 
 
 pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
-	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
+	$(CC) -fopenmp $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
 	../src/libs/libcurl.so -lpthread
 
 sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
 	../src/libs/libcurl.so 
 
+test_dt : test_dt.o mmap.o
+	$(CC) $(LFLAGS) mmap.o test_dt.o -o test_dt \
+	../src/libs/libcurl.so 
+
 
 ../jansson-2.10/src/.libs/libjansson.a :
 	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
-auxil.o : ab_incs.h
+auxil.o : 
 	$(CC) ../src/auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)
 
-mmap.o : ab_incs.h
+mmap.o : 
 	$(CC) ../src/mmap.c -c -o mmap.o $(CFLAGS)  $(INCS)
 
 make_guid.o : 

@@ -11,6 +11,7 @@ l_load_config(
     )
 {
   int status = 0;
+  if ( g_disable_lua ) { return 0; }
   if ( g_L == NULL ) { go_BYE(-1); }
   static char has_changed[NUM_SERVICES];
   memset(has_changed, 0, NUM_SERVICES);
