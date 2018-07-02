@@ -50,9 +50,9 @@ main(
   cBYE(status);
 
 BYE:
-  free_lkp(justin_cat_lkp, n_justin_cat_lkp);
-  free_lkp(os_lkp, n_os_lkp);
-  free_lkp(browser_lkp, n_browser_lkp);
-  free_lkp(device_type_lkp, n_device_type_lkp);
+  free_lkp("justin", &justin_cat_lkp, &n_justin_cat_lkp);
+  free_lkp("os", &os_lkp, &n_os_lkp);
+  free_lkp("browser", &browser_lkp, &n_browser_lkp);
+  free_lkp("device", &device_type_lkp, &n_device_type_lkp);
   return status;
 }

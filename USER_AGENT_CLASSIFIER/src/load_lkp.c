@@ -38,27 +38,32 @@ BYE:
 //-------------------------------------------------------
 int
 free_lkp(
-    LKP_REC_TYPE *lkp,
-    int n_lkp
+    const char *tbl,
+    LKP_REC_TYPE **ptr_lkp,
+    int *ptr_n_lkp
     )
 {
   int status = 0;
-  if ( ( lkp == NULL ) || ( n_lkp == 0 ) ) { go_BYE(-1); }
-  if ( ( lkp != NULL ) && ( n_lkp != 0 ) ) { 
-    for ( int i = 0; i < n_lkp; i++ ) { 
-      free_if_non_null(lkp[i].name);
-    }
-    free_if_non_null(lkp);
+  LKP_REC_TYPE *lkp = *ptr_lkp;
+  int n_lkp = *ptr_n_lkp;
+
+  // fprintf(stderr, "FREE %s:%d \n", tbl, n_lkp);
+  if ( lkp == NULL ) { goto BYE; }
+  // fprintf(stderr, "Freeing %s \n", tbl);
+  for ( int i = 0; i < n_lkp; i++ ) { 
+    free_if_non_null(lkp[i].name);
+    // printf("free %s: %d \n", tbl, i);
   }
-  else {
-    go_BYE(-1);
-  }
+  free_if_non_null(lkp);
 BYE:
+  *ptr_lkp   = NULL;
+  *ptr_n_lkp = 0;
   return status;
 }
 
 int
 load_lkp(
+    const char *tbl,
     const char *lkp_file,
     LKP_REC_TYPE **ptr_lkp,
     int *ptr_n_lkp
@@ -68,6 +73,7 @@ load_lkp(
   FILE *dfp = NULL; 
   LKP_REC_TYPE *lkp = NULL; int n_lkp = 0;
 
+  // fprintf(stderr, "Allocating %s \n", tbl);
   *ptr_lkp = NULL; n_lkp = 0;
   dfp = fopen(lkp_file, "r");
   return_if_fopen_failed(dfp, lkp_file, "r");
@@ -92,8 +98,11 @@ load_lkp(
     int lkp_id = 0;
     lkp_id = strtoll(str_idx, &endptr, 10);
     if ( lkp_id <= 0 ) { go_BYE(-1); }
-    if ( strlen(name)> MAX_LEN_NAME ) { go_BYE(-1); }
-    lkp[i].name = strdup(name);
+    if ( strlen(name) > MAX_LEN_NAME ) { go_BYE(-1); }
+    lkp[i].name = calloc(MAX_LEN_NAME+1, 1);
+    // printf("malloc %s: %d \n", tbl, i);
+    // Note free of calloc done in free_lkp()
+    strcpy(lkp[i].name, name);
     lkp[i].id = lkp_id;
   }
   // id must be 1, 2, 3, ...

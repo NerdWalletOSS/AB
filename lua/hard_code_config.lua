@@ -20,7 +20,6 @@ local function l_hard_code_config(
   config.DT = {}
   config.DT.MODEL_NAME = {}
   config.DT.MODEL_NAME.VALUE = ffi.string(c_cfg.model_name)
-  print(" config.DT.MODEL_NAME.VALUE = ", config.DT.MODEL_NAME.VALUE )
 
   return config
 end

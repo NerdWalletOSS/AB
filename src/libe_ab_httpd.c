@@ -188,7 +188,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_disable_lua = false; // NORMALLY FALSE. Just for testing
+  g_disable_lua = true; // NORMALLY FALSE. Just for testing
   if ( g_disable_lua ) { 
     fprintf(stderr, "\n\n\n");
     fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
@@ -202,7 +202,7 @@ main(
     strcpy(g_config_file, argv[1]); 
   }
   
-  status = setup(false); cBYE(status);
+  status = setup(); cBYE(status);
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);
