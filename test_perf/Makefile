@@ -1,6 +1,6 @@
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
 #
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -fopenmp
 INCS= -I. \
 	-I../src/ \
 	-I../libevent-2.0.22-stable/include/event2/ \
@@ -33,7 +33,7 @@ CC= gcc
 
 PBLASTER_OBJS = \
 	 restart.o execute.o setup_curl.o pblaster.o  add_tests.o \
-	 read_test_info.o \
+	 read_test_info.o hammer.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
@@ -41,7 +41,7 @@ PBLASTER_OBJS = \
 
 SBLASTER_OBJS = \
 	restart.o setup_curl.o sblaster.o  execute.o add_tests.o \
-	 read_test_info.o \
+	read_test_info.o hammer.o \
 	../src/auxil.o \
 	../src/mmap.o  \
 	../src/make_guid.o  \
@@ -64,7 +64,7 @@ add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS)
 	../src/libs/libcurl.so 
 
 pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
-	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
+	$(CC) -fopenmp $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
 	../src/libs/libcurl.so -lpthread
 
 sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 

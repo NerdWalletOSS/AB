@@ -72,6 +72,7 @@ shutdown_curl(
     void
     )
 {
+  fprintf(stderr, "Shutting down curl\n");
   if ( g_ch != NULL ) { 
     curl_easy_cleanup(g_ch);  g_ch = NULL;
   }
