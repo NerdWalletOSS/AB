@@ -10,7 +10,6 @@
 #include <event2/buffer.h>
 #include <jansson.h>
 
-#define STAND_ALONE
 #ifdef STAND_ALONE
 CFG_TYPE g_cfg;
 #endif
@@ -139,16 +138,19 @@ read_conf_file(
 
   status = get_string(j_ab, "DEFAULT_URL", "VALUE", NULL, AB_MAX_LEN_URL,
       ptr_cfg->default_url);
-  cBYE(status);
 
   status = get_string(j_ab, "MMDB_FILE", "VALUE", NULL, AB_MAX_LEN_URL,
       ptr_cfg->mmdb_file);
-  cBYE(status);
   //--- START: Statsd
   status = get_string(j_ab, "STATSD", "STATSD_COUNT", "VALUE", 
-      AB_MAX_LEN_STATSD_KEY,
-      ptr_cfg->statsd_count);
-  cBYE(status);
+      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_count);
+  status = get_string(j_ab, "STATSD", "STATSD_INC", "VALUE", 
+      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_inc);
+  status = get_string(j_ab, "STATSD", "STATSD_GAUGE", "VALUE", 
+      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_gauge);
+  status = get_string(j_ab, "STATSD", "STATSD_TIMING", "VALUE", 
+      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_timing);
+
   //--- STOP : Statsd
 
   json_decref(root);

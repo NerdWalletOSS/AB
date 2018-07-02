@@ -64,6 +64,9 @@ all : ab_httpd \
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
 
+../jansson-2.10/src/.libs/libjansson.so :
+	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
+
 ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so
 
 ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
@@ -176,6 +179,7 @@ ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
+	../jansson-2.10/src/.libs/libjansson.so \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
@@ -190,6 +194,7 @@ ab_httpd : $(COBJS)  \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
+	../jansson-2.10/src/.libs/libjansson.so \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
