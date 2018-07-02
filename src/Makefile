@@ -15,6 +15,7 @@ INCS= -I. \
 	-I../libyuarel/ \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
+	-I../jansson-2.10/src/ \
 	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= -g -DDEBUG
@@ -110,7 +111,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so
+../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so ../jansson-2.10/src/.libs/libjansson.so
 	make -C ../dt_interpreter/src/
 
 ../USER_AGENT_CLASSIFIER/src/ua.so : 
@@ -131,7 +132,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so
+$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so
 
 
 ../statsd-c-client-master/libstatsdclient.so :
