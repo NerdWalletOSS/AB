@@ -58,7 +58,7 @@ hammer(
         avg_time += t;
         hit_ctr++;
         t = t % 1000; // convert to msec
-        if ( ( hit_ctr % 50 ) == 0 ) {
+        if ( ( hit_ctr % 200 ) == 0 ) {
           sprintf(url, "%s:%d/Diagnostics?Source=C", g_server, g_port);
           status = execute(g_ch[tid], url, &http_code); cBYE(status);
           if ( http_code != 200 ) { go_BYE(-1); }
