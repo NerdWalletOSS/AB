@@ -1,9 +1,0 @@
-luajit ab_load_config.lua
-luajit ab.lua
-luajit ab_update_config.lua
-luajit add_test.lua
-luajit bin_anonymous.lua
-luajit bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.lua
-luajit bins.lua
-luajit reload.lua
-luajit spooky_hash.lua

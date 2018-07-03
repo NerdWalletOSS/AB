@@ -14,7 +14,7 @@
 #include "get_variant.h"
 #include "get_variants.h"
 #include "ab_globals.h"
-
+#include "statsd.h"
 
 int 
 get_variants(
@@ -38,7 +38,10 @@ get_variants(
   memset(test_names, '\0', N1);
   status = extract_name_value(args, "TestName=", '&', test_names, N1);
   cBYE(status);
-  if ( test_names[0] == '\0' ) { g_log_no_test_names++; go_BYE(-1); }
+  if ( test_names[0] == '\0' ) {
+    g_log_no_test_names++;
+    STATSD_COUNT("no_test_names", 1);go_BYE(-1);
+  }
   //-------------------------------------------------------------
   memset(g_mrslt, '\0', AB_MAX_LEN_RESULT+1);
   int oplen = 2; // length of output string 

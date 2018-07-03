@@ -5,6 +5,7 @@
 #include "post_from_log_q.h"
 #include "make_curl_payload.h"
 #include "kafka_add_to_queue.h"
+#include "statsd.h"
 // #include "kafka_close_conn.h"
 
 void *
@@ -58,6 +59,7 @@ post_from_log_q(
     uint64_t t_stop = RDTSC();
     if ( t_stop > t_start ) { 
       g_log_kafka_calls++;
+      STATSD_COUNT("kafka_calls", 1);
       g_log_kafka_total_time += t_stop - t_start;
     }
 
@@ -74,16 +76,17 @@ post_from_log_q(
     if ( g_ch != NULL ) { // use logger 
       curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
       g_log_posts++;
+      STATSD_COUNT("posts", 1);
       int retry_count = 0;
       bool post_succeeded = false;
       for ( ;  retry_count < g_cfg.num_post_retries ; retry_count++ ) {
         curl_res = curl_easy_perform(g_ch);
         if ( curl_res != CURLE_OK ) { 
-          g_log_failed_posts++; continue;
+          g_log_failed_posts++; STATSD_COUNT("failed_posts", 1); continue;
         }
         curl_easy_getinfo(g_ch, CURLINFO_RESPONSE_CODE, &http_code);
         if ( http_code != 200 )  { 
-          g_log_failed_posts++; continue;
+          g_log_failed_posts++; STATSD_COUNT("failed_posts", 1); continue;
         }
         // If control comes here, it means we succeeded
         post_succeeded = true;
@@ -91,12 +94,12 @@ post_from_log_q(
         // Should we sleep and give logger some breathing room?
       }
       if ( !post_succeeded ) { 
-        g_log_bad_posts++;
+        g_log_bad_posts++; STATSD_COUNT("bad_posts", 1);
         if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
       }
     }
     if ( g_rk != NULL ) { 
-      g_log_kafka_calls++;
+      g_log_kafka_calls++; STATSD_COUNT("kafka_calls", 1);
       status = kafka_add_to_queue(g_curl_payload, 0); 
       if ( status != 0 ) { WHEREAMI; } // TODO P2 add stattsd logging
     }

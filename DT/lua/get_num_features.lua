@@ -1,4 +1,4 @@
-local cache = require 'lua/cache'
+local cache = require "lua/cache"
 
 local function get_nested_length(table)
   --[[
@@ -6,8 +6,8 @@ local function get_nested_length(table)
   with v as a table, counts the number of nested elements in that, and adds to the current count.
   ]]--
   local counter = 0
-  for k, v in pairs(table) do
-    if type(v) == 'table' then
+  for k,v in pairs(table) do
+    if type(v) == "table" then
       counter = counter + get_nested_length(v)
     else
       counter = counter + 1
@@ -18,7 +18,7 @@ end
 
 local function get_num_features()
   local dt_feature = assert(cache.get("dt_feature"), 
-    'dt_feature not in cache.')
+    "dt_feature not in cache.")
   return get_nested_length(dt_feature)
 end
 

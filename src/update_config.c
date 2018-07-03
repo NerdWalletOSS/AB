@@ -7,6 +7,7 @@
 #include "load_lkp.h"
 #include "load_classify_ua_map.h"
 #include "l_get_num_features.h"
+#include "statsd.h"
 
 #include "load_dt.h"
 #include "load_rf.h"
@@ -43,6 +44,7 @@ update_config(
     return_if_malloc_failed(g_log_q);
     memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
 #endif
+    fprintf(stderr, "Allocating g_log_q\n");
     g_n_log_q = 0;
   //---------------------------------------------------
 
@@ -56,9 +58,12 @@ update_config(
     fprintf(stderr, "WARNING! Not logging to statsd \n");
   }
   else {
-    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
+    int port = g_cfg.statsd.port;
+    g_statsd_link = statsd_init(g_cfg.statsd.server, port);
     if ( g_statsd_link == NULL ) { go_BYE(-1); }
   }
+  
+    STATSD_GAUGE("start_time", g_log_start_time);
   // log_server
   // log_port
   // log_url
@@ -116,11 +121,10 @@ update_config(
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
   // justin cat file 
-  free_if_non_null(g_justin_cat_lkp);  
-  g_n_justin_cat_lkp = 0; 
+  free_lkp("justin", &g_justin_cat_lkp, &g_n_justin_cat_lkp);
   g_justin_cat_other_id = -1;
   if ( *g_cfg.justin_cat_file != '\0' ) { 
-    status = load_lkp(g_cfg.justin_cat_file, &g_justin_cat_lkp, 
+    status = load_lkp("justin", g_cfg.justin_cat_file, &g_justin_cat_lkp, 
         &g_n_justin_cat_lkp);
     cBYE(status);
     for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
@@ -131,28 +135,25 @@ update_config(
   }
   //--------------------------------------------------------
   // os file 
-  free_if_non_null(g_os_lkp);  
-  g_n_os_lkp = 0; 
+  free_lkp("os", &g_os_lkp, &g_n_os_lkp);
   if ( *g_cfg.os_file != '\0' ) { 
-    status = load_lkp(g_cfg.os_file, &g_os_lkp, 
-        &g_n_os_lkp);
+    status = load_lkp("os", g_cfg.os_file, &g_os_lkp, &g_n_os_lkp);
     cBYE(status);
   }
   //--------------------------------------------------------
   // browser file 
-  free_if_non_null(g_browser_lkp);  
-  g_n_browser_lkp = 0; 
+  free_lkp("browser", &g_browser_lkp, &g_n_browser_lkp);
   if ( *g_cfg.browser_file != '\0' ) { 
-    status = load_lkp(g_cfg.browser_file, &g_browser_lkp, 
-        &g_n_browser_lkp);
+    status = load_lkp("browser", g_cfg.browser_file, 
+        &g_browser_lkp, &g_n_browser_lkp);
     cBYE(status);
   }
   //--------------------------------------------------------
   // device_type file 
-  free_if_non_null(g_device_type_lkp);  
-  g_n_device_type_lkp = 0; 
+  free_lkp("device_type", &g_device_type_lkp, &g_n_device_type_lkp);
   if ( *g_cfg.device_type_file != '\0' ) { 
-    status = load_lkp(g_cfg.device_type_file, &g_device_type_lkp, 
+    status = load_lkp("device_type", g_cfg.device_type_file, 
+        &g_device_type_lkp, 
         &g_n_device_type_lkp);
     cBYE(status);
   }
@@ -177,19 +178,19 @@ update_config(
 
     // fprintf(stderr, "WARNING!!!! Not loading dt_dir \n"); 
 
-    int buflen = 2 * (AB_MAX_LEN_FILE_NAME+1);
+    int buflen = strlen(g_cfg.dt_dir) + strlen(g_cfg.model_name) + 32;
     buf = malloc(buflen); return_if_malloc_failed(buf);
     memset(buf, '\0', buflen); 
 
-    sprintf(buf, "%s/_dt.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_dt.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_dt(buf, &g_dt, &g_len_dt_file, &g_n_dt);
     cBYE(status);
 
-    sprintf(buf, "%s/_rf.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_rf.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_rf(buf, &g_rf, &g_len_rf_file, &g_n_rf);
     cBYE(status);
 
-    sprintf(buf, "%s/_mdl.bin", g_cfg.dt_dir); 
+    sprintf(buf, "%s/%s/_mdl.bin", g_cfg.dt_dir, g_cfg.model_name); 
     status = load_mdl(buf, &g_mdl, &g_len_mdl_file, &g_n_mdl);
     cBYE(status);
 

@@ -7,6 +7,7 @@
 #include "get_ss_info.h"
 #include "get_variant.h"
 #include "make_curl_payload.h"
+#include "statsd.h"
 
 int 
 get_variant(
@@ -28,17 +29,21 @@ get_variant(
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   cBYE(status);
   T = &(g_tests[test_idx]);
-  g_log_get_variant_calls++; 
+  g_log_get_variant_calls++;
+  STATSD_COUNT("get_variant_calls", 1);
   // Extract UUID
   status = extract_name_value(args, "UUID=", '&', g_uuid, g_cfg.max_len_uuid);
   if ( ( status < 0 ) || ( *g_uuid == '\0' ) ) { 
     status = -1;
     g_log_no_uuid++;
+    STATSD_COUNT("no_uuid", 1);
   }
   cBYE(status);
   status = chk_uuid(g_uuid, g_cfg.max_len_uuid); 
   if ( status < 0 ) {
+    status = AB_ERROR_CODE_BAD_UUID;
     g_log_bad_uuid++;
+    STATSD_COUNT("bad_uuid", 1);
   }
   cBYE(status);
   get_tracer(args, in_tracer);
@@ -70,12 +75,26 @@ get_variant(
     const char *vname = g_tests[test_idx].variants[final_variant_idx].name;
     int vid = g_tests[test_idx].variants[final_variant_idx].id;
     if ( cd == NULL ) { cd = "null"; }
-    int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, "{ \"Variant\" : \"%s\", \"VariantID\" :  %d, \"CustomData\" : %s, \"Test\" : \"%s\", \"TestID\" : %d  }",
-        vname, 
-        vid,
-        cd,
-        test_name, 
-        g_tests[test_idx].id); if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
+    int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT, 
+"{ \
+\"Variant\" : \"%s\", \
+\"variant\" : \"%s\", \
+\"VariantID\" :  %d, \
+\"variant_id\" :  %d, \
+\"CustomData\" : %s, \
+\"custom_data\" : %s, \
+\"Test\" : \"%s\", \
+\"test\" : \"%s\", \
+\"TestID\" : %d,  \
+\"test_id\" : %d  \
+}",
+        vname,  vname,
+        vid, vid,
+        cd, cd,
+        test_name,  test_name,
+        g_tests[test_idx].id, g_tests[test_idx].id
+        ); 
+    if ( nw >= AB_MAX_LEN_RESULT ) { go_BYE(-1); }
     goto BYE; // Nothing more to do. Early exit
   }
   //-----------------------------------------------------------

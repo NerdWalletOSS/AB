@@ -69,6 +69,7 @@ generic_handler(
     )
 {
   int status = 0;
+  AB_REQ_TYPE req_type = Undefined;
   uint64_t t_start = RDTSC();
   struct event_base *base = (struct event_base *)arg;
   char api[AB_MAX_LEN_API_NAME+1]; 
@@ -88,7 +89,7 @@ generic_handler(
     strcpy(g_rslt, "{ \"HealthCheck\" : \"OK\" }"); goto BYE;
   }
   // STOP:  NW Specific 
-  AB_REQ_TYPE req_type = get_req_type(api); 
+  req_type = get_req_type(api); 
   if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_body(req_type, req, g_body, AB_MAX_LEN_BODY, &g_sz_body); 
   cBYE(status);
@@ -128,6 +129,14 @@ BYE:
       // These are the only 2 external APIs and hence should not 
       // get any details of our internal code structure
       evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"GetVariant(s)\"");
+      if ( status == AB_ERROR_CODE_BAD_UUID ) { 
+        evhttp_add_header(evhttp_request_get_output_headers(req), 
+          "Error", "Bad UUID");
+      }
+      else if ( status == AB_ERROR_CODE_BAD_TEST ) { 
+        evhttp_add_header(evhttp_request_get_output_headers(req), 
+          "Error", "Bad Test Name");
+      }
     }
     else {
       status = mk_json_output(api, args, g_err, g_rslt);
@@ -179,7 +188,7 @@ main(
   struct evhttp *httpd;
   struct event_base *base;
   //--------------------------------------------
-  g_disable_lua = false; // NORMALLY FALSE. Just for testing
+  g_disable_lua = true; // NORMALLY FALSE. Just for testing
   if ( g_disable_lua ) { 
     fprintf(stderr, "\n\n\n");
     fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
@@ -193,7 +202,7 @@ main(
     strcpy(g_config_file, argv[1]); 
   }
   
-  status = setup(false); cBYE(status);
+  status = setup(); cBYE(status);
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);

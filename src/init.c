@@ -6,6 +6,16 @@
 #include "init.h"
 #include "ping_server.h"
 
+static size_t write_data(
+    void *buffer, 
+    size_t size, 
+    size_t nmemb, 
+    void *userp
+    )
+{
+  // basically do nothing with response
+  return size * nmemb;
+}
 
 size_t 
 WriteMemoryCallback(
@@ -50,14 +60,10 @@ init_lua(
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
   status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
-  // TODO DELETE status = luaL_loadfile(g_L, "./RTS/ab.lua"); cBYE(status);
-  // TODO DELETE status = lua_pcall(g_L, 0, 0, 0); 
 
   g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L_DT);  
   status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
-  // TODO DELETE status = luaL_loadfile(g_L_DT, "./dt.lua"); cBYE(status);
-  // TODO DELETE status = lua_pcall(g_L_DT, 0, 0, 0); cBYE(status);
 
 BYE:
   return status;
@@ -122,6 +128,8 @@ setup_curl(
   if ( strcmp(method, "POST") == 0 ) { 
     res = curl_easy_setopt(ch, CURLOPT_POST, 1L);
     if ( res != CURLE_OK ) { go_BYE(-1);  }
+    //  we do not want any response for POST . See write_data()
+    curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, write_data);
   }
   else {
     res = curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);

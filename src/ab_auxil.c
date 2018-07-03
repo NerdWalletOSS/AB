@@ -26,6 +26,8 @@
 #include "auxil.h"
 #include "ab_auxil.h"
 #include "mmap.h"
+#include "statsd.h"
+
 
 //<hdr>
 int 
@@ -37,14 +39,14 @@ chk_test_name(
   int status = 0;
 
   if ( ( X == NULL ) || ( *X == '\0' ) )  { 
-    g_log_bad_test_name++; go_BYE(-1); 
+    g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
   }
   if ( strlen(X) > AB_MAX_LEN_TEST_NAME ) { 
-    g_log_bad_test_name++; go_BYE(-1); 
+    g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
   }
   for ( const char *cptr = X; *cptr != '\0'; cptr++ ) {
     if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { 
-      g_log_bad_test_name++; go_BYE(-1); 
+      g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
     }
   }
 BYE:
@@ -61,6 +63,7 @@ chk_uuid(
   int status = 0;
   if ( ( X == NULL ) || ( *X == '\0' ) )  { 
     g_log_bad_uuid++;
+    STATSD_COUNT("bad_uuid", 1);
     go_BYE(-1); 
   }
   for ( int i = 0; ; i++ ) { 
@@ -69,7 +72,7 @@ chk_uuid(
     if ( i+1 > desired_len ) { go_BYE(-1);}
     if ( c == '-' ) { continue; } // hyphen is allowed 
     if ( !isalnum(c ) ) { 
-      g_log_bad_uuid++; go_BYE(-1); 
+      g_log_bad_uuid++; STATSD_COUNT("bad_uuid", 1); go_BYE(-1); 
     }
   }
 BYE:
@@ -145,10 +148,12 @@ get_tracer(
       AB_MAX_LEN_TRACER); 
   if ( ( status < 0 ) || ( *tracer ==  '\0' ) ) { 
     g_log_no_tracer++;
+    STATSD_COUNT("no_tracer", 1);
   }
   else {
     if ( !chk_tracer(tracer, AB_MAX_LEN_TRACER) ) { 
       g_log_bad_tracer++;
+      STATSD_COUNT("bad_tracer", 1);
     }
   }
 }

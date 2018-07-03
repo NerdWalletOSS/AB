@@ -9,6 +9,7 @@
 #include "auxil.h"
 #include "load_lkp.h"
 #include "alt_get_variant.h"
+#include "statsd.h"
 
 int 
 router(
@@ -18,6 +19,7 @@ router(
   int status = 0;
 
   g_log_router_calls++;
+  STATSD_COUNT("router_calls", 1);
   memset(g_redirect_url, '\0', AB_MAX_LEN_REDIRECT_URL+1);
   status = alt_get_variant(args);
   // Notice that you cannot afford to return a status of -1
@@ -25,6 +27,7 @@ router(
   if ( ( status < 0 ) || ( *g_redirect_url == '\0' ) ) {
     status = 0;
     g_log_bad_router_calls++;
+    STATSD_COUNT("bad_router_calls", 1);
     strcpy(g_redirect_url, g_cfg.default_url);
     // following helps to detect error 
     // TODO P3: Make sure that g_redirect_url does 

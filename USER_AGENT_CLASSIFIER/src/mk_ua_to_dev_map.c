@@ -79,15 +79,15 @@ main(
   ofp = fopen(output_file, "wb");
   return_if_fopen_failed(ofp, output_file, "wb");
   /* read justin categories */
-  status = load_lkp(justin_cat_file, &justin_cat_lkp, &n_justin_cat_lkp);
+  status = load_lkp("justin", justin_cat_file, &justin_cat_lkp, &n_justin_cat_lkp);
   cBYE(status);
-  status = load_lkp(os_file, &os_lkp, &n_os_lkp);
+  status = load_lkp("os", os_file, &os_lkp, &n_os_lkp);
   cBYE(status);
-  status = load_lkp(browser_file, &browser_lkp, &n_browser_lkp);
+  status = load_lkp("browser", browser_file, &browser_lkp, &n_browser_lkp);
   cBYE(status);
-  status = load_lkp(device_file, &device_lkp, &n_device_lkp);
+  status = load_lkp("device", device_file, &device_lkp, &n_device_lkp);
   cBYE(status);
-  status = load_lkp(device_type_file, &device_type_lkp, &n_device_type_lkp);
+  status = load_lkp("device_type", device_type_file, &device_type_lkp, &n_device_type_lkp);
   cBYE(status);
   // read mapping between other lkps and justin category
   status = load_justin_map(justin_map_file, &justin_map, &n_justin_map);
@@ -201,11 +201,10 @@ main(
 BYE:
   fclose_if_non_null(afp);
   fclose_if_non_null(ofp);
-  free_if_non_null(justin_map);
-  free_lkp(justin_cat_lkp, n_justin_cat_lkp);
-  free_lkp(os_lkp, n_os_lkp);
-  free_lkp(browser_lkp, n_browser_lkp);
-  free_lkp(device_lkp, n_device_lkp);
-  free_lkp(device_type_lkp, n_device_type_lkp);
+  free_lkp("justin", &justin_cat_lkp, &n_justin_cat_lkp);
+  free_lkp("os", &os_lkp, &n_os_lkp);
+  free_lkp("browser", &browser_lkp, &n_browser_lkp);
+  free_lkp("device", &device_lkp, &n_device_lkp);
+  free_lkp("device_type", &device_type_lkp, &n_device_type_lkp);
   return status;
 }

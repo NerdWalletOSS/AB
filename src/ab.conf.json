@@ -1,8 +1,12 @@
 {
   "DT": {
     "DT_DIR": {
-      "VALUE": "../DT/spam/",
+      "VALUE": "../DT/",
       "COMMENT": "Decision Tree folder"
+    },
+    "MODEL_NAME": {
+      "VALUE": "spam",
+      "COMMENT": "Name of model in decision tree folder"
     }
   },
   "AB": {
@@ -84,6 +88,14 @@
       "STATSD_TIMING": {
         "COMMENT": "Determined by ...",
         "VALUE": "nw.metrics.ab.request_time"
+      },
+       "STATSD_GAUGE": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.misc"
+      },
+      "STATSD_COUNT": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.counts"
       }
     },
     "WEBAPP": {
