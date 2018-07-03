@@ -5,7 +5,7 @@
 #include "init.h"
 #include "update_config.h"
 #include "load_lkp.h"
-#include "load_classify_ua_map.h"
+#include "load_user_agent_classifier.h"
 #include "l_get_num_features.h"
 #include "statsd.h"
 
@@ -91,20 +91,6 @@ update_config(
         AB_LOGGER_TIMEOUT_MS, &g_ch, &g_curl_hdrs);
     cBYE(status);
   }
-  // Following for curl  for Session Service
-  if ( ( *g_cfg.ss.server == '\0' ) || ( *g_cfg.ss.url == '\0' ) ||
-      ( ( g_cfg.ss.port <= 1 )  || ( g_cfg.ss.port >= 65535 ) ) ) {
-    fprintf(stderr, "WARNING! SessionService not in use\n");
-  }
-  else {
-    /* The get_or_create endpoint averages around 25ms response, with 
-     * a 95th percentile of 30ms. The plain get endpoint would be 
-     * expected to be faster -- Andrew Hollenbach */
-    status = setup_curl("GET", g_ss_response, "ss", g_cfg.ss.server, 
-        g_cfg.ss.port, g_cfg.ss.url, g_cfg.ss.health_url, 
-        AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
-    cBYE(status);
-  }
   // num_post_retries, Nothing to do 
   // verbose, Nothing to do 
   // mysql_server For Lua
@@ -119,53 +105,14 @@ update_config(
   if ( g_cfg.max_len_uuid < 1 ) { go_BYE(-1); }
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
-  // justin cat file 
-  free_lkp("justin", &g_justin_cat_lkp, &g_n_justin_cat_lkp);
-  g_justin_cat_other_id = -1;
-  if ( *g_cfg.justin_cat_file != '\0' ) { 
-    status = load_lkp("justin", g_cfg.justin_cat_file, &g_justin_cat_lkp, 
-        &g_n_justin_cat_lkp);
-    cBYE(status);
-    for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
-      if ( strcasecmp(g_justin_cat_lkp[i].name, "Other") == 0 ) {
-        g_justin_cat_other_id = g_justin_cat_lkp[i].id;
-      }
-    }
-  }
-  //--------------------------------------------------------
-  // os file 
-  free_lkp("os", &g_os_lkp, &g_n_os_lkp);
-  if ( *g_cfg.os_file != '\0' ) { 
-    status = load_lkp("os", g_cfg.os_file, &g_os_lkp, &g_n_os_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // browser file 
-  free_lkp("browser", &g_browser_lkp, &g_n_browser_lkp);
-  if ( *g_cfg.browser_file != '\0' ) { 
-    status = load_lkp("browser", g_cfg.browser_file, 
-        &g_browser_lkp, &g_n_browser_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // device_type file 
-  free_lkp("device_type", &g_device_type_lkp, &g_n_device_type_lkp);
-  if ( *g_cfg.device_type_file != '\0' ) { 
-    status = load_lkp("device_type", g_cfg.device_type_file, 
-        &g_device_type_lkp, 
-        &g_n_device_type_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // ua_to_dev_map_file
-  if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
-    munmap(g_classify_ua_map, g_len_classify_ua_file);
-  }
-  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
-    status = load_classify_ua_map(g_cfg.ua_to_dev_map_file, 
-        &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map);
-    cBYE(status);
-  }
+
+  status = load_user_agent_classifier(
+    g_cfg.ua_dir, &g_justin_cat_other_id,
+    &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map, 
+    &g_justin_cat_lkp, &g_n_justin_cat_lkp, 
+    &g_os_lkp, &g_n_os_lkp, 
+    &g_browser_lkp, &g_n_browser_lkp, 
+    &g_device_type_lkp, &g_n_device_type_lkp);
   //--------------------------------------------------------
   // dt, rf, mdl
   free_if_non_null(g_dt_feature_vector); 

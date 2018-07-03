@@ -16,8 +16,11 @@ post_from_log_q(
   int status = 0;
   CURLcode curl_res; 
   long http_code;
-  PAYLOAD_REC_TYPE lcl_payload;
+#ifdef AB_AS_KAFKA
   KAFKA_REC_TYPE kafka_payload;
+#else
+  PAYLOAD_REC_TYPE lcl_payload;
+#endif
 
   for ( ; ; ) {
     pthread_mutex_lock(&g_mutex);	/* protect buffer */

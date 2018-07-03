@@ -29,15 +29,12 @@
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
 #include "ext_classify_ua.h"
-#include "hard_code_config.h"
 #include "setup.h"
 
-#include "l_hard_code_config.h"
 #include "l_load_config.h"
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
 
-#include "ext_get_host.h"
 #include "delete_test.h"
 #include "stop_test.h"
 #include "l_chk_test.h"
@@ -128,10 +125,6 @@ ab_process_req(
       status = l_get_config(); cBYE(status);
       break;
       //--------------------------------------------------------
-    case GetHost : /* done by Lua */
-      status = ext_get_host(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
-      break;
-      //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
       status = l_get_num_features(&num_features); cBYE(status);
       sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
@@ -199,12 +192,8 @@ ab_process_req(
         status = ping_server("logger", g_cfg.logger.server,
             g_cfg.logger.port, g_cfg.logger.health_url, g_rslt);
       }
-      else if ( strcmp(server, "logger") == 0 ) {
-        status = ping_server("logger", g_cfg.ss.server,
-            g_cfg.ss.port, g_cfg.ss.health_url, g_rslt);
-      }
-      else if ( strcmp(server, "logger") == 0 ) {
-        status = ping_server("logger", g_cfg.webapp.server,
+      else if ( strcmp(server, "webapp") == 0 ) {
+        status = ping_server("webapp", g_cfg.webapp.server,
             g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
       }
       else {
@@ -234,7 +223,7 @@ ab_process_req(
         pthread_cond_destroy(&g_condp);
       }
       // common to restart and reload
-      status = setup(false); cBYE(status);
+      status = setup(g_config_file); cBYE(status);
       pthread_mutex_init(&g_mutex, NULL);
       pthread_cond_init(&g_condc, NULL);
       pthread_cond_init(&g_condp, NULL);
