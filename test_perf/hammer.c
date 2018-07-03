@@ -13,6 +13,7 @@ extern char *g_server;
 extern int32_t g_port;
 extern TEST_INFO_REC_TYPE *g_T; /* [g_num_tests] */
 extern int g_num_tests;
+extern int g_num_threads;
 
 void *
 hammer(
@@ -30,7 +31,8 @@ hammer(
   double min_time = DBL_MAX;
   double max_time = -1.0 * DBL_MAX;
 
-  fprintf(stderr, "Hammer started %d \n", tid);
+  if ( ( tid < 0 ) || ( tid >= g_num_threads ) ) { go_BYE(-1); }
+  // fprintf(stderr, "Hammer started %d \n", tid);
   for ( int iter = 0; iter < g_num_iters; iter++ ) {
     // T is used to measure individual times 
     for ( int uid = 0; uid < g_num_users; uid++ ) {
@@ -63,10 +65,12 @@ hammer(
           status = execute(g_ch[tid], url, &http_code); cBYE(status);
           if ( http_code != 200 ) { go_BYE(-1); }
           ndots++; 
-          if ( tid == 0 ) { 
+          if ( tid == 0 ) {
             fprintf(stderr, ".");
-            if ( ndots >= 64 ) { 
-              fprintf(stderr, "%d\n", hit_ctr);
+            if ( ndots >= 48 ) { 
+              double mu = avg_time/hit_ctr;
+              fprintf(stderr, "Thread %d, Hits %d, Time= %lf\n", 
+                  tid, hit_ctr, mu);
               ndots = 0;
             }
           }
@@ -75,6 +79,6 @@ hammer(
     }
   }
 BYE:
-  fprintf(stderr, "Hammer Finished %d \n", tid);
+  // fprintf(stderr, "Hammer Finished %d \n", tid);
   return NULL;
 }
