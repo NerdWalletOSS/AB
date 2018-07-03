@@ -1,0 +1,29 @@
+Wyatt suggested we use:
+nw.metrics.ab.requests
+nw.metrics.ab.request_time
+
+On Thu, Sep 10, 2015 at 1:00 PM, Eric Ogren <eric@nerdwallet.com> wrote:
+Hey Ramesh,
+
+This library https://github.com/romanbsd/statsd-c-client should I
+think work for metrics collection as well (we will have to install a
+monitoring agent on the box but we should do that anyways).
+
+I'm CCing Wyatt as I forgot which namespaces we are using already, but
+if you do something like:
+
+const float sample_rate = 1.0; // I don't think sending metrics every request will harm performance but if it does we could lower this
+
+link = statsd_init("localhost", 8125);
+statsd_inc(link, "com.nerdwallet.ab.requests (Wyatt to help with actual name)", sample_rate);
+statsd_timing(link, "com.nerdwallet.ab.request_time", req_time);
+
+I think it should capture the two major pieces of info we're
+interested in. DataDog will take care of capturing medians, p95, p99
+etc numbers for us.
+
+From Jason Scheirer 
+http://statsd-metrics.readthedocs.io/en/latest/metrics.html <- Core concepts of
+statsd
+https://github.com/romanbsd/statsd-c-client/blob/master/test-client.c <-
+Simplest possible usage of statsd in C

@@ -1,0 +1,11 @@
+{
+  "src_tbl" : "user_agent_d c",
+  "flds" : [ 
+    "device", 
+    "device_type",
+    "conf_os_fmly_nm", 
+    "conf_browser_fmly_nm", 
+    "user_agent_long_tx" 
+    ],
+  "query" : " CASE WHEN c.is_mobile_in::text = 'True'::character varying::text THEN 'Mobile'::character varying WHEN c.is_tablet_in::text = 'True'::character varying::text THEN 'Tablet'::character varying ELSE 'Desktop'::character varying END AS device, CASE WHEN c.conf_device_fmly_nm::text = 'Tablet'::character varying::text AND c.conf_os_fmly_nm::text = 'Android'::character varying::text THEN 'Android Tablet'::character varying WHEN c.conf_device_fmly_nm::text = 'Windows'::character varying::text AND c.os_fmly_nm::text = 'Windows Phone'::character varying::text THEN 'Windows Phone'::character varying WHEN c.conf_device_fmly_nm::text = 'Windows'::character varying::text THEN 'PC'::character varying ELSE c.conf_device_fmly_nm END AS device_type, conf_browser_fmly_nm, conf_os_fmly_nm, user_agent_long_tx"
+}

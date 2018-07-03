@@ -1,0 +1,181 @@
+{
+  "DT": {
+    "DT_DIR": {
+      "VALUE": "../DT/",
+      "COMMENT": "Decision Tree folder"
+    },
+    "MODEL_NAME": {
+      "VALUE": "spam",
+      "COMMENT": "Name of model in decision tree folder"
+    }
+  },
+  "AB": {
+    "SESSION_SERVICE" : {
+      "HEALTH_URL": {
+        "COMMENT": "Health check URL for SS",
+        "VALUE": "/health_check"
+      },
+      "PORT": {
+        "COMMENT": "Port on which SS is running",
+        "VALUE": "80"
+      },
+      "SERVER": {
+        "COMMENT": " Name of Server running SS",
+        "VALUE": "logger"
+      },
+      "URL": {
+        "COMMENT": "URL for SS",
+        "VALUE": "\"session\""
+      }
+    },
+    "LOGGER": {
+      "HEALTH_URL": {
+        "COMMENT": "Health check URL for DP",
+        "VALUE": "/health_check/"
+      },
+      "PORT": {
+        "COMMENT": "Port on which DP is listening",
+        "VALUE": "80"
+      },
+      "SERVER": {
+        "COMMENT": " Name of Server running DP",
+        "VALUE": "logger"
+      },
+      "URL": {
+        "COMMENT": "URL on which DP needs data POSTed",
+        "VALUE": "/abserver/ABLog/"
+      },
+      "NUM_POST_RETRIES": {
+        "COMMENT": "Number of times it will attempt to POST to log server.",
+        "VALUE": "1"
+      }
+    },
+    "MYSQL": {
+      "DATABASE": {
+        "COMMENT": "Name of database in MySQL server",
+        "VALUE": "abdb"
+      },
+      "PASSWORD": {
+        "COMMENT": "Password for user for MySQL server",
+        "VALUE": ""
+      },
+      "SERVER": {
+        "COMMENT": "Name of MySQL server that back-ends the WebApp",
+        "VALUE": "127.0.0.1"
+      },
+      "PORT": {
+        "COMMENT": "Port on which the mysql server is listening",
+        "VALUE": "3306"
+      },
+      "USER": {
+        "COMMENT": "User for MySQL database",
+        "VALUE": "root"
+      }
+    },
+    "STATSD": {
+      "SERVER": {
+        "COMMENT": "setup for statsd",
+        "VALUE": "localhost"
+      },
+      "STATSD_INC": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.requests"
+      },
+      "PORT": {
+        "COMMENT": "Default 8125. Determined by DataDog",
+        "VALUE": "8125"
+      },
+      "STATSD_TIMING": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.request_time"
+      },
+       "STATSD_GAUGE": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.misc"
+      },
+      "STATSD_COUNT": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.counts"
+      }
+    },
+    "WEBAPP": {
+      "SERVER": {
+        "COMMENT": "the WebApp address",
+        "VALUE": "127.0.0.1"
+      },
+      "PORT": {
+        "COMMENT": "Port on which the webapp server is listening",
+        "VALUE": "8002"
+      },
+      "HEALTH_URL": {
+        "COMMENT": "Health check URL for Webapp",
+        "VALUE": "/health_check"
+      },
+      "URL": {
+        "COMMENT": "URL for Webapp",
+        "VALUE": "\"webapp\""
+      }
+
+    },
+    "KAFKA": {
+      "BROKERS": {
+        "COMMENT": "List of brokers",
+        "VALUE": "127.0.0.1"
+      },
+      "TOPIC": {
+        "COMMENT": "The topic for Kafka",
+        "VALUE": "ab"
+      },
+      "QUEUE_SIZE": {
+        "COMMENT": "The queue size for retries to kafka",
+        "VALUE": "1000000"
+      },
+      "MAX_BUFFERING_TIME": {
+        "COMMENT": "Max time in milliseconds that messages will be batched",
+        "VALUE": "50"
+      },
+      "RETRIES": {
+        "COMMENT": "Max number of retries to send a message to kafka",
+        "VALUE": "5"
+      }
+    },
+    "SZ_LOG_Q": {
+        "COMMENT": "Size of queue of messages for second thread",
+        "VALUE": "1048576"
+      },
+    "DEFAULT_URL": {
+      "COMMENT": "For URL Router",
+      "VALUE": "https://www.nerdwallet.com"
+    },
+    "DEV_FILE": {
+      "VALUE": "\"./device.csv\""
+    },
+    "UA_TO_DEV_MAP_FILE": {
+      "VALUE": "\"./ua_to_dev.bin\""
+    },
+    "PORT": {
+      "COMMENT": "Port on which A/B server will run",
+      "VALUE": "8000"
+    },
+    "RELOAD_ON_STARTUP": {
+      "COMMENT": "If true then Reload occurs when server comes up",
+      "VALUE": "true"
+    },
+    "MAX_LEN_UUID": {
+      "COMMENT": "Maximum Length of UUID. If test_uuid_len=true",
+      "VALUE": "36"
+    },
+    "VERBOSE": {
+      "COMMENT": "Set to true if you want logs on stderr",
+      "VALUE": "false"
+    },
+    "XY_GUID": {
+      "COMMENT": "Used for testing.Set to 0 or omit this line in production",
+      "VALUE": "1"
+    },
+    "MMDB_FILE": {
+      "COMMENT": "maxmind database for ip to geo",
+      "VALUE": "/opt/ab/GeoIP2-City_2017_12_08.mmdb"
+    }
+  }
+}

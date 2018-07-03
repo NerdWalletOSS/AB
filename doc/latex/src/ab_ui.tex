@@ -1,0 +1,314 @@
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- User Interface}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Data Science Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+
+\section{Introduction}
+
+\section{UI Guidelines}
+\subsection{Global Variables}
+The UI maintains the following global variables. 
+\be
+\item Admin Name, Displayed at top of all pages
+\item TestType, can be AB or XY (for URL Router), 
+  Displayed at top of all pages
+\ee
+
+\subsection{Client side validation}
+Client-side validation is considered a ``nice-to-have'' as long as it does not
+overly complicate the code. All text-boxes will have some defaults for the
+maximum number of characters they will accept.
+
+\section{Login Page}
+
+Set Admin Name and decide TestType
+
+\section{Home Page}
+\label{home_page}
+Contains 
+\be
+\item a {\tt PLUS} button that leads to Section~\ref{add_edit_basic_page} 
+  with GET param TestID as null
+\item A radio button that allows one of the following options for State. 
+  It restricts tests displayed to those that have the selected state(s)
+  \be
+\item Draft
+\item Dormant, Started, Terminated --- default 
+\item Archived
+  \ee
+\item A table of existing tests, Table~\ref{tbl_home}. We display all valid
+  state/action pairs. Note that clicking on an Action causes the corresponding
+  TestID to be sent as a GET parameter to the destination page.
+\ee
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf ID} & {\bf Name} & {\bf State} & {\bf Action} & {\bf Details} \\ \hline \hline
+  5 & Test0 & Draft & {\tt Edit, Dormant, Delete} & Section~\ref{edit_test},
+  ~\ref{del_test} \\ \hline 
+  10 & Test1 & Dormant & {\tt Edit, Start, Delete} &  
+  Section~\ref{edit_test}, ~\ref{start_test}, ~\ref{del_test} \\ \hline 
+  20 & Test2 & Started & {\tt Edit, Terminate} & 
+  Section~\ref{edit_test}, ~\ref{archive_test} \\ \hline 
+  30 & Test3 & Terminated & {\tt View, Archive} & 
+  Section~\ref{view_test}, ~\ref{archive_test} \\ \hline 
+  40 & Test4 & Archived & {\tt View}  &  Section~\ref{edit_test} \\ \hline
+\hline
+\end{tabular}
+\caption{Home Page}
+\label{tbl_home}
+\end{table}
+
+%--------------------------------------------------------------
+
+\section{Actions}
+\subsection{Edit Test}
+\label{edit_test}
+Leads to Section~\ref{add_edit_basic_page}
+
+\subsection{Dormant Test}
+\label{dormant_test}
+Verifies that test is in good shape, changes state to dormant and returns to home page Section~\ref{home_page}
+
+\subsection{Start Test}
+\label{start_test}
+Changes state to start and returns to home page Section~\ref{home_page} after a
+confirmation pop-up
+
+\subsection{Stop Test}
+\label{stop_test}
+Leads to Section~\ref{add_edit_basic_page} with GET param {\tt action = terminate}
+
+\subsection{Archive Test}
+\label{archive_test}
+
+Changes state to archived and returns to home page Section~\ref{home_page} after
+a confirmation pop-up
+
+\subsection{View Test}
+\label{view_test}
+Leads to Section~\ref{add_edit_basic_page}
+
+\subsection{Delete Test}
+\label{del_test}
+
+Does a hard delete of the test after a confirmation pop-up
+and returns to home page Section~\ref{home_page}
+
+
+\section{Add/Edit Basic Page}
+\label{add_edit_basic_page}
+This page has the GET params TestID and Action. We derive ``mode'' using the
+table Table~\ref{tbl_mode}
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+{\bf TestID} & {\bf State} & {\bf Mode} \\ \hline
+Undefined     & --- & Add \\ \hline
+Defined & Dormant, Draft & Edit \\ \hline
+Defined & Started & View (except Percentage can be edited)\\ \hline
+Defined & Terminated, Archived & View \\ \hline
+\hline
+\end{tabular}
+\caption{Mode for Add/Edit Basic Page}
+\label{tbl_mode}
+\end{table}
+
+%---------------------------------------------
+The page has the following UI elements
+\be
+\item Text box for test name 
+\item Text box for test description
+\item Variant information consists of a table as in Table~\ref{tbl_page_1}
+\item A {\bf Next} button, leading to Section~\ref{addnl_variant_info}
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Number} &   {\bf ID} & {\bf Name} & {\bf Percentage} 
+  & {\bf URL} & {\bf Winner} \\ \hline \hline
+  1 & --- & Control & 40   & \url{www.google.com} & N \\ \hline
+  2 & --- & Variant A & 30  & \url{www.yahoo.com} & Y \\ \hline
+  3 & --- & Variant B & 20  & \url{www.cnn.com} & N \\ \hline
+\hline
+\end{tabular}
+\caption{Add/Edit Page}
+\label{tbl_page_1}
+\end{table}
+If Mode = View, nothing is editable. 
+Depending on Mode being Add or Edit, this page behaves somewhat differently as shown below.
+ However, in both of following cases, 
+ (i)  Test Description is editable text box
+ and (ii) Percentage is editable text box
+ \subsection{Add Mode}
+ \label{add_edit_basic_page_add_mode}
+ \bi
+ \item Test Name is editable test box 
+ \item ID is not viewable
+ \item Name is editable text box
+ \item URL is editable text box
+ \item Winner is not viewable
+\ei
+ \subsection{Edit Mode}
+ \label{add_edit_basic_page_edit_mode}
+ \bi
+ \item Test Name is read-only
+ \item ID is displayed as read-only
+ \item Name is read-only
+ \item URL is displayed as read-only 
+ \item Winner is a radio button so only one row can be selected
+   \ei
+
+A few other notes
+\bi
+\item If TestType = AB, then the name of the first variant must be set to
+  Control and is {\bf never} editable.
+\item If Action = terminate, then an additional column called ``Winner'' is
+displayed with radio buttons allowing the user to select any one variant as
+winner. In this case, {\tt Next} button leads to home page, after a confirmation
+pop-up.
+\item URL.  Should be displayed only if TestType = XY
+\ei
+%------------------------------------------------
+
+\section{Additional Variant Information}
+\label{addnl_variant_info}
+Looks exactly like Section~\ref{add_edit_basic_page}
+with constraints of Section~\ref{add_edit_basic_page_edit_mode} with differences as follows
+\be
+\item {\tt Next} leads to Section~\ref{filters} if TestType = AB. 
+Leads to Section~\ref{device_specific} if TestType = XY. 
+\item Each row has
+an {\tt Edit} button that creates a pop-up that allows user to view/edit 3 text
+fields
+\be
+\item Custom Data.
+  Should be displayed only if TestType = XY
+\item Description
+\ee
+\ee
+
+\section{Filters}
+\label{filters}
+This page is for use only when TestType = AB and state = draft 
+\be
+\item {\bf Previous} leads to Section~\ref{addnl_variant_info}
+\item {\bf Next} leads to Section~\ref{home_page}
+\item We have a check box called ``Has Filters''. If unchecked, no edits should be allowed on this page.
+\item We have 2 tables, 
+  \be
+\item one for boolean filters as in Section~\ref{tbl_bool_filters}
+\item one for categorigcal filters as in Section~\ref{tbl_cat_filters}
+  \ee
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Attribute} &   {\bf Value} & {\bf Checkbox} \\ \hline \hline
+  Platform & Desktop & \\ \hline
+  Platform & Tablet & \\ \hline
+  Platform & Mobile & \\ \hline
+  \hline
+  IsPaid & true & \\ \hline
+  IsPaid & false & \\ \hline
+\hline
+\end{tabular}
+\caption{Setting Filters}
+\label{tbl_filters}
+\end{table}
+
+\section{Device Specific Routing}
+\label{device_specific}
+This page is for use only when TestType = XY and State is draft, dormant,
+started. 
+\be
+\item There is a check-box which indicates whether 
+  \verb+is_device_specific+ is true for this test. This can be turned on and off
+  at any point in time. Turning it off means that we use the percentage
+  information in Section~\ref{add_edit_basic_page}. Turning it on means that we use the
+  percentage information in this page.
+\item {\bf Previous} leads to Section~\ref{addnl_variant_info}
+\item {\bf Next} leads to Section~\ref{follow_on}
+\item Table as in Section~\ref{tbl_device_specific}
+  \ee
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Variant Name} & 
+  {\bf Desktop} & 
+  {\bf Mobile iOS}  &
+  {\bf Mobile Android}  & 
+  {\bf Tablet iOS}  & 
+  Tablet {\bf Android}  &
+  Other \\ \hline \hline
+  V1 & 100  & 0   & 20 & 40 & 60 & 80 \\ \hline
+  V2 & 0    & 100 &  80 & 60 & 40 & 20 \\ \hline
+\hline
+\end{tabular}
+\caption{Device Specific Routing}
+\label{tbl_device_specific}
+\end{table}
+
+\section{Follow On}
+\label{follow_on}
+This page is for use only when TestType = XY and State is draft or dormant.
+\be
+\item Display the Channel of the test
+\item {\bf Clear}, which keeps us in same page but clears any radio button
+  selection
+\item {\bf Previous} leads to Section~\ref{device_specific}
+\item {\bf Next} leads to Section~\ref{home_page}
+\item If there are no candidates to follow, then message indicating {\bf No
+  Tests to Follow}; else, table as in Table~\ref{tbl_follow_on}
+  \ee
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Test ID } & {\bf Test Name} & {\bf Radio Button}\\ \hline 
+  10 & Test1 & \\ \hline
+  20 & Test2 & \\ \hline
+\hline
+\end{tabular}
+\caption{Selecting a Follow On}
+\label{tbl_follow_on}
+\end{table}
+
+\section{Config}
+We will have a ``hidden'' page for editing config variables as in
+Table~\ref{tbl_config}
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Name } & {\bf Value} \\ \hline \hline
+  \verb+default_landing_page+ & \url{www.nerdwallet.com} \\ \hline
+\verb+check_url_reachable+ & true \\ \hline
+  \verb+num_retries+ & 10 \\ \hline 
+\hline
+\end{tabular}
+\caption{View/Edit Config Variables}
+\label{tbl_config}
+\end{table}
+
+\end{document}

@@ -1,0 +1,85 @@
+# For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
+#
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic 
+
+DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
+
+OPTFLAGS= -O4
+OPTFLAGS= 
+
+INCS= -I. \
+    -I../hhash/ \
+    -I../statsd-c-client-master/
+
+
+CONANFLAGS := $(shell cat ../conanbuildinfo.gcc)
+
+LFLAGS= $(DBGFLAGS) $(OPTFLAGS) $(WARN)
+# Uncomment below to capture server error 
+# CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
+CFLAGS= $(LFLAGS) 
+
+
+CC= clang
+CC= gcc
+A=../../Q2/AUX
+
+CSRCS := $(wildcard *.c)
+
+fil3   := ab_httpd.c sel_ab_httpd.c logger.c ab_utils.c
+CSRCS3 := $(filter-out $(fil3), $(CSRCS))
+COBJS3 = $(CSRCS3:.c=.o)
+
+filU   := ab_httpd.c sel_ab_httpd.c libe_ab_httpd.c logger.c 
+USRCS := $(filter-out $(filU), $(CSRCS))
+UOBJS = $(USRCS:.c=.o)
+
+UINCS = ab_constants.h  macros.h 
+
+LOGGER_OBJS = logger.o  auxil.o mmap.o
+LOGGER_INCS = ab_constants.h  macros.h 
+
+
+all : ab_logger ab_httpd
+
+
+CSRCS3 := $(filter-out $(fil3), $(CSRCS))
+COBJS3 = $(CSRCS3:.c=.o)
+
+.c.o : 
+	$(CC) -c -o $@ $< $(CFLAGS) $(INCS) $(CONANFLAGS)
+
+../hhash/libhhash.a :
+	make -C ../hhash/
+
+../statsd-c-client-master/libstatsdclient.a :
+	make -C ../statsd-c-client-master/ libstatsdclient.a
+
+LOGGER_OBJS = logger.o  auxil.o mmap.o
+LOGGER_INCS = ab_constants.h  macros.h 
+
+ab_logger : $(LOGGER_OBJS) $(LOGGER_INCS)
+	$(CC) $(LFLAGS) $(LOGGER_OBJS) -o ab_logger \
+	$(CONANFLAGS)
+	
+ab_httpd : $(COBJS3) \
+	../hhash/libhhash.a \
+	../statsd-c-client-master/libstatsdclient.a
+	$(CC) $(CFLAGS) $(COBJS3) -o ab_httpd  \
+	$(CONANFLAGS) \
+	../hhash/libhhash.a \
+	../statsd-c-client-master/libstatsdclient.a \
+	-lm -lpthread -ldl -lrt -lstdc++
+
+clean:
+	rm -r -f ab_httpd ab_logger \
+	$(COBJS1) $(COBJS2) $(COBJS3) $(LOGGER_OBJS) \
+	../hhash/libhhash.a 
+	make -i -C ../hhash/ clean 
+	make -i -C ../statsd-c-client-master/ clean
+	echo "ALL CLEAN"
+
+qclean :
+	rm -r -f ab_httpd ab_logger \
+	$(COBJS1) $(COBJS2) $(COBJS3) $(LOGGER_OBJS) 

@@ -1,0 +1,1 @@
+export LUA_PATH="`pwd`/?.lua;;"

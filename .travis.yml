@@ -1,0 +1,29 @@
+language: erlang
+sudo: required
+dist: trusty
+
+group: edge  #  Add this
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+
+env:
+  - LUA="luajit"
+
+branches:
+  only:
+    - dev
+    - dev_ramesh
+    - dev_lumpy
+    - dev_inder
+
+install:
+  - bash aio.sh -b
+
+script:
+  - cd bin
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
