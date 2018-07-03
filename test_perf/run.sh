@@ -2,7 +2,7 @@
 set -e 
 S=localhost
 P=8000
-num_tests=32
+num_tests=128
 num_iters=64
 num_users=64
 curl --url "$S:$P/Ignore"

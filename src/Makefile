@@ -18,11 +18,11 @@ INCS= -I. \
 	-I../jansson-2.10/src/ \
 	-I../USER_AGENT_CLASSIFIER/src/
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
@@ -111,7 +111,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so
+../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so ../jansson-2.10/src/.libs/libjansson.so
 	make -C ../dt_interpreter/src/
 
 ../USER_AGENT_CLASSIFIER/src/ua.so : 

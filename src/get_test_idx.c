@@ -56,6 +56,7 @@ get_test_idx(
   if ( *ptr_test_idx < 0 ) { 
     g_log_missing_test++;
     STATSD_COUNT("missing_test", 1);
+    status = -1; goto BYE; // TODO P2 Delete this line after demo
     go_BYE(-1);
   }
 
