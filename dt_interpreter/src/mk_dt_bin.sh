@@ -9,7 +9,7 @@ source ../../src/to_source
 dt_csv_file=$1
 test -f $dt_csv_file
 # This is an optional test file 
-testfile=cc_member_model_test_file
+# testfile=cc_member_model_test_file
 if [ "$testfile" != "" ]; then 
   test -f $testfile 
 fi
@@ -19,6 +19,7 @@ rffile=_rf.bin
 mdlfile=_mdl.bin
 VG="valgrind --leak-check=full"
 VG=""
+echo ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 
 $VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 1>_out 2>&1
 if [ "$VG" != "" ]; then 
   grep "ERROR SUMMARY: 0 errors" _out 1>/dev/null 2>&1

@@ -8,6 +8,7 @@ gcc -g -Wall -std=gnu99 \
   ../src/mmap.c  test_read_conf_file.c  ../src/validate_config.c  \
   ../jansson-2.10/src/.libs/libjansson.so \
   -o test_conf
-./test_conf $conf_file
+VG="valgrind --leak-check=full --show-leak-kinds=all"
+$VG ./test_conf $conf_file
 
 echo "Successfully completed $0 in $PWD"

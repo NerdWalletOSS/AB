@@ -46,23 +46,25 @@ get_string(
   int status = 0;
   json_t *handle = NULL;
 
+  if ( root == NULL ) { go_BYE(-1); }
+  if ( key1 == NULL ) { go_BYE(-1); }
   handle = json_object_get(root, key1);
-  printf(" TODO DELETE %s:", key1);
+  fprintf(stderr, " TODO DELETE %s:", key1);
   if ( handle == NULL ) { go_BYE(-1); }
   if ( ( key2 != NULL ) && ( *key2 != '\0' ) ) { 
     handle = json_object_get(handle, key2);
-    printf("%s:", key2);
+    fprintf(stderr, "%s:", key2);
   }
   if ( ( key3 != NULL ) && ( *key3 != '\0' ) ) { 
     handle = json_object_get(handle, key3);
-    printf("%s:", key3);
+    fprintf(stderr, "%s:", key3);
   }
   if ( handle == NULL ) { go_BYE(-1); }
   const char *X = json_string_value(handle);
   if ( X == NULL ) { go_BYE(-1); }
   if ( strlen(X) > maxlen ) { go_BYE(-1); }
   strcpy(dst, X);
-  printf("%s", X);
+  fprintf(stderr, "%s", X);
 BYE:
   printf("\n");
   return status;
@@ -122,6 +124,10 @@ read_conf_file(
   char *cbuf = NULL; int buflen = 0;
   char *X = NULL; size_t nX = 0;
 
+  if ( ( file_name[0] == NULL ) || ( file_name[0] == '\0' ) ) { 
+    go_BYE(-1); 
+  }
+  if ( !isfile(file_name) ) { go_BYE(-1); }
   // read file name into buffer
   status = rs_mmap(file_name, &X, &nX, 0); cBYE(status);
   buflen = nX+1;
@@ -135,7 +141,7 @@ read_conf_file(
   root = json_loads(cbuf, 0, &error);
   if ( root == NULL ) { go_BYE(-1); }
 
-  json_t *j_ip = json_object_get(root, "IP_ADDRESS__CLASSIFIER");
+  json_t *j_ip = json_object_get(root, "IP_ADDRESS_CLASSIFIER");
   if ( j_ip == NULL ) { 
     g_disable_ip = true;
   } 

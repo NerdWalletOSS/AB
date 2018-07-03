@@ -61,9 +61,11 @@ init_lua(
   luaL_openlibs(g_L);  
   status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
 
-  g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
-  luaL_openlibs(g_L_DT);  
-  status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+  if ( !g_disable_dt ) { 
+    g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
+    luaL_openlibs(g_L_DT);  
+    status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+  }
 
 BYE:
   return status;

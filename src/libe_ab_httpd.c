@@ -185,8 +185,10 @@ main(
   int status = 0;
   struct evhttp *httpd;
   struct event_base *base;
+
+  zero_globals();
   //--------------------------------------------
-  g_disable_lua = true; // NORMALLY FALSE. Just for testing
+  g_disable_lua = false; // NORMALLY FALSE. Just for testing
   if ( g_disable_lua ) { 
     fprintf(stderr, "\n\n\n");
     fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
