@@ -83,7 +83,7 @@ $pstm2 = $DBH->query('SHOW CREATE TABLE '.$table);
 $row2 = $pstm2->fetch(PDO::FETCH_NUM);
 $ifnotexists = str_replace('CREATE TABLE', 'CREATE TABLE ', $row2[1]);
 $return.= $ifnotexists.';';
-$return.= 'LOCK TABLES '.$table.' WRITE;';
+//$return.= 'LOCK TABLES '.$table.' WRITE;';
 $return.= '/*!40000 ALTER TABLE `abtest` DISABLE KEYS */;';
 
 /*

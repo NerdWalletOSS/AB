@@ -18,7 +18,7 @@ function add_addnl_var_info(
 )
 {
   //-- START: For logging
-  $ret_val = start_log($str_inJ);
+  $ret_val = start_log($str_inJ, 'additional_variant_info');
   $created_at = $ret_val['created_at'];
   $updated_at = $ret_val['updated_at'];
   $t_create   = $ret_val['t_create'];
