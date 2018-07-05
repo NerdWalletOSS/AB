@@ -13,7 +13,7 @@ extern bool g_disable_sd; // set to false if no statsd server
 extern bool g_disable_wa; // disable WebApp
 extern bool g_disable_lg; // disable Logger
 
-int 
+static int 
 get_server(
     json_t *root,
     const char *service,
@@ -28,8 +28,6 @@ get_server(
       AB_MAX_LEN_URL, ptr_ss->url);
   status = get_string(root, service, "HEALTH_URL", "VALUE", 
       AB_MAX_LEN_URL, ptr_ss->health_url);
-
-BYE:
   return status;
 }
 
@@ -124,7 +122,7 @@ read_conf_file(
   char *cbuf = NULL; int buflen = 0;
   char *X = NULL; size_t nX = 0;
 
-  if ( ( file_name[0] == NULL ) || ( file_name[0] == '\0' ) ) { 
+  if ( ( file_name == NULL ) || ( file_name[0] == '\0' ) ) { 
     go_BYE(-1); 
   }
   if ( !isfile(file_name) ) { go_BYE(-1); }

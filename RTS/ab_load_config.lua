@@ -4,21 +4,27 @@ local consts = require 'lua/ab_consts'
 local ffi = require 'lua/ab_ffi'
 local JSON = require 'lua/JSON'
 local sql = require 'lua/sql'
-i
+
+local load_cfg = {}
+
 function load_cfg.db_connect(mysql)
+  assert(mysql, "mysql not defined")
   local host = mysql.SERVER.VALUE
   local user = mysql.USER.VALUE
   local pass = mysql.PASSWORD.VALUE
   local port = tonumber(mysql.PORT.VALUE)
   local db = mysql.DATABASE.VALUE
   local conn = sql:connect(host, user, pass, db, port)
+  assert(conn, "Unable to open connection to MySQL server")
   return conn
 end
 
 function load_cfg.load_db_data(config)
-  local conn = load_cfg.db_connect(config.MYSQL)
+  assert(config, "config not defined")
+  local conn = load_cfg.db_connect(config)
   -- TODO execute the sql
   local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
+  assert(res, "cannot get devices")
   table.sort(res, function(a,b) return a.id < b.id end)
   local devs = {}
   for index, entry in ipairs(res) do
@@ -36,7 +42,7 @@ function load_cfg.load_config(config_file)
   assert(config.AB, "The loaded config must have an entry for AB")
   local db = config.AB.MYSQL
   assert(config.AB.MYSQL, "MYSQL entry cannot be nil")
-  locla mysql = config.AB.MYSQL
+  local mysql = config.AB.MYSQL
   assert(mysql ~= nil and type(mysql) == "table", "Config must be a table for mysql ")
   local host = mysql.SERVER.VALUE
   assert(host ~= nil and type(host) == "string" and #host > 0 , "Mysql entry must have a valid hostname")
