@@ -17,6 +17,7 @@ bool g_disable_ip; // set to false if no MaxMind Database
 bool g_disable_sd; // set to false if no statsd server
 bool g_disable_wa; // disable WebApp
 bool g_disable_lg; // disable Logger
+bool g_disable_kf; // disable Kafka
 
 CFG_TYPE cfg;
 char g_valid_chars_in_url[256]; // Set by C

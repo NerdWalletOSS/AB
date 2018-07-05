@@ -121,6 +121,7 @@ EXTERN bool g_disable_ip; // set to false if no MaxMind Database
 EXTERN bool g_disable_sd; // disable statsd
 EXTERN bool g_disable_wa; // disable WebApp
 EXTERN bool g_disable_lg; // disable Logger
+EXTERN bool g_disable_kf; // disable Kafka
 
 
 #include "ab_log_globals.h"

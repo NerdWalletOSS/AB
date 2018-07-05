@@ -12,6 +12,7 @@ extern bool g_disable_ip; // set to false if no MaxMind Database
 extern bool g_disable_sd; // set to false if no statsd server
 extern bool g_disable_wa; // disable WebApp
 extern bool g_disable_lg; // disable Logger
+extern bool g_disable_kf; // disable Kafka
 
 static int 
 get_server(
@@ -224,6 +225,15 @@ read_conf_file(
   else {
     g_disable_lg = false;
     get_server(j_ab, "LOGGER", &(ptr_cfg->logger));
+  }
+
+  json_t *j_kf = json_object_get(j_ab, "KAFKA");
+  if ( j_kf == NULL ) { 
+    g_disable_kf = true;
+  } 
+  else {
+    g_disable_kf = false;
+    // TODO TODO TODO P1
   }
 
   json_decref(root);

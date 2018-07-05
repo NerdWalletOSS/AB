@@ -44,7 +44,6 @@ zero_cfg(
 
   memset(g_cfg.kafka.brokers, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
   memset(g_cfg.kafka.topic, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
-  memset(g_cfg.kafka.queue_size, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
   memset(g_cfg.kafka.retries, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
   memset(g_cfg.kafka.max_buffering_time, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
 

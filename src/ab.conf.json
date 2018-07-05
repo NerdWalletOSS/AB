@@ -120,10 +120,6 @@
         "COMMENT": "The topic for Kafka",
         "VALUE": "ab"
       },
-      "QUEUE_SIZE": {
-        "COMMENT": "The queue size for retries to kafka",
-        "VALUE": "1000000"
-      },
       "MAX_BUFFERING_TIME": {
         "COMMENT": "Max time in milliseconds that messages will be batched",
         "VALUE": "50"

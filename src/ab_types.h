@@ -115,7 +115,6 @@ typedef struct _mysql_type {
 typedef struct _kafka_cfg_type {
   char brokers[AB_MAX_LEN_KAFKA_PARAM+1];
   char topic[AB_MAX_LEN_KAFKA_PARAM+1];
-  char queue_size[AB_MAX_LEN_KAFKA_PARAM+1];
   char retries[AB_MAX_LEN_KAFKA_PARAM+1];
   char max_buffering_time[AB_MAX_LEN_KAFKA_PARAM+1];
 } KAFKA_CFG_TYPE;

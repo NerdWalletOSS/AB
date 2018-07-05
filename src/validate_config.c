@@ -10,6 +10,7 @@ extern bool g_disable_ip; // set to false if no MaxMind Database
 extern bool g_disable_sd; // set to false if no statsd server
 extern bool g_disable_wa; // disable WebApp
 extern bool g_disable_lg; // disable Logger
+extern bool g_disable_kf; // disable Kafka
 
 static bool
 chk_url(
