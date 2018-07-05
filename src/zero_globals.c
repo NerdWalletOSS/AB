@@ -56,6 +56,7 @@ zero_cfg(
   memset(g_cfg.mysql.server, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
   memset(g_cfg.mysql.user, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
   memset(g_cfg.mysql.password, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
+  memset(g_cfg.mysql.database, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
   g_cfg.mysql.port = 3306;
 
   g_cfg.sz_log_q     = AB_DEFAULT_N_LOG_Q;

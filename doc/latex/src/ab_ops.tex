@@ -1,0 +1,100 @@
+%%_START_DELETE_FOR_BOOK
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- Operations Manual}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Data Science Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+%%_STOP_DELETE_FOR_BOOK
+%%_START_ADD_FOR_BOOK
+%%C \chapter{Database Design and Usage}
+%%_STOP_ADD_FOR_BOOK
+\section{Introduction}
+
+\section{Run Time Server (RTS)}
+
+\subsection{Operating System and Packages}
+We have tested this with the most recent version of the Ubuntu server. We expect
+the following packages to have been installed
+\be
+\item gcc
+\item g++
+\item cmake
+\ee
+
+
+\subsection{Environment Variables}
+
+The RTS expects the following environment variables to be set
+\be
+\item \verb+LUA_PATH+ 
+  See \verb+AB/to_source+ for an example
+\item \verb+LD_LIBRARY_PATH+
+  See \verb+AB/src/to_source+ for an example
+  \ee
+
+
+\subsection{Configuration}
+A sample config file is provided in 
+\verb+AB/src/ab.conf.json+ Using this as a template, the following need to be
+configured. Note that if there is an error in loading the config file, the
+server will {\bf not} start up. You need to ensure that entries are set
+correctly and that servers/files/directories are where you say they will be.
+
+\subsubsection{Access to other servers}
+
+The run time server needs access to the following servers. 
+\be
+\item MySQL --- to get to the database where AB information is stored. This ia
+  {\bf mandatory}.
+\item Logger --- to record actions taken by the AB server. This is optional.
+\item Kafka --- to record actions taken by the AB server. This is optional.
+\item StatsD --- to send UDP packets to DataDog. This is optional.
+\ee
+
+\subsection{APIs for debugging}
+
+\be
+\item {\tt api/v1/health\_check} --- returns 200 to say server is alive
+\item {\tt /CheckLoggerConnectivity} --- sends a fake payload to Logger and
+  verifies that it gets a timely response
+\item {\tt /CheckDBConnectivity} --- makes a simple request to the MySQL
+  database and verifies that it gets a timely response
+\item {\tt /CheckKafkaConnectivity} --- sends a fake payload to Kafka and
+  verifies that it gets a timely response
+\item {\tt /Diagnostics} --- checks the internal consistency of the RTS
+\item {\tt /DumpLog} --- provides statistics of how RTS is doing in terms of
+  both activity that it has done, errors it has encountered, response time,
+  \ldots
+\item {\tt /GetConfig} --- returns configs that have been provided to the
+  RTS
+\item {\tt /PingServer?Service=XXXX} where XXXX can be one of 
+  \be
+\item logger
+\item webapp
+\item kafka 
+\item statsd 
+  \ee
+  This simply pings the health check URL on the server, if one has been
+  provided, to verify that it is alive
+  \ee
+%------------------------------------
+
+\end{document}

@@ -142,7 +142,6 @@ EXTERN UTM_REC_TYPE g_utm_kv;
 
 // For Kafka
 EXTERN bool g_ignore_kafka_errors; 
-// INDRAJEET TO PROVIDE WHAT ELSE
 EXTERN rd_kafka_t *g_rk;         /* Producer instance handle */
 EXTERN rd_kafka_topic_t *g_rkt;  /* Topic object */
 EXTERN rd_kafka_conf_t *g_kafka_conf;  /* Temporary configuration object */

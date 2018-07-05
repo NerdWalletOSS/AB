@@ -1,7 +1,11 @@
 #include "ab_incs.h"
 #include "auxil.h"
-#include "ab_globals.h"
 #include "l_get_config.h"
+
+#include <lua.h>
+extern char g_rslt[AB_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern char g_err[AB_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern lua_State *g_L;
 
 int
 l_get_config(
@@ -31,8 +35,9 @@ l_get_config(
         AB_MAX_LEN_RESULT, strlen(config));
     lua_pop(g_L, 1);
     go_BYE(-1);
-  } else {
-    memcpy(g_buf, config, strlen(config));
+  } 
+  else {
+    memcpy(g_rslt, config, strlen(config));
     lua_pop(g_L, 1);
   }
 

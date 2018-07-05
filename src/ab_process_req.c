@@ -37,7 +37,6 @@
 
 #include "delete_test.h"
 #include "stop_test.h"
-#include "l_chk_test.h"
 #include "get_utm_kv.h"
 #ifdef KAFKA
 #include "kafka_close_conn.h"
@@ -89,11 +88,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckDBConnectivity : /* done by Lua */
-      status = l_chk_db_conn(); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case CheckTest : /* done by Lua */
-      status = l_chk_test(body); cBYE(status);
+      status = chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
     case Classify : /* done by C */
@@ -195,6 +190,12 @@ ab_process_req(
       else if ( strcmp(server, "webapp") == 0 ) {
         status = ping_server("webapp", g_cfg.webapp.server,
             g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "kafka") == 0 ) {
+        // Indrajeet TODO P1
+      }
+      else if ( strcmp(server, "statsd") == 0 ) {
+        // Indrajeet TODO P1
       }
       else {
         go_BYE(-1);

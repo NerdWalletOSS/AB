@@ -50,14 +50,8 @@ get_variant(
   //--------------------------------------------------------
   // Deal with filters
   bool is_exclude = false; 
-  if ( T->has_filters ) {  // ask Session Service
-    // TODO P1: To implement. status = get_ss_info(g_uuid); 
-    if ( status == -1 ) { go_BYE(-1); }
-    if ( status == -2 ) { 
-      is_exclude = false; 
-    }
-    else { // call Lua INDRAJEET TODO  
-    }
+  if ( T->has_filters ) {  
+    // TODO  RAMESH P1 
     if ( is_exclude ) {
       int nw = snprintf(g_rslt, AB_MAX_LEN_RESULT,
           "{ \"Variant\" : \"Ineligible\", \"VariantID\" :  0, \"Test\" : \"%s\", \"TestID\" : %d }",

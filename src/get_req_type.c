@@ -19,9 +19,6 @@ get_req_type(
   else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
     return CheckDBConnectivity;
   }
-  else if (strcasecmp(api, "CheckTest") == 0) {
-    return CheckTest;
-  }
   else if (strcasecmp(api, "Classify") == 0) {
     return Classify;
   }

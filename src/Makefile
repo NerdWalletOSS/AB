@@ -202,7 +202,8 @@ ab_httpd : $(COBJS)  \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
 	./libs/librdkafka.so \
-	-lm  -lpthread -ldl   
+	./libs/libmysqlclient.so \
+	-lm  -lpthread -ldl 
 
 ../librdkafka/src/librdkafka.so:
 	cd ../ && rm -rf librdkafka &&  tar -xvzf librdkafka.tar.gz && cd librdkafka && ./configure && make

@@ -14,7 +14,6 @@ typedef enum _ab_req_type {
   CheckLoggerConnectivity, // Read &  C
   CheckKafkaConnectivity, // Read &  C
   CheckDBConnectivity, // Config &  Lua
-  CheckTest, /// Read & Lua
   Classify, // Read & C 
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
@@ -110,6 +109,7 @@ typedef struct _mysql_type {
   char server[AB_MAX_LEN_MYSQL_PARAM+1];
   char user[AB_MAX_LEN_MYSQL_PARAM+1];
   char password[AB_MAX_LEN_MYSQL_PARAM+1];
+  char database[AB_MAX_LEN_MYSQL_PARAM+1];
 } MYSQL_TYPE;
 
 typedef struct _kafka_cfg_type {

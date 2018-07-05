@@ -16,7 +16,7 @@
 #define AB_MAX_HEADERS_SIZE 8191
 #define AB_MAX_LEN_BODY    32767
 #define AB_MAX_LEN_PAYLOAD  1024-1 // for POST to logger
-#define AB_MAX_LEN_RESULT   1048576-1
+#define AB_MAX_LEN_RESULT   32767
 
 #define AB_MAX_LEN_HDR_KEY 63
 #define AB_MAX_LEN_HDR_VAL 127
