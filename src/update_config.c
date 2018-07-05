@@ -160,7 +160,7 @@ update_config(
 #ifdef KAFKA
   kafka_close_conn();
   if ( !g_disable_kf ) { 
-     status = kafka_open_conn(g_cfg.kafka); cBYE(status);
+    status = kafka_open_conn(g_cfg.kafka); cBYE(status);
   }
 #endif
   // ---------------------

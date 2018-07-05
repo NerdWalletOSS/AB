@@ -48,6 +48,7 @@ validate_config(
 {
   int status = 0;
   char *buf = NULL;
+  int32_t ival;
 
   if ( cfg.sz_log_q <= 1024 ) { go_BYE(-1); }
   if ( ( cfg.port <= 0 ) ||  ( cfg.port >= 65536 ) ) { go_BYE(-1); }
@@ -107,9 +108,14 @@ validate_config(
          ( cfg.webapp.port >= 65536 ) ) { go_BYE(-1); }
   }
   //---------------------------------
-
-
-
+  if ( !g_disable_kf ) { 
+    if ( cfg.kafka.brokers[0] == '\0' ) { go_BYE(-1); }
+    if ( cfg.kafka.topic[0] == '\0' ) { go_BYE(-1); }
+    status = stoI4(cfg.kafka.retries, &ival); 
+    if ( ival < 0 ) { go_BYE(-1); }
+    status = stoI4(cfg.kafka.max_buffering_time, &ival); 
+    if ( ival < 0 ) { go_BYE(-1); }
+  }
 BYE:
   free_if_non_null(buf);
   return status;

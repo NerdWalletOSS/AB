@@ -233,7 +233,14 @@ read_conf_file(
   } 
   else {
     g_disable_kf = false;
-    // TODO TODO TODO P1
+    get_string(j_kf, "BROKERS", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.brokers);
+    get_string(j_kf, "TOPIC", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.topic);
+    get_string(j_kf, "RETRIES", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.retries);
+    get_string(j_kf, "MAX_BUFFERING_TIME", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.max_buffering_time);
   }
 
   json_decref(root);
