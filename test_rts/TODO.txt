@@ -1,0 +1,1 @@
+Add tests for StopTest and DeleteTest direct calls to RTS

@@ -113,7 +113,6 @@ update_config(
   // mysql_database For Lua
   // default_url, Nothing to do 
   // reload_on_startup, Nothing to do 
-  // xy_guid, Nothing to do 
 
   free_if_non_null(g_uuid);
   if ( g_cfg.max_len_uuid > AB_MAX_LEN_UUID ) { go_BYE(-1); }

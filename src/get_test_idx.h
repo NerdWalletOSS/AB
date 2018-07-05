@@ -3,10 +3,6 @@ extern int get_test_idx(
     int test_type,
     int *ptr_test_idx
     );
-extern int chk_if_dupe(
-    const char *name,
-    bool *ptr_is_dupe
-    );
 extern int get_state_enum(
     const char *state,
     int *ptr_state_enum

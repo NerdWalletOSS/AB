@@ -50,4 +50,5 @@ function load_cfg.load_config(config_file)
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
   return config
 end
+
 return load_cfg

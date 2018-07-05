@@ -155,14 +155,13 @@ typedef struct _cfg_type {
   // START: For decision tree
   char dt_dir[AB_MAX_LEN_FILE_NAME+1];
   char model_name[AB_MAX_LEN_FILE_NAME+1];
-  char ua_dir[AB_MAX_LEN_FILE_NAME+1];
   // STOP: For decision tree
   char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
   // STOP: For run time user agent classifier
-  char statsd_inc[AB_MAX_LEN_REDIRECT_URL+1];
-  char statsd_count[AB_MAX_LEN_REDIRECT_URL+1];
-  char statsd_gauge[AB_MAX_LEN_REDIRECT_URL+1];
-  char statsd_timing[AB_MAX_LEN_REDIRECT_URL+1];
+  char statsd_inc[AB_MAX_LEN_STATSD_KEY+1];
+  char statsd_count[AB_MAX_LEN_STATSD_KEY+1];
+  char statsd_gauge[AB_MAX_LEN_STATSD_KEY+1];
+  char statsd_timing[AB_MAX_LEN_STATSD_KEY+1];
 
 } CFG_TYPE;
 

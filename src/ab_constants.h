@@ -96,5 +96,7 @@
 
 #define AB_ERROR_CODE_BAD_UUID -2
 #define AB_ERROR_CODE_BAD_TEST -3
+
+#define AB_MAX_LEN_STATSD_KEY 63
 #endif
 

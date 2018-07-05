@@ -3,26 +3,16 @@
 WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -fopenmp
 INCS= -I. \
 	-I../src/ \
-	-I../libevent-2.0.22-stable/include/event2/ \
-	-I../libevent-2.0.22-stable/include/ \
-	-I../jansson-2.10/src/ \
-	-I../statsd-c-client-master/ \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
-	-I../dt_interpreter/src/  \
-	-I../libmaxminddb-1.3.2/include/ \
-	-I../registered-domain-libs/C/ \
-	-I../libyuarel/ \
-	-I../libmaxminddb-1.3.2/projects/VS12/
 
-
+DBGFLAGS= -g 
 DBGFLAGS= 
-DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
-LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY
+LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) 
 # Uncomment below to capture server error 
 # CFLAGS= $(LFLAGS) -DCAPTURE_SERVER_ERROR 
 CFLAGS= $(LFLAGS) 
@@ -64,7 +54,7 @@ add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS)
 	../src/libs/libcurl.so 
 
 pblaster : $(PBLASTER_OBJS) $(BLASTER_INCS) 
-	$(CC) -fopenmp $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
+	$(CC) $(LFLAGS) $(PBLASTER_OBJS) -o pblaster \
 	../src/libs/libcurl.so -lpthread
 
 sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS) 
@@ -74,10 +64,6 @@ sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS)
 test_dt : test_dt.o mmap.o
 	$(CC) $(LFLAGS) mmap.o test_dt.o -o test_dt \
 	../src/libs/libcurl.so 
-
-
-../jansson-2.10/src/.libs/libjansson.a :
-	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
 auxil.o : 
 	$(CC) ../src/auxil.c -c -o auxil.o $(CFLAGS)  $(INCS)

@@ -10,7 +10,7 @@ require_once "../utility_functions.php";
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="Assures Quality with business logic">
-    <meta name="author" content="Nerdwallet QA Team">
+    <meta name="author" content="Lua Q Scrabble" >
     <link rel="icon" href="images/favicon.ico">
 
     <title>NW Admin Panel</title>
@@ -51,8 +51,8 @@ require_once "../utility_functions.php";
     <li ><a href="check_rts.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-check"></span> RTS</button></a></li>
     <li ><a href="chk_scn.php"><button type="button" class="btn btn-sm btn-info"> SCN</button></a></li>	
     <li ><a href="ui_monitor.php"><button type="button" class="btn btn-sm btn-info">AB Monitor</button></a></li>
-    <li ><a href="ur_ui_monitor.php"><button type="button" class="btn btn-sm btn-info">UR Monitor</button></a></li>
-    <li ><a href="show_dump.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-download-alt"></span> Data</button></a></li>-->	
+    <li ><a href="ur_ui_monitor.php"><button type="button" class="btn btn-sm btn-info">UR Monitor</button></a></li>-->
+    <li ><a href="show_dump.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-download-alt"></span> Data</button></a></li>
     </ul>
     </div><!--/.nav-collapse -->
     </div>
