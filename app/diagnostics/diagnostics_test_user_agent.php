@@ -8,7 +8,6 @@ require_once "get_url.php";
 require_once "includes/header_diagnostics.php"; 
 //-----------------------------------------------------------
 ?>
-<script src="js/add_admin.js"></script>
 <div class="container">
 	<div class="row" >
          <!--<div class="col-xs-6">-->
@@ -25,9 +24,11 @@ $url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
 $http_code = 0;
 $rslt = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt );
-print("<pre>".print_r($rslt,true)."</pre>");
+var_dump($data);
 if (!$data) {
 echo "User Agent unavailable";
+} else {
+print("<pre>".print_r($rslt,true)."</pre>");
 }
 ?>
 </table>
