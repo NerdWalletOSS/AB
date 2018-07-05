@@ -47,7 +47,7 @@
     "MYSQL": {
       "DATABASE": {
         "COMMENT": "Name of database in MySQL server",
-        "VALUE": "abdb"
+        "VALUE": "abdb2"
       },
       "PASSWORD": {
         "COMMENT": "Password for user for MySQL server",
