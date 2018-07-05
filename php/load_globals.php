@@ -7,12 +7,17 @@ function make_lkp($tbl)
 
   $R = db_get_rows($tbl);
   rs_assert(!is_null($R));
+  $cnt = 0;
   foreach ( $R as $r ) {
     $id   = $r['id'];
     $name = $r['name'];
-    $X[$name] = $id;
-    $reverse_X[$id] = $name;
+    if ( ( isset($r['is_del']) ) && ( $r['is_del'] == 0 ) ) { 
+      $X[$name] = $id;
+      $reverse_X[$id] = $name;
+      $cnt++;
+    }
   }
+  rs_assert($cnt > 0);
   $GLOBALS[$tbl] = $X;
   $GLOBALS["reverse_" . $tbl] = $reverse_X;
   // print("<br> Created $tbl with " . count($R) . " rows <br\n");
