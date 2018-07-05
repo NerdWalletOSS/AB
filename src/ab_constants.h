@@ -88,13 +88,14 @@
 #define AB_MAX_LEN_KAFKA_PARAM 63
 #define AB_MAX_LEN_MYSQL_PARAM 63
 
-#define AB_SEED_1 961748941; // large prime number
-#define AB_SEED_2 982451653; // some other large primenumber
+#define AB_SEED_1 961748941 // large prime number
+#define AB_SEED_2 982451653 // some other large primenumber
 
 
 #define AB_ERROR_CODE_BAD_UUID -2
 #define AB_ERROR_CODE_BAD_TEST -3
 
 #define AB_MAX_LEN_STATSD_KEY 63
+#define AB_MAX_LEN_STATSD_BUF 127 
 #endif
 

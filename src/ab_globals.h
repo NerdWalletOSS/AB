@@ -153,7 +153,7 @@ EXTERN char g_body[AB_MAX_LEN_BODY+1];
 EXTERN int g_sz_body;
 EXTERN int g_kafka_memory; 
 
-EXTERN char g_statsd_buf[AB_MAX_LEN_REDIRECT_URL+1];
+EXTERN char g_statsd_buf[AB_MAX_LEN_STATSD_BUF+1];
 
 #include "ua_types.h"
 EXTERN  MODEL_REC_TYPE *g_ua_M; int g_ua_nM;

@@ -33,7 +33,7 @@
       },
       "SERVER": {
         "COMMENT": " Name of Server running DP",
-        "VALUE": "ab_logger"
+        "VALUE": "localhost"
       },
       "URL": {
         "COMMENT": "URL on which DP needs data POSTed",
@@ -79,17 +79,13 @@
         "COMMENT": "Determined by ...",
         "VALUE": "nw.metrics.ab.requests"
       },
-      "STATSD_DEC": {
-        "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.XXXXXXXXX"
-      },
       "STATSD_TIMING": {
         "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.request_time"
+        "VALUE": "nw.metrics.ab.time"
       },
        "STATSD_GAUGE": {
         "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.misc"
+        "VALUE": "nw.metrics.ab.gauge"
       },
       "STATSD_COUNT": {
         "COMMENT": "Determined by ...",

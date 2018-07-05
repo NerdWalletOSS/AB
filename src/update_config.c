@@ -36,34 +36,28 @@ update_config(
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q <= 0 ) { go_BYE(-1); }
 #ifdef AB_AS_KAFKA
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
-    return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
+  g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
+  return_if_malloc_failed(g_log_q);
+  memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
 #else
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
-    return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
+  g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
+  return_if_malloc_failed(g_log_q);
+  memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
 #endif
-    fprintf(stderr, "Allocating g_log_q\n");
-    g_n_log_q = 0;
   //---------------------------------------------------
-
-  // statsd.server 
-  // statsd.port 
   if ( g_statsd_link != NULL ) { 
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
-  if ( ( *g_cfg.statsd.server == '\0' ) || ( g_cfg.statsd.port <= 0 ) ) {
+  if ( g_disable_sd ) {
     fprintf(stderr, "WARNING! Not logging to statsd \n");
   }
   else {
-    int port = g_cfg.statsd.port;
-    g_statsd_link = statsd_init(g_cfg.statsd.server, port);
+    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
     if ( g_statsd_link == NULL ) { go_BYE(-1); }
   }
   
-    STATSD_GAUGE("start_time", g_log_start_time);
+  STATSD_GAUGE("start_time", g_log_start_time);
   // log_server
   // log_port
   // log_url
@@ -81,8 +75,7 @@ update_config(
     go_BYE(-1); 
   }
   // Following for curl for logging GetVariant 
-  if ( ( *g_cfg.logger.server == '\0' ) || ( *g_cfg.logger.url == '\0' ) ||
-      ( ( g_cfg.logger.port <= 1 )  || ( g_cfg.logger.port >= 65535 ) ) ) {
+  if ( g_disable_lg ) { 
     fprintf(stderr, "WARNING! /GetVariant NOT being logged\n");
   }
   else {
