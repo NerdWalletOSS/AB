@@ -17,12 +17,12 @@ require_once "chk_test.php"
             </div>
             <div class="panel-body">
 <?php
-$X = array();
+/*$X = array();
 $X['TestName'] = 'Test1';
 $X['TestType'] = 'XYTest';
 $str_inJ = json_encode($X);
 $data = chk_test($str_inJ);
-print("<pre>".print_r($data,true)."</pre>");
+print("<pre>".print_r($data,true)."</pre>");*/
 $rslt = chk_tests();
 print("<pre>".print_r($rslt,true)."</pre>");
 

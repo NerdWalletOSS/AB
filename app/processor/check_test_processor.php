@@ -18,21 +18,14 @@ else
 		header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
 		return false;
 	}
-
 // Call to check test
 $TestName = $_GET['TestName'];
 $X = array();
 $X['TestName'] = $TestName;
 $X['TestType'] = $TestType;
 $str_inJ = json_encode($X);
-$status = chk_test($str_inJ);
 
-if ($status == 1 ) {
-  $_SESSION['test_status'] = "<span style='color:green;font-weight:bold'>SUCCESS: ".$TestName." is in good state with respect to RTS & DB </span>";
-}
-else {
-  $_SESSION['test_status'] = "<span style='color:red;font-weight:bold'>ERROR: ".$TestName." is not in sync with respect to RTS & DB</span>";
-}
+$rslt = chk_test($str_inJ);
 
 // CASE: FIX TO A WINNER
 /*

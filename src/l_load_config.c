@@ -13,8 +13,6 @@ l_load_config(
   int status = 0;
   if ( g_disable_lua ) { return 0; }
   if ( g_L == NULL ) { go_BYE(-1); }
-  static char has_changed[NUM_SERVICES];
-  memset(has_changed, 0, NUM_SERVICES);
   lua_getglobal(g_L, "load_config");
   if ( !lua_isfunction(g_L, -1)) {
     fprintf(stderr, "Function load_config does not exist in lua's global space\n");
@@ -22,9 +20,7 @@ l_load_config(
     go_BYE(-1);
   }
   lua_pushstring(g_L, file_name); // not pushing string as it causes a copy
-  lua_pushlightuserdata(g_L, has_changed);
-  lua_pushlightuserdata(g_L, &g_cfg);
-  status = lua_pcall(g_L, 3, 0, 0);
+  status = lua_pcall(g_L, 1, 0, 0);
   if (status != 0) {
     WHEREAMI;
     fprintf(stderr, "calling function load_config failed: %s\n", lua_tostring(g_L, -1));
@@ -49,22 +45,9 @@ l_load_config(
     go_BYE(-1);
   }
 
-  restart_subsystems(has_changed);
 BYE:
   return status;
 }
 
-void restart_subsystems(char* has_changed) { //TODO declare prototype
-  // For now a single restart is enough
-  char changed = 0;
-  for( int i=0; i< NUM_SERVICES; i++) {
-    if (has_changed[i] == 1) {
-      changed = 1;
-      break;
-    }
-  }
-  if( changed == 1) {
-    update_config();
-  }
-}
+
 

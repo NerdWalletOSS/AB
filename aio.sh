@@ -57,7 +57,7 @@ install_test_deps() {
   my_print "Installing luajit from source"
   tar -xvf LuaJIT-2.1.0-beta3.tar.gz
   cd LuaJIT-2.1.0-beta3/
-  sed -i '114s/#//' src/Makefile # to enable gc64
+  # sed -i '114s/#//' src/Makefile # to enable gc64
   make TARGET_FLAGS=-pthread
   sudo make install
   cd /usr/local/bin
