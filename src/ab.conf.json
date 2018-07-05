@@ -77,13 +77,13 @@
         "COMMENT": "setup for statsd",
         "VALUE": "localhost"
       },
-      "STATSD_INC": {
-        "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.requests"
-      },
       "PORT": {
         "COMMENT": "Default 8125. Determined by DataDog",
         "VALUE": "8125"
+      },
+      "STATSD_INC": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.requests"
       },
       "STATSD_TIMING": {
         "COMMENT": "Determined by ...",
@@ -168,10 +168,6 @@
     "VERBOSE": {
       "COMMENT": "Set to true if you want logs on stderr",
       "VALUE": "false"
-    },
-    "XY_GUID": {
-      "COMMENT": "Used for testing.Set to 0 or omit this line in production",
-      "VALUE": "1"
     },
     "MMDB_FILE": {
       "COMMENT": "maxmind database for ip to geo",

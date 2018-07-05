@@ -81,7 +81,7 @@ add_tests(
     memset(url, '\0', AB_MAX_LEN_URL+1);
     sprintf(url, "%s:%d/AddFakeTest?TestName=T%d&TestType=%s&State=%s&IsDevSpecific=%d&NumVariants=%d", 
         server, port, test_id, test_type, state, is_dev_specific, num_variants);
-    fprintf(stderr, "%s\n", url);
+    // fprintf(stderr, "%s\n", url);
     status = execute(ch, url, &http_code); cBYE(status);
     if ( http_code != 200 ) { go_BYE(-1); }
   }

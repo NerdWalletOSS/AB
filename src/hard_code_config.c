@@ -35,7 +35,6 @@ hard_code_config(void)
 
   strcpy(g_cfg.default_url, "http://localhost:8080/AB/test_webapp/index0.html");
   g_cfg.max_len_uuid = 47;
-  g_cfg.xy_guid = 1;
 
   // START: For user agent classifier
   strcpy(g_cfg.ua_to_dev_map_file,  "/opt/ab/ua_to_dev.bin");
