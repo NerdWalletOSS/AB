@@ -4,8 +4,10 @@
 #include "load_classify_ua_map.h"
 #include "load_user_agent_classifier.h"
 
+
 int
 load_user_agent_classifier(
+    bool disable_ua,
     const char *ua_dir,
     uint32_t *ptr_justin_cat_other_id,
 
@@ -27,7 +29,8 @@ load_user_agent_classifier(
 )
 {
   int status = 0;
-  char buf[AB_MAX_LEN_FILE_NAME+1+64]; // TODO P4 improve
+  int buflen = AB_MAX_LEN_FILE_NAME+64;  // TODO P4 improve
+  char buf[buflen+1];
 
   // Free stuff and clean it up
   *ptr_justin_cat_other_id = -1;
@@ -44,9 +47,19 @@ load_user_agent_classifier(
   *ptr_num_classify_ua_map = 0;
   //-------------------------------------------
 
+  if ( disable_ua ) { 
+    *ptr_n_justin_cat_lkp = 1;
+    *ptr_justin_cat_other_id = 1;
+    ptr_justin_cat_lkp = malloc(1 * sizeof(LKP_REC_TYPE));
+    strcpy((*ptr_justin_cat_lkp)[0].name, "Other");
+    (*ptr_justin_cat_lkp)[0].id = 1;
+    goto BYE;
+  }
+
   if ( !isdir(ua_dir) ) { go_BYE(-1); }
 
   // justin cat file 
+  memset(buf, '\0', buflen);
   sprintf(buf, "%s/justin_cat.csv", ua_dir);
   if ( !isfile(buf) ) { go_BYE(-1); }
   status = load_lkp("justin", buf, 
@@ -59,12 +72,14 @@ load_user_agent_classifier(
   }
   //--------------------------------------------------------
   // os file 
+  memset(buf, '\0', buflen);
   sprintf(buf, "%s/os.csv", ua_dir); 
   if ( !isfile(buf) ) { go_BYE(-1); }
   status = load_lkp("os", buf, ptr_os_lkp, ptr_n_os_lkp);
   cBYE(status);
   //--------------------------------------------------------
   // browser file 
+  memset(buf, '\0', buflen);
   sprintf(buf, "%s/browser.csv", ua_dir); 
   if ( !isfile(buf) ) { go_BYE(-1); }
   status = load_lkp("browser", buf, 
@@ -72,6 +87,7 @@ load_user_agent_classifier(
   cBYE(status);
   //--------------------------------------------------------
   // device_type file 
+  memset(buf, '\0', buflen);
   sprintf(buf, "%s/device_type.csv", ua_dir); 
   if ( !isfile(buf) ) { go_BYE(-1); }
   status = load_lkp("device_type", buf, 
@@ -79,6 +95,7 @@ load_user_agent_classifier(
   cBYE(status);
   //--------------------------------------------------------
   // ua_to_dev_map_file
+  memset(buf, '\0', buflen);
   sprintf(buf, "%s/ua_to_dev_map.bin", ua_dir);
   if ( !isfile(buf) ) { go_BYE(-1); }
   status = load_classify_ua_map(buf, 

@@ -106,13 +106,14 @@ update_config(
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
 
-  status = load_user_agent_classifier(
+  status = load_user_agent_classifier(g_disable_ua,
     g_cfg.ua_dir, &g_justin_cat_other_id,
     &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map, 
     &g_justin_cat_lkp, &g_n_justin_cat_lkp, 
     &g_os_lkp, &g_n_os_lkp, 
     &g_browser_lkp, &g_n_browser_lkp, 
     &g_device_type_lkp, &g_n_device_type_lkp);
+  cBYE(status);
   //--------------------------------------------------------
   // dt, rf, mdl
   free_if_non_null(g_dt_feature_vector); 

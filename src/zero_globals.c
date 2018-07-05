@@ -84,6 +84,7 @@ free_globals(
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
+  free_if_non_null(g_ss_response);
 
   free_if_non_null(g_log_q); g_n_log_q = 0;
   fprintf(stderr, "Freeing g_log_q\n");

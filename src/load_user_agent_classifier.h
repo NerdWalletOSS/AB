@@ -1,5 +1,6 @@
 extern int
 load_user_agent_classifier(
+    bool disable_ua,
     const char *ua_dir,
     uint32_t *ptr_justin_cat_other_id,
 
