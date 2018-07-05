@@ -85,6 +85,7 @@ function reload.get_tests_from_db()
     local str = JSON:encode(test_json)
     tests_ret[#tests_ret + 1] = str
   end
+  conn:close()
   return tests_ret
 end
 
@@ -105,6 +106,7 @@ function reload.reload(c_index, g_reload_tests)
     c_index[0] = c_index[0] + 1
   end
   cache.put("RELOAD_STRS", tests)
+
 end
 
 return reload

@@ -5,6 +5,7 @@
 
 int 
 l_mdl_meta(
+    void
     )
 {
   int status = 0;

@@ -99,69 +99,58 @@ typedef struct _payload_rec_type {
 } PAYLOAD_REC_TYPE;
 
 typedef struct _service_type {
-  uint16_t  port;
+  int32_t  port;
   char server[AB_MAX_LEN_SERVER_NAME+1];
   char url[AB_MAX_LEN_URL+1];
   char health_url[AB_MAX_LEN_URL+1];
 } SERVICE_TYPE;
 
+typedef struct _mysql_type {
+  int32_t  port;
+  char server[AB_MAX_LEN_MYSQL_PARAM+1];
+  char user[AB_MAX_LEN_MYSQL_PARAM+1];
+  char password[AB_MAX_LEN_MYSQL_PARAM+1];
+} MYSQL_TYPE;
+
 typedef struct _kafka_cfg_type {
-  char brokers[AB_MAX_LEN_SERVER_NAME+1];
-  char topic[AB_MAX_LEN_KAFKA_TOPIC+1];
-  char queue_size[AB_MAX_LEN_KAFKA_QUEUE_SIZE+1];
-  char retries[AB_MAX_LEN_KAFKA_NUM_RETRIES+1];
-  char max_buffering_time[AB_MAX_LEN_KAFKA_BUF_TIME+1];
+  char brokers[AB_MAX_LEN_KAFKA_PARAM+1];
+  char topic[AB_MAX_LEN_KAFKA_PARAM+1];
+  char queue_size[AB_MAX_LEN_KAFKA_PARAM+1];
+  char retries[AB_MAX_LEN_KAFKA_PARAM+1];
+  char max_buffering_time[AB_MAX_LEN_KAFKA_PARAM+1];
 } KAFKA_CFG_TYPE;
 
-typedef struct _ua_classify_cfg_type {
-  char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1];
-  char justin_cat_file[AB_MAX_LEN_FILE_NAME+1];
-  char os_file[AB_MAX_LEN_FILE_NAME+1];
-  char browser_file[AB_MAX_LEN_FILE_NAME+1];
-  char device_type_file[AB_MAX_LEN_FILE_NAME+1];
-  char ua_model_coeff_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
-  char ua_category_intercept_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
-} UA_CLASSIFY_CFG_TYPE;
+typedef struct _statsd_keys_cfg_type {
+  char inc[AB_MAX_LEN_STATSD_KEY+1];
+  char count[AB_MAX_LEN_STATSD_KEY+1];
+  char gauge[AB_MAX_LEN_STATSD_KEY+1];
+  char timing[AB_MAX_LEN_STATSD_KEY+1];
+} STATSD_KEYS_CFG_TYPE;
 
 typedef struct _cfg_type {
 
-  uint16_t  port;  // port on which AB RTS will run
-  bool verbose;    // how chatty should RTS be
+  char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
+
+  char ua_dir[AB_MAX_LEN_FILE_NAME+1]; // For classifying user agent
+
+  char dt_dir[AB_MAX_LEN_FILE_NAME+1]; // For decision tree
+  char model_name[AB_MAX_LEN_FILE_NAME+1]; // For decision tree
+
 
   SERVICE_TYPE logger;
-  SERVICE_TYPE ss;
+  MYSQL_TYPE mysql;
   SERVICE_TYPE statsd;
   SERVICE_TYPE webapp;
   KAFKA_CFG_TYPE kafka;
 
-  uint32_t sz_log_q;
+  int32_t sz_log_q;
+  int32_t  port;  // port on which AB RTS will run
+  int max_len_uuid;
   int num_post_retries;
-
+  bool verbose;    // how chatty should RTS be
   char default_url[AB_MAX_LEN_REDIRECT_URL+1];
 
-  int max_len_uuid;
-  uint64_t xy_guid; // Set to 0 for real, positive integer for testing
-
-  // START: For classifying user agent
-  char ua_to_dev_map_file[AB_MAX_LEN_FILE_NAME+1];
-  char justin_cat_file[AB_MAX_LEN_FILE_NAME+1];
-  char os_file[AB_MAX_LEN_FILE_NAME+1];
-  char browser_file[AB_MAX_LEN_FILE_NAME+1];
-  char device_type_file[AB_MAX_LEN_FILE_NAME+1];
-  char ua_model_coeff_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
-  char ua_category_intercept_file[AB_MAX_LEN_FILE_NAME+1];  // for run time
-  UA_CLASSIFY_CFG_TYPE ua;
-  // STOP: For classifying user agent
-  // START: For decision tree
-  char dt_dir[AB_MAX_LEN_FILE_NAME+1];
-  char model_name[AB_MAX_LEN_FILE_NAME+1];
-  // STOP: For decision tree
-  char mmdb_file[AB_MAX_LEN_FILE_NAME+1]; // For MaxMind
-  // STOP: For run time user agent classifier
-  char statsd_inc[AB_MAX_LEN_STATSD_KEY+1];
-  char statsd_count[AB_MAX_LEN_STATSD_KEY+1];
-  char statsd_gauge[AB_MAX_LEN_STATSD_KEY+1];
-  char statsd_timing[AB_MAX_LEN_STATSD_KEY+1];
+  STATSD_KEYS_CFG_TYPE statsd_keys;
 
 } CFG_TYPE;
 

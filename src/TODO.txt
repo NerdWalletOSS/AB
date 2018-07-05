@@ -12,30 +12,6 @@
 
 [RAMESH] database migration 
 
-[RAMESH] Use logger to verify that headers are coming across correctly
-
-[INDRAJEET] Update fake session service to check headers
-
-[RAMESH]  FOLLOWING IN PROGRESS
-
-\subsection{Feature requests from Robby}
-\be
-\item 
-If you see an incoming \verb+X-Caller-Client-ID+ header, 
-include it as callerClientID on any ServiceCallHeaders in events you emit.
-\item If you see an \verb+X-Cookie-ID+ or \verb+X-Request-ID+ HTTP header, 
-\be
-\item include it in any outbound calls you make to other NW services.
-\item include it as cookieId or requestId on any EventHeaders in events you emit.
-\ee
-\item Generally send an ``ab-service'' \verb+X-Caller-Client-ID+ header 
-with all outbound calls you make.
-\ee
-
 [INDRAJEET] verify that we are firing events properly
 
-The updated schema is now in stage. You can view the final schema here:
-https://github.com/NerdWallet/schemas/pull/222/files
-
-The logger PR that is merged to stage:
-https://github.com/NerdWallet/logger.nerdwallet/pull/459
+NO WARNINGS in Makefile 

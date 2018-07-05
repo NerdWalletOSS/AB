@@ -4,7 +4,6 @@
 #include "ab_auxil.h"
 #include "get_test_idx.h"
 #include "log_decision.h"
-#include "get_ss_info.h"
 #include "get_variant.h"
 #include "make_curl_payload.h"
 #include "statsd.h"
@@ -52,7 +51,7 @@ get_variant(
   // Deal with filters
   bool is_exclude = false; 
   if ( T->has_filters ) {  // ask Session Service
-    status = get_ss_info(g_uuid); 
+    // TODO P1: To implement. status = get_ss_info(g_uuid); 
     if ( status == -1 ) { go_BYE(-1); }
     if ( status == -2 ) { 
       is_exclude = false; 

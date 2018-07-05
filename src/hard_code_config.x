@@ -36,23 +36,15 @@ hard_code_config(void)
   strcpy(g_cfg.default_url, "http://localhost:8080/AB/test_webapp/index0.html");
   g_cfg.max_len_uuid = 47;
 
-  // START: For user agent classifier
-  strcpy(g_cfg.ua_to_dev_map_file,  "/opt/ab/ua_to_dev.bin");
-  strcpy(g_cfg.justin_cat_file,  "/opt/ab/justin_cat.csv");
-  strcpy(g_cfg.os_file,  "/opt/ab/os.csv");
-  strcpy(g_cfg.browser_file,  "/opt/ab/browser.csv");
-  strcpy(g_cfg.device_type_file,  "/opt/ab/device_type.csv");
-  strcpy(g_cfg.ua_model_coeff_file,  "/opt/ab/model_coefficients.csv");
-  strcpy(g_cfg.ua_category_intercept_file,  "/opt/ab/category_intercept.csv");
-  // STOP : For user agent classifier
-  strcpy(g_cfg.statsd_inc,   "nw.metrics.ab.requests");
-  strcpy(g_cfg.statsd_count,  "nw.metrics.ab.counts");
-  strcpy(g_cfg.statsd_timing,  "nw.metrics.ab.request_time");
+  // TODO: P1: Indrajeet to check key values below
+  strcpy(g_cfg.statsd_keys.inc,   "nw.metrics.ab.requests");
+  strcpy(g_cfg.statsd_keys.count, "nw.metrics.ab.counts");
+  strcpy(g_cfg.statsd_keys.timing,"nw.metrics.ab.request_time");
+  strcpy(g_cfg.statsd_keys.gauge, "nw.metrics.ab.gauge");
 
+  strcpy(g_cfg.ua_dir,  "../USER_AGENT_CLASSIFIER/data/");
   strcpy(g_cfg.dt_dir,  "../DT/");
-  // strcpy(g_cfg.model_name,  "spam");
   strcpy(g_cfg.model_name,  "cc_member_models");
-
   strcpy(g_cfg.mmdb_file,  "/opt/ab/GeoIP2-City_2017_12_08.mmdb");
 
   // defaults taken from https://kafka.apache.org/08/documentation.html

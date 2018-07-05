@@ -23,7 +23,7 @@ EXTERN int  g_sz_ss_response; // For C. Size of response
 
 EXTERN statsd_link *g_statsd_link; // For C to talk to statsd server
 
-EXTERN uint32_t g_n_log_q;   // For C
+EXTERN int32_t g_n_log_q;   // For C
 #ifdef AB_AS_KAFKA
 EXTERN KAFKA_REC_TYPE *g_log_q; // For C [g_cfg.sz_log_q] 
 #else
@@ -33,8 +33,6 @@ EXTERN uint32_t g_q_rd_idx; // For C: spot where producer is to write
 EXTERN uint32_t g_q_wr_idx; // For C: spot where consumer is to read
 
 EXTERN char *g_uuid; // For C
-EXTERN uint64_t g_xy_guid; // For C. Set to positive integer for debugging. 
-// Normally this should be 0
 
 EXTERN char g_my_name[AB_MAX_LEN_HOSTNAME+1]; // For C
 
@@ -68,23 +66,17 @@ EXTERN pthread_t g_con; // For C
 EXTERN pthread_cond_t g_condc, g_condp; // For C
 EXTERN pthread_mutex_t g_mutex; // For C
 
+// START: User Agent Classifier
+#include "ua_types.h"
 EXTERN uint32_t g_justin_cat_other_id; 
 EXTERN uint32_t g_justin_cat_id; 
 EXTERN uint32_t g_os_id; 
 EXTERN uint32_t g_browser_id; 
 EXTERN uint32_t g_device_type_id; 
 
-#include "ua_types.h"
 EXTERN UA_REC_TYPE *g_classify_ua_map; // Set by C
 EXTERN size_t g_len_classify_ua_file; // Set by C
 EXTERN uint32_t g_num_classify_ua_map; // Set by C
-
-// get ip address from browser headers
-EXTERN char g_ip_address[AB_MAX_LEN_IP_ADDRESS+1];  
-// get date from browser headers
-EXTERN char g_date[AB_MAX_LEN_DATE+1];  
-EXTERN char g_in_tracer[AB_MAX_LEN_TRACER+1];
-EXTERN char g_out_tracer[AB_MAX_LEN_TRACER+1];
 
 EXTERN LKP_REC_TYPE *g_justin_cat_lkp; 
 EXTERN int g_n_justin_cat_lkp; 
@@ -98,6 +90,14 @@ EXTERN int g_n_browser_lkp;
 EXTERN LKP_REC_TYPE *g_device_type_lkp; 
 EXTERN int g_n_device_type_lkp; 
 
+// STOP : User Agent Classifier
+
+// get ip address from browser headers
+EXTERN char g_ip_address[AB_MAX_LEN_IP_ADDRESS+1];  
+// get date from browser headers
+EXTERN char g_date[AB_MAX_LEN_DATE+1];  
+EXTERN char g_in_tracer[AB_MAX_LEN_TRACER+1];
+EXTERN char g_out_tracer[AB_MAX_LEN_TRACER+1];
 EXTERN LKP_REC_TYPE *g_referer_class_lkp; 
 EXTERN int g_n_referer_class_lkp; 
 
@@ -115,6 +115,12 @@ EXTERN MAXMIND_REC_TYPE g_maxmind;
 EXTERN lua_State *g_L; // Set by C
 EXTERN lua_State *g_L_DT; // Set by C
 EXTERN bool g_disable_lua; // used for testing, normally false
+EXTERN bool g_disable_dt; // set to false if no decision tree
+EXTERN bool g_disable_ua; // set to false if no user agent classifier
+EXTERN bool g_disable_ip; // set to false if no MaxMind Database
+EXTERN bool g_disable_sd; // disable statsd
+EXTERN bool g_disable_wa; // disable WebApp
+EXTERN bool g_disable_lg; // disable Logger
 
 
 #include "ab_log_globals.h"
