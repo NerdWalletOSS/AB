@@ -1,0 +1,9 @@
+When I use my locally compiled curl, i get no valgrind errors.
+When I use libcurl4-gnutls-dev, I get some leaks on shutdown
+-----
+Keep in mind that the following 2 constants are defined in 2 places. Hence, a change in one must be reflected as a change in the other. 
+AB_MAX_NUM_TESTS in src/ab_constants.h and 
+max_num_tests in php/db.conf.json
+
+AB_MAX_NUM_ACTIVE_TESTS in src/ab_constants.h and 
+max_num_active_tests in php/db.conf.json
