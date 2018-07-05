@@ -33,7 +33,7 @@ function load_cfg.load_config(config_file)
   local conf_str = file:read('*a')
   file:close()
   local config = JSON:decode(conf_str)
-   assert(config.AB, "The loaded config must have an entry for AB")
+  assert(config.AB, "The loaded config must have an entry for AB")
   local db = config.AB.MYSQL
   assert(config.AB.MYSQL, "MYSQL entry cannot be nil")
   locla mysql = config.AB.MYSQL
@@ -48,6 +48,6 @@ function load_cfg.load_config(config_file)
   assert(port ~= nil and port >= 0 and port < 2^16 - 1, "Mysql entry must have a valid port")
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
-return config
+  return config
 end
-  return load_cfg
+return load_cfg
