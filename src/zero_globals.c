@@ -87,7 +87,6 @@ free_globals(
   free_if_non_null(g_ss_response);
 
   free_if_non_null(g_log_q); g_n_log_q = 0;
-  fprintf(stderr, "Freeing g_log_q\n");
   g_q_rd_idx = 0; g_q_wr_idx = 0;
 
   free_if_non_null(g_uuid);

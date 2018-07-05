@@ -6,6 +6,7 @@
 #include "l_update_config.h"
 #include "l_load_config.h"
 #include "read_conf_file.h"
+#include "validate_config.h"
 #include "setup.h"
 
 int
@@ -19,6 +20,7 @@ setup(
   zero_globals();
   init_globals();
   status = read_conf_file(config_file, &g_cfg); cBYE(status);
+  status = validate_config(g_cfg); cBYE(status);
   status = init_lua(); cBYE(status); // after read_conf_file
   status = l_load_config(config_file); cBYE(status);
   // IMPORTANT: Update lua before C: Order of following 2 lines matters

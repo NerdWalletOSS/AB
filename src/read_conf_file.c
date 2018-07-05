@@ -47,24 +47,24 @@ get_string(
   if ( root == NULL ) { go_BYE(-1); }
   if ( key1 == NULL ) { go_BYE(-1); }
   handle = json_object_get(root, key1);
-  fprintf(stderr, " TODO DELETE %s:", key1);
+  // fprintf(stderr, " TODO DELETE %s:", key1);
   if ( handle == NULL ) { go_BYE(-1); }
   if ( ( key2 != NULL ) && ( *key2 != '\0' ) ) { 
     handle = json_object_get(handle, key2);
-    fprintf(stderr, "%s:", key2);
+    // fprintf(stderr, "%s:", key2);
   }
   if ( ( key3 != NULL ) && ( *key3 != '\0' ) ) { 
     handle = json_object_get(handle, key3);
-    fprintf(stderr, "%s:", key3);
+    // fprintf(stderr, "%s:", key3);
   }
   if ( handle == NULL ) { go_BYE(-1); }
   const char *X = json_string_value(handle);
   if ( X == NULL ) { go_BYE(-1); }
   if ( strlen(X) > maxlen ) { go_BYE(-1); }
   strcpy(dst, X);
-  fprintf(stderr, "%s", X);
+  // fprintf(stderr, "%s", X);
 BYE:
-  printf("\n");
+  // fprintf(stderr, "\n");
   return status;
 }
 
