@@ -46,7 +46,6 @@ local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match
   local original_position = tonumber(name_hash % consts.AB_MAX_NUM_TESTS)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local position = original_position
-  print("original position", position)
   local test = nil
   local stop = false
   repeat
@@ -107,12 +106,9 @@ function AddTests.get_test(
   local original_position = position
   c_index = ffi.cast("int*", c_index)
   local test_type = assert(get_test_type(test_data.TestType), "TestType cannot be nil")
-  print("pos0")
   local test = get_pos(g_tests, test_data, test_type, c_index, name_hash, match)
- print("pos1", c_index[0])
   if test == -1 then
     test = get_pos(g_tests, test_data, test_type, c_index, name_hash, is_pos_empty)
-     print("pos2", c_index[0])
   end
   assert(test ~= -1 , "Unable to find an empty spot")
   return ffi.cast("TEST_META_TYPE*", g_tests)[c_index[0]], name_hash
@@ -140,7 +136,6 @@ function AddTests.add(
   assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
-  print("TestState", test_data.State:lower())
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
