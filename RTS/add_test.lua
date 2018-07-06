@@ -1,4 +1,4 @@
-local dbg = require 'lua/debugger'
+-- local dbg = require 'lua/debugger'
 local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
