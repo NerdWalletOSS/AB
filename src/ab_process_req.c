@@ -29,18 +29,14 @@
 #include "classify_ua.h"
 #include "ext_classify_ip.h"
 #include "ext_classify_ua.h"
-#include "hard_code_config.h"
 #include "setup.h"
 
-#include "l_hard_code_config.h"
 #include "l_load_config.h"
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
 
-#include "ext_get_host.h"
 #include "delete_test.h"
 #include "stop_test.h"
-#include "l_chk_test.h"
 #include "get_utm_kv.h"
 #ifdef KAFKA
 #include "kafka_close_conn.h"
@@ -92,11 +88,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case CheckDBConnectivity : /* done by Lua */
-      status = l_chk_db_conn(); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case CheckTest : /* done by Lua */
-      status = l_chk_test(body); cBYE(status);
+      status = chk_db_conn(); cBYE(status);
       break;
       //--------------------------------------------------------
     case Classify : /* done by C */
@@ -126,10 +118,6 @@ ab_process_req(
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
       status = l_get_config(); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case GetHost : /* done by Lua */
-      status = ext_get_host(args, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
@@ -199,13 +187,15 @@ ab_process_req(
         status = ping_server("logger", g_cfg.logger.server,
             g_cfg.logger.port, g_cfg.logger.health_url, g_rslt);
       }
-      else if ( strcmp(server, "logger") == 0 ) {
-        status = ping_server("logger", g_cfg.ss.server,
-            g_cfg.ss.port, g_cfg.ss.health_url, g_rslt);
-      }
-      else if ( strcmp(server, "logger") == 0 ) {
-        status = ping_server("logger", g_cfg.webapp.server,
+      else if ( strcmp(server, "webapp") == 0 ) {
+        status = ping_server("webapp", g_cfg.webapp.server,
             g_cfg.webapp.port, g_cfg.webapp.health_url, g_rslt);
+      }
+      else if ( strcmp(server, "kafka") == 0 ) {
+        // Indrajeet TODO P1
+      }
+      else if ( strcmp(server, "statsd") == 0 ) {
+        // Indrajeet TODO P1
       }
       else {
         go_BYE(-1);
@@ -234,7 +224,7 @@ ab_process_req(
         pthread_cond_destroy(&g_condp);
       }
       // common to restart and reload
-      status = setup(false); cBYE(status);
+      status = setup(g_config_file); cBYE(status);
       pthread_mutex_init(&g_mutex, NULL);
       pthread_cond_init(&g_condc, NULL);
       pthread_cond_init(&g_condp, NULL);

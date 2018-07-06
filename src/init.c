@@ -61,9 +61,11 @@ init_lua(
   luaL_openlibs(g_L);  
   status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
 
-  g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
-  luaL_openlibs(g_L_DT);  
-  status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+  if ( !g_disable_dt ) { 
+    g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
+    luaL_openlibs(g_L_DT);  
+    status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+  }
 
 BYE:
   return status;
@@ -147,6 +149,7 @@ setup_curl(
     if ( ping_status < 0 ) { 
       fprintf(stderr, "WARNING! Server %s:%d, url %s  not running\n", 
           server, port, health_url);
+      go_BYE(-1); 
     }
     else {
       fprintf(stderr, "[INFO] Server %s:%d running.\n", server, port);
@@ -155,6 +158,9 @@ setup_curl(
   *ptr_ch = ch;
   *ptr_curl_hdrs = curl_hdrs;
 BYE:
+  if ( status < 0 ) { 
+    // TODO P2: Free anything you allocated here
+  }
   free_if_non_null(full_url);
   return status;
 }

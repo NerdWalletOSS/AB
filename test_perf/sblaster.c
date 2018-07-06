@@ -29,7 +29,7 @@ main(
 
   // Set globals 
   // process input parameters
-  if ( argc != 6 ) { go_BYE(-1); }
+  if ( argc != 7 ) { go_BYE(-1); }
 
   g_server         = argv[1];
 
@@ -46,6 +46,10 @@ main(
   status = stoI4(argv[5], &itemp); cBYE(status);
   if ( itemp <= 0 ) { go_BYE(-1); }
   g_num_users = (int32_t)itemp; 
+
+  status = stoI4(argv[6], &itemp); cBYE(status);
+  if ( itemp <= 0 ) { go_BYE(-1); }
+  g_num_threads = (int32_t)itemp; 
 
   //----------------------------------------
   status = read_test_info(test_file_name, &g_T, &g_num_tests); cBYE(status);

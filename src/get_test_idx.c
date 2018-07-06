@@ -16,27 +16,8 @@
 
 #include "ab_globals.h"
 
-int chk_if_dupe(
-    const char *name,
-    bool *ptr_is_dupe
-    )
-{
-  int status = 0;
-  *ptr_is_dupe = false;
-  if ( ( name == NULL ) || ( *name == '\0' ) ) { go_BYE(-1); }
-  uint64_t name_hash = spooky_hash64(name, strlen(name), g_seed1);
-  for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) {
-    if ( name_hash == g_tests[i].name_hash ) {
-      if ( strcmp(g_tests[i].name, name) == 0 ) { 
-        *ptr_is_dupe = true; break; 
-      }
-    }
-  }
-BYE:
-   return status;
-}
-
-int get_test_idx(
+int 
+get_test_idx(
     const char *name,
     int test_type,
     int *ptr_test_idx
@@ -75,15 +56,18 @@ int get_test_idx(
   if ( *ptr_test_idx < 0 ) { 
     g_log_missing_test++;
     STATSD_COUNT("missing_test", 1);
+    status = -1; goto BYE; // TODO P2 Delete this line after demo
     go_BYE(-1);
   }
 
 BYE:
+  // TODO P1 STATSD: move num_probes to one call at end 
   return status;
 }
 
 
-int get_state_enum(
+int 
+get_state_enum(
     const char *state,
     int *ptr_state_enum
     )

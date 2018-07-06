@@ -1,6 +1,7 @@
 #include "kafka_open_conn.h"
 
-int kafka_open_conn(
+int 
+kafka_open_conn(
     KAFKA_CFG_TYPE config
     )
 {

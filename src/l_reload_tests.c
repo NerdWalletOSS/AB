@@ -4,7 +4,7 @@
 #include "aux_zero.h"
 #include "l_reload_tests.h"
 
-  int
+int
 l_reload_tests(
     void
     )

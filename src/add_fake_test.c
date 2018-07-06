@@ -221,7 +221,7 @@ add_fake_test(
       go_BYE(-1);
       break;
   }
-  fprintf(stderr, "Created test %s at location %d \n", test_name, idx);
+  // fprintf(stderr, "Created test %s at location %d \n", test_name, idx);
 
 BYE:
   free_if_non_null(buf);

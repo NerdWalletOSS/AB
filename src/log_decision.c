@@ -13,7 +13,6 @@ log_decision(
     )
 {
   int status = 0;
-  bool is_wait = false;
   if ( g_n_log_q >= g_cfg.sz_log_q ) { go_BYE(-1); }
   // Following if statement was put in to say that we would rather 
   // drop messages on the floor, then stall the main thread

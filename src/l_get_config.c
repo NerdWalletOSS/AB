@@ -1,7 +1,11 @@
 #include "ab_incs.h"
 #include "auxil.h"
-#include "ab_globals.h"
 #include "l_get_config.h"
+
+#include <lua.h>
+extern char g_rslt[AB_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern char g_err[AB_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern lua_State *g_L;
 
 int
 l_get_config(
@@ -25,14 +29,15 @@ l_get_config(
     lua_pop(g_L, 1);
   }
 
-  char* tests = (char *)lua_tostring(g_L, 1);
-  if (AB_MAX_LEN_RESULT < strlen(tests)) {
+  char* config = (char *)lua_tostring(g_L, 1);
+  if (AB_MAX_LEN_RESULT < strlen(config)) {
     sprintf(g_err, "{\"error\": Length of configs is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",
-        AB_MAX_LEN_RESULT, strlen(tests));
+        AB_MAX_LEN_RESULT, strlen(config));
     lua_pop(g_L, 1);
     go_BYE(-1);
-  } else {
-    memcpy(g_buf, tests, strlen(tests));
+  } 
+  else {
+    memcpy(g_rslt, config, strlen(config));
     lua_pop(g_L, 1);
   }
 

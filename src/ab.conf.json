@@ -1,4 +1,16 @@
 {
+  "IP_ADDRESS_CLASSIFIER": {
+    "MMDB_FILE": {
+      "COMMENT": "maxmind database for ip to geo",
+      "VALUE": "/opt/ab/GeoIP2-City_2017_12_08.mmdb"
+    }
+  },
+  "USER_AGENT_CLASSIFIER": {
+    "UA_DIR": {
+      "VALUE": "../USER_AGENT_CLASSIFIER/data/",
+      "COMMENT": "User Agent Classifier Directory"
+    }
+  },
   "DT": {
     "DT_DIR": {
       "VALUE": "../DT/",
@@ -10,24 +22,6 @@
     }
   },
   "AB": {
-    "SESSION_SERVICE" : {
-      "HEALTH_URL": {
-        "COMMENT": "Health check URL for SS",
-        "VALUE": "/health_check"
-      },
-      "PORT": {
-        "COMMENT": "Port on which SS is running",
-        "VALUE": "80"
-      },
-      "SERVER": {
-        "COMMENT": " Name of Server running SS",
-        "VALUE": "logger"
-      },
-      "URL": {
-        "COMMENT": "URL for SS",
-        "VALUE": "\"session\""
-      }
-    },
     "LOGGER": {
       "HEALTH_URL": {
         "COMMENT": "Health check URL for DP",
@@ -35,15 +29,15 @@
       },
       "PORT": {
         "COMMENT": "Port on which DP is listening",
-        "VALUE": "80"
+        "VALUE": "8004"
       },
       "SERVER": {
         "COMMENT": " Name of Server running DP",
-        "VALUE": "logger"
+        "VALUE": "localhost"
       },
       "URL": {
         "COMMENT": "URL on which DP needs data POSTed",
-        "VALUE": "/abserver/ABLog/"
+        "VALUE": "/Log/"
       },
       "NUM_POST_RETRIES": {
         "COMMENT": "Number of times it will attempt to POST to log server.",
@@ -53,7 +47,7 @@
     "MYSQL": {
       "DATABASE": {
         "COMMENT": "Name of database in MySQL server",
-        "VALUE": "abdb"
+        "VALUE": "abdb2"
       },
       "PASSWORD": {
         "COMMENT": "Password for user for MySQL server",
@@ -77,21 +71,21 @@
         "COMMENT": "setup for statsd",
         "VALUE": "localhost"
       },
-      "STATSD_INC": {
-        "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.requests"
-      },
       "PORT": {
         "COMMENT": "Default 8125. Determined by DataDog",
         "VALUE": "8125"
       },
+      "STATSD_INC": {
+        "COMMENT": "Determined by ...",
+        "VALUE": "nw.metrics.ab.requests"
+      },
       "STATSD_TIMING": {
         "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.request_time"
+        "VALUE": "nw.metrics.ab.time"
       },
        "STATSD_GAUGE": {
         "COMMENT": "Determined by ...",
-        "VALUE": "nw.metrics.ab.misc"
+        "VALUE": "nw.metrics.ab.gauge"
       },
       "STATSD_COUNT": {
         "COMMENT": "Determined by ...",
@@ -105,15 +99,15 @@
       },
       "PORT": {
         "COMMENT": "Port on which the webapp server is listening",
-        "VALUE": "8002"
+        "VALUE": "8080"
       },
       "HEALTH_URL": {
         "COMMENT": "Health check URL for Webapp",
-        "VALUE": "/health_check"
+        "VALUE": "AB/health_check"
       },
       "URL": {
         "COMMENT": "URL for Webapp",
-        "VALUE": "\"webapp\""
+        "VALUE": "AB"
       }
 
     },
@@ -125,10 +119,6 @@
       "TOPIC": {
         "COMMENT": "The topic for Kafka",
         "VALUE": "ab"
-      },
-      "QUEUE_SIZE": {
-        "COMMENT": "The queue size for retries to kafka",
-        "VALUE": "1000000"
       },
       "MAX_BUFFERING_TIME": {
         "COMMENT": "Max time in milliseconds that messages will be batched",
@@ -143,39 +133,25 @@
         "COMMENT": "Size of queue of messages for second thread",
         "VALUE": "1048576"
       },
-    "DEFAULT_URL": {
-      "COMMENT": "For URL Router",
-      "VALUE": "https://www.nerdwallet.com"
-    },
-    "DEV_FILE": {
-      "VALUE": "\"./device.csv\""
-    },
-    "UA_TO_DEV_MAP_FILE": {
-      "VALUE": "\"./ua_to_dev.bin\""
-    },
     "PORT": {
       "COMMENT": "Port on which A/B server will run",
       "VALUE": "8000"
-    },
-    "RELOAD_ON_STARTUP": {
-      "COMMENT": "If true then Reload occurs when server comes up",
-      "VALUE": "true"
     },
     "MAX_LEN_UUID": {
       "COMMENT": "Maximum Length of UUID. If test_uuid_len=true",
       "VALUE": "36"
     },
+    "DEFAULT_URL": {
+      "COMMENT": "For URL Router",
+      "VALUE": "https://www.nerdwallet.com"
+    },
+    "RELOAD_ON_STARTUP": {
+      "COMMENT": "If true then Reload occurs when server comes up",
+      "VALUE": "true"
+    },
     "VERBOSE": {
       "COMMENT": "Set to true if you want logs on stderr",
       "VALUE": "false"
-    },
-    "XY_GUID": {
-      "COMMENT": "Used for testing.Set to 0 or omit this line in production",
-      "VALUE": "1"
-    },
-    "MMDB_FILE": {
-      "COMMENT": "maxmind database for ip to geo",
-      "VALUE": "/opt/ab/GeoIP2-City_2017_12_08.mmdb"
     }
   }
 }
