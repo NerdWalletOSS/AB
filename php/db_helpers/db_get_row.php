@@ -16,7 +16,7 @@ function db_get_row(
   $sql .= " $additional_where_clause ";
   $stmt = $dbh->prepare($sql);
   $X['value'] = $value;
-  // echo "$sql\n"; var_dump($X);
+  //echo "$sql\n"; var_dump($X);
   $rslt = $stmt->execute($X); if ( !$rslt ) { go_BYE(""); }
   $nR = $stmt->rowCount();
   if ( $nR != 1 ) { return null; }
