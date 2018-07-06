@@ -100,7 +100,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 						//TableRow += "<strong>No Action</strong></td>";
 						//}
             TableRow += "</td></tr>";
-
             $(table).append(TableRow);
           });
           return ($(table));

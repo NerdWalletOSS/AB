@@ -20,6 +20,7 @@ l_update_config(
       case 1 : L = g_L_DT; strcpy(state, "DT"); break;
       default : go_BYE(-1); break;
     }
+    if ( L == NULL ) { continue; }
     lua_getglobal(L, "update_config");
     if ( !lua_isfunction(L, -1)) {
       fprintf(stderr, "update_config() does not exist in %s\n", state);
