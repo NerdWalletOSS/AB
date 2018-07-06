@@ -79,7 +79,7 @@ $(document).ready(function() {
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
-            TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test' data-key ='"+ value['name'] + "'>Check Test</button></td>";
+            TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test btn btn-warning btn-xs' data-key ='"+ value['name'] + "'>Check Test</button></td>";
 						} else {  
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";
              }
@@ -89,17 +89,17 @@ $(document).ready(function() {
 					if (value['state_id'] == 3) {
             TableRow += "<td><a href='fix_to_a_winner.php?TestID=" + value['id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></a>";
 } else {
-TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='check_test btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button></a></td>"; 
+TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button></a>"; 
 }          
  if (value['state_id'] == 1) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
             } 
             if (value['state_id'] == 4) {
-            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button></td>";}      
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
 						// else {
 						//TableRow += "<strong>No Action</strong></td>";
 						//}
-            TableRow += "</tr>";
+            TableRow += "</td></tr>";
 
             $(table).append(TableRow);
           });
