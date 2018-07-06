@@ -39,9 +39,8 @@ tests.t1 = function(
       jB = JSON:encode(B)
       a, b, c = curl.get(U, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
-      a, b, c = curl.get(dl_url);   assert(c == 200)
-      -- Tc = test info using C
-      local Tc = nil
+      -- TODO PUT BACK a, b, c = curl.get(dl_url);   assert(c == 200)
+      local Tc = nil -- Tc = test info using C
       local url = tic_url .. "&TestName=" .. B.name
       a, b, c = curl.get(url)
       if ( state == "archived" ) then 
@@ -53,10 +52,9 @@ tests.t1 = function(
         assert(Tc.State == state, 
         "expected " .. state .. " got " .. Tc.State)
       end
-      -- Tl = test info using Lua
      
+      local Tl = nil -- test info using Lua
       --[[ TODO PUT THIS BLOCK BACK IN
-      local Tl = nil
       local url = til_url .. "&TestName=" .. B.name
       a, b, c = curl.get(til_url .. "&TestName=" .. B.name);   
       if ( state == "archived" ) then 
@@ -76,11 +74,13 @@ tests.t1 = function(
       a, b, c = curl.get(ltc_url);   assert(c == 200)
       local Lc = JSON:decode(b)
 
-      -- Ll = list tests using C 
+      -- Ll = list tests using Lua
+      --[[ TODO PUT BACK
       a, b, c = curl.get(ltl_url);   assert(c == 200)
       local Ll = JSON:decode(b)
       -- Lc should be same as Ll
       assert(#Ll == #Lc)
+      --]]
 
       -- check number of tests
       if ( state == "started" ) then
@@ -98,5 +98,5 @@ tests.t1 = function(
   end
   print("Test t1 succeeded")
 end
-tests.t1(10) -- TO COMMENT OUT
+tests.t1(333) -- TO COMMENT OUT
 return tests

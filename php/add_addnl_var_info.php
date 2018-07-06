@@ -2,6 +2,7 @@
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "php/db_helpers/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "php/rts/");
 require_once 'db_get_test.php';
 require_once 'mod_cell.php';
 require_once 'lkp.php';
@@ -11,14 +12,14 @@ require_once 'aux_chk_name.php';
 
 require_once 'start_log.php'; // UTPAL: Added the required file
 require_once 'mod_row.php';  // UTPAL: Added the required file
-
+require_once 'inform_rts.php';  // UTPAL: Added the required file
 
 function add_addnl_var_info(
   $str_inJ
 )
 {
   //-- START: For logging
-  $ret_val = start_log($str_inJ);
+  $ret_val = start_log($str_inJ, 'additional_variant_info');
   $created_at = $ret_val['created_at'];
   $updated_at = $ret_val['updated_at'];
   $t_create   = $ret_val['t_create'];

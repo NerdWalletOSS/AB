@@ -83,6 +83,6 @@ $config = config_html($TestType);
 
 
 <!-- /container -->
-<script src="js/bootstrap-confirmation.js"></script>
+<script src="js/bootstrap-confirmation.min.js"></script>
 <!-- FOOTER -->
 <?php require_once "footer.php"; ?>

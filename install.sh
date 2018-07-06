@@ -70,9 +70,9 @@ make install
 
 libtool --finish ./libs
 # copy config file to correct location
-cp $conf_file $HOME/local/httpd.conf
+cp $conf_file $HOME/local/conf/httpd.conf
 # Now make changes to conf file
-# Change ServerName
 # Change Listen 8080
+# Assumption: Only one line that matches "^Listen"
 echo "SUCCESS for $0 in $PWD"
 

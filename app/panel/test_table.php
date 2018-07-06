@@ -31,7 +31,7 @@ function action_state($state_id) {
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['name']."</a></td>";
   if (($result[$i]['state_id'] == 3)|| ($result[$i]['state_id'] == 4)) {
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>
-<button class='check_test' data-key ='".$result[$i]['name']."'>Check Test</button></td>";
+<button class='check_test btn btn-warning btn-xs' data-key ='".$result[$i]['name']."'>Check Test</button></td>";
 } else {  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";}
 
 

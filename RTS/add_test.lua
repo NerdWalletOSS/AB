@@ -1,4 +1,4 @@
--- local dbg = require 'lua/debugger'
+local dbg = require 'lua/debugger'
 local JSON = require 'lua/JSON'
 local cache = require 'lua/cache'
 local assertx = require 'lua/assertx'
@@ -43,7 +43,7 @@ local function get_test_type(TestType)
 end
 
 local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match_func)
-  local original_position = name_hash % consts.AB_MAX_NUM_TESTS
+  local original_position = tonumber(name_hash % consts.AB_MAX_NUM_TESTS)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
   local position = original_position
   local test = nil
@@ -56,8 +56,6 @@ local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match
     end
   until stop == true
   if match_func(test, test_data, name_hash) then
-    -- test.name_hash = name_hash
-    -- print(position -1)
     c_index[0] = position -1
     return test, name_hash
   else
@@ -67,7 +65,7 @@ local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match
     repeat
       test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
       position = position + 1
-      if position == original_position or match_func(test, test_data, name_hash)then
+      if (position - 1)== original_position or match_func(test, test_data, name_hash)then
         stop = true
       end
     until stop == true
@@ -92,6 +90,8 @@ end
 local function match(c_test, test_data, name_hash)
   if c_test.name_hash == name_hash and c_test.id == tonumber(test_data.id) and ffi.string(c_test.name) == test_data.name then
     return true
+  else
+    return false
   end
 end
 
@@ -136,7 +136,6 @@ function AddTests.add(
   assert(c_test.variants, "no space allocated for variants")
 
   assert(c_test ~= nil, "Position not found to insert")
-  print("TestState", test_data.State:lower())
   if test_data.State:lower() == "archived" then
     -- delete the test
     -- delete from cache
