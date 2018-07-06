@@ -33,7 +33,21 @@
 The WebApp is written in PHP and (for testing ) deployed using Apache 
 as the web server. 
 
-\subsubsection{Config File}
+\subsection{Building}
+
+\subsubsection{Local Testing}
+In order to facilitate quick testing, we provide
+\begin{verbatim}
+cd AB
+bash install.sh 
+\end{verbatim}
+where the directory contains relevant zip files to install Apache 
+and PHP from source.
+This script also installs some packages using {\tt sudo apt-get update}
+
+\subsubsection{For deployment}
+
+\subsection{Configuration}
 
 The webapp assumes that the config file is located in
 \verb+/opt/abadmin/db2.json+ 
@@ -75,14 +89,13 @@ When deployed locally, this URL serves as a health check
 \section{Run Time Server (RTS)}
 
 \subsection{Operating System and Packages}
-We have tested this with the most recent version of the Ubuntu server. We expect
-the following packages to have been installed
+We have tested this with the most recent version of the Ubuntu server. 
+We expect the following packages to have been installed
 \be
 \item gcc
 \item g++
 \item cmake
 \ee
-
 
 \subsection{Environment Variables}
 
