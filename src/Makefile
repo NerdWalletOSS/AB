@@ -16,6 +16,7 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
+	-I../mysql-connector-c-6.1.6-src/include/ \
 	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= -g -DDEBUG
