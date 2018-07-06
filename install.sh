@@ -3,7 +3,7 @@ set -e
 #-- MAKE CHANGES BELOW THIS LINE
 port=8080 
 dir="$PWD"/TGZ_FILES/
-sample_conf=httpd.conf
+sample_conf=doc/httpd.conf
 #-- DO NOT CHANGE BELOW THIS LINE
 test -f $sample_conf
 conf_file="$PWD"/"$sample_conf"
@@ -72,4 +72,7 @@ libtool --finish ./libs
 # copy config file to correct location
 cp $conf_file $HOME/local/httpd.conf
 # Now make changes to conf file
+# Change ServerName
+# Change Listen 8080
 echo "SUCCESS for $0 in $PWD"
+
