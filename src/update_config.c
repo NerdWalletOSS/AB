@@ -5,7 +5,7 @@
 #include "init.h"
 #include "update_config.h"
 #include "load_lkp.h"
-#include "load_classify_ua_map.h"
+#include "load_user_agent_classifier.h"
 #include "l_get_num_features.h"
 #include "statsd.h"
 
@@ -36,34 +36,28 @@ update_config(
   free_if_non_null(g_log_q);
   if ( g_cfg.sz_log_q <= 0 ) { go_BYE(-1); }
 #ifdef AB_AS_KAFKA
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
-    return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
+  g_log_q = malloc(g_cfg.sz_log_q * sizeof(void *)); 
+  return_if_malloc_failed(g_log_q);
+  memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(void *)));
 #else
-    g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
-    return_if_malloc_failed(g_log_q);
-    memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
+  g_log_q = malloc(g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)); 
+  return_if_malloc_failed(g_log_q);
+  memset(g_log_q, '\0', (g_cfg.sz_log_q * sizeof(PAYLOAD_REC_TYPE)));
 #endif
-    fprintf(stderr, "Allocating g_log_q\n");
-    g_n_log_q = 0;
   //---------------------------------------------------
-
-  // statsd.server 
-  // statsd.port 
   if ( g_statsd_link != NULL ) { 
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
-  if ( ( *g_cfg.statsd.server == '\0' ) || ( g_cfg.statsd.port <= 0 ) ) {
+  if ( g_disable_sd ) {
     fprintf(stderr, "WARNING! Not logging to statsd \n");
   }
   else {
-    int port = g_cfg.statsd.port;
-    g_statsd_link = statsd_init(g_cfg.statsd.server, port);
+    g_statsd_link = statsd_init(g_cfg.statsd.server, g_cfg.statsd.port);
     if ( g_statsd_link == NULL ) { go_BYE(-1); }
   }
   
-    STATSD_GAUGE("start_time", g_log_start_time);
+  STATSD_GAUGE("start_time", g_log_start_time);
   // log_server
   // log_port
   // log_url
@@ -81,28 +75,13 @@ update_config(
     go_BYE(-1); 
   }
   // Following for curl for logging GetVariant 
-  if ( ( *g_cfg.logger.server == '\0' ) || ( *g_cfg.logger.url == '\0' ) ||
-      ( ( g_cfg.logger.port <= 1 )  || ( g_cfg.logger.port >= 65535 ) ) ) {
+  if ( g_disable_lg ) { 
     fprintf(stderr, "WARNING! /GetVariant NOT being logged\n");
   }
   else {
     status = setup_curl("POST", NULL, "logger", g_cfg.logger.server, 
         g_cfg.logger.port, g_cfg.logger.url, g_cfg.logger.health_url, 
         AB_LOGGER_TIMEOUT_MS, &g_ch, &g_curl_hdrs);
-    cBYE(status);
-  }
-  // Following for curl  for Session Service
-  if ( ( *g_cfg.ss.server == '\0' ) || ( *g_cfg.ss.url == '\0' ) ||
-      ( ( g_cfg.ss.port <= 1 )  || ( g_cfg.ss.port >= 65535 ) ) ) {
-    fprintf(stderr, "WARNING! SessionService not in use\n");
-  }
-  else {
-    /* The get_or_create endpoint averages around 25ms response, with 
-     * a 95th percentile of 30ms. The plain get endpoint would be 
-     * expected to be faster -- Andrew Hollenbach */
-    status = setup_curl("GET", g_ss_response, "ss", g_cfg.ss.server, 
-        g_cfg.ss.port, g_cfg.ss.url, g_cfg.ss.health_url, 
-        AB_SS_TIMEOUT_MS, &g_ss_ch, &g_ss_curl_hdrs);
     cBYE(status);
   }
   // num_post_retries, Nothing to do 
@@ -113,60 +92,21 @@ update_config(
   // mysql_database For Lua
   // default_url, Nothing to do 
   // reload_on_startup, Nothing to do 
-  // xy_guid, Nothing to do 
 
   free_if_non_null(g_uuid);
   if ( g_cfg.max_len_uuid > AB_MAX_LEN_UUID ) { go_BYE(-1); }
   if ( g_cfg.max_len_uuid < 1 ) { go_BYE(-1); }
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
-  // justin cat file 
-  free_lkp("justin", &g_justin_cat_lkp, &g_n_justin_cat_lkp);
-  g_justin_cat_other_id = -1;
-  if ( *g_cfg.justin_cat_file != '\0' ) { 
-    status = load_lkp("justin", g_cfg.justin_cat_file, &g_justin_cat_lkp, 
-        &g_n_justin_cat_lkp);
-    cBYE(status);
-    for ( int i = 0; i < g_n_justin_cat_lkp; i++ ) { 
-      if ( strcasecmp(g_justin_cat_lkp[i].name, "Other") == 0 ) {
-        g_justin_cat_other_id = g_justin_cat_lkp[i].id;
-      }
-    }
-  }
-  //--------------------------------------------------------
-  // os file 
-  free_lkp("os", &g_os_lkp, &g_n_os_lkp);
-  if ( *g_cfg.os_file != '\0' ) { 
-    status = load_lkp("os", g_cfg.os_file, &g_os_lkp, &g_n_os_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // browser file 
-  free_lkp("browser", &g_browser_lkp, &g_n_browser_lkp);
-  if ( *g_cfg.browser_file != '\0' ) { 
-    status = load_lkp("browser", g_cfg.browser_file, 
-        &g_browser_lkp, &g_n_browser_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // device_type file 
-  free_lkp("device_type", &g_device_type_lkp, &g_n_device_type_lkp);
-  if ( *g_cfg.device_type_file != '\0' ) { 
-    status = load_lkp("device_type", g_cfg.device_type_file, 
-        &g_device_type_lkp, 
-        &g_n_device_type_lkp);
-    cBYE(status);
-  }
-  //--------------------------------------------------------
-  // ua_to_dev_map_file
-  if ( ( g_classify_ua_map != NULL ) && ( g_len_classify_ua_file != 0 ) ) {
-    munmap(g_classify_ua_map, g_len_classify_ua_file);
-  }
-  if ( *g_cfg.ua_to_dev_map_file != '\0' ) { 
-    status = load_classify_ua_map(g_cfg.ua_to_dev_map_file, 
-        &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map);
-    cBYE(status);
-  }
+
+  status = load_user_agent_classifier(g_disable_ua,
+    g_cfg.ua_dir, &g_justin_cat_other_id,
+    &g_classify_ua_map, &g_len_classify_ua_file, &g_num_classify_ua_map, 
+    &g_justin_cat_lkp, &g_n_justin_cat_lkp, 
+    &g_os_lkp, &g_n_os_lkp, 
+    &g_browser_lkp, &g_n_browser_lkp, 
+    &g_device_type_lkp, &g_n_device_type_lkp);
+  cBYE(status);
   //--------------------------------------------------------
   // dt, rf, mdl
   free_if_non_null(g_dt_feature_vector); 
@@ -219,17 +159,11 @@ update_config(
 #endif
 #ifdef KAFKA
   kafka_close_conn();
-  if ( g_cfg.kafka.brokers[0] != '\0' ) { 
-    // status = kafka_open_conn(g_cfg.kafka.topic, g_cfg.kafka.brokers); cBYE(status);
-     kafka_open_conn(g_cfg.kafka);
-     // sprintf(g_buf, "hey in hardcode for demo\0"); 
-     // INDRAKEET TO DO take out null character if not needed. gcc complains
-     // kafka_add_to_queue(g_buf);  
+  if ( !g_disable_kf ) { 
+    status = kafka_open_conn(g_cfg.kafka); cBYE(status);
   }
 #endif
   // ---------------------
-  // INDRAJEET: PUT IN STUFF FOR LUA 
-
 BYE:
   free_if_non_null(buf);
   return status;

@@ -1,6 +1,6 @@
 #
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return -Wno-unused-parameter
 INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
@@ -15,13 +15,16 @@ INCS= -I. \
 	-I../libyuarel/ \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
-	-I../USER_AGENT_CLASSIFIER/src/
+	-I../jansson-2.10/src/ \
+	-I ../mysql-connector-c-6.1.6-src/include/\
+	-I../USER_AGENT_CLASSIFIER/src/ \
+	-I/usr/include/mysql/
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
@@ -63,6 +66,9 @@ all : ab_httpd \
 
 ../curl-7.51.0/include/curl/curlbuild.h :
 	cd ../curl-7.51.0/ && ./configure && make && cd - 
+
+../jansson-2.10/src/.libs/libjansson.so :
+	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
 ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so
 
@@ -107,7 +113,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so
+../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so ../jansson-2.10/src/.libs/libjansson.so
 	make -C ../dt_interpreter/src/
 
 ../USER_AGENT_CLASSIFIER/src/ua.so : 
@@ -128,7 +134,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so
+$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so
 
 
 ../statsd-c-client-master/libstatsdclient.so :
@@ -138,9 +144,8 @@ $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libma
 	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
 
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
-	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
-	make -C ../mysql-connector-c-6.1.6-src
-		 -
+	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles" && make
+
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
 
@@ -176,6 +181,7 @@ ab_httpd : $(COBJS)  \
 	./libs/libstatsdclient.so \
 	./libs/libcurl.so \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
+	../jansson-2.10/src/.libs/libjansson.so \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
@@ -190,19 +196,21 @@ ab_httpd : $(COBJS)  \
 	./libs/libcurl.so \
 	../libyuarel/yuarel.o \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
+	../jansson-2.10/src/.libs/libjansson.so \
 	./libs/dt.so \
 	./libs/ua.so \
 	./libs/utm_kv.so \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
 	./libs/librdkafka.so \
-	-lm  -lpthread -ldl   
+	./libs/libmysqlclient.so \
+	-lm  -lpthread -ldl 
 
 ../librdkafka/src/librdkafka.so:
 	cd ../ && rm -rf librdkafka &&  tar -xvzf librdkafka.tar.gz && cd librdkafka && ./configure && make
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c add_fake_test.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ../lua/ab_consts.lua:
 	bash gen_consts.sh
@@ -226,3 +234,4 @@ clean:
 qclean :
 	rm -r -f ab_httpd $(COBJS) *.o _*
 	rm -f ../lua/ab_ffi.lua ../lua/ab_consts.lua
+

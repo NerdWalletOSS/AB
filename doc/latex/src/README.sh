@@ -15,3 +15,5 @@ make -f ../tools/docdir.mk ab_rts.pdf
 #-- 
 lua get_tbl_type.lua > _table_type.tex
 make -f ../tools/docdir.mk ab_sql.pdf
+#----
+make -f ../tools/docdir.mk ab_ops.pdf

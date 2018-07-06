@@ -150,3 +150,11 @@ chk_tracer(
     const char * tracer,
     size_t max_len
     );
+extern bool 
+isdir (
+    const char * const dirname
+    );
+extern bool 
+isfile (
+    const char * const filename
+    );

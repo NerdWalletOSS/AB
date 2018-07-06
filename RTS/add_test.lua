@@ -6,7 +6,6 @@ local ffi = require 'lua/ab_ffi'
 local AddTests = {}
 local bins = require 'RTS/bins'
 local consts = require 'lua/ab_consts'
-local assertx = require 'lua/assertx'
 local g_seed1 = 961748941 -- TODO remove manual copy from zero_globals.c
 local g_seed2 = 982451653 -- TODO remove manual copy from zero_globals.c
 AddTests.g_seed1 = g_seed1
@@ -30,10 +29,68 @@ end
 
 local states = create_state_table(consts)
 
-local function match(c_test, test_data, name_hash)
+local function get_test_type(TestType)
+  assert(TestType ~= nil, "Test type cannot be nil")
+  local x = tonumber(TestType)
+  if x ~= nil then return x end
+  if TestType:lower() == "abtest" then
+    return consts.AB_TEST_TYPE_AB
+  elseif TestType:lower() == "xytest" then
+    return consts.AB_TEST_TYPE_XY
+  else
+    error("Invalid test type given")
+  end
+end
+
+local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match_func)
+  local original_position = name_hash % consts.AB_MAX_NUM_TESTS
+  g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
+  local position = original_position
+  local test = nil
+  local stop = false
+  repeat
+    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
+    position = position + 1
+    if position == consts.AB_MAX_NUM_TESTS or  match_func(test, test_data, name_hash) then
+      stop = true
+    end
+  until stop == true
+  if match_func(test, test_data, name_hash) then
+    -- test.name_hash = name_hash
+    -- print(position -1)
+    c_index[0] = position -1
+    return test, name_hash
+  else
+    -- Now search from 0 to orignal position -1
+    position = 0
+    stop = false
+    repeat
+      test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
+      position = position + 1
+      if position == original_position or match_func(test, test_data, name_hash)then
+        stop = true
+      end
+    until stop == true
+    if match_func(test, test_data, name_hash) then
+      -- test.name_hash = name_hash
+      -- print(position -1)
+      c_index[0] = position - 1
+      return test, name_hash
+    else
+      c_index[0] = -1
+      return -1
+    end
+  end
+end
+
+local function is_pos_empty(c_test)
   if c_test.name_hash == 0 then
     return true
-  elseif c_test.name_hash == name_hash and c_test.id == tonumber(test_data.id) and ffi.string(c_test.name) == test_data.name then
+  end
+end
+
+local function match(c_test, test_data, name_hash)
+  if c_test.name_hash == name_hash and c_test.id == tonumber(test_data.id) and ffi.string(c_test.name) == test_data.name then
     return true
   end
 end
@@ -48,47 +105,13 @@ function AddTests.get_test(
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
   c_index = ffi.cast("int*", c_index)
-  local idx = c_index[0]
-  --[[ TODO Why do I have to comment this?
-  assert( ( idx >= 0 )  and (idx < consts.AB_MAX_NUM_TESTS) ), 
-  "idx  for tests is " .. idx)
-  --]]
-  g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
-  local test = nil
-  local stop = false
-  repeat
-    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
-    position = position + 1
-    if position == consts.AB_MAX_NUM_TESTS or  match(test, test_data, name_hash) then
-      stop = true
-    end
-  until stop == true
-  if match(test, test_data, name_hash) then
-    -- test.name_hash = name_hash
-    -- print(position -1)
-    c_index[0] = position -1
-    return test, name_hash
-  else
-    -- Now search from 0 to orignal position -1
-    position = 0
-    stop = false
-    repeat
-      test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
-      position = position + 1
-      if position == original_position or match(test, test_data, name_hash)then
-        stop = true
-      end
-    until stop == true
-    if match(test, test_data, name_hash) then
-      -- test.name_hash = name_hash
-      -- print(position -1)
-      c_index[0] = position - 1
-      return test, name_hash
-    else
-      c_index[0] = -1
-      assert(nil, "Unable to find any position for insertion")
-    end
+  local test_type = assert(get_test_type(test_data.TestType), "TestType cannot be nil")
+  local test = get_pos(g_tests, test_data, test_type, c_index, name_hash, match)
+  if test == -1 then
+    test = get_pos(g_tests, test_data, test_type, c_index, name_hash, is_pos_empty)
   end
+  assert(test ~= -1 , "Unable to find an empty spot")
+  return ffi.cast("TEST_META_TYPE*", g_tests)[c_index[0]], name_hash
 end
 
 
@@ -100,10 +123,10 @@ function AddTests.add(
   -- print(test_str)
   c_index = ffi.cast("int*", c_index)
   local test_data = JSON:decode(test_str)
-   assert(type(test_data) == "table", "Unable to decode json string")
+  assert(type(test_data) == "table", "Unable to decode json string")
   assert(type(test_data) == "table", "Invalid JSON string given")
   -- dbg()
-  local test_type = assert(test_data.TestType, "TestType cannot be nil")
+  local test_type = assert(get_test_type(test_data.TestType), "TestType cannot be nil")
   assert(test_data.name ~= nil, "Test should have a name")
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
@@ -134,13 +157,7 @@ function AddTests.add(
     c_test.seed = spooky_hash.convert_str_to_u64(seed)
     local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
     assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")
-    if test_type == "ABTest" then
-      c_test.test_type = consts.AB_TEST_TYPE_AB
-    elseif test_type == "XYTest" then
-      c_test.test_type = consts.AB_TEST_TYPE_XY
-    else
-      error("Invalid TestType given")
-    end
+    c_test.test_type = get_test_type(test_type)
     -- print(c_index[0])
     -- dbg()
     assert(c_test.variants ~= nil, "Space must be allocated for variants")
