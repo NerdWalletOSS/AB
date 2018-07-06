@@ -289,6 +289,10 @@ check_payload(
   if ( uuid == NULL )  { g_err = true; go_BYE(-1); }
   if ( strlen(uuid) > AB_MAX_LEN_UUID ) { g_err = true; go_BYE(-1); }
 
+  val = json_object_get(root, "version");
+  const char *version = json_string_value(val);
+  if ( version == NULL )  { g_err = true; go_BYE(-1); }
+
   val = json_object_get(root, "test_id");
   const char *test_id = json_string_value(val);
   if ( test_id == NULL )  { g_err = true; go_BYE(-1); }
@@ -314,6 +318,8 @@ check_payload(
   }
 
   int32_t tempI4; int64_t tempI8; 
+  status = stoI4(version, &tempI4); cBYE(status);
+  if ( tempI4 < 1 ) { g_err = true; go_BYE(-1); }
   status = stoI4(test_id, &tempI4); cBYE(status);
   if ( tempI4 < 1 ) { g_err = true; go_BYE(-1); }
   status = stoI4(variant_id, &tempI4); cBYE(status);

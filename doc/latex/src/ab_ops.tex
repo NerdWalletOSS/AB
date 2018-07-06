@@ -28,6 +28,50 @@
 %%_STOP_ADD_FOR_BOOK
 \section{Introduction}
 
+\section{WebApp}
+
+The WebApp is written in PHP and (for testing ) deployed using Apache 
+as the web server. 
+
+\subsubsection{Config File}
+
+The webapp assumes that the config file is located in
+\verb+/opt/abadmin/db2.json+ 
+A sample is provided in \verb+AB/php/db.conf.json+
+
+\subsubsection{Access to other servers}
+
+The WebApp server needs access to the following servers. 
+\be
+\item {\tt RTS Finder} When this server is hit with the endpoint
+  {\tt/DescribeInstances}, it returns a JSON array of the RTS's available. For
+  each RTS, it returns the server and the port.
+\item {\tt RTS} For testing purposes, it is often useful to bypass the Finder
+  and hit a single RTS directly.
+\item {\tt MySQL} We need to pass all the information to access the database
+  that contains the information maniuplated by the WebApp
+  \ee
+
+\subsection{Diagnostics}
+
+\subsubsection{Consistency}
+
+On \url{localhost:8080/AB/app/diagnostics/diagnostics.php}, one can check
+\be
+\item the configurations used
+\item the RTS' available
+  \ee
+
+On \url{localhost:8080/AB/app/admin/admin.php}, one can check
+\be
+\item whether the database and the RTS are consistent
+\item whether the database is self-consistent \TBC
+\ee 
+
+\subsubsection{Health check}
+When deployed locally, this URL serves as a health check
+\url{localhost:8080/AB/health_check.html}
+
 \section{Run Time Server (RTS)}
 
 \subsection{Operating System and Packages}
@@ -50,6 +94,19 @@ The RTS expects the following environment variables to be set
   See \verb+AB/src/to_source+ for an example
   \ee
 
+\subsection{Building}
+
+\subsubsection{Local Testing}
+In order to facilitate quick testing, we support the following
+\begin{verbatim}
+cd AB/src/
+make clean
+make
+\end{verbatim}
+
+\subsubsection{For deployment}
+
+This is where aio.sh comes in. Indrajeet \TBC
 
 \subsection{Configuration}
 A sample config file is provided in 
@@ -57,6 +114,8 @@ A sample config file is provided in
 configured. Note that if there is an error in loading the config file, the
 server will {\bf not} start up. You need to ensure that entries are set
 correctly and that servers/files/directories are where you say they will be.
+
+The server is started as follows \verb+ ./ab_httpd ab.conf.json+
 
 \subsubsection{Access to other servers}
 

@@ -97,5 +97,7 @@
 
 #define AB_MAX_LEN_STATSD_KEY 63
 #define AB_MAX_LEN_STATSD_BUF 127 
+
+#define  AB_LOGEVENT_VERSION_NUM 1 // Change VERY carefully!
 #endif
 
