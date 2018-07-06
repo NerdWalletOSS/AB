@@ -6,11 +6,11 @@ INCS= -I. \
 	-I../curl-7.51.0/include/ \
 	-I../curl-7.51.0/include/curl/ \
 
-DBGFLAGS= -g 
 DBGFLAGS= 
+DBGFLAGS= -g 
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) 
 # Uncomment below to capture server error 

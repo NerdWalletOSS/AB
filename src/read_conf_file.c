@@ -2,17 +2,35 @@
 #include "ab_constants.h"
 #include "auxil.h"
 #include "mmap.h"
-#include <err.h>
-#include <event2/keyvalq_struct.h>
-#include <event.h>
-#include <evhttp.h>
-#include <event2/http.h>
-#include <event2/buffer.h>
 #include <jansson.h>
+#include "read_conf_file.h"
+#include "zero_globals.h"
 
-#ifdef STAND_ALONE
-CFG_TYPE g_cfg;
-#endif
+extern  bool g_disable_dt; // set to false if no decision tree
+extern bool g_disable_ua; // set to false if no user agent classifier
+extern bool g_disable_ip; // set to false if no MaxMind Database
+extern bool g_disable_sd; // set to false if no statsd server
+extern bool g_disable_wa; // disable WebApp
+extern bool g_disable_lg; // disable Logger
+extern bool g_disable_kf; // disable Kafka
+
+static int 
+get_server(
+    json_t *root,
+    const char *service,
+    SERVICE_TYPE *ptr_ss
+    )
+{
+  int status = 0;
+  status = get_int(root, service, "PORT", "VALUE", &(ptr_ss->port));
+  status = get_string(root, service, "SERVER", "VALUE", 
+      AB_MAX_LEN_SERVER_NAME, ptr_ss->server);
+  status = get_string(root, service, "URL", "VALUE", 
+      AB_MAX_LEN_URL, ptr_ss->url);
+  status = get_string(root, service, "HEALTH_URL", "VALUE", 
+      AB_MAX_LEN_URL, ptr_ss->health_url);
+  return status;
+}
 
 int
 get_string(
@@ -27,21 +45,27 @@ get_string(
   int status = 0;
   json_t *handle = NULL;
 
+  if ( root == NULL ) { go_BYE(-1); }
+  if ( key1 == NULL ) { go_BYE(-1); }
   handle = json_object_get(root, key1);
+  // fprintf(stderr, " TODO DELETE %s:", key1);
   if ( handle == NULL ) { go_BYE(-1); }
   if ( ( key2 != NULL ) && ( *key2 != '\0' ) ) { 
     handle = json_object_get(handle, key2);
+    // fprintf(stderr, "%s:", key2);
   }
   if ( ( key3 != NULL ) && ( *key3 != '\0' ) ) { 
     handle = json_object_get(handle, key3);
+    // fprintf(stderr, "%s:", key3);
   }
   if ( handle == NULL ) { go_BYE(-1); }
   const char *X = json_string_value(handle);
   if ( X == NULL ) { go_BYE(-1); }
-  if ( strlen(X) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+  if ( strlen(X) > maxlen ) { go_BYE(-1); }
   strcpy(dst, X);
-  printf("%s\n", X);
+  // fprintf(stderr, "%s", X);
 BYE:
+  // fprintf(stderr, "\n");
   return status;
 }
 
@@ -98,8 +122,11 @@ read_conf_file(
   int status = 0;
   char *cbuf = NULL; int buflen = 0;
   char *X = NULL; size_t nX = 0;
-  int32_t ival;
 
+  if ( ( file_name == NULL ) || ( file_name[0] == '\0' ) ) { 
+    go_BYE(-1); 
+  }
+  if ( !isfile(file_name) ) { go_BYE(-1); }
   // read file name into buffer
   status = rs_mmap(file_name, &X, &nX, 0); cBYE(status);
   buflen = nX+1;
@@ -109,27 +136,51 @@ read_conf_file(
 
   // read buffer into JSON
   json_t *root = NULL;
-  json_t *val  = NULL;
   json_error_t error;
   root = json_loads(cbuf, 0, &error);
   if ( root == NULL ) { go_BYE(-1); }
 
+  json_t *j_ip = json_object_get(root, "IP_ADDRESS_CLASSIFIER");
+  if ( j_ip == NULL ) { 
+    g_disable_ip = true;
+  } 
+  else {
+    g_disable_ip = false;
+    status = get_string(j_ip, "MMDB_FILE","VALUE", NULL, 
+        AB_MAX_LEN_FILE_NAME, ptr_cfg->mmdb_file);
+  }
+  //----------------------
+  json_t *j_ua = json_object_get(root, "USER_AGENT_CLASSIFIER");
+  if ( j_ua == NULL ) { 
+    g_disable_ua = true;
+  } 
+  else {
+    g_disable_ua = false;
+    status = get_string(j_ua, "UA_DIR","VALUE", NULL, AB_MAX_LEN_FILE_NAME, 
+        ptr_cfg->ua_dir);
+  }
+  //----------------------
   json_t *j_dt = json_object_get(root, "DT");
-  if ( j_dt == NULL ) { go_BYE(-1); }
-
-  status = get_string(j_dt, "DT_DIR","VALUE", NULL, AB_MAX_LEN_FILE_NAME, 
-      ptr_cfg->dt_dir);
-  status = get_string(j_dt, "MODEL_NAME","VALUE", NULL, 
-      AB_MAX_LEN_FILE_NAME, ptr_cfg->model_name);
+  if ( j_dt == NULL ) { 
+    g_disable_dt = true;
+  } 
+  else {
+    g_disable_dt = false;
+    status = get_string(j_dt, "DT_DIR","VALUE", NULL, AB_MAX_LEN_FILE_NAME, 
+        ptr_cfg->dt_dir);
+    status = get_string(j_dt, "MODEL_NAME","VALUE", NULL, 
+        AB_MAX_LEN_FILE_NAME, ptr_cfg->model_name);
+  }
   //----------------------
   json_t *j_ab = json_object_get(root, "AB");
   if ( j_ab == NULL ) { go_BYE(-1); }
 
   status = get_int(j_ab, "SZ_LOG_Q", "VALUE", NULL, &(ptr_cfg->sz_log_q));
 
-  status = get_int(j_ab, "PORT", "VALUE", NULL, &ival);
-  if ( ( ival < 0 ) || ( ival >= 65535 ) ) { go_BYE(-1); }
-  ptr_cfg->port = ival;
+  status = get_int(j_ab, "PORT", "VALUE", NULL, &(ptr_cfg->port));
+
+  status = get_int(j_ab, "MAX_LEN_UUID", "VALUE", NULL, 
+      &(ptr_cfg->max_len_uuid));
 
   status = get_bool(j_ab, "VERBOSE", "VALUE", NULL, &(ptr_cfg->verbose));
 
@@ -139,19 +190,58 @@ read_conf_file(
   status = get_string(j_ab, "DEFAULT_URL", "VALUE", NULL, AB_MAX_LEN_URL,
       ptr_cfg->default_url);
 
-  status = get_string(j_ab, "MMDB_FILE", "VALUE", NULL, AB_MAX_LEN_URL,
-      ptr_cfg->mmdb_file);
-  //--- START: Statsd
-  status = get_string(j_ab, "STATSD", "STATSD_COUNT", "VALUE", 
-      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_count);
-  status = get_string(j_ab, "STATSD", "STATSD_INC", "VALUE", 
-      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_inc);
-  status = get_string(j_ab, "STATSD", "STATSD_GAUGE", "VALUE", 
-      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_gauge);
-  status = get_string(j_ab, "STATSD", "STATSD_TIMING", "VALUE", 
-      AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_timing);
+  //--- START: Statsd keys
+  json_t *j_sd = json_object_get(j_ab, "STATSD");
+  if ( j_sd == NULL ) { 
+    g_disable_sd = true;
+  } 
+  else {
+    g_disable_sd = false;
+    status = get_string(j_ab, "STATSD", "STATSD_COUNT", "VALUE", 
+        AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_keys.count);
+    status = get_string(j_ab, "STATSD", "STATSD_INC", "VALUE", 
+        AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_keys.inc);
+    status = get_string(j_ab, "STATSD", "STATSD_GAUGE", "VALUE", 
+        AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_keys.gauge);
+    status = get_string(j_ab, "STATSD", "STATSD_TIMING", "VALUE", 
+        AB_MAX_LEN_STATSD_KEY, ptr_cfg->statsd_keys.timing);
+    get_server(j_ab, "STATSD", &(ptr_cfg->statsd));
+  }
 
-  //--- STOP : Statsd
+  //--- STOP : Statsd keys
+  json_t *j_wa = json_object_get(j_ab, "WEBAPP");
+  if ( j_wa == NULL ) { 
+    g_disable_wa = true;
+  } 
+  else {
+    g_disable_wa = false;
+    get_server(j_ab, "WEBAPP", &(ptr_cfg->webapp));
+  }
+
+  json_t *j_lg = json_object_get(j_ab, "WEBAPP");
+  if ( j_lg == NULL ) { 
+    g_disable_lg = true;
+  } 
+  else {
+    g_disable_lg = false;
+    get_server(j_ab, "LOGGER", &(ptr_cfg->logger));
+  }
+
+  json_t *j_kf = json_object_get(j_ab, "KAFKA");
+  if ( j_kf == NULL ) { 
+    g_disable_kf = true;
+  } 
+  else {
+    g_disable_kf = false;
+    get_string(j_kf, "BROKERS", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.brokers);
+    get_string(j_kf, "TOPIC", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.topic);
+    get_string(j_kf, "RETRIES", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.retries);
+    get_string(j_kf, "MAX_BUFFERING_TIME", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
+        ptr_cfg->kafka.max_buffering_time);
+  }
 
   json_decref(root);
 BYE:
@@ -159,22 +249,3 @@ BYE:
   rs_munmap(X, nX);
   return status;
 }
-int
-validate_config(
-    CFG_TYPE g_cfg
-    )
-{
-  int status = 0;
-BYE:
-  return status;
-}
-#ifdef STAND_ALONE
-int
-main()
-{
-  read_conf_file("ab.conf.json", &g_cfg);
-  validate_config(g_cfg);
-  fprintf(stderr, "SUCCESS\n");
-}
-
-#endif

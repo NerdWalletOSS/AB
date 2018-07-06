@@ -34,6 +34,7 @@ end
 function list_tests()
   local tests = cache.get('tests')
   local o_table = {}
+  if ( not tests ) then return " [] " end
   for _,v in pairs(tests) do
     o_table[#o_table + 1] = v
   end

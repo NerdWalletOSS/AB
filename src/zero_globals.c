@@ -4,6 +4,7 @@
 #include "aux_zero.h"
 #include "auxil.h"
 #include "maxminddb.h"
+#include "load_lkp.h"
 #include "dt_types.h"
 #ifdef KAFKA
 #include "kafka_close_conn.h"
@@ -14,6 +15,58 @@ extern MMDB_s g_mmdb; extern bool g_mmdb_in_use;
 extern DT_REC_TYPE *g_dt_map;
 extern size_t g_len_dt_file;
 extern uint32_t g_num_dt_map;
+
+void
+zero_service(
+    SERVICE_TYPE *ptr_S
+    )
+{
+  ptr_S->port    = 0;
+  memset(ptr_S->server, '\0', AB_MAX_LEN_SERVER_NAME+1);
+  memset(ptr_S->url, '\0', AB_MAX_LEN_URL+1);
+  memset(ptr_S->health_url, '\0', AB_MAX_LEN_URL+1);
+}
+
+void
+zero_cfg(
+    void
+    )
+{
+  memset(g_cfg.mmdb_file, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.ua_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.dt_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.model_name, '\0', AB_MAX_LEN_FILE_NAME+1);
+
+
+  zero_service(&(g_cfg.logger));
+  zero_service(&(g_cfg.statsd));
+  zero_service(&(g_cfg.webapp));
+
+  memset(g_cfg.kafka.brokers, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
+  memset(g_cfg.kafka.topic, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
+  memset(g_cfg.kafka.retries, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
+  memset(g_cfg.kafka.max_buffering_time, '\0', AB_MAX_LEN_KAFKA_PARAM+1);
+
+  memset(g_cfg.statsd_keys.inc, '\0', AB_MAX_LEN_STATSD_KEY+1);
+  memset(g_cfg.statsd_keys.count, '\0', AB_MAX_LEN_STATSD_KEY+1);
+  memset(g_cfg.statsd_keys.gauge, '\0', AB_MAX_LEN_STATSD_KEY+1);
+  memset(g_cfg.statsd_keys.timing, '\0', AB_MAX_LEN_STATSD_KEY+1);
+
+  memset(g_cfg.mysql.server, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
+  memset(g_cfg.mysql.user, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
+  memset(g_cfg.mysql.password, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
+  memset(g_cfg.mysql.database, '\0', AB_MAX_LEN_MYSQL_PARAM+1);
+  g_cfg.mysql.port = 3306;
+
+  g_cfg.sz_log_q     = AB_DEFAULT_N_LOG_Q;
+  g_cfg.port         = 0;
+  g_cfg.verbose      = false;
+  g_cfg.max_len_uuid = AB_MAX_LEN_UUID;
+  g_cfg.num_post_retries = 0;
+  g_cfg.verbose      = false;
+  memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
+}
+
 
 //<hdr>
 void
@@ -26,15 +79,13 @@ free_globals(
     free_test(i); 
     g_test_str[i] = NULL; // do not free. malloc/free is for Lua
   }
-  free_if_non_null(g_ss_response);  g_sz_ss_response = 0;
-
   if ( g_statsd_link != NULL ) {
     statsd_finalize(g_statsd_link);
     g_statsd_link = NULL;
   }
+  free_if_non_null(g_ss_response);
 
   free_if_non_null(g_log_q); g_n_log_q = 0;
-  fprintf(stderr, "Freeing g_log_q\n");
   g_q_rd_idx = 0; g_q_wr_idx = 0;
 
   free_if_non_null(g_uuid);
@@ -92,41 +143,11 @@ zero_globals(
     go_BYE(-1);
   }
   //------------------------------
-  g_cfg.port        = 0;
-  g_cfg.verbose     = false;
+  zero_cfg();
 
-  g_cfg.logger.port    = 0;
-  memset(g_cfg.logger.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
-  memset(g_cfg.logger.url, '\0', AB_MAX_LEN_URL+1);
-  memset(g_cfg.logger.health_url, '\0', AB_MAX_LEN_URL+1);
-
-  g_cfg.ss.port    = 0;
-  memset(g_cfg.ss.server, '\0', AB_MAX_LEN_SERVER_NAME+1);
-  memset(g_cfg.ss.url, '\0', AB_MAX_LEN_URL+1);
-  memset(g_cfg.ss.health_url, '\0', AB_MAX_LEN_URL+1);
-
-  g_cfg.statsd.port = 0;
-  memset(g_cfg.statsd.server,    '\0', AB_MAX_LEN_SERVER_NAME+1);
-
-  g_cfg.num_post_retries = 0;
-  memset(g_cfg.default_url,  '\0', AB_MAX_LEN_REDIRECT_URL+1);
-
-  g_cfg.max_len_uuid = AB_MAX_LEN_UUID;
   g_uuid = malloc(g_cfg.max_len_uuid+1);
   return_if_malloc_failed(g_uuid);
   memset(g_uuid, '\0',  g_cfg.max_len_uuid+1);
-
-  memset(g_cfg.ua_to_dev_map_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.justin_cat_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.os_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.browser_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.device_type_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.ua_model_coeff_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.ua_category_intercept_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-
-  memset(g_cfg.dt_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
-
-  memset(g_cfg.mmdb_file, '\0', AB_MAX_LEN_FILE_NAME+1);
 
   g_ss_response = NULL;
   g_sz_ss_response = AB_MAX_LEN_SS_RESPONSE+1;;
@@ -136,7 +157,6 @@ zero_globals(
 
   g_statsd_link  = NULL;
 
-  g_cfg.sz_log_q    = AB_DEFAULT_N_LOG_Q;
   g_n_log_q     = 0;
   g_log_q       = NULL;
   g_q_rd_idx    = 0;

@@ -16,7 +16,7 @@
 #define AB_MAX_HEADERS_SIZE 8191
 #define AB_MAX_LEN_BODY    32767
 #define AB_MAX_LEN_PAYLOAD  1024-1 // for POST to logger
-#define AB_MAX_LEN_RESULT   1048576-1
+#define AB_MAX_LEN_RESULT   32767
 
 #define AB_MAX_LEN_HDR_KEY 63
 #define AB_MAX_LEN_HDR_VAL 127
@@ -67,7 +67,7 @@
 
 #define AB_MAX_LEN_TRACER 31
 
-#define AB_DEFAULT_N_LOG_Q 128
+#define AB_DEFAULT_N_LOG_Q 65536
 
 #define AB_MAX_LEN_LKP_NAME 31
 #define AB_MAX_LEN_TEST_TYPE 15
@@ -85,18 +85,19 @@
 #define AB_MAX_LEN_STATE      31
 #define AB_MAX_LEN_CITY       31
 
-#define AB_MAX_LEN_KAFKA_NUM_RETRIES 3
-#define AB_MAX_LEN_KAFKA_BUF_TIME 7
-#define AB_MAX_LEN_KAFKA_QUEUE_SIZE 7
+#define AB_MAX_LEN_KAFKA_PARAM 63
+#define AB_MAX_LEN_MYSQL_PARAM 63
 
-#define AB_SEED_1 961748941; // large prime number
-#define AB_SEED_2 982451653; // some other large primenumber
+#define AB_SEED_1 961748941 // large prime number
+#define AB_SEED_2 982451653 // some other large primenumber
 
-#define AB_MAX_LEN_KAFKA_TOPIC 63
 
 #define AB_ERROR_CODE_BAD_UUID -2
 #define AB_ERROR_CODE_BAD_TEST -3
 
 #define AB_MAX_LEN_STATSD_KEY 63
+#define AB_MAX_LEN_STATSD_BUF 127 
+
+#define  AB_LOGEVENT_VERSION_NUM 1 // Change VERY carefully!
 #endif
 

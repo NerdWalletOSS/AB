@@ -22,7 +22,6 @@
 #include "halt_server.h"
 #include "ab_globals.h"
 #include "zero_globals.h"
-#include "hard_code_config.h"
 #include "get_and_classify_ua.h"
 #include "post_from_log_q.h"
 #include "update_config.h"
@@ -37,7 +36,6 @@
 #include "dump_log.h"
 #include "l_load_config.h"
 #include "l_update_config.h"
-#include "l_hard_code_config.h"
 #include "setup.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -128,14 +126,14 @@ BYE:
         ( strcmp(api, "GetVariants") == 0 ) ) { 
       // These are the only 2 external APIs and hence should not 
       // get any details of our internal code structure
-      evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"GetVariant(s)\"");
       if ( status == AB_ERROR_CODE_BAD_UUID ) { 
-        evhttp_add_header(evhttp_request_get_output_headers(req), 
-          "Error", "Bad UUID");
+        evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"BAD UUID\" }");
       }
       else if ( status == AB_ERROR_CODE_BAD_TEST ) { 
-        evhttp_add_header(evhttp_request_get_output_headers(req), 
-          "Error", "Bad Test Name");
+        evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"BAD TEST NAME\" }\"");
+      }
+      else if ( status == AB_ERROR_CODE_BAD_TEST ) { 
+        evbuffer_add_printf(opbuf, "{ \"ERROR\" : \"MISCELLANEOUS\" }\"");
       }
     }
     else {
@@ -187,22 +185,23 @@ main(
   int status = 0;
   struct evhttp *httpd;
   struct event_base *base;
+
+  zero_globals();
   //--------------------------------------------
-  g_disable_lua = true; // NORMALLY FALSE. Just for testing
+  g_disable_lua = false; // NORMALLY FALSE. Just for testing
   if ( g_disable_lua ) { 
     fprintf(stderr, "\n\n\n");
     fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
     fprintf(stderr, "LUA DISABLED LUA DISABLED LUA DISABLED \n");
     fprintf(stderr, "\n\n\n");
   }
+  //----------------------------------
   memset(g_config_file, '\0', AB_MAX_LEN_FILE_NAME+1);
-  if ( argc > 2 ) { go_BYE(-1); }
-  if ( argc == 2 ) { 
-    if ( strlen(argv[1]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
-    strcpy(g_config_file, argv[1]); 
-  }
-  
-  status = setup(); cBYE(status);
+  if ( argc != 2 ) { go_BYE(-1); }
+  if ( strlen(argv[1]) > AB_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
+  strcpy(g_config_file, argv[1]); 
+  status = setup(g_config_file); cBYE(status);
+  //----------------------------------
   if ( g_cfg.sz_log_q > 0 ) { 
     pthread_mutex_init(&g_mutex, NULL);	
     pthread_cond_init(&g_condc, NULL);

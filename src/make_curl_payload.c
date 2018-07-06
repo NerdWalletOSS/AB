@@ -38,6 +38,7 @@ make_curl_payload(
   memset(curl_payload,            '\0', sz_curl_payload+1);
   size_t sz = snprintf(curl_payload, sz_curl_payload, 
 "{  \
+\"version\" : \"%d\", \
 \"uuid\" : \"%s\", \
 \"test_id\" : \"%u\", \
 \"variant_id\" : \"%u\", \
@@ -45,6 +46,7 @@ make_curl_payload(
 \"in_tracer_id\" : \"%s\", \
 \"out_tracer_id\" : \"%s\", \
 \"time\" : \"%" PRIu64 "\" }",
+  AB_LOGEVENT_VERSION_NUM,
       lcl_payload.uuid,
       lcl_payload.test_id, 
       lcl_payload.variant_id,

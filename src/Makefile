@@ -1,6 +1,6 @@
 #
 # For fast version, make -e DBGFLAGS="" -e OPTFLAGS=" -O4"
-WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return
+WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic -Wno-aggregate-return -Wno-unused-parameter
 INCS= -I. \
 	-I../libevent-2.0.22-stable/include/event2/ \
 	-I../libevent-2.0.22-stable/include/ \
@@ -16,14 +16,15 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
-	-I../mysql-connector-c-6.1.6-src/include/ \
-	-I../USER_AGENT_CLASSIFIER/src/
+	-I ../mysql-connector-c-6.1.6-src/include/\
+	-I../USER_AGENT_CLASSIFIER/src/ \
+	-I/usr/include/mysql/
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) \
 	-DKAFKA \
@@ -143,9 +144,8 @@ $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libma
 	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
 
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
-	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
-	make -C ../mysql-connector-c-6.1.6-src
-		 -
+	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles" && make
+
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
 
@@ -203,13 +203,14 @@ ab_httpd : $(COBJS)  \
 	./libs/libevent.so \
 	./libs/libmaxminddb.so \
 	./libs/librdkafka.so \
-	-lm  -lpthread -ldl   
+	./libs/libmysqlclient.so \
+	-lm  -lpthread -ldl 
 
 ../librdkafka/src/librdkafka.so:
 	cd ../ && rm -rf librdkafka &&  tar -xvzf librdkafka.tar.gz && cd librdkafka && ./configure && make
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c add_fake_test.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ../lua/ab_consts.lua:
 	bash gen_consts.sh
@@ -233,3 +234,4 @@ clean:
 qclean :
 	rm -r -f ab_httpd $(COBJS) *.o _*
 	rm -f ../lua/ab_ffi.lua ../lua/ab_consts.lua
+
