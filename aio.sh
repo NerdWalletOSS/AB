@@ -41,6 +41,10 @@ build(){
   cd ../
   find ./RTS -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
   find ./DT -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
+  find ./DT -name "*.csv" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
+  find ./DT -name "*.bin" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
+  mkdir ./bin/USER_AGENT_CLASSIFIER
+  cp USER_AGENT_CLASSIFIER/data/* ./bin/USER_AGENT_CLASSIFIER/
   find ./lua -name "*.lua" -and -not -name "test_*.lua" -exec cp --parents \{\} ./bin/ \;
 
   find ./ -name "*.so*" -exec cp \{\} ./bin/libs/ \;
