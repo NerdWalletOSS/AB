@@ -75,8 +75,15 @@ post_from_log_q(
     // Now, here is the real work of this consumer - the POST
     status = make_curl_payload(lcl_payload, g_curl_payload, 
         AB_MAX_LEN_PAYLOAD);
-    if ( status != 0 ) { WHEREAMI; }
-    if ( g_ch != NULL ) { // use logger 
+    if ( status != 0 ) {
+      // TODO P2 record a POST error
+      WHEREAMI; continue; 
+    }
+    if ( !g_disable_lua ) { // use logger 
+      if ( g_ch == NULL ) { 
+        // TODO P2 record a POST error
+        WHEREAMI; continue; 
+      }
       curl_easy_setopt(g_ch, CURLOPT_POSTFIELDS, g_curl_payload);
       g_log_posts++;
       STATSD_COUNT("posts", 1);
@@ -101,10 +108,17 @@ post_from_log_q(
         if ( g_cfg.verbose ) { fprintf(stderr, "POST totally failed\n");  }
       }
     }
-    if ( g_rk != NULL ) { 
+    if ( !g_disable_kf ) { // use kafka 
+      if ( g_rk == NULL ) { 
+        // TODO P2 add statsd logging
+        WHEREAMI; continue;
+      }
       g_log_kafka_calls++; STATSD_COUNT("kafka_calls", 1);
       status = kafka_add_to_queue(g_curl_payload, 0); 
-      if ( status != 0 ) { WHEREAMI; } // TODO P2 add stattsd logging
+      if ( status != 0 ) { 
+        // TODO P2 add statsd logging
+        WHEREAMI;  continue;
+      }
     }
   }
 #ifdef AB_AS_KAFKA
