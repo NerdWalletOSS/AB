@@ -16,7 +16,7 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
-	-I ../mysql-connector-c-6.1.6-src/include/\
+	-I ../mysql-connector-c-6.1.6-src/include/ \
 	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= 
@@ -143,9 +143,8 @@ $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libma
 	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
 
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
-	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles"
-	make -C ../mysql-connector-c-6.1.6-src
-		 -
+	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles" && make
+
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
 
