@@ -8,6 +8,7 @@ return[[
   "id": "777",
   "State": "started",
   "seed": "123453789",
+  "TestType": "ABTest",
   "is_dev_specific": "0",
   "Variants": [{
     "id": "100",

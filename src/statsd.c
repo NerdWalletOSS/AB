@@ -1,5 +1,6 @@
 #include "ab_globals.h"
 #include "statsd.h"
+#include <stdlib.h>
 
 extern bool g_disable_sd;
 int 

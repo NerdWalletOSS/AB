@@ -16,6 +16,7 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
+	-I ../mysql-connector-c-6.1.6-src/include/\
 	-I../USER_AGENT_CLASSIFIER/src/
 
 DBGFLAGS= 
@@ -209,7 +210,7 @@ ab_httpd : $(COBJS)  \
 	cd ../ && rm -rf librdkafka &&  tar -xvzf librdkafka.tar.gz && cd librdkafka && ./configure && make
 
 libspooky_hash.so:
-	gcc spooky_hash.c get_test_idx.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
+	gcc spooky_hash.c get_test_idx.c add_fake_test.c convert_str_to_u64.c $(CFLAGS) $(INCS) -shared -fPIC -o libspooky_hash.so
 
 ../lua/ab_consts.lua:
 	bash gen_consts.sh

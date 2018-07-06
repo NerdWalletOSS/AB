@@ -1,7 +1,7 @@
 #include "ab_incs.h"
 #include "chk_db_conn.h"
 
-#include <mysql/mysql.h>
+#include <mysql.h>
 #include "macros.h"
 #include "ab_incs.h"
 #define LEN_QSTR 2048
