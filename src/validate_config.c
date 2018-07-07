@@ -64,7 +64,7 @@ validate_config(
     if ( !g_valid_chars_in_url[(uint8_t)(*cptr)] ) { go_BYE(-1); }
   }
   //---------------------------------
-  if ( !g_disable_ua ) { 
+  if ( !g_disable_dt ) { 
     if ( !isdir(cfg.dt_dir) ) { go_BYE(-1); }
     if ( cfg.model_name[0] == '\0' ) { go_BYE(-1); }
     int len = strlen(cfg.dt_dir) + strlen(cfg.model_name) + 8;

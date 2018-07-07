@@ -29,20 +29,22 @@ l_load_config(
     go_BYE(-1);
   }
   // Now to load ML lua transforms
-  lua_getglobal(g_L_DT, "load_config");
-  if ( !lua_isfunction(g_L_DT, -1)) {
-    fprintf(stderr, "Function load_config does not exist in DT lua's global space\n");
-    lua_pop(g_L_DT, 1);
-    go_BYE(-1);
-  }
-  lua_pushstring(g_L_DT, file_name); // not pushing string as it causes a copy
-  status = lua_pcall(g_L_DT, 1, 0, 0);
-  if (status != 0) {
-    WHEREAMI;
-    fprintf(stderr, "calling function load_config for DT failed: %s\n", lua_tostring(g_L_DT, -1));
-    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
-    lua_pop(g_L_DT, 1);
-    go_BYE(-1);
+  if ( g_L_DT != NULL ) {
+    lua_getglobal(g_L_DT, "load_config");
+    if ( !lua_isfunction(g_L_DT, -1)) {
+      fprintf(stderr, "Function load_config does not exist in DT lua's global space\n");
+      lua_pop(g_L_DT, 1);
+      go_BYE(-1);
+    }
+    lua_pushstring(g_L_DT, file_name); // not pushing string as it causes a copy
+    status = lua_pcall(g_L_DT, 1, 0, 0);
+    if (status != 0) {
+      WHEREAMI;
+      fprintf(stderr, "calling function load_config for DT failed: %s\n", lua_tostring(g_L_DT, -1));
+      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+      lua_pop(g_L_DT, 1);
+      go_BYE(-1);
+    }
   }
 
 BYE:
