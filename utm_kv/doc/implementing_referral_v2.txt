@@ -1,0 +1,185 @@
+Function 0: coalesce
+
+SQL implementation of COALESCE
+
+======
+Function 1: _url_strip
+Strips the URL of certain trash characters
+
+Input: url (string, char*)
+
+Output: url (string, char*)
+
+Processes:
+0. special_chars := '/.-()\'\" +[*?&'
+1. url := url after stripping any number of chars in special_chars from the front and rear.
+2. tok := strtok(url, delim='/')
+3. trash := the last element of tok
+4a. If trash (which is a string) is all digits and has a length of 13 (i.e. a 13-digit number):
+	- remove the last 13 chars from url, i.e. remove trash
+	- strip special_chars from the front and rear. (i.e same step as 1)
+	- return that final product
+4b. Else:
+	- return url
+
+======
+Function 3.1: _get_utm_key_value(url, utm_type):
+Gets the appropriate value from the url, given utm_type (string)
+
+Input: 
+1. url: a string
+2. utm_type: a string
+
+Output: string
+
+If i have a url like:
+'abcdefutm_medium=abc&def', I want 'abc'
+If it is 
+'abcdefutm_medium=abc#def&ghi', I want 'abc'
+If it is 
+'abcdefutm_medium=abc&def#ghi', I want 'abc'
+If it is 
+'abcdefutm_medium=abc', I want 'abc'
+If it is 
+'abcdefutm_medium=', I want ''
+If 'utm_medium' does not exist, I want ''
+If it is
+'abcdefutm_medium=sc%09a+b%22Td', I want 'sc\ta b"td'
+
+
+Processes:
+0. utm_type += '=' (i.e. if we normally supply 'utm_medium', I want it 'utm_medium=')
+1a. If utm_type is a substring of url:
+    start_index := the index of the char right after utm_type (aka index of X in 'utm_medium=X')
+    end_index := the index of the next available '&', '#' OR null-terminator
+    new_string will be x[start_index:end_index]
+    BUT WITH:
+    	- 1. all to lower
+    	- 2. all %[\da-f]{2} to be hex-decoded
+    	- 3. all '+' to be replaced by ' '
+return new_string
+
+======
+
+Function 4: process_input
+
+Chunks in the input url and returns out the important bits.
+
+Input: url (string, char*)
+
+Requires:
+mvc: a hash-table with utm_source_tx (string) as the key, and values as:
+{'v': string, chnl_short_cd_1: chnl_nm_1, chnl_short_cd_2: chnl_nm_2, ...}
+where chnl_short_cd_1, chnl_short_cd_2 ... are strings
+and chnl_nm_1, chnl_nm_2 ... are strings.
+
+Will be given in JSON format.
+
+Output: 3 strings:
+- mvd_vendor_nm
+- mvc_chnl_nm
+- utm_campaign_id
+
+Useful constants:
+
+UTM_MED = ['UTM_MED', 'utm_medium']
+UTM_SRC = ['UTM_SRC', 'utm_source']
+UTM_CAMP = ['UTM_CAMP', 'utm_campaign']
+
+Processes:
+1. url := _url_strip(url)
+2. utm_medium_cd := tolower(strstrip(_get_utm_key_value(qs, 'utm_medium')))
+3. utm_source_tx := tolower(strstrip(_get_utm_key_value(qs, 'utm_source')))
+4. utm_campaign_id := _get_utm_key_value(qs, 'utm_campaign')
+5. mvd_vendor_nm := mvc[utm_source_tx]['vendor_nm'] if utm_source_tx is a key of mvc. If not, NULL
+6. mvc_chnl_nm := mvc[utm_source_tx][utm_medium_cd] if utm_source_tx is a key of mvc AND utm_medium_cd is a key of mvc[utm_source_tx]. If not, NULL
+7. Return mvd_vendor_nm, mvc_chnl_nm, utm_campaign_id
+
+
+======
+Function 5. process_referrer
+Chunks in the referrer and returns out the important bits.
+WILL NEED a parser to get the domain from the host. I was thinking https://www.w3.org/Library/src/HTParse.c but not sure.
+
+Input: referrer (string, char*)
+
+Requires:
+3 arrays of strings:
+1. isn
+2. rd_sm
+3. rd_search
+
+Output: 1 string and 1 (possibly neg) int:
+- referral_site_nm (string, char*)
+- ext_dw_referral_sk (int, possibly negative)
+
+isn = [
+'localnerd', 'nerdscholar', 'nerdwallet', 'nerdwallethealth',
+'nerdwalletinvesting', 'nerdwalletwire', 'search%20nerdwallet',
+'www%2cnerdwallet']
+
+Processes:
+1a. If referrer is NULL or is '':
+	- referral_site_nm := NULL
+	- ext_dw_referral_sk := 0
+	- return the two now
+2. parsed_ref := url_parser.parse(referrer)
+3. ref_netloc := parsed_ref.host
+4. referral_site_nm := ref_netloc.domain (i.e. extract domain from ref_netloc)
+5a. If referral_site_nm is in isn 
+	- ext_dw_referral_sk := 2 (like, really useless)
+5b. Else if referral_site_nm is NULL or is '':
+	- ext_dw_referral_sk := 0
+5b. Else if referral_site_nm is in rd_sm OR if (referral_site_nm not in rd_sm AND
+										   referral_site_nm not in rd_search AND
+										   ref_netloc in rd_sm):
+	- ext_dw_referral_sk := 1
+5c. Else if referral_site_nm is in rd_search OR if (referral_site_nm not in rd_sm AND
+										   referral_site_nm not in rd_search AND
+										   ref_netloc in rd_search):
+	- ext_dw_referral_sk := 3
+5d. Else:
+	- ext_dw_referral_sk := 0
+6. Return referral_site_nm, ext_dw_referral_sk
+
+
+======
+Function 6: get_referral_type_cd
+Final function for referral_type_cd
+
+Input: 
+- url (string)
+- referrer (string)
+
+Requires:
+isn (from above)
+rd_sm (from above)
+rd_search (from above)
+mvc (from above)
+
+
+Output:
+- referral_type_cd (string, one of 5 options: 'Social Media', 'Referral', 'Search', 'Internal', 'Unknown')
+
+
+Processes:
+1. mvd_vendor_nm, mvc_chnl_nm, utm_campaign_id := process_input(url)
+2. referral_site_nm, ext_dw_referral_sk := process_referrer(referrer)
+3. mvd_c = coalesce(mvd_vendor_nm, referral_site_nm, 'other')
+4a. if mvd_c in ('twitter', 'facebook', 't', 'linkedin', 'lnkd', 'pinterest')
+	OR mvc_chnl_nm == 'social'
+	OR ext_dw_referral_sk == 1:
+		referral_type_cd := 'Social Media'
+4b. else if mvc_chnl_nm is not NULL AND mvc_chnl_nm != 'sem' AND mvc_chnl_nm != 'social':
+		referral_type_cd := 'Referral'
+4c. else if ext_dw_referral_sk == 3 OR mvc_chnl_nm == 'sem':
+        referral_type_cd := 'Search'
+4d. else if mvd_c == 'nerdwallet' OR ext_dw_referral_sk == 2:
+        referral_type_cd = 'Internal'
+4e. else if utm_campaign_id is not NULL OR utm_campaign_id is not '' OR
+	coalesce(mvd_vendor_nm, mvc_chnl_nm) != '' OR
+	referral_site_nm is not NULL or referral_site_nm is not '':
+        referral_type_cd := 'Referral'
+4f. else:
+		referral_type_cd := 'Unknown'
+5. return referral_type_cd

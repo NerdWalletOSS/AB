@@ -1,0 +1,10 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <string.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+#include "macros.h"

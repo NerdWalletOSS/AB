@@ -1,0 +1,18 @@
+Any time you are dealing with a function that prints to stdout you can
+capture that output in an output buffer, like this:
+
+// Start buffer capture.
+ob_start(); 
+// Output here was captured in the buffer rather than stdout.
+debug_print_backtrace(); 
+// Contents of the buffer were returned and the buffer was flushed from memory.
+return ob_get_clean(); 
+
+
+Technically all inputs to the current script are available in
+php://input, but I never access this directly. The standard
+superglobals like $_POST, $_GET, etc.  are PHP's parsed version of
+this same data, so it's considered a best practice to always access
+input data through these superglobals instead of php://input.  Any
+query params in the URL will be available in $_GET, while any data
+sent in the body of a POST request will be available in $_POST.

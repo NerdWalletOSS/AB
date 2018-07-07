@@ -1,0 +1,134 @@
+%%_START_DELETE_FOR_BOOK
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- The Database}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Data Science Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+%%_STOP_DELETE_FOR_BOOK
+%%_START_ADD_FOR_BOOK
+%%C \chapter{Database Design and Usage}
+%%_STOP_ADD_FOR_BOOK
+\section{Introduction}
+
+The AB Admin Webapp stores information needed by the AB system in a relational
+database. In this document, we describe how the design and usage of this
+database. 
+We have tried to hew as closely as possible to the 
+naming conventions in
+\url{http://guides.rubyonrails.org/active_record_basics.html}
+
+Some more Rails conventions
+\bi
+\item  tables are plural, e.g., users, page\_views, clicks
+\item primary key is always {\tt id}
+\item foreign keys are primary key table singular concatenated with \verb+_id+
+  e.g., fk in clicks pointing to users is \verb+user_id+, 
+  fk in clicks to \verb+page_views+ is \verb+page_view_id+
+\item Almost every table has cols ``created\_at'' and
+``updated\_at'' of type datetime. 
+\item Use suffix \verb+_on+ for dates, e.g., \verb+expires_on+ '2018-12-31'
+(as opposed to \verb+_at+ used for datetime/timestamps).
+\ei
+
+There are four kinds of tables 
+\be
+\item Configuration tables. These do not directly contain information about AB test.
+Instead, they contain auxiliary information e.g., list of authorized users,
+kinds of tests supported, names od devices recognized, \ldots
+\item Test info tables. These contain the details of tests created by users
+\item Debugging tables. These are used to create audit reports and to
+  analyze usage of the system. See Section~\ref{logging_tables}
+\item Journaling tables. These contain changes made to the test info tables as
+described in Section~\ref{journaling_tables}
+\ee
+
+
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Name } & {\bf Table Type} \\ \hline \hline
+\input{_table_type}
+\hline
+\end{tabular}
+\caption{View/Edit Config Variables}
+\label{tbl_config}
+\end{table}
+
+\section{Logging Tables}
+\label{logging_tables}
+
+Every request to the webapp causes a row to be inserted into
+\verb+request_webapp+. The primary key of this row is then used in the
+journaling tables. After the processing of the request is completed, the row in
+question is updated with an (optional) error message, (optional) output message and status code.
+
+\section{Journaling Tables}
+\label{journaling_tables}
+
+All changes to the database are made by the Admin WebApp using transactions.
+There are no deletes to the database, only inserts and updates. 
+In every transaction, a copy of the rows modified/created are stored in log
+tables that are identical to the original table with the following exceptions
+\be
+\item there is no primary key
+\item there are no constraints place on data in these tables
+\item every field in the original table exists in the journaling table
+\item there are two additional fields
+  \be
+\item \verb+request_webapp_id+ (Section~\ref{logging_tables}) used to 
+  \be
+\item tie together multiple rows affected by a particular transaction
+\item corrrelate changes to the database with requests made to the Webapp
+  \ee
+\item \verb+txn_id+ which identifies the operation made by the middle-tier i.e.,
+  it identifies the logical purpose for performing the transaction. This is a
+  foreign key to the table \verb+txn_type+
+  \ee
+  \ee
+For a ``hello world'' explanation of what this is about, see 
+\verb+sql/triggers_example.sql+
+
+\section{Permissions}
+
+Hewing to the principle of least privelege, we create database users with
+minimal ability to modify the database.  The two users are (1) {\tt webapp} (2)
+{\tt backend}. All users can read all tables.
+
+\be
+\item Triggers allow inserts (no updates or deletes) into tables marked as
+  ``journaling''
+\item 
+Neither webapp nor backend user can delete from any table. All 
+deletes are soft deletes using the {\tt is\_del} field. 
+\item 
+Only inserts (no updates or deletes) are allowed into tables marked as
+``debugging'' 
+\item 
+Webapp users can update and insert only into tables marked as ``test info''
+\item 
+  \ee
+
+
+
+
+
+\end{document}
+
