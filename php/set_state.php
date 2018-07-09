@@ -140,6 +140,7 @@ function set_state(
   if ( !$status ) { 
     $http_code = 400; 
     $Y['msg_stderr'] = $rts_err_msg;
+    header("Error-Message: Unable to talk to RTS" . nl2br($rts_err_msg));
   }
 
   header("Error-Code: $http_code");
