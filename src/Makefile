@@ -133,7 +133,8 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so
+$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
+
 
 
 ../statsd-c-client-master/libstatsdclient.so :
