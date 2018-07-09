@@ -86,9 +86,9 @@ function db_get_test(
 
   return $T;
 }
-
+/*
 $x = db_get_test(1);
 $y = json_encode($x);
 print($y);
-
+ */
 ?>
