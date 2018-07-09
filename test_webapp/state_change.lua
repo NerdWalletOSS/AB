@@ -53,7 +53,10 @@ local function change_state(
       T.Winner = V[vidx].name
     end
   end
+  print(JSON:encode(T))
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
+  for k, v in pairs(hdrs) do print(k, v) end
+  print(status)
   assert(status == 200)
   return true
 end

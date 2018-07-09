@@ -11,10 +11,12 @@ $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "SetState" : "ERROR", "Message" : "No payload" }'; exit;
 }
-$rslt =  set_state($body);
-foreach ( $rslts as $key=> $val ) {
-  $val = convert_uuencode($val);
-  header("$key: $val");
+$rslts =  set_state($body);
+if ( is_array($rslts ) ) { 
+  foreach ( $rslts as $key=> $val ) {
+    $val = convert_uuencode($val);
+    header("$key: $val");
+  }
 }
 ob_clean();
 ?>
