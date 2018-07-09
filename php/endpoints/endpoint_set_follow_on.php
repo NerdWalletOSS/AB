@@ -11,7 +11,13 @@ $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "No payload" }'; exit;
 }
-$rslt =  set_follow_on($body);
-header("TestID: ".$rslt["TestID"]);
+$rslts =  set_follow_on($body);
+header("TestID: ".$rslts["TestID"]);
+if ( is_array($rslts ) ) { 
+  foreach ( $rslts as $key=> $val ) {
+    $val = str_replace("\n", " ", $val);
+    header("$key: $val");
+  }
+}
 ob_clean();
 ?>

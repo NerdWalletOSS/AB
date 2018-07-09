@@ -13,13 +13,10 @@ if ( ( empty($body) ) || ( trim($body) == "" ) ) {
 }
 $rslts =  set_state($body);
 if ( is_array($rslts ) ) { 
-
   foreach ( $rslts as $key=> $val ) {
-    // $val = convert_uuencode($val);
     $val = str_replace("\n", " ", $val);
     header("$key: $val");
   }
-
 }
 ob_clean();
 ?>

@@ -11,8 +11,12 @@ $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "AddAdminChannel" : "ERROR", "Message" : "No payload" }'; exit;
 }
-$rslt =  add_admin_channel($body);
-foreach ( $rslt as $key=> $val ) {
-  header("$key: $val");
+$rslts =  add_admin_channel($body);
+if ( is_array($rslts ) ) { 
+  foreach ( $rslts as $key=> $val ) {
+    $val = str_replace("\n", " ", $val);
+    header("$key: $val");
+  }
+}
 }
 ?>
