@@ -316,12 +316,10 @@ function test_basic(
   $outJ["TestID"] = $test_id;
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
-  $Y['msg_stderr']  = $outJ["msg_stderr"] = $err;
   db_set_row("request_webapp", $request_webapp_id, $Y);
   // Note it is possible for both msg_stdout and msg_stderr to be set
   // Note that state cannot be terminated or archived for this endpoint
   header("Error-Code: $http_code");
-  header("Error-Message: ".$err);
   http_response_code($http_code);
   return $outJ;
 }

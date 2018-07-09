@@ -11,9 +11,11 @@ $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   echo '{ "SetFilters" : "ERROR", "Message" : "No payload" }'; exit;
 }
-
-$rslt =  set_filters($body);
-foreach ( $rslt as $key=> $val ) {
-  header("$key: $val");
+$rslts =  set_filters($body);
+if ( is_array($rslts ) ) { 
+  foreach ( $rslts as $key=> $val ) {
+    $val = str_replace("\n", " ", $val);
+    header("$key: $val");
+  }
 }
 ?>
