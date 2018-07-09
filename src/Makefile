@@ -17,7 +17,7 @@ INCS= -I. \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
 	-I ../mysql-connector-c-6.1.6-src/include/ \
-	-I../USER_AGENT_CLASSIFIER/src/ \
+	-I../USER_AGENT_CLASSIFIER/src/ 
 
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
@@ -69,7 +69,7 @@ all : ab_httpd \
 ../jansson-2.10/src/.libs/libjansson.so :
 	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
-ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so
+ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 
 ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 
@@ -106,7 +106,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 	$(CC) -c load_mdl.c -o load_mdl.o $(CFLAGS) $(INCS)
 
 
-.c.o : ../curl-7.51.0/lib/.libs/libcurl.so  
+.c.o : ../curl-7.51.0/lib/.libs/libcurl.so  ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS) $(DBGFLAGS)
 
 ../lua-5.1.3/src/liblua.a :
@@ -188,7 +188,8 @@ ab_httpd : $(COBJS)  \
 	../libyuarel/yuarel.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so \
-	./libs/librdkafka.so
+	./libs/librdkafka.so \
+	./libs/libmysqlclient.so 
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
