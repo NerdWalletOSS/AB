@@ -10,8 +10,8 @@ require_once 'db_get_test.php';
 
 function inform_rts(
   $test_id,
-  $is_check = false,
-  &$err_msg
+  &$err_msg,
+  $is_check = false
 )
 {
 
