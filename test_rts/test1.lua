@@ -1,6 +1,6 @@
 local curl              = require 'lua/curl'
 local JSON              = require 'lua/JSON'
-local compare_test_info = require 'test_rts/compare_test_info'
+local compare_T = require 'test_rts/compare_T'
 
 local tic_url = "localhost:8000/TestInfo?Source=C&TestType=XYTest"
 local til_url = "localhost:8000/TestInfo?Source=Lua&TestType=XYTest"
@@ -67,7 +67,7 @@ tests.t1 = function(
       --]]
     
       if ( Tl and Tc ) then 
-        assert(compare_test_info(Tl, Tc))
+        assert(compare_T(Tl, Tc))
       end
 
       -- Lc = list tests using C 
