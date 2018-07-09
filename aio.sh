@@ -32,6 +32,10 @@ buildall(){
 }
 
 build(){
+  echo "############So files"
+  find . -name "*.so"
+  echo "############So files"
+
   rm -rf bin
   mkdir bin
   cd ./src
