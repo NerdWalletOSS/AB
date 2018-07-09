@@ -30,7 +30,11 @@ local function change_state(
   if ( new_state == "dormant" ) then 
     assert ( (T.State == "dormant") or (T.State == "draft"))
   elseif ( new_state == "started" ) then 
-    assert ( (T.State == "started") or (T.State == "dormant"))
+    assert ( 
+             (T.State == "started") or 
+             (T.State == "dormant") or 
+             ( (T.State == "terminated") and (T.TestType == "XYTest" ) ) 
+             )
   elseif ( new_state == "terminated" ) then 
     assert ( (T.State == "terminated") or (T.State == "started"))
   elseif ( new_state == "archived" ) then 
@@ -53,10 +57,7 @@ local function change_state(
       T.Winner = V[vidx].name
     end
   end
-  print(JSON:encode(T))
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
-  for k, v in pairs(hdrs) do print(k, v) end
-  print(status)
   assert(status == 200)
   return true
 end
