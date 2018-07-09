@@ -26,7 +26,7 @@ buildall(){
   sudo apt-get install gcc cmake g++ -y
   sudo pip install pystatsd
   clean
-  install_test_deps
+  # install_test_deps
   set -e
   build
 }
