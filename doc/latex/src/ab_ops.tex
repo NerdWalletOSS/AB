@@ -61,9 +61,10 @@ The WebApp server needs access to the following servers.
   {\tt/DescribeInstances}, it returns a JSON array of the RTS's available. For
   each RTS, it returns the server and the port.
 \item {\tt RTS} For testing purposes, it is often useful to bypass the Finder
-  and hit a single RTS directly.
-\item {\tt MySQL} We need to pass all the information to access the database
-  that contains the information maniuplated by the WebApp
+  and hit a single RTS directly. Note that this is {\bf not} meant for a
+  ``real'' deploy.
+\item {\tt MySQL} The WebApp stores all its information in a MySQL database.
+  Necessary credentials need to be provided.
   \ee
 
 \subsection{Diagnostics}
@@ -128,7 +129,7 @@ configured. Note that if there is an error in loading the config file, the
 server will {\bf not} start up. You need to ensure that entries are set
 correctly and that servers/files/directories are where you say they will be.
 
-The server is started as follows \verb+ ./ab_httpd ab.conf.json+
+When testing, the server is started as follows \verb+ ./ab_httpd ab.conf.json+
 
 \subsubsection{Access to other servers}
 
@@ -144,7 +145,7 @@ The run time server needs access to the following servers.
 \subsection{APIs for debugging}
 
 \be
-\item {\tt api/v1/health\_check} --- returns 200 to say server is alive
+\item {\tt /api/v1/health\_check} --- returns 200 to say server is alive
 \item {\tt /CheckLoggerConnectivity} --- sends a fake payload to Logger and
   verifies that it gets a timely response
 \item {\tt /CheckDBConnectivity} --- makes a simple request to the MySQL
@@ -156,7 +157,7 @@ The run time server needs access to the following servers.
   both activity that it has done, errors it has encountered, response time,
   \ldots
 \item {\tt /GetConfig} --- returns configs that have been provided to the
-  RTS
+  RTS, with passwords redacted
 \item {\tt /PingServer?Service=XXXX} where XXXX can be one of 
   \be
 \item logger
