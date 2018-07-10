@@ -153,6 +153,7 @@ malloc_test(
     num_devices = 1;  
   }
   if ( num_devices < 1 ) { go_BYE(-1); }
+  p->num_devices     = num_devices;
   //------------------------------------------
   if ( state == TEST_STATE_TERMINATED ) {
     p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
