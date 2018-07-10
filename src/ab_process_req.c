@@ -7,6 +7,7 @@
 #include "post_from_log_q.h"
 
 #include "l_add_test.h"
+#include "num_tests.h"
 #include "l_mdl_meta.h"
 #include "l_reload_tests.h"
 #include "chk_logger_conn.h"
@@ -56,7 +57,7 @@ ab_process_req(
 {
   int status = 0;
   char server[AB_MAX_LEN_SERVER_NAME+1];
-  int num_features; 
+  int num_features, itemp;
   //-----------------------------------------
   memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', AB_ERR_MSG_LEN+1);
@@ -175,6 +176,11 @@ ab_process_req(
       //--------------------------------------------------------
     case MdlMeta : /* done by Lua */
       status = l_mdl_meta(); cBYE(status);
+      break;
+      //--------------------------------------------------------
+    case NumTests : /* done by Lua */
+      status = num_tests(&itemp); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"%d\" }", api, itemp);
       break;
       //--------------------------------------------------------
     case PingServer : /* done by C */

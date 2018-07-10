@@ -1,6 +1,8 @@
 local channels = require 'test_webapp/channels'
 local admins   = require 'test_webapp/admins'
 -- TODO P3 Random selections should be improved
+--
+local salt = 1
 local R = {}
 
 local function rand_perc(
@@ -32,7 +34,8 @@ local function rand_perc(
       sum = sum + x
     end
     assert(sum <= 100)
-    P[NumVariants] = P[NumVariants] + (100 - sum)
+    -- Note that 1 is always Control in this case
+    P[1] = P[1] + (100 - sum)
   else
     assert(nil)
   end
@@ -40,10 +43,13 @@ local function rand_perc(
 end
 
 local function rand_name()
-  return tostring(math.random(1, 1000000000))
+  math.randomseed(os.time())
+  salt = salt + 1
+  return tostring(salt + math.random(1, 1000000000))
 end
 
 local function rand_dscr()
+  salt = salt + 1
   return tostring(math.random(1, 1000000000))
 end
 
@@ -75,6 +81,7 @@ local function rand_vrnt(
   TestType, 
   NumVariants
   )
+  math.randomseed(os.time())
   assert(TestType)
   assert(NumVariants)
   local V = {}
@@ -85,7 +92,7 @@ local function rand_vrnt(
     if ( ( TestType == "ABTest" ) and ( i == 1 ) ) then 
       v.name = "Control"
     else
-      v.name = rand_name()
+      v.name = rand_name() .. tostring(i)
     end
     v.percentage = assert(P[i])
     if ( TestType == "XYTest" ) then 

@@ -10,8 +10,6 @@ local function mk_rand_test(
   )
   local T = R.rand_test(X)
   local hdrs, outbody, status = curl.post(tbp_url, nil, JSON:encode(T))
-  -- for k, v in pairs(hdrs) do print(k, v) end 
-  -- print(outbody)
   assert(status == 200 )
   return get_test_id(hdrs)
 end
