@@ -31,9 +31,7 @@ l_add_test(
   lua_pushstring(g_L, args); // not pushing string as it causes a copy
   lua_pushlightuserdata(g_L, g_tests);
   lua_pushlightuserdata(g_L, rslt);
-  fprintf(stderr, "STARTED 111: Adding test\n");
   status = lua_pcall(g_L, 3, 0, 0);
-  fprintf(stderr, "STOPPED 111: Adding test\n");
   if (status != 0) {
     fprintf(stderr, "function preproc failed: %s\n", lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
