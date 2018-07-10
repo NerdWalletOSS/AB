@@ -9,11 +9,13 @@ num_tests(
     )
 {
   int status = 0;
+  int sum = 0;
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name[0] != '\0' ) { 
-      *ptr_num_tests++;
+      sum++;
     }
   }
+  *ptr_num_tests = sum;
 BYE:
   return status;
 }
