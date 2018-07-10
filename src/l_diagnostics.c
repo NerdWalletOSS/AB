@@ -101,10 +101,10 @@ diagnostics(
       else {
         if ( strlen(vk.url) > AB_MAX_LEN_URL ) { go_BYE(-1); }
         /* TODO P1 Put this check in 
-        if ( ( vk.separator != '?' ) && ( vk.separator != '&' ) ) {
-          go_BYE(-1);
-        }
-        */
+           if ( ( vk.separator != '?' ) && ( vk.separator != '&' ) ) {
+           go_BYE(-1);
+           }
+           */
       }
       if ( vk.id <= 0 ) { go_BYE(-1); }
       all_vids[n_all_vids++] = vk.id;
@@ -115,12 +115,12 @@ diagnostics(
       for ( int l = k+1; l < num_variants; l++ ) {
         VARIANT_REC_TYPE vl = g_tests[i].variants[l];
         if ( vl.id == vk.id ) { go_BYE(-1); }
-        if ( strcmp(vl.name, vk.name ) == 0 ) { go_BYE(-1); }
-        if ( ( vl.url != NULL ) && ( vk.url != NULL ) ) {
-          if ( strcmp(vl.url, vk.url ) == 0 ) { go_BYE(-1); }
+        if ( ( vl.url != NULL ) && ( vk.url != NULL )  &&
+            ( *vl.url != '\0' ) && ( *vk.url != '\0' ) ) { 
+          if ( strcmp(vl.name, vk.name ) == 0 ) { go_BYE(-1); }
         }
       }
-      if ( vk.url != NULL ) { 
+      if ( ( vk.url != NULL ) && ( *vk.url != '\0' ) ) {
         if ( ( strncmp(vk.url, "https://", 8) != 0 ) &&
             ( strncmp(vk.url, "http://", 7) != 0 ) ) {
           go_BYE(-1);

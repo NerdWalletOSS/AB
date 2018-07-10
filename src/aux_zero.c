@@ -125,6 +125,7 @@ malloc_test(
   if ( p->final_variant_id  != NULL ) { go_BYE(-1); }
   if ( p->final_variant_idx != NULL ) { go_BYE(-1); }
   //------------------------------------------
+  p->is_dev_specific     = is_dev_specific;
   variants = malloc(num_variants * sizeof(VARIANT_REC_TYPE));
   return_if_malloc_failed(variants);
   p->num_variants = num_variants;

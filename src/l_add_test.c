@@ -14,6 +14,10 @@ l_add_test(
   // cdata[0]=5;
   // printf("original value: %d\n", cdata[0]);
   int status = 0;
+  FILE *fp = NULL;
+  fp = fopen("/tmp/_x.json", "w");
+  fprintf(fp, "%s\n", args);
+  fclose(fp);
   //-------------------------------------
   if ( g_L == NULL ) { go_BYE(-1); }
   int rslt[4]; 

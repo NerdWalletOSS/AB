@@ -1,19 +1,19 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local JSON = require 'JSON'
-local plfile = require 'pl.file'
-local plpath = require 'pl.path'
-local curl = require 'curl'
--- INDRAJEET TODO 
+require 'lua/str'
+local JSON    = require 'lua/JSON'
+local curl    = require 'lua/curl'
+local tbp_url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+
+local R = require 'test_webapp/rand_selections'
+
 local function mk_rand_test(
   X
   )
   -- TODO Following is a hack. Needs to be done properly
   local T = {}
-  local infile = "good_basic1.lua"
-  T = assert(dofile(infile))
-  local url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
-  local hdrs, outbody, status = curl.post(url, nil, JSON:encode(T))
-  return hdrs, outbody, status
+  if ( not X ) then X = {} end 
+  T.name = X.name or tostring(math.random(1, 1000000000))
+  local hdrs, outbody, status = curl.post(tbp_url, nil, JSON:encode(T))
+  assert(status == 200 )
+  return get_test_id(hdrs)
 end
 return mk_rand_test
