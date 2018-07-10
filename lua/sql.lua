@@ -202,8 +202,7 @@ local mysql_connect = function( self, host, user, password, db, port)
   out.log = self.log
   out.doLog = false
   out.toggleLog = function(self,v) self.doLog = v end
-  out.close = function(self) print("No need to close connection explicitly") end
-  ffi.gc(out.conn, function(conn) clib.mysql_close( self.conn) end)
+  out.close = function(self) clib.mysql_close(self.conn) end 
   return out
 end
 
