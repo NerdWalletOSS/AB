@@ -25,7 +25,14 @@ local function rand_perc(
     -- last guy gets whateveris left over
     P[NumVariants] = balance
   elseif ( TestType == "ABTest" ) then
-    print("TODO: no change to perc as yet")
+    local x = math.floor(100.0 / NumVariants)
+    local sum = 0
+    for i = 1, NumVariants do
+      P[i] = x
+      sum = sum + x
+    end
+    assert(sum <= 100)
+    P[NumVariants] = P[NumVariants] + (100 - sum)
   else
     assert(nil)
   end
@@ -71,16 +78,16 @@ local function rand_vrnt(
   assert(TestType)
   assert(NumVariants)
   local V = {}
-  local lp = "localhost:8080/AB/test_webapp/landing_page_"
-  local P = rand_perc(TestType, NumVariants)
+  local lp = "http://localhost:8080/AB/test_webapp/landing_page_"
+  local P = assert(rand_perc(TestType, NumVariants))
   for i = 1, NumVariants do 
-    v = {}
+    local v = {}
     if ( ( TestType == "ABTest" ) and ( i == 1 ) ) then 
       v.name = "Control"
     else
       v.name = rand_name()
     end
-    v.percentage = P[i]
+    v.percentage = assert(P[i])
     if ( TestType == "XYTest" ) then 
       v.url = lp .. tostring(i) .. ".php"
     end
@@ -108,7 +115,6 @@ local function rand_test(X)
   end
   T.NumVariants = X.NumVariants or math.random(2, 8)
   T.Variants = rand_vrnt(T.TestType, T.NumVariants)
-  print("XXXXXXXXXXXXXXXXXXX")
   return T
 end
 

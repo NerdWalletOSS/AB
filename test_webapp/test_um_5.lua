@@ -3,7 +3,7 @@ local JSON = require 'lua/JSON'
 local curl = require 'lua/curl'
 local mk_test = require 'test_webapp/mk_test'
 local reset_db = require 'test_webapp/reset_db'
-local get_test_id = require 'test_webapp/get_test_id'
+local mk_rand_test = require 'test_webapp/mk_rand_test'
 local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
@@ -26,30 +26,29 @@ tests.t1 = function (
 
   assert(reset_db())
    -- START: Make some test of type XYTest
-  local hdrs, outbody, status = mk_test("good_basic4.lua")
-  assert(status == 200)
-  local tid1 = get_test_id(hdrs)
+  local winners = {}
+  local optargs = {}
+  optargs.TestType = "XYTest"
+  local tid1 = mk_rand_test(optargs)
   local T1 = get_test_info(tid1)
+  winners["XYTest"] = T1.Variants[1].name
 
-  -- Create test name with same name but type = ABTest
-  T1.TestType = "ABTest"
-  T1.id = ""
-  local hdrs, outbody, status = mk_test(T1)
-  assert(status == 200)
-  local tid2 = get_test_id(hdrs)
+  -- Create test of type = ABTest
+  optargs.TestType = "ABTest"
+  local tid2 = mk_rand_test({ TestType = "ABTest"})
+  local T2 = get_test_info(tid1)
+  winners.ABTest = T1.Variants[1].name
 
   local tids = { }
   tids.XYTest = tid1
   tids.ABTest = tid2
-  local optargs = { }
-  optargs.Winner = "Control"
   for k, tid in pairs(tids)  do
     S.publish(tid)
     S.start(tid)
-    S.terminate(tid, optargs)
+    S.terminate(tid, { Winner = winners[k] })
   end
   for k, tid in pairs(tids)  do
-    status = pcall(S.start, tid)
+    local status = pcall(S.start, tid)
     if ( k == "XYTest" ) then assert(status) end  -- resurrect XYTest
     if ( k == "ABTest" ) then assert(not status) end -- not resurrect ABTest
   end
