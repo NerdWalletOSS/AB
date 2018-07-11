@@ -30,7 +30,11 @@ local function change_state(
   if ( new_state == "dormant" ) then 
     assert ( (T.State == "dormant") or (T.State == "draft"))
   elseif ( new_state == "started" ) then 
-    assert ( (T.State == "started") or (T.State == "dormant"))
+    assert ( 
+             (T.State == "started") or 
+             (T.State == "dormant") or 
+             ( (T.State == "terminated") and (T.TestType == "XYTest" ) ) 
+             )
   elseif ( new_state == "terminated" ) then 
     assert ( (T.State == "terminated") or (T.State == "started"))
   elseif ( new_state == "archived" ) then 
@@ -54,24 +58,30 @@ local function change_state(
     end
   end
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
+  -- for k, v in pairs(hdrs) do print(k, v) end 
+  -- print(outbody)
   assert(status == 200)
   return true
 end
 
 local function publish(test_id, optargs)
   assert(change_state(test_id, "dormant", optargs))
+  return true
 end
 
 local function start(test_id, optargs)
   assert(change_state(test_id, "started", optargs))
+  return true
 end
 
 local function terminate(test_id, optargs)
   assert(change_state(test_id, "terminated", optargs))
+  return true
 end
 
 local function archive(test_id, optargs)
   assert(change_state(test_id, "archived", optargs))
+  return true
 end
 
 S.publish   = publish

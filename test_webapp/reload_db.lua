@@ -12,6 +12,7 @@ local function reload_db(
   command = string.gsub(command, "__SQLDUMP_FILE__", sqldump_file)
   local status = os.execute(command)
   assert(status == 0)
+  return true
 end
 return reload_db
 -- reload_db("../test_rts/abdb2_100.sql")

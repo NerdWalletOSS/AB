@@ -27,9 +27,7 @@ l_add_test(
   lua_pushstring(g_L, args); // not pushing string as it causes a copy
   lua_pushlightuserdata(g_L, g_tests);
   lua_pushlightuserdata(g_L, rslt);
-  fprintf(stderr, "STARTED 111: Adding test\n");
   status = lua_pcall(g_L, 3, 0, 0);
-  fprintf(stderr, "STOPPED 111: Adding test\n");
   if (status != 0) {
     fprintf(stderr, "function preproc failed: %s\n", lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
@@ -86,9 +84,7 @@ l_add_test(
   lua_pushlightuserdata(g_L, g_tests);
   entry_position[0] = test_idx;
   lua_pushlightuserdata(g_L, entry_position);
-  fprintf(stderr, "STARTED 222: Adding test\n");
   status = lua_pcall(g_L, 3, 0, 0);
-  fprintf(stderr, "STOPPED  222: Adding test\n");
   if (status != 0) {
     WHEREAMI; 
     fprintf(stderr, "calling function add failed: %s\n", lua_tostring(g_L, -1));
@@ -101,6 +97,5 @@ l_add_test(
   }
   // printf("changed value: %d\n", cdata[0]);
 BYE:
-  fprintf(stderr, "STOPPED: Adding test\n");
   return status;
 }

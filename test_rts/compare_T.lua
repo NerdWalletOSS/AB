@@ -1,4 +1,4 @@
-local function compare_test_info(
+local function compare_T(
   T1,
   T2
   )
@@ -52,4 +52,4 @@ local function compare_test_info(
   end
   return true
 end
-return compare_test_info
+return compare_T

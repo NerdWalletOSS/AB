@@ -7,5 +7,6 @@ local function reset_db()
     ]]
   local status = os.execute(command)
   assert(status == 0)
+  return true
 end
 return reset_db

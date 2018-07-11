@@ -88,6 +88,9 @@ get_req_type(
   else if (strcasecmp(api, "MdlMeta") == 0) {
     return MdlMeta;
   }
+  else if (strcasecmp(api, "NumTests") == 0) {
+    return NumTests;
+  }
   else if (strcasecmp(api, "PingServer") == 0) {
     return PingServer;
   }
