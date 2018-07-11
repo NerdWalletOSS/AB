@@ -1,5 +1,7 @@
 local channels = require 'test_webapp/channels'
 local admins   = require 'test_webapp/admins'
+local plfile   = require 'pl.file'
+local plpath   = require 'pl.path'
 -- TODO P3 Random selections should be improved
 --
 local salt = 1
@@ -81,6 +83,8 @@ local function rand_vrnt(
   TestType, 
   NumVariants
   )
+  local cd1 = plfile.read(plpath.currentdir() .. "/custom_data_1.json")
+  local cd2 = plfile.read(plpath.currentdir() .. "/custom_data_2.json")
   math.randomseed(os.time())
   assert(TestType)
   assert(NumVariants)
@@ -98,6 +102,16 @@ local function rand_vrnt(
     if ( TestType == "XYTest" ) then 
       v.url = lp .. tostring(i) .. ".php"
     end
+    local x = math.random(1, 10)
+    if ( x == 1 ) then 
+      local y = math.random(1, 2)
+      if ( y == 1 ) then 
+        v.custom_data = cd1
+      else
+        v.custom_data = cd2
+      end
+    end
+
     V[i] = v
   end
   return V

@@ -15,4 +15,5 @@ T.t1 = function(num_tests)
   end
   print("Successfully added " .. num_tests .. " tests in test t1")
 end 
+T.t1(1000) -- TO DELETE once LJT starts working
 return T
