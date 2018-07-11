@@ -94,7 +94,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
  if (value['state_id'] == 1) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
             } 
-            if (value['state_id'] == 4) {
+            if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
 						// else {
 						//TableRow += "<strong>No Action</strong></td>";
