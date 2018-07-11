@@ -230,6 +230,10 @@ clean:
 	make -i -C ../statsd-c-client-master/ clean
 	make -i -C ../libevent-2.0.22-stable/ distclean 
 	make -i -C ../curl-7.51.0/ distclean 
+	make -C ../dt_intepreter/src clean
+	make -C ../USER_AGENT_CLASSIFIER/src clean
+	rm -f ../dt_interpreter/src/*.so 
+	rm -f ../USER_AGENT_CLASSIFIER/src/*.so 
 	rm -r -f ../librdkafka/* # TODO P3 Check with Indrajeet
 	rm -r -f ../jansson-2.10/* # TODO P3 Check with Indrajeet
 	rm -r -f ../libmaxminddb-1.3.2/* # TODO P3 Check with Indrajeet

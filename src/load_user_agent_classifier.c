@@ -48,11 +48,14 @@ load_user_agent_classifier(
   //-------------------------------------------
 
   if ( disable_ua ) { 
+    LKP_REC_TYPE *justin_cat_lkp = NULL;
     *ptr_n_justin_cat_lkp = 1;
     *ptr_justin_cat_other_id = 1;
-    ptr_justin_cat_lkp = malloc(1 * sizeof(LKP_REC_TYPE));
-    strcpy((*ptr_justin_cat_lkp)[0].name, "Other");
-    (*ptr_justin_cat_lkp)[0].id = 1;
+    justin_cat_lkp = malloc(1 * sizeof(LKP_REC_TYPE));
+    justin_cat_lkp[0].name = malloc(16);
+    strcpy(justin_cat_lkp[0].name, "Other");
+    justin_cat_lkp[0].id = 1;
+    *ptr_justin_cat_lkp = justin_cat_lkp;
     goto BYE;
   }
 

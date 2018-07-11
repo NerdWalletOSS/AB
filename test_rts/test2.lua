@@ -36,10 +36,14 @@ tests.t1 = function(
     a, b, c = curl.get(dc_url);   assert(c == 200)
 
     if ( test_php )  then
-      a, b, c = curl.get(php_url);   assert(c == 200)
+      a, b, c = curl.get(php_url);  
+      if ( c ~= 200 ) then
+        print(i, b, c, php_url)
+      end
+      assert(c == 200)
     end
   end
   print("Test t1 terminated")
 end
-tests.t1(100, true) -- COMMENT once LJT starts working
+tests.t1(1000, true) -- COMMENT once LJT starts working
 return tests

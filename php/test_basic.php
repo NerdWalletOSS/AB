@@ -304,13 +304,6 @@ function test_basic(
   }
   //------------------------------------------
   $http_code = 200;
-  $outJ["status_code"] = $http_code;
-  $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
-  $outJ["TestID"] = $test_id;
-  $Y['msg_stdout']  = $outJ["msg_stdout"];
-  $Y['status_code'] = $outJ["status_code"];
-  // Note it is possible for both msg_stdout and msg_stderr to be set
-  // Note that state cannot be terminated or archived for this endpoint
   if ( $state == "started" ) {
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 
@@ -318,7 +311,14 @@ function test_basic(
       $Y['msg_stderr'] = $rts_err_msg;
     }
   }
+  $outJ["status_code"] = $http_code;
+  $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
+  $outJ["TestID"] = $test_id;
+  $Y['msg_stdout']  = $outJ["msg_stdout"];
+  $Y['status_code'] = $outJ["status_code"];
   db_set_row("request_webapp", $request_webapp_id, $Y);
+  // Note it is possible for both msg_stdout and msg_stderr to be set
+  // Note that state cannot be terminated or archived for this endpoint
   header("Error-Code: $http_code");
   http_response_code($http_code);
   return $outJ;

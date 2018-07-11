@@ -15,7 +15,7 @@ function list_rts(
   // Load configs 
   rs_assert(load_configs());
   $conf_file = "/opt/abadmin/db2.json";
-  rs_assert(is_file($conf_file), "File not foudn $conf_file");
+  rs_assert(is_file($conf_file), "File not found $conf_file");
   $configs = json_decode(file_get_contents($conf_file));
   rs_assert($configs, "unable to JSON decode $conf_file");
   //-----------------------------------------------------------
@@ -23,6 +23,10 @@ function list_rts(
   if ( $configs->{'rts_finder_server'} == "" ) {
     $server = $configs->{'ab_rts_server'};
     $port   =  $configs->{'ab_rts_port'};
+    if ( ( $server == "" ) || ($port == "" ) )  {
+      echo("NO RTS found\n");
+      return null;
+    }
 
     $SP = array(1);
     $SP[0] = array('server' => $server, 'port' => $port);
