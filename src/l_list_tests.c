@@ -34,12 +34,15 @@ l_list_tests(
     }
 
     char* tests = (char *)lua_tostring(g_L, 1);
-    if (AB_MAX_LEN_RESULT < strlen(tests)) {
+    if ( strlen(tests) > AB_MAX_LEN_RESULT ) { 
       sprintf(g_err, "{\"error\": Length of list tests is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",
           AB_MAX_LEN_RESULT, strlen(tests));
-      lua_pop(g_L, 1);
+       fprintf(stderr, "Length of list tests is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")\n",
+          AB_MAX_LEN_RESULT, strlen(tests));
+       lua_pop(g_L, 1);
       go_BYE(-1);
-    } else {
+    } 
+    else {
       memcpy(g_rslt, tests, strlen(tests));
       lua_pop(g_L, 1);
     }

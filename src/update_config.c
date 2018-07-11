@@ -107,6 +107,7 @@ update_config(
     &g_browser_lkp, &g_n_browser_lkp, 
     &g_device_type_lkp, &g_n_device_type_lkp);
   cBYE(status);
+  if ( g_n_justin_cat_lkp < 1 ) { go_BYE(-1); }
   //--------------------------------------------------------
   // dt, rf, mdl
   free_if_non_null(g_dt_feature_vector); 
