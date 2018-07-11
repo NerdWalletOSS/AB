@@ -1,0 +1,96 @@
+{
+  "DeviceCrossVariant": {
+    "Other": [
+      {
+        "percentage": "50",
+        "test_id": "1",
+        "variant_id": "1",
+        "device_id": "6",
+        "api_id": "1"
+      },
+      {
+        "percentage": "30",
+        "test_id": "1",
+        "variant_id": "2",
+        "device_id": "6",
+        "api_id": "1"
+      },
+      {
+        "percentage": "20",
+        "test_id": "1",
+        "variant_id": "3",
+        "device_id": "6",
+        "api_id": "1"
+      }
+    ],
+    "Tablet_Android": [
+      {
+        "percentage": "50",
+        "test_id": "1",
+        "variant_id": "1",
+        "device_id": "5",
+        "api_id": "1"
+      },
+      {
+        "percentage": "30",
+        "test_id": "1",
+        "variant_id": "2",
+        "device_id": "5",
+        "api_id": "1"
+      },
+      {
+        "percentage": "20",
+        "test_id": "1",
+        "variant_id": "3",
+        "device_id": "5",
+        "api_id": "1"
+      }
+    ],
+    "Tablet_iOS": [
+      {
+        "percentage": "50",
+        "test_id": "1",
+        "variant_id": "1",
+        "device_id": "4",
+        "api_id": "1"
+      },
+      {
+        "percentage": "30",
+        "test_id": "1",
+        "variant_id": "2",
+        "device_id": "4",
+        "api_id": "1"
+      },
+      {
+        "percentage": "20",
+        "test_id": "1",
+        "variant_id": "3",
+        "device_id": "4",
+        "api_id": "1"
+      }
+    ],
+    "Mobile_Android": [
+      {
+        "percentage": "50",
+        "test_id": "1",
+        "variant_id": "1",
+        "device_id": "3",
+        "api_id": "1"
+      },
+      {
+        "percentage": "30",
+        "test_id": "1",
+        "variant_id": "2",
+        "device_id": "3",
+        "api_id": "1"
+      },
+      {
+        "percentage": "20",
+        "test_id": "1",
+        "variant_id": "3",
+        "device_id": "3",
+        "api_id": "1"
+      }
+    ]
+  }
+}

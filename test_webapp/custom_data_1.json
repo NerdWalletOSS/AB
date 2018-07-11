@@ -1,0 +1,49 @@
+{
+  "CategoricalFilters": [
+    {
+      "is_on": "0",
+      "id": "1",
+      "cat_attr_val_id": "1",
+      "Value": "pc",
+      "test_id": "1",
+      "attr_id": "1",
+      "Attribute": "device"
+    },
+    {
+      "is_on": "0",
+      "id": "2",
+      "cat_attr_val_id": "2",
+      "Value": "tablet",
+      "test_id": "1",
+      "attr_id": "1",
+      "Attribute": "device"
+    },
+    {
+      "is_on": "0",
+      "id": "3",
+      "cat_attr_val_id": "3",
+      "Value": "mobile",
+      "test_id": "1",
+      "attr_id": "1",
+      "Attribute": "device"
+    },
+    {
+      "is_on": "0",
+      "id": "4",
+      "cat_attr_val_id": "4",
+      "Value": "false",
+      "test_id": "1",
+      "attr_id": "2",
+      "Attribute": "is_paid"
+    },
+    {
+      "is_on": "0",
+      "id": "5",
+      "cat_attr_val_id": "5",
+      "Value": "true",
+      "test_id": "1",
+      "attr_id": "2",
+      "Attribute": "is_paid"
+    }
+  ]
+}
