@@ -16,6 +16,15 @@ local function mk_rand_test(
   local hdrs, outbody, status = curl.post(tbp_url, nil, JSON:encode(T1))
   assert(status == 200 )
   local tid = get_test_id(hdrs)
+  -- check that basic data got added as required
+  local chk_T1  = get_test_info(tid)
+  assert(T1.name == chk_T1.name)
+  assert(#T1.Variants == #chk_T1.Variants)
+  if ( T1.description ) then 
+    assert(T1.description == chk_T1.description)
+  else
+    assert(not chk_T1.description)
+  end
 
   -- V2 has id and V1 has custom_data/description, so bring stuff into V2
   local T2  = get_test_info(tid)
@@ -30,7 +39,6 @@ local function mk_rand_test(
   end
   for k2, v2 in ipairs(V2) do 
     if ( ( v2.custom_data ) or ( v2.description ) )  then 
-      print("HAS custom data or description")
       local A = {}
       A.id = tid
       A.Updater = R.rand_admn()
@@ -61,6 +69,8 @@ local function mk_rand_test(
       end
     end
   end
+  --=== Add filters TODO  P2
+  --=== Add device cross variant  TODO  P1
   return tid
 end
 return mk_rand_test

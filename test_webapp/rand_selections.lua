@@ -106,7 +106,6 @@ local function rand_vrnt(
     end
     local x = math.random(1, 10)
     if ( x == 1 ) then 
-      print("Setting custom data")
       local y = math.random(1, 2)
       v.description = trim(tostring(math.random(1, 1000000000) .. salt))
       if ( y == 1 ) then 
