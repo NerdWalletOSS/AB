@@ -49,6 +49,7 @@ l_add_test(
           TEST_STATE_TERMINATED);
       break;
     case 3: // nil to archived => Nothing to do
+      go_BYE(-1); 
       break;
     case 4: // stared to started => Nothing to do
       break;
@@ -60,10 +61,10 @@ l_add_test(
       status = free_test(test_idx); 
       break;
     case 7: // terminated to started
-      go_BYE(-1); 
+      /* allowed for XYTests */ // TODO P1  RAMESH 
       break;
     case 8: // terminated to terminated
-      go_BYE(-1); 
+      go_BYE(-1);  // TODO P1 THINK ABOUT WHAT TO DO HERE 
       break;
     case 9: // terminated to archived
       status = free_test(test_idx); 
