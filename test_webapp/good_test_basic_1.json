@@ -1,0 +1,26 @@
+{
+  "TestType": "XYTest",
+  "Channel": "facebook",
+  "BinType": "anonymous",
+  "description": "some bogus description",
+  "Creator": "joe",
+  "name": "T1",
+  "id": "",
+  "Variants": [{
+    "name": "Control",
+    "percentage": "50",
+    "url": "http://www.google.com"
+  },
+  {
+    "name": "Variant_A",
+    "percentage": "30",
+    "url": "http://www.yahoo.com"
+  },
+  {
+    "id": "300",
+    "name": "Variant_B",
+    "percentage": "20",
+    "url": "http://www.cnn.com"
+  }
+  ]
+}

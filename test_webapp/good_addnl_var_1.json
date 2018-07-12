@@ -1,0 +1,9 @@
+{
+  "TestType": "ABTest",
+  "TestName": "T1",
+  "TestID": "100",
+  "VariantName": "Variant_A",
+  "VariantID": "200",
+  "CustomData": { "test" : "abc" },
+  "Description": "Description of Variant A"
+}

@@ -1,0 +1,4 @@
+
+Changes in SDK to make compliant with NW SDK
+
+

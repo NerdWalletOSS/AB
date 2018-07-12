@@ -1,0 +1,8 @@
+TEMP.*
+*.pdf
+.meta
+*.aux
+*.log
+*.toc
+*.bbl
+*.out

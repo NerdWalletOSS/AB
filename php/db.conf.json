@@ -1,0 +1,11 @@
+{
+  "dbhost" : "127.0.0.1",
+  "dbname" : "abdb",
+  "dbuser" : "root",
+  "dbpass" : "",
+  "ab_rts_server" : "localhost",
+  "ab_rts_port" : "8000",
+  "rts_finder_server" : "",
+  "rts_finder_port" : "",
+  "check_url_reachable" : "true",
+}

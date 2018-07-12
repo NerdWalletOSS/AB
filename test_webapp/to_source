@@ -1,0 +1,2 @@
+ export AB_WEBAPP_STANDALONE=true
+ export AB_CONFIG_FILE=$PWD/standalone_db.json

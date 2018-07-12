@@ -1,0 +1,136 @@
+\documentclass[letterpaper]{article}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../styles/ramesh_abbreviations}
+\begin{document}
+\title{AB --- Design of the RTS}
+\author{ Ramesh Subramonian }
+\maketitle
+\thispagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{{\small Data Science Team}}
+\cfoot{}
+\rfoot{{\small \thepage}}
+
+\section{Introduction}
+
+The AB Run Time Server serves two purposes 
+\be
+\item Its primary purposes is to provide bucketing decisions for AB tests for
+  other services and applications. For example, should user A be treated as
+  Control or as Variant for test X? 
+\item It is also used by Marketing to route SEM (Search Engine Marketing)
+  traffic 
+  \ee
+
+\section{Speed and Scalability}
+
+Since the AB RTS is a blocking (see disclaimer below) call for most other
+services, it must have a very low response time, otherwise it will adversely
+impact user experience. Also, since experimentation is
+wide spread throughout the site, it must have high throughput.
+Our goal is to be able to support an average response time of 100
+\(\mu\)-seconds while supporting a traffic of 10,000 requests per second.
+
+Are calls to the AB RTS blocking? When used as an AB system, the clients are
+programmed to timeout if the response time is excessive. In such cases, they
+upstream systems behave ``as if'' the AB RTS had responded with ``Control''.
+When used as a marketing traffic router, the AB RTS is blocking.
+
+\section{The use of Lua and C}
+
+\subsection{Naming conventions}
+
+All Lua functions exposed to C will be prefixe with \verb+l_+, e.g.,
+\verb+l_add_test()+
+\section{Multi-threading}
+
+For all practical purposes, the AB RTS is a single-threaded system.
+However, in order to keep the main thread free to respond to client requests, we
+have 2 additional threads for the following purposes
+\be
+\item {\bf Logging:} The RTS is required to send an HTTP POST request to a
+  logging server, informing about it bucketing decisions that it makes. 
+\item {\bf Updates:} Changes made in the AB Admin Interface need to be
+  propagated to the RTS. These cause updates to the data structures that the RTS
+  uses to respond quickly.
+  \ee
+
+\section{Global Variables}
+
+Global variables are 
+\bi
+\item declared in \verb+ab_globals.h+
+\item initialized in \verb+zero_globals()+
+\item freed in \verb+zero_globals()+
+\item all start with \verb+g_+
+\item most of these are written to by Lua and read by C. There are a few
+  exceptions, as noted in \verb+ab_globals+
+\ei
+
+\subsection{Counters}
+
+The counters are listed in Table~\ref{tbl_counters}.
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Counter } & {\bf Comment} \\ \hline
+\input{_counters.tex}
+\hline
+\end{tabular}
+\caption{Counters}
+\label{tbl_counters}
+\end{table}
+
+
+\subsection{statsd}
+
+TODO \TBC 
+
+\section{Endpoints}
+The endpoints listed in Table~\ref{tbl_endpoints} are supported.
+\begin{table}[hb]
+\centering
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|}  \hline \hline
+  {\bf Endpoint } & {\bf Read/Write} & {\bf Responsible party} \\ \hline \hline
+\input{_endpoints.tex}
+\hline
+\end{tabular}
+\caption{End-points}
+\label{tbl_endpoints}
+\end{table}
+
+\section{Logging bucketing decisions}
+
+The AB RTS logs bucketing decisions by making a POST request to the logger
+service with the fields listed below
+\verbatiminput{_logger_fields}
+
+\TBC
+
+\section{Miscellaneous}
+\subsection{Feature requests from Robby}
+\be
+\item 
+If you see an incoming \verb+X-Caller-Client-ID+ header, 
+include it as callerClientID on any ServiceCallHeaders in events you emit.
+\item If you see an \verb+X-Cookie-ID+ or \verb+X-Request-ID+ HTTP header, 
+\be
+\item include it in any outbound calls you make to other NW services.
+\item include it as cookieId or requestId on any EventHeaders in events you emit.
+\ee
+\item Generally send an ``ab-service'' \verb+X-Caller-Client-ID+ header 
+with all outbound calls you make.
+\ee
+\end{document}
