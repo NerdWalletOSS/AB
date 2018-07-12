@@ -59,8 +59,6 @@ local function change_state(
     end
   end
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
-  for k, v in pairs(hdrs) do print(k, v) end 
-  print(outbody)
   assert(status == 200)
   return true
 end
