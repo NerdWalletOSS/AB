@@ -17,7 +17,7 @@ require_once 'inform_rts.php';
 require_once 'is_new_test.php';
 require_once 'start_log.php';
 require_once 'dup_row.php';
-error_reporting(E_NOTICE);
+error_reporting(E_ALL);
 
 function test_basic(
   $str_inJ
