@@ -54,9 +54,15 @@ function add_addnl_var_info(
       continue; 
     }
     rs_assert($found == false); 
-    $custom_data = trim($v->{'custom_data'});
-    $description = trim($v->{'description'});
-    $url         = trim($v->{'url'});
+    if ( isset($v->{'custom_data'} ) ) {
+      $custom_data = trim($v->{'custom_data'});
+    }
+    if ( isset($v->{'description'} ) ) {
+      $description = trim($v->{'description'});
+    }
+    if ( isset($v->{'url'} ) ) {
+      $url         = trim($v->{'url'});
+    }
     $vname = trim($v->{'name'});
     $found = true;
     break;
@@ -128,6 +134,7 @@ function add_addnl_var_info(
   db_set_row("request_webapp", $request_webapp_id, $Y);
   header("Error-Code: $http_code");
   header("Error-Message: ".$err);
+  header("Description: <<$description>>");
   http_response_code($http_code);
   return $outJ;
 }

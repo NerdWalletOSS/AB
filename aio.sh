@@ -26,12 +26,16 @@ buildall(){
   sudo apt-get install gcc cmake g++ -y
   sudo pip install pystatsd
   clean
-  install_test_deps
+  # install_test_deps
   set -e
   build
 }
 
 build(){
+  echo "############So files"
+  find . -name "*.so"
+  echo "############So files"
+
   rm -rf bin
   mkdir bin
   cd ./src

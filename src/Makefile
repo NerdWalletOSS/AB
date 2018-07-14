@@ -16,9 +16,8 @@ INCS= -I. \
 	-I../libmaxminddb-1.3.2/projects/VS12/ \
 	-I../librdkafka/src/ \
 	-I../jansson-2.10/src/ \
-	-I ../mysql-connector-c-6.1.6-src/include/\
-	-I../USER_AGENT_CLASSIFIER/src/ \
-	-I/usr/include/mysql/
+	-I ../mysql-connector-c-6.1.6-src/include/ \
+	-I../USER_AGENT_CLASSIFIER/src/ 
 
 DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
@@ -70,7 +69,7 @@ all : ab_httpd \
 ../jansson-2.10/src/.libs/libjansson.so :
 	cd .. && tar -zxvf jansson-2.10.tar.gz && cd jansson-2.10/ && ./configure && make && cd ../src/
 
-ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so
+ab_auxil.o : ../curl-7.51.0/include/curl/curlbuild.h ../librdkafka/src/librdkafka.so ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 
 ab_incs.h : ../curl-7.51.0/include/curl/curlbuild.h
 
@@ -107,7 +106,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 	$(CC) -c load_mdl.c -o load_mdl.o $(CFLAGS) $(INCS)
 
 
-.c.o : ../curl-7.51.0/lib/.libs/libcurl.so  
+.c.o : ../curl-7.51.0/lib/.libs/libcurl.so  ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS) $(DBGFLAGS)
 
 ../lua-5.1.3/src/liblua.a :
@@ -134,7 +133,8 @@ load_mdl.o : load_mdl.c load_mdl.h
 ./libs/libevent.so: ./libs ../libevent-2.0.22-stable/.libs/libevent.so
 	cp ../libevent-2.0.22-stable/.libs/libevent.so ./libs/libevent.so
 
-$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so
+$(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libmaxminddb.so ./libs/librdkafka.so ./libs/libcurl.so ../jansson-2.10/src/.libs/libjansson.so ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
+
 
 
 ../statsd-c-client-master/libstatsdclient.so :
@@ -144,7 +144,11 @@ $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a ./libs/libevent.so ./libs/libma
 	cp ../statsd-c-client-master/libstatsdclient.so ./libs/libstatsdclient.so
 
 ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so:
-	cd ../ && rm -rf mysql-connector-c-6.1.6-src && tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles" && make
+	cd ../ && \
+		rm -rf mysql-connector-c-6.1.6-src && \
+		tar -xvzf mysql-connector-c-6.1.6-src.tar.gz && \
+		cd mysql-connector-c-6.1.6-src && cmake -G "Unix Makefiles" && \
+		make
 
 ./libs/libmysqlclient.so: ./libs ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so
 	cp ../mysql-connector-c-6.1.6-src/libmysql/libmysqlclient.so ./libs/libmysqlclient.so
@@ -189,7 +193,8 @@ ab_httpd : $(COBJS)  \
 	../libyuarel/yuarel.o \
 	./libs/libmysqlclient.so \
 	./libs/libmaxminddb.so \
-	./libs/librdkafka.so
+	./libs/librdkafka.so \
+	./libs/libmysqlclient.so 
 	$(CC) $(CFLAGS) $(COBJS) \
 	  -o ab_httpd  \
 	./libs/libstatsdclient.so \
