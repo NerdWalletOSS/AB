@@ -1,6 +1,6 @@
 require 'busted.runner'()
 local assertx = require 'lua/assertx'
--- local dbg = require 'debugger'
+local dbg = require 'lua/debugger'
 local ffi = require 'lua/ab_ffi'
 local JSON = require 'lua/JSON'
 local consts = require 'lua/ab_consts'
@@ -172,7 +172,7 @@ describe('AddTest framework', function()
         j_table.TestType = nil
         local j_str = JSON:encode(j_table)
         local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
-        assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
+        assertx(status == false, "Insert for valid test should succeed. Failure: ", res)
         status, res = pcall(AddTest.add, j_str, g_tests, c_index)
         assert(status == false)
         cleanup(g_tests, c_index)
@@ -597,7 +597,7 @@ describe('AddTest framework', function()
     j_table.TestType = "InvalidTest"
     local j_str = JSON:encode(j_table)
     local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
-    assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
+    assertx(status == false, "Insert for valid test should succeed. Failure: ", res)
     local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
     assert(status == false)
     cleanup(g_tests, c_index)

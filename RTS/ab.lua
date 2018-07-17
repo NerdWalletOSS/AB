@@ -1,3 +1,6 @@
+-- ab.lua is the only place where we have globals rest all use locals.
+-- All function call from C are registered here.
+-- Also the globals are functions.
 local cache = require 'lua/cache'
 local JSON  = require 'lua/JSON'
 local x_hard_code_config = require 'lua/hard_code_config'
@@ -12,6 +15,7 @@ function load_config(...)
   cache.put("config", x_load_config.load_config(...))
 end
 
+-- not used anymore TODO IS delete
 function hard_code_config(...)
   local cfg = x_hard_code_config(...)
   cache.put("config", cfg)
@@ -36,7 +40,10 @@ function list_tests()
   local o_table = {}
   if ( not tests ) then return " [] " end
   for _,v in pairs(tests) do
-    o_table[#o_table + 1] = v
+    local entry = {}
+    entry.name = v.name
+    entry.TestType = v.TestType
+    o_table[#o_table + 1] = entry
   end
   return JSON:encode(o_table)
 end
@@ -49,6 +56,7 @@ function check_db_conn()
   local configs = cache.get('config').AB.DB
   local conn = load_config.db_connect(configs)
   assert(conn ~= nil, "must be a valid connection object")
+  conn:close() -- TODO RS Integrate into webserver
 end
 
 function get_config()
