@@ -7,6 +7,8 @@ $(document).ready(function() {
       url: "processor/insert_test_processor.php",
       data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
+        console.log(response);
+        console.log("I AM HERE");
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
@@ -22,7 +24,12 @@ $(document).ready(function() {
       },
       success: function(response, textStatus, XHR) {
         console.log(response);
+        console.log(response);
+        console.log("1111111111111")
         console.log(XHR);
+        console.log("1111111111111")
+        console.log(textStatus);
+        console.log("222222222222222");
         console.log(XHR.getAllResponseHeaders());
         var id = XHR.getResponseHeader('TestID');
         console.log(id);

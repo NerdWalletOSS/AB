@@ -4,18 +4,17 @@ require_once "set_path.php";
 
 // -- CALL REQUIRED FILES
 require_once "header.php"; 
+require_once "config_html.php"; 
+require_once "html_header.php";
 
 // -- TEST TestID CREDENTIALS
-if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
-	{
-		header('Location: error.php?error="TestID is not set"');
-		return false;
-	}
-# -- Check if number of TestID are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == ""))) {
+  header('Location: error.php?error="TestID is not set"');
+  return false;
+}
+$id = $_GET['TestID'];
 require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
-require_once "html_headers.php";
 ?>
 <script src="js/add_addln_var_info.js"></script>
 <?php

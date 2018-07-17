@@ -26,11 +26,13 @@ tests.t1 = function(num_iters, num_hits)
     local choice = rand_set("rts_endpoints")
     if ( choice == "add_test" ) then 
       local T = rand_test()
-      print(i, T.TestType, T.State, T.final_variant_idx, T.final_variant_id)
       a, b, c = curl.get(at_url, nil, JSON:encode(T))
     elseif ( choice == "diagnostics" ) then 
-      local a, b, c = curl.get(dc_url); assert(c == 200)
+      a, b, c = curl.get(dc_url); assert(c == 200)
       a, b, c = curl.get(dl_url); assert(c == 200)
+    elseif ( choice == "list_tests" ) then 
+      a, b, c = curl.get(ltc_url); assert(c == 200)
+      a, b, c = curl.get(ltl_url); assert(c == 200)
     else
       assert(nil, "not implemented" .. choice)
     end
