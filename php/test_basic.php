@@ -280,7 +280,7 @@ function test_basic(
       $A = db_get_rows("attr", "((attr_type_id = $attr_type_id) and (is_del = false))");
       if ( !empty($A) ) { 
         foreach ( $A as $a ) { 
-          var_dump($a);
+          //var_dump($a);
           $attr_id = $a['id'];
           $CV = db_get_rows("cat_attr_val", 
             "((attr_id = $attr_id) and (is_del = false))");

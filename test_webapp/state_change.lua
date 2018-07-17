@@ -53,7 +53,7 @@ local function change_state(
       T.Winner = optargs.Winner
     else
       local V = T.Variants
-      local vidx = math.random(#V)
+      local vidx = math.random(1, #V)
       T.Winner = V[vidx].name
     end
   end

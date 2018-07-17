@@ -17,6 +17,7 @@ if (isset($id) && ($id != "")) {
 // -- STANDARD HEADER INFORMATION
 require_once "header.php"; 
 require_once "display_logic_aev_test.php";
+require_once "html_header.php";
 ?>
 <script src="js/insert_test.js"></script>
 <?php 

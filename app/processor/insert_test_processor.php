@@ -13,7 +13,7 @@ ob_start();
 if ( !$_POST ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
-var_dump($_POST);
+//var_dump($_POST);
 $str_inJ = json_encode($_POST);
 $json_input = create_good_json_test($str_inJ);
 if ( !$json_input ) {
@@ -23,7 +23,8 @@ if ( !$json_input ) {
 //-------------------------------------
 // Call to add test
 $rslt =  test_basic($json_input);
+//print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
-ob_clean();
+ob_flush();
 
 ?>

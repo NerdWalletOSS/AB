@@ -39,7 +39,7 @@ if (isset($url) && ($url != "")) {$V[$i]['url']  = get_json_element($inJ, 'VURL_
 
 $X['Variants'] = $V;
 $outJ = json_encode($X);
-echo $outJ;
+//echo $outJ;
 return $outJ;
 
 }
