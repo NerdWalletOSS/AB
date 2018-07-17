@@ -7,7 +7,7 @@ require_once 'make_pos_int.php';
 require_once 'make_boolean.php';
 require_once 'db_get_rows.php';
 function load_configs(
-  $conf_file = "/opt/abadmin/db.json",
+  $conf_file = "/opt/abadmin/db2.json",
   $reload=false
 )
 {
