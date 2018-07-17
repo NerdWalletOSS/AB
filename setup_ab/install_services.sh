@@ -16,6 +16,9 @@ install_mysql(){
 
 install_statsd(){
   audo apt-get install ngrep
+  cd ../
+  bash aio.sh -t
+  cd -
   pip install pystatsd
   python -c 'import pystatsd; pystatsd.Server().serve()' &
 
