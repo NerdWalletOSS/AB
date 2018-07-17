@@ -1,6 +1,6 @@
 <?php
 function extract_sql_params(
-      $conf_file = "/opt/abadmin/db.json",
+      $conf_file = "/opt/abadmin/db2.json",
       &$dbuser, 
       &$dbpass, 
       &$dbhost, 
