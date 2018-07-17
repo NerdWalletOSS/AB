@@ -34,10 +34,9 @@ tests.t1 = function (
   winners["XYTest"] = T1.Variants[1].name
 
   -- Create test of type = ABTest
-  optargs.TestType = "ABTest"
   local tid2 = mk_rand_test({ TestType = "ABTest"})
-  local T2 = get_test_info(tid1)
-  winners.ABTest = T1.Variants[1].name
+  local T2 = get_test_info(tid2)
+  winners.ABTest = T2.Variants[1].name
 
   local tids = { }
   tids.XYTest = tid1
