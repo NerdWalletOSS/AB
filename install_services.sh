@@ -27,7 +27,7 @@ sudo pip install pystatsd
 }
 
 
-
-
+install_statsd
+install_mysql
 # install_apache
 # install_php
