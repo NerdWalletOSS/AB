@@ -14,13 +14,13 @@ if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
 # -- Check if number of TestID are set.
 if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
 require_once "display_logic_aev_test.php";
+require_once "config_html.php";
 $config = config_html($TestType);
-require_once "html_headers.php";
+require_once "html_header.php";
 ?>
 <script src="js/add_addln_var_info.js"></script>
 <?php
 require_once "navbar.php";
-require_once "config_html.php";
 ?>
 
   <div class="container theme-showcase" role="main">

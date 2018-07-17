@@ -23,7 +23,7 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         console.log(response);
         console.log(XHR);
-        console.log(XHR.getAllResponseHeaders());
+        //console.log(XHR.getAllResponseHeaders());
         var id = XHR.getResponseHeader('TestID');
         console.log(id);
         window.location = "aev_test_2.php?TestID=" + id;
