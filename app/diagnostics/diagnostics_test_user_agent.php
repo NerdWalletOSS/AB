@@ -24,22 +24,12 @@ $url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
 $http_code = 0;
 $rslt = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt );
+var_dump($data);
 if (!$data) {
 echo "User Agent unavailable";
 } else {
-//print_r(json_decode($rslt));
-
-$iter = new RecursiveIteratorIterator( new RecursiveArrayIterator(json_decode($rslt,true)), RecursiveIteratorIterator::SELF_FIRST);
-
-foreach($iter as $key=>$value) { 
-   if(is_array($value))
-     { echo "$key: \n"; }
-   else
-     { echo "$key => $value \n"; } 
+print("<pre>".print_r($rslt,true)."</pre>");
 }
-
-}
-
 ?>
 </table>
           </div>
