@@ -98,5 +98,5 @@ tests.t1 = function(
   end
   print("Test t1 succeeded")
 end
-tests.t1(333) -- TO COMMENT OUT
+tests.t1(1000) -- TO COMMENT OUT
 return tests
