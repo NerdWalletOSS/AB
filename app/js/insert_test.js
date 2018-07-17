@@ -7,6 +7,10 @@ $(document).ready(function() {
       url: "processor/insert_test_processor.php",
       data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
+				console.log(response);
+				console.log(textStatus);
+				console.log(XHR);
+				console.log(response.getAllResponseHeaders());
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
@@ -21,6 +25,10 @@ $(document).ready(function() {
         }
       },
       success: function(response, textStatus, XHR) {
+				console.log(response);
+				console.log(textStatus);
+				console.log(XHR);
+				console.log(response.getAllResponseHeaders());
         var id = XHR.getResponseHeader('TestID');
         window.location = "aev_test_2.php?TestID=" + id;
       },

@@ -30,11 +30,13 @@ unset($_SESSION['test_status']);
 ?>
 
 			<div class="table-responsive">
-<table class="table table-striped" >
-<tr><td><b>SERVER</b></td><td><b>PORT</b></td><td><b>Check RTS</b></td></tr>
 <?php
 $SP = list_rts();
 if ( $SP ) { 
+?>
+<table class="table table-striped" >
+<tr><td><b>SERVER</b></td><td><b>PORT</b></td><td><b>Check RTS</b></td></tr>
+<?php
    foreach ( $SP as $sp ) { 
        $server = $sp['server']; $port = $sp['port'];
 	echo "<tr><td>".$server."</td><td>".$port."</td>
