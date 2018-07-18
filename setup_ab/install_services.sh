@@ -5,11 +5,14 @@ install_mysql(){
   if [ $RES -ne 0 ]
   then
     sudo apt-get update
-    sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password
-    password x'
-    sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
+  
+		sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password x'
+		sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password x'
+
+
     sudo apt-get install mysql-server -y
     mysql -uroot -px -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
+    mysql -uroot < ../sql/create_table.sql
   fi
 }
 
@@ -19,7 +22,7 @@ install_statsd(){
   cd ../
   bash aio.sh -t
   cd -
-  pip install pystatsd
+  sudo pip install pystatsd
   python -c 'import pystatsd; pystatsd.Server().serve()' &
 
 }
@@ -44,7 +47,6 @@ install_apache_php(){
   cd -
 }
 
-set -e
 cd ../
 bash aio.sh -b
 cd -
