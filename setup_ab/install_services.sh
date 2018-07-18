@@ -15,7 +15,7 @@ install_mysql(){
 
 
 install_statsd(){
-  audo apt-get install ngrep
+  sudo apt-get install ngrep -y
   cd ../
   bash aio.sh -t
   cd -
@@ -31,6 +31,19 @@ install_logger(){
   cd -
 }
 
+install_kafka(){
+  cd ../test_kafka
+  bash ./setup_kafka.sh -i
+  bash ./setup_kafka.sh -r
+  cd -
+}
+
+install_apache_php(){
+  cd ../
+  bash install.sh
+  cd -
+}
+
 set -e
 cd ../
 bash aio.sh -b
@@ -39,5 +52,5 @@ cd -
 install_statsd
 install_mysql
 install_logger
-# install_apache
-# install_php
+install_kafka
+install_apache_php

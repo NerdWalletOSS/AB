@@ -14,7 +14,7 @@ usage(){
 install_kafka(){
 	sudo apt-get update
 	# sudo apt-get install default-jre -y
-	sudo apt-get install openjdk-8-jdk
+	sudo apt-get install openjdk-8-jdk -y
 	sudo apt-get install zookeeperd zookeeper -y
 	# RES="`echo ruok | nc localhost 2181`"
 	# if [[ "$RES" != "imok" ]]
@@ -35,9 +35,9 @@ install_kafka(){
 	sudo chown -R kafka:nogroup /opt/kafka
 	sudo chown -R kafka:nogroup /var/lib/kafka
 	sudo /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties &
-	/opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic ab &
-	kill -9 %2
-	/opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181 | grep "ab"
+	sudo /opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic ab &
+	sudo kill -9 %2
+	sudo /opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181 | grep "ab"
 	RES="`echo $?`"
 	if [[ "$RES" != "0" ]]
 	then
