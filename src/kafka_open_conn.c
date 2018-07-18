@@ -65,18 +65,16 @@ kafka_open_conn(
   //   }
   // }
 
-  // // /* Set max time for which buffering takes place  */
-  // // const char* retries = "0"; // max 10000000
-  // // Ideas at
-  // // https://github.com/edenhill/librdkafka/wiki/How-to-decrease-message-latency
-  // if ( (config.max_buffering_time != NULL) && (*config.max_buffering_time != '\0') ) {
-  //   if (rd_kafka_conf_set(g_kafka_conf, "queue.buffering.max.ms", config.max_buffering_time,
-  //         g_err, sizeof(g_err)) != RD_KAFKA_CONF_OK) {
-  //     fprintf(stderr, "%s\n", g_err);
-  //     // add error to g_err
-  //     go_BYE(-1);
-  //   }
-  // }
+   // /* Set max time for which buffering takes place  */
+  // https://github.com/edenhill/librdkafka/blob/master/INTRODUCTION.md#high-throughput
+  if ( (config.max_buffering_time != NULL) && (*config.max_buffering_time != '\0') ) {
+    if (rd_kafka_conf_set(g_kafka_conf, "queue.buffering.max.ms", config.max_buffering_time,
+          g_err, sizeof(g_err)) != RD_KAFKA_CONF_OK) {
+      fprintf(stderr, "%s\n", g_err);
+      // add error to g_err
+      go_BYE(-1);
+    }
+  }
 
 
   /* Set max retries before returning an error */
