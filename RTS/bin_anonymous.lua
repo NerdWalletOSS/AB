@@ -157,7 +157,7 @@ local function add_device_specific_started(c_test, test_data)
     for _,dev in ipairs(dev_variants) do
       dev.id = dev.variant_id
     end
-    -- STRONG ASSUMPTION is that the devices will have ids starting from 0
+    -- STRONG ASSUMPTION is that the devices will have ids starting from 1
     -- Idea is bin[device_id]
     local index = index_to_key_map[device_name] - 1
     assert(seen[index] == false)

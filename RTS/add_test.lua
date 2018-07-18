@@ -45,39 +45,36 @@ end
 local function get_pos(g_tests, test_data,  test_type_id, c_index, name_hash, match_func)
   local original_position = tonumber(name_hash % consts.AB_MAX_NUM_TESTS)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
-  local position = original_position
+  local position = original_position - 1
   local test = nil
-  local stop = false
   repeat
-    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
     position = position + 1
-    if position == consts.AB_MAX_NUM_TESTS or  match_func(test, test_data, name_hash) then
-      stop = true
+    test = g_tests[position]
+    if match_func(test, test_data, name_hash) then
+      break
     end
-  until stop == true
+  until position == consts.AB_MAX_NUM_TESTS - 1
+  
   if match_func(test, test_data, name_hash) then
-    c_index[0] = position -1
+    c_index[0] = position
+    return test, name_hash
+  end 
+  
+  -- Now search from 0 to orignal position -1
+  position = -1
+  repeat
+    position = position + 1
+    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
+    if match_func(test, test_data, name_hash) then
+      break
+    end
+  until position == original_position
+  if match_func(test, test_data, name_hash) then
+    c_index[0] = position
     return test, name_hash
   else
-    -- Now search from 0 to orignal position -1
-    position = 0
-    stop = false
-    repeat
-      test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
-      position = position + 1
-      if (position - 1)== original_position or match_func(test, test_data, name_hash)then
-        stop = true
-      end
-    until stop == true
-    if match_func(test, test_data, name_hash) then
-      -- test.name_hash = name_hash
-      -- print(position -1)
-      c_index[0] = position - 1
-      return test, name_hash
-    else
-      c_index[0] = -1
-      return -1
-    end
+    c_index[0] = -1
+    return -1
   end
 end
 

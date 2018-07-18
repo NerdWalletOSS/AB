@@ -358,6 +358,8 @@ describe('AddTest framework', function()
             local status, res = pcall(do_malloc_if_needed, g_tests, j_str)
             assertx(status == true, "Insert for valid test should succeed. Failure: ", res)
             -- dbg()
+            -- put 6 random entries for devices
+            cache.put("devices", {1,2,3,4,5,6})
             local status, res = pcall(AddTest.add, j_str, g_tests, c_index)
             assertx(status == true, res)
             local dev_variants = j_table.DeviceCrossVariant

@@ -15,13 +15,6 @@ function load_config(...)
   cache.put("config", x_load_config.load_config(...))
 end
 
--- not used anymore TODO IS delete
-function hard_code_config(...)
-  local cfg = x_hard_code_config(...)
-  cache.put("config", cfg)
-  x_load_config.load_db_data(cfg.AB)
-end
-
 function update_config(...)
   x_update_config(...)
 end
@@ -83,7 +76,6 @@ end
 
 function diagnostics(...)
   x_diagnostics()
-
 end
 -- function add(c_str, c_data)
 --    -- print("hi from lua", c_str)
