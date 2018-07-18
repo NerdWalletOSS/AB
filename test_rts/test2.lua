@@ -21,9 +21,11 @@ tests.t1 = function(
   if ( not test_php) then test_php = true end 
 
   reload_db(plpath.currentdir() .. "/abdb2_100.sql") -- TODO Improve path
+  print("SQL Reload done")
 
   for i = 1, num_iters do 
     local a, b, c = curl.get("localhost:8000/Reload"); assert(c == 200)
+    print("Reload done")
     a, b, c = curl.get(ltc_url);   assert(c == 200)
     local Lc = JSON:decode(b)
 
@@ -31,17 +33,22 @@ tests.t1 = function(
     local Ll = JSON:decode(b)
     assert(#Ll == #Lc)
     assert(#Ll == 25)
+    print("List tests done")
 
     a, b, c = curl.get(dl_url);   assert(c == 200)
     a, b, c = curl.get(dc_url);   assert(c == 200)
 
+    print("Diagnostics done")
     if ( test_php )  then
       a, b, c = curl.get(php_url);  
+      print("PHP Check tests done")
       if ( c ~= 200 ) then
         print(i, b, c, php_url)
       end
+      print(php_url)
       assert(c == 200)
     end
+    print("iter " .. i)
   end
   print("Test t1 terminated")
 end

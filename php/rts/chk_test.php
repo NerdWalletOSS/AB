@@ -30,6 +30,7 @@ function chk_test(
     get_url($S, $P, $url, $http_code, $rslt); 
     rs_assert($http_code == 200, "Bad http code from RTS"); 
     $T1 = json_decode($rslt);
+    var_dump($rslt);
     rs_assert($T1, "bad JSON from RTS");
     $T2 = db_get_test(null, $test_name, $test_type);
     //print("<pre>".print_r($T2,true)."</pre>");
@@ -49,8 +50,7 @@ function chk_test(
   }
   return true;
 }
-/*
-$x = chk_test(' { "TestName" : "Test1", "TestType" : "XYTest" } ');
+$x = chk_test(' { "TestName" : "T3", "TestType" : "ABTest" } ');
 var_dump($x);
- */
+
 ?>
