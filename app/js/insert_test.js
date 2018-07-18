@@ -25,7 +25,7 @@ $(document).ready(function() {
         console.log(XHR);
         //console.log(XHR.getAllResponseHeaders());
         var id = XHR.getResponseHeader('TestID');
-        console.log(id);
+        console.log("TEST ID = " + id);
         window.location = "aev_test_2.php?TestID=" + id;
       },
       beforeSend: function() {
