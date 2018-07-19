@@ -24,7 +24,7 @@ function list_rts(
     $server = $configs->{'ab_rts_server'};
     $port   =  $configs->{'ab_rts_port'};
     if ( ( $server == "" ) || ($port == "" ) )  {
-      echo("NO RTS found\n");
+      // echo("NO RTS found\n");
       return null;
     }
 
@@ -58,7 +58,7 @@ function list_rts(
     return $SP;
   }
   else {
-    echo("NO RTS found\n");
+    // echo("2: NO RTS found\n");
     return null;
   }
 }
@@ -73,5 +73,5 @@ if ( $SP ) {
 else {
   echo "Not using RTS\n";
 }
- */
+*/
 ?>

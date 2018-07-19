@@ -41,8 +41,5 @@ $X['Variants'] = $V;
 $outJ = json_encode($X);
 //echo $outJ;
 return $outJ;
-
 }
-
 ?>
-
