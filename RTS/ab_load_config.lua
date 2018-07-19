@@ -53,6 +53,7 @@ function load_cfg.load_config(config_file)
   assert(port ~= nil and port >= 0 and port < 2^16 - 1, "Mysql entry must have a valid port")
   local db = mysql.DATABASE.VALUE
   assert(db ~= nil and type(db) == "string" and #db > 0, "Mysql entry must have a valid database")
+  cache.put("config", config)
   return config
 end
 
