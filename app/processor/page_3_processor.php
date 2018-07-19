@@ -39,7 +39,7 @@ $rslt =  set_device_specific_variant(json_encode($T));
 print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
 if (isset($rslt["msg_stderr"])) {
-header("Error-Msg-Out: ".$rslt["msg_stderr"]);
+header("Error-Message: ".$rslt["msg_stderr"]);
 }
 //ob_clean();
 ?>
