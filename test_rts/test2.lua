@@ -52,6 +52,7 @@ tests.t1 = function(
         assert(c == 200)
       end
     end
+    print("iter " .. i)
   end
   print("Test t1 terminated")
 end

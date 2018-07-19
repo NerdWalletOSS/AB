@@ -9,21 +9,23 @@ require_once '../create_good_json_test.php';
 //-----------------------------------------------------------
 //-------- ACCESS POST parameters
 
-ob_start();
+// RS TODO Is this needed? ob_start();
 if ( !$_POST ) {
   echo '{ "InsertTest" : "ERROR", "Message" : "No paylaod" }'; exit;
 }
-var_dump($_POST);
+//var_dump($_POST);
 $str_inJ = json_encode($_POST);
 $json_input = create_good_json_test($str_inJ);
 if ( !$json_input ) {
-  echo '{ "InsertTest" : "ERROR", "Message" : "Bad JSOn" }'; exit;
+  echo '{ "InsertTest" : "ERROR", "Message" : "Bad JSON" }'; exit;
 }
 //print("<pre>".print_r($json_input,true)."</pre>"); exit();
 //-------------------------------------
 // Call to add test
 $rslt =  test_basic($json_input);
+//// TODO Set the status code here 
+//print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
-ob_clean();
-
+header("XXXXXX: YYYYYY");
+// RS TODO Is this needed? ob_flush();
 ?>

@@ -24,7 +24,8 @@ if (isset($TestType))
 			}
 
 		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ")");
-	}
+        }
+require_once "html_header.php";
 ?>
 <!-- PAGE SPECIFIC FILE CALLS -->
   <link href="css/dataTables.min.css" rel="stylesheet">

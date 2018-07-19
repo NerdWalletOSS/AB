@@ -59,6 +59,7 @@ function list_rts(
   }
   else {
     // echo("NO RTS found\n");
+
     return null;
   }
 }
@@ -73,5 +74,5 @@ if ( $SP ) {
 else {
   echo "Not using RTS\n";
 }
- */
+*/
 ?>

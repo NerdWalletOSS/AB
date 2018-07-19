@@ -70,8 +70,11 @@ function chk_test_basic(
     assert(is_string($perc) || is_numeric($perc));
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
-
+    if (isset($v->{'url'})){
     $variant_urls[$vidx] = $v->{'url'};
+    } else {
+    $variant_urls[$vidx] = "";
+    }
 
     $vidx++;
   }

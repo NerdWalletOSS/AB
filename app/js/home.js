@@ -123,7 +123,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         $("#error_message").html("Loading...")
       }*/
     });
-    option.attr( "checked" );//option.prop('checked', true);
+    option.prop('checked', true);
     return false;
   });
 

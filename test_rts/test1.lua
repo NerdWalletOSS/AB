@@ -76,11 +76,12 @@ tests.t1 = function(
 
       -- Ll = list tests using Lua
       
+
       a, b, c = curl.get(ltl_url);   assert(c == 200)
       local Ll = JSON:decode(b)
-      -- Lc should be same as Ll
       assert(#Ll == #Lc)
      
+
 
       -- check number of tests
       if ( state == "started" ) then
@@ -90,6 +91,7 @@ tests.t1 = function(
       elseif ( state == "archived" ) then
         print(#Lc, state)
         assert(#L == (num_tests - i))
+
       else
         assert(nil)
       end
@@ -98,5 +100,5 @@ tests.t1 = function(
   end
   print("Test t1 succeeded")
 end
-tests.t1(333) -- TO COMMENT OUT
+tests.t1(1000) -- TO COMMENT OUT
 return tests

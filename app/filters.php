@@ -1,3 +1,19 @@
+  <?php
+    switch ( $this_state ) {
+    case "draft" : 
+    case "dormant" : 
+      $mode = "Edit";
+      break;
+    case "started" : 
+    case "terminated" : 
+    case "archived" : 
+      $mode = "View";
+      break;
+    default : 
+      // HANDLE ERROR PROPERLY TODO
+      break;
+    }
+?>
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -80,7 +96,7 @@ else
 ?>
 <td><input class="btn btn-lg btn-success btn-block" type="submit" form="set_filters" id="setFilters" value="Save"></td>
 <?php } ?>
-<td> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="location.href = 'home.php';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
