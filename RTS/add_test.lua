@@ -29,7 +29,7 @@ end
 
 local states = create_state_table(consts)
 
-local function get_test_type(TestType)
+local function get_test_type_id(TestType)
   assert(TestType ~= nil, "Test type cannot be nil")
   local x = tonumber(TestType)
   if x ~= nil then return x end
@@ -42,42 +42,39 @@ local function get_test_type(TestType)
   end
 end
 
-local function get_pos(g_tests, test_data,  test_type, c_index, name_hash, match_func)
+local function get_pos(g_tests, test_data,  test_type_id, c_index, name_hash, match_func)
   local original_position = tonumber(name_hash % consts.AB_MAX_NUM_TESTS)
   g_tests = ffi.cast("TEST_META_TYPE*", g_tests)
-  local position = original_position
+  local position = original_position - 1
   local test = nil
-  local stop = false
   repeat
-    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
     position = position + 1
-    if position == consts.AB_MAX_NUM_TESTS or  match_func(test, test_data, name_hash) then
-      stop = true
+    test = g_tests[position]
+    if match_func(test, test_data, name_hash) then
+      break
     end
-  until stop == true
+  until position == consts.AB_MAX_NUM_TESTS - 1
+  
   if match_func(test, test_data, name_hash) then
-    c_index[0] = position -1
+    c_index[0] = position
+    return test, name_hash
+  end 
+  
+  -- Now search from 0 to orignal position -1
+  position = -1
+  repeat
+    position = position + 1
+    test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
+    if match_func(test, test_data, name_hash) then
+      break
+    end
+  until position == original_position
+  if match_func(test, test_data, name_hash) then
+    c_index[0] = position
     return test, name_hash
   else
-    -- Now search from 0 to orignal position -1
-    position = 0
-    stop = false
-    repeat
-      test = ffi.cast("TEST_META_TYPE*", g_tests)[position]
-      position = position + 1
-      if (position - 1)== original_position or match_func(test, test_data, name_hash)then
-        stop = true
-      end
-    until stop == true
-    if match_func(test, test_data, name_hash) then
-      -- test.name_hash = name_hash
-      -- print(position -1)
-      c_index[0] = position - 1
-      return test, name_hash
-    else
-      c_index[0] = -1
-      return -1
-    end
+    c_index[0] = -1
+    return -1
   end
 end
 
@@ -105,10 +102,10 @@ function AddTests.get_test(
   local position = name_hash % consts.AB_MAX_NUM_TESTS
   local original_position = position
   c_index = ffi.cast("int*", c_index)
-  local test_type = assert(get_test_type(test_data.TestType), "TestType cannot be nil")
-  local test = get_pos(g_tests, test_data, test_type, c_index, name_hash, match)
+  local test_type_id = assert(get_test_type_id(test_data.TestType), "TestType cannot be nil")
+  local test = get_pos(g_tests, test_data, test_type_id, c_index, name_hash, match)
   if test == -1 then
-    test = get_pos(g_tests, test_data, test_type, c_index, name_hash, is_pos_empty)
+    test = get_pos(g_tests, test_data, test_type_id, c_index, name_hash, is_pos_empty)
   end
   assert(test ~= -1 , "Unable to find an empty spot")
   return ffi.cast("TEST_META_TYPE*", g_tests)[c_index[0]], name_hash
@@ -126,7 +123,7 @@ function AddTests.add(
   assert(type(test_data) == "table", "Unable to decode json string")
   assert(type(test_data) == "table", "Invalid JSON string given")
   -- dbg()
-  local test_type = assert(get_test_type(test_data.TestType), "TestType cannot be nil")
+  local test_type_id = assert(get_test_type_id(test_data.TestType), "TestType cannot be nil")
   assert(test_data.name ~= nil, "Test should have a name")
   assertx(#test_data.name <= consts.AB_MAX_LEN_TEST_NAME,
   "Test name should be below test name limit. Got ", #test_data.name,
@@ -146,7 +143,6 @@ function AddTests.add(
 
   else
     ffi.copy(c_test.name, test_data.name)
-    c_test.test_type = consts.AB_TEST_TYPE_AB
     c_test.state = assert(states[test_data.State], "Must have a valid state")
     c_test.id = assert(tonumber(test_data.id), "Must have a valid test id")
     local seed = assert(test_data.seed, "Seed needs to be specified for test")
@@ -156,7 +152,7 @@ function AddTests.add(
     c_test.seed = spooky_hash.convert_str_to_u64(seed)
     local is_dev_spec = assert(tonumber(test_data.is_dev_specific), "Must have boolean device specific routing")
     assert(is_dev_spec == consts.TRUE or is_dev_spec == consts.FALSE, "Device specific must have TRUE or FALSE values only")
-    c_test.test_type = get_test_type(test_type)
+    c_test.test_type = get_test_type_id(test_data.TestType)
     -- print(c_index[0])
     -- dbg()
     assert(c_test.variants ~= nil, "Space must be allocated for variants")

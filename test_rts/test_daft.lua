@@ -28,11 +28,9 @@ tests.t1 = function(num_iters, num_hits)
       local T = rand_test()
       a, b, c = curl.get(at_url, nil, JSON:encode(T))
     elseif ( choice == "diagnostics" ) then 
-      a, b, c = curl.get(dc_url); assert(c == 200)
+      local a, b, c = curl.get(dc_url); assert(c == 200)
       a, b, c = curl.get(dl_url); assert(c == 200)
-    elseif ( choice == "list_tests" ) then 
-      a, b, c = curl.get(ltc_url); assert(c == 200)
-      a, b, c = curl.get(ltl_url); assert(c == 200)
+
     else
       assert(nil, "not implemented" .. choice)
     end

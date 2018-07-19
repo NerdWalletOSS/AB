@@ -10,8 +10,9 @@ local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
 --==========================
+local server = os.getenv("WEBAPP_SERVER") or "localhost"
 local ssurl =  -- set state URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_set_state.php"
 
 local S = {}
 
@@ -58,8 +59,6 @@ local function change_state(
     end
   end
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
-  -- for k, v in pairs(hdrs) do print(k, v) end 
-  -- print(outbody)
   assert(status == 200)
   return true
 end

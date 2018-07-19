@@ -58,7 +58,8 @@ function list_rts(
     return $SP;
   }
   else {
-    // echo("2: NO RTS found\n");
+    // echo("NO RTS found\n");
+
     return null;
   }
 }

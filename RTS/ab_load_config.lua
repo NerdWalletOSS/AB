@@ -22,7 +22,6 @@ end
 function load_cfg.load_db_data(config)
   assert(config, "config not defined")
   local conn = load_cfg.db_connect(config.AB.MYSQL)
-  -- TODO execute the sql
   local res = conn:query('SELECT * FROM device ORDER BY id ASC;')
   assert(res, "cannot get devices")
   table.sort(res, function(a,b) return a.id < b.id end)

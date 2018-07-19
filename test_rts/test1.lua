@@ -39,7 +39,7 @@ tests.t1 = function(
       jB = JSON:encode(B)
       a, b, c = curl.get(U, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
-      -- TODO PUT BACK a, b, c = curl.get(dl_url);   assert(c == 200)
+      a, b, c = curl.get(dl_url);   assert(c == 200)
       local Tc = nil -- Tc = test info using C
       local url = tic_url .. "&TestName=" .. B.name
       a, b, c = curl.get(url)
@@ -54,7 +54,7 @@ tests.t1 = function(
       end
      
       local Tl = nil -- test info using Lua
-      --[[ TODO PUT THIS BLOCK BACK IN
+      
       local url = til_url .. "&TestName=" .. B.name
       a, b, c = curl.get(til_url .. "&TestName=" .. B.name);   
       if ( state == "archived" ) then 
@@ -64,7 +64,7 @@ tests.t1 = function(
         local Tl = JSON:decode(b)
         assert(Tc.State == state)
       end
-      --]]
+     
     
       if ( Tl and Tc ) then 
         assert(compare_T(Tl, Tc))
@@ -75,9 +75,13 @@ tests.t1 = function(
       local Lc = JSON:decode(b)
 
       -- Ll = list tests using Lua
+      
+
       a, b, c = curl.get(ltl_url);   assert(c == 200)
       local Ll = JSON:decode(b)
       assert(#Ll == #Lc)
+     
+
 
       -- check number of tests
       if ( state == "started" ) then
@@ -85,7 +89,9 @@ tests.t1 = function(
       elseif ( state == "terminated" ) then
         assert(#Lc == num_tests) 
       elseif ( state == "archived" ) then
-        assert(#Lc == (num_tests - i))
+        print(#Lc, state)
+        assert(#L == (num_tests - i))
+
       else
         assert(nil)
       end

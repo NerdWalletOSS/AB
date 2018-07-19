@@ -1,0 +1,36 @@
+The AB RTS (run time system) serves many requests. Some of them are fulfilled by
+Lua and some by C. Where speed is needed, C performs the tasks exclusively and
+where performance can be relaxed a little lua is added in. Even when lua is at
+play it sets C data structures appropriately so that C can work at blazingly
+fast speeds. Another way to look at the division of tasks is "Fast but dumb C,
+and slow but smart lua".
+
+For the lua software architecture we split different components into different
+spaces so that they remain isolated from each others impact. Currently we have
+two lua spaces, one for AB and one for DT.
+
+When the server starts up the C server loads a predefined file (ab.lua, and
+dt.lua) and then calls load_config and update_config in these spaces.
+
+Before we dive down into the exact functionality these two function calls are
+used for, we must emphasize that these two files are the only places where we
+have global functions. In no other place should we ever have globals functions
+(and we should never have global variables). In case something needs to be
+persisted accross various calls, the  cache structure can  be used. The cache
+also supports cachin of garbage collectable info (for when memory pressure is
+high).
+
+Getting back to the two files, the load config just looks at things relevant to
+the space and caches it, and the update config carries out all the necessary
+operations like reading of files or connecting to servers.
+
+Our coding convention in generals is
+- Every file returns either a table or a function
+- We dont use dofile we only use require
+- In the two file we expose the relevant functions, no new operations are
+  performed in the files
+- All shared files between spaces are put in the common folder called lua
+- Exclusive functions are put in their own folders (RTS for AB and DT for DT)
+- Before starting up theserver the LUA_PATH must be set to oint to a folder that
+  contains all 3 folders mentioned above as their immediate children
+
