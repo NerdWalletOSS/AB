@@ -1,3 +1,19 @@
+  <?php
+    switch ( $this_state ) {
+    case "draft" : 
+    case "dormant" : 
+      $mode = "Edit";
+      break;
+    case "started" : 
+    case "terminated" : 
+    case "archived" : 
+      $mode = "View";
+      break;
+    default : 
+      // HANDLE ERROR PROPERLY TODO
+      break;
+    }
+?>
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">

@@ -24,17 +24,9 @@ $(document).ready(function() {
       },
       success: function(response, textStatus, XHR) {
         console.log(response);
-        console.log(response);
         console.log("1111111111111")
         console.log(XHR);
-<<<<<<< HEAD
-        //console.log(XHR.getAllResponseHeaders());
-=======
-        console.log("1111111111111")
         console.log(textStatus);
-        console.log("222222222222222");
-        console.log(XHR.getAllResponseHeaders());
->>>>>>> dev
         var id = XHR.getResponseHeader('TestID');
         console.log("TEST ID = " + id);
         window.location = "aev_test_2.php?TestID=" + id;
