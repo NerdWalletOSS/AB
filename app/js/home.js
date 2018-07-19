@@ -144,9 +144,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
           $("#stack_trace").css('display', 'inline', 'important');
           $("#error_message").html(response.getResponseHeader('Error-Message'));
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
-        } else {
-          //var id = response.getResponseHeader('TestID');
-          window.location = "home.php";
         }
       },
       success: function(response, textStatus, XHR) {
