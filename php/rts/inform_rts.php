@@ -31,7 +31,8 @@ function inform_rts(
       $url = "CheckTest";
     }
     post_url($server, $port, $url, $body, $http_code, $rslt);
-    if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
+    if ( $http_code != 200 ) { 
+			$err_msg .= $rslt; $is_ok = false; }
   }
   return $is_ok;
 }

@@ -58,6 +58,7 @@ $config = config_html($TestType);
   <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id='<?php echo $external_id; ?> >
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
+  <?php  if ($this_state == "started") { ?>
   <?php } ?>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>

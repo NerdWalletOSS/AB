@@ -14,6 +14,7 @@ $(document).ready(function() {
           $("#error_message").css('display', 'inline', 'important');
           $("#stack_trace").css('display', 'inline', 'important');
           $("#error_message").html(response.getResponseHeader('Error-Message'));
+          $("#error_message").html(response.getResponseHeader('Error-Msg-Out'));
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
         } else {
           var id = response.getResponseHeader('TestID');

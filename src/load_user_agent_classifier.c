@@ -100,7 +100,9 @@ load_user_agent_classifier(
   // ua_to_dev_map_file
   memset(buf, '\0', buflen);
   sprintf(buf, "%s/ua_to_dev_map.bin", ua_dir);
-  if ( !isfile(buf) ) { go_BYE(-1); }
+  if ( !isfile(buf) ) { 
+    fprintf(stderr, "File not found %s \n", buf); go_BYE(-1); 
+  }
   status = load_classify_ua_map(buf, 
       ptr_classify_ua_map, ptr_len_classify_ua_file, 
       ptr_num_classify_ua_map);

@@ -314,6 +314,7 @@ function test_basic(
   $outJ["status_code"] = $http_code;
   $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
   $outJ["TestID"] = $test_id;
+  $Y['msg_stderr']  = $outJ["msg_stderr"] = $err;
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
   db_set_row("request_webapp", $request_webapp_id, $Y);
