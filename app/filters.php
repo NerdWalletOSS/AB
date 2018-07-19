@@ -96,7 +96,7 @@ else
 ?>
 <td><input class="btn btn-lg btn-success btn-block" type="submit" form="set_filters" id="setFilters" value="Save"></td>
 <?php } ?>
-<td> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="location.href = 'home.php';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
