@@ -24,7 +24,6 @@ $(document).ready(function() {
       },
       success: function(response, textStatus, XHR) {
         console.log(response);
-        console.log("1111111111111")
         console.log(XHR);
         console.log(textStatus);
         var id = XHR.getResponseHeader('TestID');
