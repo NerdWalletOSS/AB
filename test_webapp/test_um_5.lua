@@ -9,10 +9,11 @@ local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
 local S = require 'test_webapp/state_change'
 --==========================
+local server = os.getenv("WEBAPP_SERVER") or "localhost"
 local ssurl =  -- set state URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_set_state.php"
 local tburl =  -- test basic URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_test_basic.php"
 
 -- STOP: Stuff common to all tests in this suite
 local tests = {}
@@ -34,10 +35,9 @@ tests.t1 = function (
   winners["XYTest"] = T1.Variants[1].name
 
   -- Create test of type = ABTest
-  optargs.TestType = "ABTest"
   local tid2 = mk_rand_test({ TestType = "ABTest"})
-  local T2 = get_test_info(tid1)
-  winners.ABTest = T1.Variants[1].name
+  local T2 = get_test_info(tid2)
+  winners.ABTest = T2.Variants[1].name
 
   local tids = { }
   tids.XYTest = tid1
