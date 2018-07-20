@@ -2,39 +2,21 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "aux_zero.h"
-#include "l_add_test.h"
+#include "add_test.h"
 
 // int cdata[1];
 int
-l_add_test(
+add_test(
     const char *args
     )
 {
-  static int entry_position[1];
+  int status = 0;
   // cdata[0]=5;
   // printf("original value: %d\n", cdata[0]);
-  int status = 0;
+  go_BYE(-1); 
   //-------------------------------------
-  if ( g_L == NULL ) { go_BYE(-1); }
-  int rslt[4]; 
-  lua_getglobal(g_L, "preproc");
-  if ( !lua_isfunction(g_L, -1)) {
-    fprintf(stderr, "Function preproc does not exist \n");
-    lua_pop(g_L, 1);
-    go_BYE(-1);
-  }
-  entry_position[0] = -1;
-  lua_pushstring(g_L, args); // not pushing string as it causes a copy
-  lua_pushlightuserdata(g_L, g_tests);
-  lua_pushlightuserdata(g_L, rslt);
-  status = lua_pcall(g_L, 3, 0, 0);
-  if (status != 0) {
-    fprintf(stderr, "function preproc failed: %s\n", lua_tostring(g_L, -1));
-    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-    lua_pop(g_L, 1);
-    go_BYE(-1);
-  }
   // Now based on rslt, do things
+#ifdef TODO
   int what_to_do      = rslt[0];
   int test_idx        = rslt[1]; 
   int num_variants    = rslt[2];
@@ -97,6 +79,7 @@ l_add_test(
     go_BYE(-1);
   }
   // printf("changed value: %d\n", cdata[0]);
+#endif
 BYE:
   return status;
 }

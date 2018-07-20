@@ -1,5 +1,5 @@
 extern int 
-l_test_info(
+test_info(
     const char *args
     );
 extern int 

@@ -1,7 +1,7 @@
 #include "ab_incs.h"
 #include "auxil.h"
 #include "ab_globals.h"
-#include "l_test_info.h"
+#include "test_info.h"
 #include "get_test_idx.h"
 
 #define mcr_chk_buflen(buf, Xlen, nX)  {\
@@ -15,56 +15,18 @@
 }
 
 int
-l_test_info(
+test_info(
     const char *args
     )
 {
   int status = 0;
-
-  int bufsz = 7; char buf[bufsz+1]; 
-  status = extract_name_value(args, "Source=", '&', buf, bufsz);
-  cBYE(status);
-
-
-  if ( ( *buf == '\0' ) || ( strcmp(buf, "Lua") == 0 ) ) {
-    if ( g_L == NULL ) { go_BYE(-1); }
-    lua_getglobal(g_L, "get_test_info");
-    if ( !lua_isfunction(g_L, -1)) {
-      fprintf(stderr, "Function add does not exist in lua's global space\n");
-      lua_pop(g_L, 1);
-      go_BYE(-1);
-    }
-    lua_pushstring(g_L, args); // not pushing string as it causes a copy
-    status = lua_pcall(g_L, 1, 1, 0);
-    if (status != 0) {
-      WHEREAMI;
-      fprintf(stderr, "rcalling function get_test_info failed: %s\n", lua_tostring(g_L, -1));
-      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-      lua_pop(g_L, 1);
-    }
-    char* test_info = (char *)lua_tostring(g_L, 1);
-    if (AB_MAX_LEN_RESULT < strlen(test_info)) {
-      sprintf(g_err, "{\"error\": Length of test info is too much for buffer (max=%" PRIu32", actual=%" PRIu64 ")",
-          AB_MAX_LEN_RESULT, strlen(test_info));
-      lua_pop(g_L, 1);
-      go_BYE(-1);
-    } else {
-      memcpy(g_buf, test_info, strlen(test_info));
-      lua_pop(g_L, 1);
-    }
-  }
-  else if ( ( *buf != '\0' ) && ( strcmp(buf, "C") == 0 ) ) {
-    int test_type, test_idx;
-    char test_name[AB_MAX_LEN_TEST_NAME+1];
-    status = get_test_type(args, &test_type); cBYE(status);
-    status = get_test_name(args,  test_name);  cBYE(status);
-    status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
-    if ( test_idx < 0 ) { go_BYE(-1); }
-    status = c_test_info(test_idx, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
-  }
-  else {
-    go_BYE(-1);
-  }
+  int test_type, test_idx;
+  char test_name[AB_MAX_LEN_TEST_NAME+1];
+  status = get_test_type(args, &test_type); cBYE(status);
+  status = get_test_name(args,  test_name);  cBYE(status);
+  status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
+  if ( test_idx < 0 ) { go_BYE(-1); }
+  status = c_test_info(test_idx, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
 
 BYE:
   return status;

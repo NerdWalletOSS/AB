@@ -2,45 +2,21 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "get_test_idx.h"
-#include "l_diagnostics.h"
+#include "diagnostics.h"
 
 int
-l_diagnostics(
+diagnostics(
     const char *args
     )
 {
   int status = 0;
-  int bufsz = 7;
-  char buf[bufsz+1]; 
-  status = extract_name_value(args, "Source=", '&', buf, bufsz);
-  cBYE(status);
-
-  if ( ( *buf == '\0' ) || ( strcmp(buf, "Lua") == 0 ) ) {
-    if ( g_L == NULL ) { go_BYE(-1); }
-    lua_getglobal(g_L, "diagnostics");
-    if ( !lua_isfunction(g_L, -1)) {
-      fprintf(stderr, "Function [diagnostics] does not exist \n");
-      lua_pop(g_L, 1); go_BYE(-1);
-    }
-    status = lua_pcall(g_L, 0, 0, 0);
-    if (status != 0) {
-      fprintf(stderr, "calling function [diagnostics] failed: %s\n", lua_tostring(g_L, -1));
-      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-      lua_pop(g_L, 1);
-    }
-  }
-  else if ( ( *buf != '\0' ) && ( strcmp(buf, "C") == 0 ) ) {
-    status = diagnostics(); cBYE(status);
-  }
-  else {
-    go_BYE(-1);
-  }
+  status = c_diagnostics(); cBYE(status);
 BYE:
   return status;
 }
 
 int
-diagnostics(
+c_diagnostics(
     )
 {
   int status = 0;
