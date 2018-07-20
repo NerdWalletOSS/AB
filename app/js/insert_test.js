@@ -47,7 +47,7 @@ $(document).ready(function() {
     $.ajax({
       type: "POST",
       url: "processor/test_url_processor.php",
-      //data: $(this).serialize(),
+      data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
@@ -67,7 +67,7 @@ $(document).ready(function() {
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
           $("#stack_trace").css('display', 'inline', 'important');
-          $("#error_message").html('Test is in sync with RTS & Db');
+          $("#error_message").html(XHR.getResponseHeader('URLReturned'));
       },
       beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');

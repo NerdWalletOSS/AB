@@ -28,6 +28,7 @@ if (isset($Channel)) {
   $nF = 0;
 }
 $result = db_get_rows("test", "pred_id != ''");
+require_once "html_header.php";
 ?>
 <!-- PAGE SPECIFIC FILE CALLS -->
   <link href="css/dataTables.min.css" rel="stylesheet">

@@ -124,13 +124,13 @@ function add_addnl_var_info(
     if ( !$status ) { 
       $http_code = 400; 
       $Y['msg_stderr'] = $rts_err_msg;
+    header("Error-Message: Unable to talk to RTS" . nl2br($rts_err_msg));
     }
   }
   $Y['status_code'] = $outJ["status_code"] = $http_code;
   $Y['msg_stdout'] = $outJ["msg_stdout"] = 
     "Variant [$vname, $vid] of Test [$test_name, $test_id] updated";
   $outJ["TestID"] = $test_id; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-  $Y['msg_stderr']  = $outJ["msg_stderr"] = $err;
   db_set_row("request_webapp", $request_webapp_id, $Y);
   header("Error-Code: $http_code");
   header("Error-Message: ".$err);

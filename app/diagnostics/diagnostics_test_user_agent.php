@@ -23,7 +23,7 @@ $UserAgent = $_GET['UserAgent'];
 $url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
 $http_code = 0;
 $rslt = "";
-$data = get_url( 'localhost', '8000',$url, $http_code, $rslt );
+$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 var_dump($data);
 if (!$data) {
 echo "User Agent unavailable";

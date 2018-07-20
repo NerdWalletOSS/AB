@@ -21,6 +21,7 @@ require_once "../utility_functions.php";
     <link href="../bootstrap-3.3.5-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/error.css" rel="stylesheet">
 
     <!-- jQuery  -->
     <script src="../js/jquery-1.11.1.min.js"></script>

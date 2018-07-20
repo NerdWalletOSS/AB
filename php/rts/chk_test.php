@@ -27,7 +27,7 @@ function chk_test(
     $S = $sp['server']; 
     $P = $sp['port']; 
     $url  = "TestInfo?Source=C&TestName=$test_name&TestType=$test_type";
-    get_url($S, $P, $url, $http_code, $rslt); 
+    get_url($S, $P, $url, $http_code, $rslt, $destination); 
     rs_assert($http_code == 200, "Bad http code from RTS"); 
     $T1 = json_decode($rslt);
     var_dump($rslt);
