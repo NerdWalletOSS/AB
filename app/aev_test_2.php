@@ -62,9 +62,9 @@ require_once "navbar.php";
 ?>
     <p><strong>Description:</strong> &nbsp;<span id="Vdesc_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]["description"]; ?></span></p>
 
-<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+<?php   //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
     <p><strong>Custom Data:</strong> &nbsp;<span id="Vcd_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]['custom_data']; ?></span></p>
-<?php } ?>
+<?php //} ?>
   </td>
 </tr>
 <?php } ?>
