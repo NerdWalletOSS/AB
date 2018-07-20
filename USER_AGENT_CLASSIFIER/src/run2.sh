@@ -3,8 +3,8 @@
 set -e 
 make clean
 make
-VG=""
 VG="valgrind --leak-check=full "
+# VG=""
 uafile=../data/rs_tmp_user_agent000
 opfile=_ua_to_dev_map.bin
 test -f $uafile
