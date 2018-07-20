@@ -55,11 +55,16 @@ $config = config_html($TestType);
 	</tr>
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
   <tr>
-  <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id='<?php echo $external_id; ?> >
+  <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?>' >
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
   <?php  if ($this_state == "started") { ?>
-  <?php } ?>
+  <tr>
+  <td>Device: <form method="POST" id='TestURL' class="form-signin"><input type="text" name="device"></form></td><td ><input class="btn btn-sm btn-primary btn-block" type="submit" form="TestURL" id="test_url" value="Test URL"></td><td>&nbsp;</td>
+  </tr>
+  <?php } 
+          } 
+   ?>
   <?php } elseif (($mode == "Add")) { ?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
