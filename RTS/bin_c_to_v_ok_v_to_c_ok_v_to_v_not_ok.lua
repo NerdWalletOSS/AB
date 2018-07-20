@@ -68,7 +68,6 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
   -- sort the variants table
   -- ensures that control is at the first position
   table.sort(variants, function(a,b) return a.id < b.id end)
-  --[[ disconnecting this requirement
   if test_data.TestType == "ABTest" then
     if (variants[1].name:lower() ~= "control" ) then
       for k, v in pairs(variants) do
@@ -80,7 +79,6 @@ function bin_c_to_v_ok_v_to_c_ok_v_to_v_not_ok.add_bins_and_variants(c_test, tes
     assert(variants[1].name:lower() == "control", 
     "First entry has to be control. Is " .. variants[1].name)
   end
-  --]]
   local final_variant_idx, final_variant_id
   for index, value in ipairs(variants) do
     entry = c_test.variants[index - 1]

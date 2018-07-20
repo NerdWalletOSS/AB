@@ -9,10 +9,11 @@ local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
 local S      = require 'test_webapp/state_change'
 --==========================
+local server = os.getenv("WEBAPP_SERVER") or "localhost"
 local ssurl =  -- set state URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_set_state.php"
 local tburl =  -- test basic URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_test_basic.php"
 
 -- STOP: Stuff common to all tests in this suite
 local tests = {}

@@ -3,7 +3,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../helpers/");
 
-require_once 'rs_assert.php';
 require_once 'list_rts.php';
 require_once 'post_url.php';
 require_once 'db_get_test.php';

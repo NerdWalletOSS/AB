@@ -5,8 +5,9 @@ local R       = require 'test_webapp/rand_selections'
 local get_test_id = require 'test_webapp/get_test_id'
 local get_test_info = require 'test_webapp/get_test_info'
 
-local tbp_url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
-local adp_url = "localhost:8080/AB/php/endpoints/endpoint_add_addnl_var_info.php"
+local server = os.getenv("WEBAPP_SERVER") or "localhost"
+local tbp_url = "http://" .. server .. ":8080/AB/php/endpoints/endpoint_test_basic.php"
+local adp_url = "http://" .. server .. ":8080/AB/php/endpoints/endpoint_add_addnl_var_info.php"
 
 local function mk_rand_test(
   X
@@ -14,6 +15,11 @@ local function mk_rand_test(
   local T1 = R.rand_test(X)
   local V1 = assert(T1.Variants)
   local hdrs, outbody, status = curl.post(tbp_url, nil, JSON:encode(T1))
+<<<<<<< HEAD
+  for k, v in pairs(hdrs) do print(k, v) end 
+  print(outbody)
+=======
+>>>>>>> dev
   assert(status == 200 )
   local tid = get_test_id(hdrs)
   -- check that basic data got added as required

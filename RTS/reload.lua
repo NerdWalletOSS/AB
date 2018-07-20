@@ -77,7 +77,7 @@ function reload.get_tests_from_db()
       local dev_arr = {}
       for k,v in pairs(devices) do
         query = string.format('select * from device_x_variant where test_id=%s and device_id=%s;', test.id, k)
-        dev_arr[#dev_arr + 1] = conn:query(query)
+        dev_arr[v] = conn:query(query)
       end
       test_json.DeviceCrossVariant = dev_arr
     end

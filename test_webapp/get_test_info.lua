@@ -6,7 +6,9 @@ local function get_test_info(
   test_id
   )
   assert(type(test_id) == "number")
-  local url = "http://localhost:8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
+  
+  local server = os.getenv("WEBAPP_SERVER") or "localhost"
+  local url = "http://" .. server .. ":8080/AB/php/endpoints/endpoint_test_info.php?TestID=" .. test_id
   local hdrs, body, status = curl.post(url)
   assert(status == 200)
   local T = assert(JSON:decode(body))

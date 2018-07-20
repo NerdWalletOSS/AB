@@ -1,21 +1,22 @@
-local cache = require 'lua/cache'
-local JSON  = require 'lua/JSON'
+-- ab.lua is the only place where we have globals rest all use locals.
+-- All function call from C are registered here.
+-- Also the globals are functions.
 local x_hard_code_config = require 'lua/hard_code_config'
 local x_load_config = require 'RTS/ab_load_config'
 local x_update_config = require 'RTS/ab_update_config'
 local x_diagnostics = require 'RTS/diagnostics'
-
-local tests = require 'RTS/add_test'
+local x_list_tests = require 'RTS/list_tests'
+local x_add_test = require 'RTS/add_test'
 local reload_tests = require 'RTS/reload'
+local reload_tests = require 'RTS/reload'
+local x_check_db_conn = require 'RTS/check_db_conn'
+local x_get_test_info = require 'RTS/get_test_info'
+local x_get_config = require 'RTS/get_config'
+
+
 
 function load_config(...)
-  cache.put("config", x_load_config.load_config(...))
-end
-
-function hard_code_config(...)
-  local cfg = x_hard_code_config(...)
-  cache.put("config", cfg)
-  x_load_config.load_db_data(cfg.AB)
+  x_load_config.load_config(...)
 end
 
 function update_config(...)
@@ -23,22 +24,16 @@ function update_config(...)
 end
 --=================================================
 function preproc(...)
-  tests.preproc(...)
+  x_add_test.preproc(...)
 end
 
 function add(...)
-  tests.add(...)
+  x_add_test.add(...)
 end
 
 
 function list_tests()
-  local tests = cache.get('tests')
-  local o_table = {}
-  if ( not tests ) then return " [] " end
-  for _,v in pairs(tests) do
-    o_table[#o_table + 1] = v
-  end
-  return JSON:encode(o_table)
+  return x_list_tests()
 end
 
 function reload(...)
@@ -46,40 +41,17 @@ function reload(...)
 end
 
 function check_db_conn()
-  local configs = cache.get('config').AB.DB
-  local conn = load_config.db_connect(configs)
-  assert(conn ~= nil, "must be a valid connection object")
+  x_check_db_conn()
 end
 
 function get_config()
-  return JSON:encode(cache.get('config'))
+  return x_get_config()
 end
 
 function get_test_info(args)
-  local j_table = JSON:decode(args)
-  local tests = cache.get('tests')
-  local test = nil
-  if j_table.id ~= nil then
-    test = tests[j_table.id]
-    assert(test ~= nil, "Tests with id ", j_table.id, " does not exist")
-  elseif j_table.name ~= nil and j_table.test_type ~= nil then
-    for _, v in pairs(tests) do
-      if v.name == j_table.name and v.test_type == j_table.test_type then
-        assert(test == nil, "More than one match exists")
-        test = v
-      end
-    end
-  end
-  return JSON:encode(test)
+    return x_get_test_info(args)
 end
 
 function diagnostics(...)
   x_diagnostics()
-
 end
--- function add(c_str, c_data)
---    -- print("hi from lua", c_str)
---    local x = ffi.cast("int*", c_data)
---    print(c_str)
---    x[0] = 9
--- end
