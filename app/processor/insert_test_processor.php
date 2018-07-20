@@ -23,7 +23,8 @@ if ( !$json_input ) {
 //-------------------------------------
 // Call to add test
 $rslt =  test_basic($json_input);
-//// TODO Set the status code here 
+// if ( $rslt['rts_code'] != 200 ) { do something } 
+// TODO Set the status code here 
 //print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
 header("XXXXXX: YYYYYY");
