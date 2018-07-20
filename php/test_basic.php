@@ -309,12 +309,13 @@ function test_basic(
     if ( !$status ) { 
       $http_code = 400; 
       $Y['msg_stderr'] = $rts_err_msg;
+    header("Error-Message: Unable to talk to RTS" . nl2br($rts_err_msg));
     }
   }
   $outJ["status_code"] = $http_code;
   $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
   $outJ["TestID"] = $test_id;
-  $Y['msg_stderr']  = $outJ["msg_stderr"] = $err;
+  $outJ["msg_stderr"];
   $Y['msg_stdout']  = $outJ["msg_stdout"];
   $Y['status_code'] = $outJ["status_code"];
   db_set_row("request_webapp", $request_webapp_id, $Y);

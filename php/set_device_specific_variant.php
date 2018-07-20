@@ -72,12 +72,12 @@ function set_device_specific_variant(
   }
   //------------------------------------------
   $http_code = 200;
-  $rts_err_msg = "OK";
   if ( $state == "started" ) {
-    $status = inform_rts($tid, $rts_err_msg);
+    $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) { 
       $http_code = 400; 
       $Y['msg_stderr'] = $rts_err_msg;
+    header("Error-Message: Unable to talk to RTS" . nl2br($rts_err_msg));
     }
   }
   $outJ["status_code"] = $http_code;
