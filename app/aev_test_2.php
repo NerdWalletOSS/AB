@@ -115,10 +115,10 @@ require_once "navbar.php";
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
 <p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' id='Description'>
 </textarea></p>
-<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+<?php   //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' id='CustomData' >
 </textarea></p>
-<?php } ?>
+<?php //} ?>
 </td>
 </tr>
 
