@@ -290,10 +290,12 @@ function test_basic(
     }
   }
   //------------------------------------------
-  $http_code = 200;
+  $http_code = 0; 
   if ( $state == "started" ) {
+    $http_code = 200; 
+    $rts_error_msg = "";
     $status = inform_rts($test_id, $rts_err_msg);
-    if ( !$status ) { $http_code = 400; }
+    if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
   $outJ["rts_code"] = $http_code;
   $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
@@ -302,12 +304,12 @@ function test_basic(
   $outJ["OverWrite"] = $is_overwrite;
   header("TestID: $test_id"); // just for Lua test cases
 
-  $Y['msg_stdout']  = $outJ["msg_stdout"];
   // Note that state cannot be terminated or archived for this endpoint
   return $outJ;
   /* always PHP code called from front-end returns outJ which has
    * 1) msg_stdout
    * 2) rts_code, 200 is good, anything else is bad
+   * Note one exception: 0 means that the RTS was not called at all
       header("TestID: $test_id"); // just for Lua test cases
       NO other place in code has header(..)
    * Anything custom to the page e.g.
@@ -318,5 +320,16 @@ function test_basic(
    * All PHP endpoints will return a table called outJ. 
    * Should never have any return statement in code except at end
    * PHP code interacts with RTS through inform_rts() nothing else
+   *
+   *
+   * For functions that do not interact with RTS (add_admin), we follow 
+   * same protocol as above except that rts_code is always 0
+   *
+   * For chk_test() and chk_tests(), 
+   * we either return true or we rs_assert out
+   * For chk_url() 
+   * we either return true or we return false or we rs_assert out
+   * For db_get_test() 
+   * we either return a table or we rs_assert out 
    * */
 }

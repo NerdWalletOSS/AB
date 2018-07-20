@@ -72,13 +72,9 @@ function set_follow_on(
     mod_row("test", $X, " where id = $tid");
   }
   //------------------------------------------
-  $http_code = 200;
-  $outJ["status_code"] = $Y['status_code'] = $http_code;
-  $outJ["TestID"] = $tid; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-  $outJ["msg_stdout"] = $Y['msg_stdout'] = 
-    "Test [$test_name:$tid] will follow [$name_to_follow:$tid_to_follow";
-  db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
-  header("Error-Code: $http_code");
-  http_response_code($http_code);
+  $outJ["rts_code"] = 0; 
+  $outJ["msg_stdout"] = 
+    "Test [$test_name:$tid] will follow [$name_to_follow:$tid_to_follow]";
+  $outJ["TestID"] = $tid; 
   return $outJ;
 }
