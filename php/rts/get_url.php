@@ -31,6 +31,8 @@ function get_url(
     $destination = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); // UTPAL: For detination URL
     if ( $http_code == 200 ) { break; }
     trigger_error("RTS ERROR: $server, $url\n");
+    //$err_msg = "$server, $url";
+    //header("Error-Message: RTS ERROR:" . nl2br($err_msg));
   } 
   curl_close($ch);
   return true;
