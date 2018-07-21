@@ -32,7 +32,6 @@ require_once "navbar.php";
   <div class="panel-body">
 
   <!-- ADD/EDIT FORM START  -->
-  <!--<form class="form-signin" id='addTest' method='post'>-->
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -61,26 +60,18 @@ require_once "navbar.php";
 }
 ?>
     <p><strong>Description:</strong> &nbsp;<span id="Vdesc_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]["description"]; ?></span></p>
-
-<?php   //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
     <p><strong>Custom Data:</strong> &nbsp;<span id="Vcd_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]['custom_data']; ?></span></p>
-<?php //} ?>
   </td>
 </tr>
 <?php } ?>
  
 <tr>
 <td><button onclick="location.href = 'aev_test_1.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-primary btn-block" >Previous</button></td>
-<?php //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <td> <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
-<?php //} else { ?>
-<!--<td> <button onclick="location.href = 'home.php'"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>-->
-<?php //} ?>
 </tr>
   </tbody>
   </table>
   
-  <!--</form>-->
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>
@@ -115,10 +106,8 @@ require_once "navbar.php";
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
 <p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' id='Description'>
 </textarea></p>
-<?php   //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' id='CustomData' >
 </textarea></p>
-<?php //} ?>
 </td>
 </tr>
 
