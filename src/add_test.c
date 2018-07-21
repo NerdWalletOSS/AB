@@ -27,27 +27,13 @@ add_test(
   root = json_loads(args, 0, &error);
   if ( root == NULL ) { go_BYE(-1); }
   //------------------------------------------
-  status = get_int(root, "id", NULL, NULL, &itemp); cBYE(status);
-  if ( itemp <= 0 ) { go_BYE(-1); }
-  //----------------------------------------
-  fprintf(stderr, "\n%s\n", args);
   status = get_int(root, "NumVariants", NULL, NULL, &num_variants); 
   cBYE(status);
   if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
-       ( num_variants > AB_MAX_NUM_VARIANTS ) ) { 
+      ( num_variants > AB_MAX_NUM_VARIANTS ) ) { 
     go_BYE(-1);
   }
   //----------------------------------------
-  memset(cbuf, '\0', BUFLEN);
-  status = get_string(root, "State", NULL, NULL, 16, cbuf); cBYE(status);
-  status = get_state_enum(cbuf, &state); cBYE(status);
-  if ( state == TEST_STATE_ARCHIVED ) {  // delete and get out of here
-    test_idx = 0; // TODO FIX P0
-    if ( test_idx < 0 ) { go_BYE(-1); }
-    free_test(test_idx);
-    goto BYE; 
-  }
-  //------------------------------------------
   memset(cbuf, '\0', BUFLEN);
   status = get_string(root, "TestType", NULL, NULL, 16, cbuf); cBYE(status);
   status = get_test_type_enum(cbuf, &test_type); cBYE(status);
@@ -56,26 +42,41 @@ add_test(
   status = get_string(root, "name", NULL, NULL, AB_MAX_LEN_TEST_NAME, 
       test_name); cBYE(status);
   //------------------------------------------
+  memset(cbuf, '\0', BUFLEN);
+  status = get_string(root, "State", NULL, NULL, 16, cbuf); cBYE(status);
+  status = get_state_enum(cbuf, &state); cBYE(status);
+  if ( state == TEST_STATE_ARCHIVED ) {  // delete and get out of here
+    status = get_test_idx(test_name, test_type, &test_idx); 
+    if ( test_idx < 0 ) { go_BYE(-1); }
+    free_test(test_idx);
+    goto BYE; 
+  }
+  //------------------------------------------
   status = get_int(root, "is_dev_specific", NULL, NULL, &is_dev_specific); cBYE(status);
   if ( ( is_dev_specific < 0 )  || ( is_dev_specific > 1 ) ) { go_BYE(-1); }
   //----------------------------------------
   status = get_test_idx(test_name, test_type, &test_idx); 
-  if ( test_idx < 0 ) { 
+  if ( test_idx < 0 ) { // seeing this for the first time
     status = get_empty_spot(test_name, &test_idx); cBYE(status);
     if ( test_idx < 0 ) { go_BYE(-1); }
     status = malloc_test(test_idx, num_variants, is_dev_specific, state);
     cBYE(status);
+    if ( state == TEST_STATE_TERMINATED ) {
+      status = free_variant_per_bin(test_idx); cBYE(status);
+      status = malloc_final_variant(test_idx); cBYE(status);
+    }
+    // update test  --- see below
   }
-  else {
+  else { // updating an existing test 
     if ( state == TEST_STATE_TERMINATED ) {
       if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
         /* nothing to do */
+        goto BYE;
       }
       else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
-        // TODO TODO P1 
-      }
-      else {
-        go_BYE(-1);
+        status = free_variant_per_bin(test_idx); cBYE(status);
+        status = malloc_final_variant(test_idx); cBYE(status);
+        // update test --- see below
       }
     } 
     else if ( state == TEST_STATE_STARTED ) {
@@ -83,16 +84,13 @@ add_test(
         go_BYE(-1); 
       }
       else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
-        /* nothing to do */
+        // update test --- see below
       }
-      else {
-        go_BYE(-1);
-      }
-    }
-    else { // archived has been handled already 
-      go_BYE(-1);
     }
   }
+  status = update_test(test_idx, test_name, test_type, state, 
+      is_dev_specific, args);
+  cBYE(status);
 
   json_decref(root);
 BYE:
