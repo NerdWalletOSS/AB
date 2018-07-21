@@ -3,6 +3,10 @@
 #include "ab_globals.h"
 #include "aux_zero.h"
 #include "add_test.h"
+#include <jansson.h>
+#include "read_conf_file.h"
+#include "get_test_idx.h"
+#include "add_fake_test.h"
 
 // int cdata[1];
 int
@@ -11,6 +15,92 @@ add_test(
     )
 {
   int status = 0;
+  int itemp, state, test_type, test_idx;
+  char test_name[AB_MAX_LEN_TEST_NAME+1];
+  int is_dev_specific; 
+  int num_variants;
+#define BUFLEN 32768
+  char cbuf[BUFLEN];
+  // read buffer into JSON
+  json_t *root = NULL;
+  json_error_t error;
+  root = json_loads(args, 0, &error);
+  if ( root == NULL ) { go_BYE(-1); }
+  //------------------------------------------
+  status = get_int(root, "id", NULL, NULL, &itemp); cBYE(status);
+  if ( itemp <= 0 ) { go_BYE(-1); }
+  //----------------------------------------
+  fprintf(stderr, "\n%s\n", args);
+  status = get_int(root, "NumVariants", NULL, NULL, &num_variants); 
+  cBYE(status);
+  if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
+       ( num_variants > AB_MAX_NUM_VARIANTS ) ) { 
+    go_BYE(-1);
+  }
+  //----------------------------------------
+  memset(cbuf, '\0', BUFLEN);
+  status = get_string(root, "State", NULL, NULL, 16, cbuf); cBYE(status);
+  status = get_state_enum(cbuf, &state); cBYE(status);
+  if ( state == TEST_STATE_ARCHIVED ) {  // delete and get out of here
+    test_idx = 0; // TODO FIX P0
+    if ( test_idx < 0 ) { go_BYE(-1); }
+    free_test(test_idx);
+    goto BYE; 
+  }
+  //------------------------------------------
+  memset(cbuf, '\0', BUFLEN);
+  status = get_string(root, "TestType", NULL, NULL, 16, cbuf); cBYE(status);
+  status = get_test_type_enum(cbuf, &test_type); cBYE(status);
+  //------------------------------------------
+  memset( test_name, '\0', AB_MAX_LEN_TEST_NAME+1);
+  status = get_string(root, "name", NULL, NULL, AB_MAX_LEN_TEST_NAME, 
+      test_name); cBYE(status);
+  //------------------------------------------
+  status = get_int(root, "is_dev_specific", NULL, NULL, &is_dev_specific); cBYE(status);
+  if ( ( is_dev_specific < 0 )  || ( is_dev_specific > 1 ) ) { go_BYE(-1); }
+  //----------------------------------------
+  status = get_test_idx(test_name, test_type, &test_idx); 
+  if ( test_idx < 0 ) { 
+    status = get_empty_spot(test_name, &test_idx); cBYE(status);
+    if ( test_idx < 0 ) { go_BYE(-1); }
+    status = malloc_test(test_idx, num_variants, is_dev_specific, state);
+    cBYE(status);
+  }
+  else {
+    if ( state == TEST_STATE_TERMINATED ) {
+      if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
+        /* nothing to do */
+      }
+      else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
+        // TODO TODO P1 
+      }
+      else {
+        go_BYE(-1);
+      }
+    } 
+    else if ( state == TEST_STATE_STARTED ) {
+      if ( g_tests[test_idx].state == TEST_STATE_TERMINATED ) {
+        go_BYE(-1); 
+      }
+      else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
+        /* nothing to do */
+      }
+      else {
+        go_BYE(-1);
+      }
+    }
+    else { // archived has been handled already 
+      go_BYE(-1);
+    }
+  }
+
+  json_decref(root);
+BYE:
+  return status;
+}
+#ifdef XXXX
+
+
   // cdata[0]=5;
   // printf("original value: %d\n", cdata[0]);
   go_BYE(-1); 
@@ -83,3 +173,4 @@ add_test(
 BYE:
   return status;
 }
+#endif

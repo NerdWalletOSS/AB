@@ -21,7 +21,7 @@ setup(
   status = validate_config(g_cfg); cBYE(status);
   status = init_lua(); cBYE(status); // after read_conf_file
   // Must do Lua before C 
-  status = l_load_config(config_file); cBYE(status);
+  // status = l_load_config(config_file); cBYE(status);
   status = l_update_config(); cBYE(status);
   status = update_config(); cBYE(status);
 BYE:

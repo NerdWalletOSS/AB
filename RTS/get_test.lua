@@ -18,20 +18,14 @@ local function get_test(
   user,
   pass,
   port,
-  test_as_str,
-  dbg
+  tid
   )
   assert(type(db) == "string")
   assert(type(host) == "string")
   assert(type(user) == "string")
   assert(type(pass) == "string")
   assert(type(port) == "number")
-  if ( type(dbg) == nil ) then 
-    dbg = false
-  else
-    assert(type(dbg) == "boolean")
-  end
-  -- assert(type(test_as_str) == "number")
+  assert(type(tid)  == "number")
 
   local conn = db_connect(db, host, user, pass, port)
   local tmp = {}
@@ -41,38 +35,41 @@ local function get_test(
   local test_type = conn:query('select id, name from test_type;')
   test_type = mk_lkp(test_type)
 
-  local admin = conn:query('select id, name from admin;')
-  admin = mk_lkp(admin)
 
   local bin_type = conn:query('select id, name from bin_type;')
   bin_type = mk_lkp(bin_type)
 
-  local fld_str = "id, name, external_id, test_type_id, state_id, bin_type_id "
-  local where_str = " state_id = 3 or state_id = 4 ";
+  local fld_str = "id, name, external_id, test_type_id, state_id, is_dev_specific, bin_type_id "
+  local where_str = " ( state_id = 3 or state_id = 4 ) and id > " .. tid;
 
   local query_str = "select " .. fld_str .. 
                     " from test where " .. where_str .. " limit 1 "
   local test = conn:query(query_str)
-  if ( not test ) then -- nothing more to do 
-    return 0
-  end
-  assert(#test == 1 )
-  local tid = tonumber(test[1].id)
+    -- Check if nothing more to do 
+  if ( not test    ) then return 0 end
+  if ( not test[1] ) then return 0 end
+  test = test[1]
+  local tid = tonumber(test.id)
+  state_id = tonumber(test.state_id)
+  test.State    = assert(states[test.state_id])
+  test_type_id = tonumber(test.test_type_id)
+  test.TestType = assert(test_type[test.test_type_id])
+  -- Following is temp hack to enable simpler JSON parsing in C
+  test.id       = tostring(test.id)
+  test.external_id       = tostring(test.external_id)
+  test.is_dev_specific       = tostring(test.is_dev_specific)
   --=======================================
   where_str = "test_id = " .. tid .. " and is_del = false "
   fld_str = " name, id, custom_data, url "
   query = "select " .. fld_str .. " from variant where " .. where_str
   local variants = conn:query(query)
   test.Variants = variants
+  test.NumVariants = tostring(#variants)
   -- get variants
   --=======================================
   conn:close()
-  if ( dbg == true ) then 
-    return JSON:encode(test)
-  else
-    ffi.copy(test_as_str, JSON:encode(test))
-    return tid
-  end
+  collectgarbage()
+  return tid, JSON:encode(test)
 end
 return get_test
 --[[

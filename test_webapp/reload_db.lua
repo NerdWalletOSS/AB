@@ -2,7 +2,7 @@ local plpath = require 'pl.path'
 local function reload_db(
   sqldump_file
   )
-  assert(plpath.isfile(sqldump_file))
+  assert(plpath.isfile(sqldump_file), "File not found " .. sqldump_file)
   local command = [[
   cd ../sql/ 1>/dev/null 2>&1; 
   bash reset_db.sh; 

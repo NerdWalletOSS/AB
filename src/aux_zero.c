@@ -16,6 +16,7 @@ zero_test(
 
   memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
   ptr_test->test_type = 0;
+  ptr_test->test_as_str = NULL;
   ptr_test->id = 0;
   ptr_test->name_hash = 0;
   ptr_test-> external_id = 0;
@@ -51,6 +52,7 @@ free_test(
     }
   }
   free_if_non_null(ptr_test->variants);
+  free_if_non_null(ptr_test->test_as_str);
 
   free_if_non_null(ptr_test->final_variant_id);
   free_if_non_null(ptr_test->final_variant_idx);
