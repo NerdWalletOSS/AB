@@ -88,8 +88,19 @@ add_test(
       }
     }
   }
+  strncpy(g_tests[test_idx].name, test_name, AB_MAX_LEN_TEST_NAME);
+  g_tests[test_idx].test_type = test_type;
+  g_tests[test_idx].state     = state;
+  g_tests[test_idx].num_variants     = num_variants;
+  g_tests[test_idx].is_dev_specific  = is_dev_specific;
+  g_tests[test_idx].name_hash = 
+    spooky_hash64(test_name, strlen(test_name), g_seed1);
   status = update_test(test_idx, test_name, test_type, state, 
       is_dev_specific, args);
+  int len = strlen(args)+1;
+  g_tests[test_idx].test_as_str = malloc(len);
+  memset(g_tests[test_idx].test_as_str, '\0', len);
+  strcpy(g_tests[test_idx].test_as_str, args);
   cBYE(status);
 
   json_decref(root);
