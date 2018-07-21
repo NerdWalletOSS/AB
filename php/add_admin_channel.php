@@ -46,7 +46,10 @@ function add_admin_channel(
   $X['is_del'] = 0;
   $rslt = insert_row($tbl, $X);
   rs_assert($rslt);
-  return true;
+
+  $outJ['msg_stdout'] = "Added $name";
+  $outJ['rts_code'] = 0;
+  return $outJ;
 }
 /* For quick and dirty testing
 $X = '{ "Table" : "admin", "Name" : "ramesh" } ';
