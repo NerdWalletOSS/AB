@@ -6,7 +6,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 require_once "includes/header_admin.php";
 ?>
-<script src="js/check_tests.js"></script>
 <div class="container">
 	<div class="row" >
          <!--<div class="col-xs-6">-->
