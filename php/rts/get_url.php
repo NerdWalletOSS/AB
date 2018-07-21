@@ -7,6 +7,7 @@ function get_url(
   $url,
   &$http_code,
   &$rslt,
+  &$destination,
   $num_retries = 1
 )
 {
@@ -27,8 +28,10 @@ function get_url(
   for ( $tries = 0; $tries < $num_retries; $tries++ ) { 
     $rslt = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ( $http_code == 200 ) { break; }
-    trigger_error("RTS ERROR: $server, $url\n");
+    $destination = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); // UTPAL: For detination URL
+    if ( $http_code != 200 ) { 
+      return false; 
+    }
   } 
   curl_close($ch);
   return true;

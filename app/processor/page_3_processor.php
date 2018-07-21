@@ -36,6 +36,10 @@ for ( $i = 0; $i < $nV; $i++ ) {
 //-------------------------------------
 // Call to Set Device Specific Variant
 $rslt =  set_device_specific_variant(json_encode($T));
+print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
-ob_clean();
+if (isset($rslt["msg_stderr"])) {
+header("Error-Message: ".$rslt["msg_stderr"]);
+}
+//ob_clean();
 ?>

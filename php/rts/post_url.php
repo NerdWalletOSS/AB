@@ -32,10 +32,10 @@ function post_url(
   for ( $tries = 0; $tries < $num_retries; $tries++ ) { 
     $rslt = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ( $http_code == 200 ) { break; }
-    trigger_error("ERROR: $server, $port, $url\n");
+    if ( $http_code != 200 ) { return false; }
   } 
   curl_close($ch);
+  return true;
 }
 /*
 $X = xurl("localhost", 8000, "TestInfo?TestName=Ramesh&TestType=XYTest", 200);

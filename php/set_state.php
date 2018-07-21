@@ -38,6 +38,7 @@ function set_state(
   $T = db_get_row("test", "id", $test_id);
   rs_assert($T, "test [$test_id] not found");
 
+  $test_name = $T['name'];
   $state_id  = intval($T['state_id']);
   $old_state = lkp("state", $state_id, "reverse");
 
@@ -134,21 +135,17 @@ function set_state(
   $outJ["msg_stdout"] = "Changed state of Test $test_id from $old_state to $new_state";
   db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
   // Note it is possible for both msg_stdout and msg_stderr to be set
-  $rts_err_msg = "";
-  $status = true;
+  $http_code = 0;
   if ( ( $new_state == "started" ) or ( $new_state == "terminated" ) or 
        ( $new_state == "archived" ) ) {
+    $http_code = 200; 
+    $rts_error_msg = "";
     $status = inform_rts($test_id, $rts_err_msg);
+    if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
-  if ( !$status ) { 
-    $http_code = 400; 
-    $Y['msg_stderr'] = $rts_err_msg;
-    header("Error-Message: Unable to talk to RTS" . nl2br($rts_err_msg));
-  }
-  $outJ["status_code"] = $http_code;
+  $outJ["rts_code"] = $http_code;
+  $outJ["msg_stdout"] = "Changed stated of Test $test_name to $new_state";
+  $outJ["TestID"] = $test_id;
 
-  header("Error-Code: $http_code");
-  header("ChangeState: true");
-  http_response_code($http_code);
   return $outJ;
 }
