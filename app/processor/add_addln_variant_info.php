@@ -21,9 +21,7 @@ $i = get_variant_idx($X,$_POST['VariantID']);
 $X['Updater'] = $_POST['Updater'];
 $X['VariantID'] = $_POST['VariantID'];
 $X['Variants'][$i]['description'] = $_POST['Description'];
-if ( isset($TestType) && ($TestType == "XYTest")) {
 $X['Variants'][$i]['custom_data'] = $_POST['CustomData'];
-}
 //-------------------------------------
 // Call to Add/Edit Additional Variant Information
 $rslt =  add_addnl_var_info(json_encode($X));

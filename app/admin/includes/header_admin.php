@@ -26,6 +26,7 @@ require_once "../utility_functions.php";
     <!-- jQuery  -->
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
+		<script src="js/check_tests.js"></script>
 	
   </head>
 

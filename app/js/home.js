@@ -88,7 +88,9 @@ $(document).ready(function() {
 */  
 					if (value['state_id'] == 3) {
             TableRow += "<td><a href='fix_to_a_winner.php?TestID=" + value['id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></a>";
-} else {
+} else if (value['state_id'] == 5) {
+  TableRow += "<td><strong>No Action</strong>";
+}  else {
 TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button></a>"; 
 }          
  if (value['state_id'] == 1) {
@@ -96,9 +98,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             } 
             if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
-						// else {
-						//TableRow += "<strong>No Action</strong></td>";
-						//}
             TableRow += "</td></tr>";
             $(table).append(TableRow);
           });

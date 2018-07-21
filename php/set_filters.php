@@ -74,7 +74,7 @@ function set_filters(
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
     }
-  }
+  //}
   $outJ["rts_code"] = $http_code;
   $outJ["TestID"] = $test_id; 
   $outJ["msg_stdout"] = "Changed filter for Test $test_id ";

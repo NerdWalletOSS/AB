@@ -24,15 +24,14 @@ $url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
 $http_code = 0;
 $rslt = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
-var_dump($data);
 if (!$data) {
-echo "User Agent unavailable";
+echo "<strong>User Agent unavailable</strong>";
 } else {
 print("<pre>".print_r($rslt,true)."</pre>");
 }
 ?>
-</table>
           </div>
         </div></div>
+</div>
 	<!-- FOOTER -->
 <?php require_once "../includes/footer.php"; ?>
