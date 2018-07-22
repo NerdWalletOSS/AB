@@ -10,7 +10,11 @@ require_once 'add_addnl_var_info.php';
 ob_start();
 $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "InsertTest" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "AddAddnlVarInfo" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
 }
 $rslt =  add_addnl_var_info($body);
 echo "BOGUS BODY"; // TODO DELETE

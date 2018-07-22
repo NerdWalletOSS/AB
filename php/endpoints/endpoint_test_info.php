@@ -13,11 +13,19 @@ if ( ( !empty($_GET) ) && ( isset($_GET['TestID']) ) ) {
 else {
   $body = file_get_contents('php://input');
   if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-    echo '{ "InsertTest" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "TestInfo" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
   }
   $X = json_decode($body); 
   if ( !$X ) { 
-    echo '{ "InsertTest" : "ERROR", "Message" : "Invalid JSON" }'; exit;
+  $err = '{ "TestInfo" : "ERROR", "Message" : "Bad payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
   }
   $test_id = get_json_element($X, "TestID");
 }

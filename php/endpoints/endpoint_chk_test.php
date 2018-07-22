@@ -9,7 +9,11 @@ require_once 'chk_test.php';
 
 $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "ChkTest" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "ChkTest" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
 }
 $rslt =  chk_test($body);
 if ( !$rslt ) { 

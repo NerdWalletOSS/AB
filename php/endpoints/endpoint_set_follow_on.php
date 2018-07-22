@@ -9,7 +9,11 @@ require_once 'set_follow_on.php';
 ob_start();
 $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "InsertTest" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "SetFollowOn" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
 }
 $rslts =  set_follow_on($body);
 header("TestID: ".$rslts["TestID"]);
