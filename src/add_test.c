@@ -55,7 +55,7 @@ add_test(
   if ( state == TEST_STATE_ARCHIVED ) {  // delete and get out of here
     status = get_test_idx(test_name, test_type, &test_idx); 
     if ( test_idx < 0 ) { go_BYE(-1); }
-    goto BYE; 
+    free_test(test_idx); goto BYE; 
   }
   //------------------------------------------
   status = get_int(root, "is_dev_specific", NULL, NULL, &is_dev_specific); cBYE(status);
@@ -140,8 +140,7 @@ add_test(
     fprintf(stderr, "Lua function update_test failed: %s\n", 
         lua_tostring(g_L, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-    lua_pop(g_L, 1);
-    go_BYE(-1);
+    lua_pop(g_L, 1); go_BYE(-1);
   }
 
   json_decref(root);

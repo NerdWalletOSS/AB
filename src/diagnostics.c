@@ -53,7 +53,7 @@ c_diagnostics(
         ( num_variants > AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
     }
-    if ( g_tests[i].state == TEST_STATE_STARTED ) { 
+    if ( g_tests[i].state == TEST_STATE_STARTED ) {
       // not for terminated tests
       for ( uint32_t ii = 0; ii < num_devices; ii++ ) {
         for ( uint32_t jj = 0; jj < AB_NUM_BINS; jj++ ) {
@@ -62,24 +62,24 @@ c_diagnostics(
           counter[x]++;
         }
       }
-    }
-    if ( num_devices == 1 ) { 
-      for ( int v = 0; v < num_variants; v++ ) { 
-        double chk_perc = 100.0*counter[v]/(double)AB_NUM_BINS;
-        if ( g_tests[i].variants[v].percentage == 100 ) { 
-          if ( counter[v] != AB_NUM_BINS ) { go_BYE(-1); }
-        }
-        else if ( g_tests[i].variants[v].percentage == 0 ) { 
-          if ( counter[v] != 0 ) { go_BYE(-1); }
-        }
-        else {
-          if ( fabs((chk_perc - g_tests[i].variants[v].percentage)/
-                (chk_perc + g_tests[i].variants[v].percentage)) > 0.1 ) {
-            if ( g_tests[i].test_type == AB_TEST_TYPE_XY ) { 
-              printf("BAD STUFF!!!! \n");
-            }
-            else {
-              go_BYE(-1);
+      if ( num_devices == 1 ) { 
+        for ( int v = 0; v < num_variants; v++ ) { 
+          double chk_perc = 100.0*counter[v]/(double)AB_NUM_BINS;
+          if ( g_tests[i].variants[v].percentage == 100 ) { 
+            if ( counter[v] != AB_NUM_BINS ) { go_BYE(-1); }
+          }
+          else if ( g_tests[i].variants[v].percentage == 0 ) { 
+            if ( counter[v] != 0 ) { go_BYE(-1); }
+          }
+          else {
+            if ( fabs((chk_perc - g_tests[i].variants[v].percentage)/
+                  (chk_perc + g_tests[i].variants[v].percentage)) > 0.1 ) {
+              if ( g_tests[i].test_type == AB_TEST_TYPE_XY ) { 
+                printf("BAD STUFF!!!! \n");
+              }
+              else {
+                go_BYE(-1);
+              }
             }
           }
         }

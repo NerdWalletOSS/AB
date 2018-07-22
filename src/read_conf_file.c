@@ -66,7 +66,9 @@ get_string(
     go_BYE(-1); 
   }
   const char *X = json_string_value(handle);
-  if ( X == NULL ) { go_BYE(-1); }
+  if ( X == NULL ) { 
+    go_BYE(-1); 
+  }
   if ( strlen(X) > maxlen ) { go_BYE(-1); }
   strcpy(dst, X);
   // fprintf(stderr, "%s", X);

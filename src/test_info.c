@@ -134,7 +134,7 @@ c_test_info(
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
     //------------------------------------------
     const char *cptr = g_tests[test_idx].variants[i].custom_data;
-    if ( cptr == NULL ) { 
+    if ( ( cptr == NULL ) || ( *cptr == '\0' ) ) { 
       sprintf(buf, "  \"custom_data\" : null, \n");
     }
     else {

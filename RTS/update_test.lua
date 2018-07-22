@@ -21,8 +21,20 @@ local function update_test(
   local is_dev_specific = test[0].is_dev_specific
   assert( ( is_dev_specific == true ) or ( is_dev_specific == false ) )
 
-  test[0].has_filters = tonumber(T.has_filters)
-  assert(( T.has_filters >= 0) and ( T.has_filters <= 1), args)
+  local has_filters
+  if (type(T.has_filters) == "boolean") then
+    if ( T.has_filters ) then 
+      has_filters = 1
+    else
+      has_filters = 0
+    end
+  elseif (type(T.has_filters) == "number") then
+    has_filters = T.has_filters
+  else
+    assert(nil)
+  end
+  assert( (has_filters == 0 ) or (has_filters == 1 ) )
+  -- TODO P2 We still need to incorporate filters into the code
 
   if ( is_dev_specific ) then 
     assert(num_devices > 1 )
@@ -31,8 +43,8 @@ local function update_test(
   test[0].ramp = tonumber(T.ramp)
   assert(test[0].ramp >= 0)
   local Variants = assert(T.Variants)
-  local num_variants = #Variants
-  assert(num_variants == test[0].num_variants)
+  local NumVariants = #Variants
+  assert(NumVariants == test[0].num_variants)
   local sum = 0
   local num_final = 0
   local final_variant_id  = -1
@@ -64,7 +76,7 @@ local function update_test(
     num_final = num_final + tonumber(v.is_final)
     if ( tonumber(v.is_final) == 1 ) then 
       final_variant_id  = tonumber(v.id)
-      final_variant_idx = k
+      final_variant_idx = k-1
     end
 
     if ( ( v.custom_data ) and ( #v.custom_data > 0 ) ) then 
@@ -72,15 +84,16 @@ local function update_test(
       ffi.copy(test[0].variants[k-1].custom_data, v.custom_data)
     end
 
+    local percentage = tonumber(v.percentage)
     test[0].variants[k-1].id         = tonumber(v.id)
-    test[0].variants[k-1].percentage = tonumber(v.percentage)
-    assert( ( v.percentage >= 0 ) and ( v.percentage <= 100 ) ) 
-    sum = sum + v.percentage
+    test[0].variants[k-1].percentage = percentage
+    assert( ( percentage >= 0 ) and ( percentage <= 100 ) ) 
+    sum = sum + percentage
   end
   assert(num_final <= 1, "num_final = " .. num_final)
   assert( (sum > 99.99 ) and ( sum < 100.01 ) ) 
   if ( T.State == "started" ) then
-    assert(num_final == 0 )
+    assert(num_final == 0, "test = " .. T.name .. " #final = " .. num_final)
     assert(final_variant_idx < 0)
     assert(final_variant_id  <  0)
     if ( T.TestType == "XYTest" ) then 
@@ -107,13 +120,13 @@ local function update_test(
           assert((percentage >= 0 ) and (percentage <= 100))
            -- find variant_idx corresponding to this
           local variant_idx = 0
-          for v = 1, num_variants do 
+          for v = 1, NumVariants do 
             if ( Variants[v].id == variant_id ) then 
               variant_id = v-1
               break
             end
           end
-          assert(( variant_idx >= 0 )and( variant_idx < num_variants))
+          assert(( variant_idx >= 0 )and( variant_idx < NumVariants))
           local num_to_set = percentage / 100.0 * consts.AB_NUM_BINS
           start = num_set[device_id]
           -- print(device_id, variant_id, start, num_to_set)
@@ -162,14 +175,14 @@ local function update_test(
           for l = 1, num_bins_to_set do
             if ( bidx > consts.AB_NUM_BINS ) then break end 
             test[0].variant_per_bin[0][bidx] = k-1
-            bidx = bidx + num_variants
+            bidx = bidx + NumVariants
             num_bins_set = num_bins_set + 1
           end
           -- you now need to steal some stuff from Control
           if ( num_bins_set < num_bins_to_set ) then
             if ( num_bins_set == num_bins_to_set ) then break end 
-            local start = (k-1-1) * num_variants
-            local incr = (num_variants-1) * num_variants
+            local start = (k-1-1) * NumVariants
+            local incr = (NumVariants-1) * NumVariants
             for bidx = start, consts.AB_NUM_BINS-1, incr do
               test[0].variant_per_bin[0][bidx] = k-1
             end
@@ -183,6 +196,7 @@ local function update_test(
   elseif ( T.State == "terminated" ) then
     assert(num_final == 1 )
     assert(final_variant_idx >= 0)
+    assert(final_variant_idx < NumVariants)
     assert(final_variant_id  >  0)
     for d = 0, num_devices do 
       test[0].final_variant_idx[d] = final_variant_idx
