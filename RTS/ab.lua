@@ -3,6 +3,7 @@
 -- Also the globals are functions.
 local x_load_config   = require 'RTS/ab_load_config'
 local x_update_config = require 'RTS/ab_update_config'
+aux = {}
 
 function load_config(...)
   x_load_config.load_config(...)
@@ -23,5 +24,17 @@ local x_update_test      = require 'RTS/update_test'
 function update_test(...)
   x =  x_update_test(...)
   return x
+end
+
+local x_chk_device      = require 'RTS/chk_device'
+function chk_device(...)
+  x =  x_chk_device(...)
+  return x
+end
+
+local x_load_aux      = require 'RTS/load_aux'
+function load_aux(...)
+  x, y =  x_load_aux(...)
+  return x, y
 end
 

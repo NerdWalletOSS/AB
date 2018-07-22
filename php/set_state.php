@@ -64,6 +64,7 @@ function set_state(
   //--------------------------------------
   // Verify that test is in good state. Ideally, needed only for 
   // draft->dormant transition but never hurts to leave it in 
+  $unset_final = false; // this handles resurrection 
   $t1 = db_get_test($test_id);
   $t2 = json_decode(json_encode($t1));
   $chk_rslt = chk_test_basic($t2, true);
@@ -83,6 +84,7 @@ function set_state(
         ($old_state == "terminated" && ( $test_type == "XYTest") ) ), 
       "can start a test only if prevous state == dormant, not $old_state");
     $X1['state_id'] = lkp("state", "started");
+    $unset_final = true; 
     break;
   case "terminated" : 
     $winner  = trim(get_json_element($inJ, 'Winner'));
@@ -112,6 +114,11 @@ function set_state(
   $dbh = dbconn(); rs_assert($dbh); 
   try {
     $dbh->beginTransaction();
+    if ( $unset_final ) { 
+      unset($X5);
+      $X5['is_final'] = false;
+      db_mod_row("variant", $X5, " where test_id = $test_id ";
+    }
     db_set_row("test", $test_id, $X1);
     if ( isset($X2) ) { 
       db_set_row("variant", $winner_id, $X2);

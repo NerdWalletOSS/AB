@@ -1,3 +1,4 @@
+require 'lua/str'
 local assertx    = require 'lua/assertx'
 local ffi        = require 'lua/ab_ffi'
 local consts     = require 'lua/ab_consts'
@@ -23,16 +24,21 @@ local function update_test(
   test[0].has_filters = tonumber(T.has_filters)
   assert(( T.has_filters >= 0) and ( T.has_filters <= 1), args)
 
+  if ( is_dev_specific ) then 
+    assert(num_devices > 1 )
+  end
+
   test[0].ramp = tonumber(T.ramp)
   assert(test[0].ramp >= 0)
-  local V = assert(T.Variants)
-  assert(#V == test[0].num_variants)
+  local Variants = assert(T.Variants)
+  local num_variants = #Variants
+  assert(num_variants == test[0].num_variants)
   local sum = 0
   local num_final = 0
   local final_variant_id  = -1
   local final_variant_idx = -1
-  for k1, v1 in ipairs(V) do
-    for k2, v2 in ipairs(V) do 
+  for k1, v1 in ipairs(Variants) do
+    for k2, v2 in ipairs(Variants) do 
       if ( k1 ~= k2 ) then 
         if ( v1.url ) and ( v2.url ) and (#v1.url > 0) then 
           assert(v1.url ~= v2.url)
@@ -44,7 +50,7 @@ local function update_test(
     end
   end
     
-  for k, v in ipairs(V) do
+  for k, v in ipairs(Variants) do
     assert(#v.name > 0)
     assert(#v.name <= consts.AB_MAX_LEN_VARIANT_NAME)
     ffi.copy(test[0].variants[k-1].name, v.name)
@@ -78,20 +84,57 @@ local function update_test(
     assert(final_variant_idx < 0)
     assert(final_variant_id  <  0)
     if ( T.TestType == "XYTest" ) then 
-      for d = 1, num_devices do 
-        for b = 1, consts.AB_NUM_BINS do 
-          test[0].variant_per_bin[d-1][b-1] = 0 -- TODO P1 
+      if ( num_devices == 1 ) then
+        local bidx = 0
+        for k, v in pairs(Variants) do
+          num_bins_to_set = v.percentage / 100.0 * consts.AB_NUM_BINS
+          for i = 1, num_bins_to_set do
+            test[0].variant_per_bin[0][bidx] = k-1
+            bidx = bidx + 1 
+          end
+        end
+      else
+        assert(T.DeviceCrossVariant)
+        local num_set = {}
+        for d = 1, num_devices do
+          num_set[d] = 0
+        end
+        for k, v in pairs(T.DeviceCrossVariant) do 
+          local device_id = v.device_id
+          assert(( device_id >= 1 ) and ( device_id <= num_devices) )
+          local variant_id = v.variant_id
+          local percentage = v.percentage
+          assert((percentage >= 0 ) and (percentage <= 100))
+           -- find variant_idx corresponding to this
+          local variant_idx = 0
+          for v = 1, num_variants do 
+            if ( Variants[v].id == variant_id ) then 
+              variant_id = v-1
+              break
+            end
+          end
+          assert(( variant_idx >= 0 )and( variant_idx < num_variants))
+          local num_to_set = percentage / 100.0 * consts.AB_NUM_BINS
+          start = num_set[device_id]
+          -- print(device_id, variant_id, start, num_to_set)
+          for l = 1, num_to_set do 
+            assert(start+l <= consts.AB_NUM_BINS)
+            test[0].variant_per_bin[device_id-1][start+l-1] = variant_idx
+          end
+          num_set[device_id] = num_set[device_id] + num_to_set
         end
       end
     elseif ( T.TestType == "ABTest" ) then 
       assert(num_devices == 1)
       -- make sure that Control is first variant
       local Variants = T.Variants
+      local control_idx = -1
       for k, v in pairs(Variants) do
-        if ( v.name == string.lower("Control") ) then
+        if ( string.lower(v.name) == "control" ) then
           control_idx = k; break
         end
       end
+      assert( control_idx >= 1 )
       if ( control_idx ~= 1 ) then 
         local swap = Variants[control_idx]
         Variants[control_idx] = Variants[1]

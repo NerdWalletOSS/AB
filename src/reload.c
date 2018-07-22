@@ -1,4 +1,5 @@
 #include "ab_incs.h"
+#include "ua_types.h"
 #include "auxil.h"
 
 #include "aux_zero.h"
@@ -11,6 +12,8 @@ extern char g_err[AB_MAX_LEN_RESULT+1];
 extern lua_State *g_L;
 extern CFG_TYPE g_cfg;
 extern uint64_t g_log_bad_test;
+extern LKP_REC_TYPE *g_justin_cat_lkp;
+extern int g_n_justin_cat_lkp;
 
 int
 reload(
@@ -28,13 +31,47 @@ reload(
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++){
     free_test(i);
   }
+  //--- START: Load auxiliary tables
+  lua_getglobal(g_L, "load_aux");
+  if ( !lua_isfunction(g_L, -1)) {
+    fprintf(stderr, "Lua function load_aux missing\n");
+    lua_pop(g_L, 1); go_BYE(-1);
+  }
+  lua_pushstring(g_L, db);
+  lua_pushstring(g_L, host);
+  lua_pushstring(g_L, user);
+  lua_pushstring(g_L, pass);
+  lua_pushnumber(g_L, port);
+  status = lua_pcall(g_L, 5, 0, 0);
+  if (status != 0) {
+    fprintf(stderr, "Lua function load_aux failed: %s\n", 
+        lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
+    lua_pop(g_L, 1); go_BYE(-1);
+  }
+  //--- STOP: Load auxiliary tables
+  // -- Check that justin_cat_lkp in C and device in database are in sync
+  lua_getglobal(g_L, "chk_device");
+  if ( !lua_isfunction(g_L, -1)) {
+    fprintf(stderr, "Lua function chk_device missing\n");
+    lua_pop(g_L, 1); go_BYE(-1);
+  }
+  lua_pushlightuserdata(g_L, g_justin_cat_lkp);
+  lua_pushnumber(g_L, g_n_justin_cat_lkp);
+  status = lua_pcall(g_L, 2, 0, 0);
+  if (status != 0) {
+    fprintf(stderr, "Lua function chk_device failed: %s\n", 
+        lua_tostring(g_L, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
+    go_BYE(-1); 
+  }
+  //-----------------------------
   uint64_t tid;
   for ( ; ; ) {
     lua_getglobal(g_L, "get_test");
     if ( !lua_isfunction(g_L, -1)) {
-      fprintf(stderr, "Function add does not exist in lua's global space\n");
-      lua_pop(g_L, 1);
-      go_BYE(-1);
+      fprintf(stderr, "Lua function get_test missing\n");
+      lua_pop(g_L, 1); go_BYE(-1);
     }
     lua_pushstring(g_L, db);
     lua_pushstring(g_L, host);

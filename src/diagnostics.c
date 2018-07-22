@@ -65,7 +65,7 @@ c_diagnostics(
     }
     if ( num_devices == 1 ) { 
       for ( int v = 0; v < num_variants; v++ ) { 
-        double chk_perc = counter[v]/(double)AB_NUM_BINS;
+        double chk_perc = 100.0*counter[v]/(double)AB_NUM_BINS;
         if ( g_tests[i].variants[v].percentage == 100 ) { 
           if ( counter[v] != AB_NUM_BINS ) { go_BYE(-1); }
         }
