@@ -97,9 +97,17 @@ local function update_test(
         Variants[control_idx] = Variants[1]
         Variants[1] = swap
       end
-      -- Give everything to Control at the start
+      -- Give everything to Control or (non_zero variant) at the start
+      local default = 0
+      if ( Variants[1].percentage == 0 ) then
+        for k, v in pairs(Variants) do 
+          if ( v.percentage ~= 0 ) then
+            default = k-1
+          end
+        end
+      end
       for b = 1, consts.AB_NUM_BINS do
-        test[0].variant_per_bin[0][b-1] = 0
+        test[0].variant_per_bin[0][b-1] = default
       end
       -- Now for the rest of the variants to grab their spots
       for k, v in pairs(Variants) do

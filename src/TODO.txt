@@ -1,4 +1,5 @@
  Set separator for XYTests
+ Make sure you cannot exceed percentages for ABTest
 
  I think resurrect is not unsetting is_final
  
