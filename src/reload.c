@@ -23,12 +23,12 @@ reload(
   const char *user = g_cfg.mysql.user;
   const char *pass = g_cfg.mysql.pass;
   const char *db   = g_cfg.mysql.db;
-  int         port = g_cfg.mysql.port;
+  uint64_t    port = g_cfg.mysql.port;
 
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++){
     free_test(i);
   }
-  int tid;
+  uint64_t tid;
   for ( ; ; ) {
     lua_getglobal(g_L, "get_test");
     if ( !lua_isfunction(g_L, -1)) {
@@ -61,7 +61,7 @@ reload(
       fprintf(stderr, "reload: 2nd return must be a string"); go_BYE(-1); 
     }
     const char *test_as_str = lua_tostring(g_L, -1);
-    status = add_test(test_as_str); 
+    status = add_test(test_as_str);
     if ( status < 0 ) { // don't quit if one test is bad
       fprintf(stderr, "Bad test %s \n", test_as_str);
       g_log_bad_test++; // TODO P2 statsd

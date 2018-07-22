@@ -22,11 +22,21 @@ test_info(
   int status = 0;
   int test_type, test_idx;
   char test_name[AB_MAX_LEN_TEST_NAME+1];
+  int bufsz = 7;
+  char buf[bufsz+1];
   status = get_test_type(args, &test_type); cBYE(status);
   status = get_test_name(args,  test_name);  cBYE(status);
   status = get_test_idx(test_name, test_type, &test_idx); cBYE(status);
   if ( test_idx < 0 ) { go_BYE(-1); }
-  status = c_test_info(test_idx, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+  memset(buf, '\0', bufsz+1);
+  status = extract_name_value(args, "Source=", '&', buf, bufsz);
+  if ( strcmp(buf, "Lua") == 0 ) { 
+    if ( g_tests[test_idx].test_as_str == NULL ) { go_BYE(-1); }
+    strncpy(g_rslt, g_tests[test_idx].test_as_str, AB_MAX_LEN_RESULT);
+  }
+  else {
+    status = c_test_info(test_idx, g_rslt, AB_MAX_LEN_RESULT); cBYE(status);
+  }
 
 BYE:
   return status;

@@ -1,21 +1,25 @@
-[RAMESH] Fix get_num_features
-[RAMESH] Why do we run out of connections after approx 150 Reloads?
+ Set separator for XYTests
 
-[RAMESH] Add DeleteTest, pure C implementation
+ I think resurrect is not unsetting is_final
+ 
+ Fix get_num_features
+ Why do we run out of connections after approx 150 Reloads?
 
-[RAMESH] Finish ext_classify_ip
+ Add DeleteTest, pure C implementation
 
-[RAMESH] Make a sample db.json for both RTS and Webapp after cleaning up
+ Finish ext_classify_ip
 
-[RAMESH] Remove not needed functions from auxil.c ab_auxil.c
+ Make a sample db.json for both RTS and Webapp after cleaning up
 
-[RAMESH] Use const char * const appropriately wherever needed
+ Remove not needed functions from auxil.c ab_auxil.c
 
-[RAMESH]  statsd metrics 
+ Use const char * const appropriately wherever needed
 
-[RAMESH] database migration 
+  statsd metrics 
 
-[INDRAJEET] verify that we are firing events properly
+ database migration 
+
+ verify that we are firing events properly
 
 NO WARNINGS in Makefile 
 

@@ -169,6 +169,7 @@ malloc_test(
   else if ( state == TEST_STATE_STARTED ) { 
     p->variant_per_bin = malloc(num_devices * sizeof(uint8_t *));
     return_if_malloc_failed(p->variant_per_bin);
+    memset(p->variant_per_bin, '\0', num_devices * sizeof(uint8_t *));
     for ( int i = 0; i < num_devices; i++ ) { 
       p->variant_per_bin[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
       return_if_malloc_failed(p->variant_per_bin[i]);
