@@ -73,7 +73,7 @@ function add_addnl_var_info(
   // check custom data 
   rs_assert(strlen($custom_data) <= lkp("configs", "max_len_custom_data"));
   if ( $custom_data != "" ) {  // must be valid JSON
-    rs_assert(is_valid_json($custom_data));
+    rs_assert(is_valid_json($custom_data), "bad custom data $custom_data");
   }
   // check url 
   if ( $test_type == "XYTest" ) {

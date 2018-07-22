@@ -5,7 +5,7 @@ local db_connect = require 'RTS/db_connect'
 local JSON       = require 'lua/JSON'
 
 local function mk_lkp(X)
-  tmp = {}
+  local tmp = {}
   for _,v in pairs(X) do
     tmp[v.id] = v.name
   end
