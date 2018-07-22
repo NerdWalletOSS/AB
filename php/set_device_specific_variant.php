@@ -72,7 +72,7 @@ function set_device_specific_variant(
   if ( $state == "started" ) {
     $http_code = 200; 
     $rts_error_msg = "";
-    $status = inform_rts($test_id, $rts_err_msg);
+    $status = inform_rts($tid, $rts_err_msg);
     if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
   $outJ["rts_code"] = $http_code;

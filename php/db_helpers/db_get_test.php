@@ -44,6 +44,7 @@ function db_get_test(
     $Variants[$vidx++] = $v;
   }
   $T['Variants'] = $Variants;
+  $T['NumVariants'] = (string)(count($Variants));
   //------------------------------------
   $DV = db_get_rows("device_x_variant", "test_id = $test_id ");
   if ( !is_null($DV) ) {
