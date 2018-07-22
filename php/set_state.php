@@ -6,6 +6,7 @@ require_once 'dbconn.php';
 require_once 'lkp.php';
 require_once 'get_json_element.php';
 require_once 'db_set_row.php';
+require_once 'mod_row.php';
 require_once 'inform_rts.php';
 require_once 'chk_test_basic.php';
 
@@ -67,7 +68,7 @@ function set_state(
   $unset_final = false; // this handles resurrection 
   $t1 = db_get_test($test_id);
   $t2 = json_decode(json_encode($t1));
-  $chk_rslt = chk_test_basic($t2, true);
+  $chk_rslt = chk_test_basic($t2);
   rs_assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   $X1['updater_id'] = $updater_id;
@@ -117,7 +118,7 @@ function set_state(
     if ( $unset_final ) { 
       unset($X5);
       $X5['is_final'] = false;
-      db_mod_row("variant", $X5, " where test_id = $test_id ";
+      mod_row("variant", $X5, " where test_id = $test_id ");
     }
     db_set_row("test", $test_id, $X1);
     if ( isset($X2) ) { 

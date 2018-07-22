@@ -43,7 +43,7 @@ function set_filters(
   // Additional check that all is well 
   $t1 = db_get_test($test_id);
   $t2 = json_decode(json_encode($t1));
-  $chk_rslt = chk_test_basic($t2, true);
+  $chk_rslt = chk_test_basic($t2);
   rs_assert($chk_rslt);
   $X1['updated_at'] = $updated_at;
   $X1['updater_id'] = $updater_id;

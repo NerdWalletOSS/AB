@@ -43,14 +43,20 @@ tests.t1 = function (
   tids.XYTest = tid1
   tids.ABTest = tid2
   for k, tid in pairs(tids)  do
+    local T1
     S.publish(tid)
+    T1 = get_test_info(tid); assert(T1.State == "dormant")
     S.start(tid)
+    T1 = get_test_info(tid); assert(T1.State == "started")
     S.terminate(tid, { Winner = winners[k] })
+    T1 = get_test_info(tid); assert(T1.State == "terminated")
   end
   for k, tid in pairs(tids)  do
     local status = pcall(S.start, tid)
     if ( k == "XYTest" ) then assert(status) end  -- resurrect XYTest
-    if ( k == "ABTest" ) then assert(not status) end -- not resurrect ABTest
+    if ( k == "ABTest" ) then assert(not status, " tid = " .. tid ) 
+    -- not resurrect ABTest
+    end 
   end
   print("Test t1 succeeded")
 end

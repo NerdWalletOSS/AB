@@ -68,34 +68,15 @@ function set_device_specific_variant(
     }
   }
   //------------------------------------------
-<<<<<<< HEAD
-  $http_code = 200;
-  $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
-  $outJ["TestID"] = $tid; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-  // Note it is possible for both msg_stdout and msg_stderr to be set
-=======
   $http_code = 0;
->>>>>>> dev
   if ( $state == "started" ) {
     $http_code = 200; 
     $rts_error_msg = "";
     $status = inform_rts($test_id, $rts_err_msg);
     if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
-<<<<<<< HEAD
-
-  $Y['msg_stdout']  = $outJ["msg_stdout"];
-  $Y['status_code'] = $outJ["status_code"];
-  db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
-
-  $outJ["status_code"] = $http_code;
-  header("Error-Code: $http_code");
-  http_response_code($http_code);
-=======
   $outJ["rts_code"] = $http_code;
   $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
   $outJ["TestID"] = $tid; 
-
->>>>>>> dev
   return $outJ;
 }

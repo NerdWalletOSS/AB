@@ -18,5 +18,4 @@ if ( is_array($rslts ) ) {
     header("$key: $val");
   }
 }
-}
 ?>

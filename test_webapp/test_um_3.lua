@@ -35,32 +35,26 @@ tests.t1 = function (
   optargs.TestType = test_type
   local tid1 = mk_rand_test(optargs)
   local T1 = get_test_info(tid1)
+  optargs.name = T1.name
 
   -- archived/delete the test
-  T1.NewState = "archived"
-  T1.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T1))
-  assert(status == 200)
+  S.archive(tid1)
   local chk_T
   chk_T = get_test_info(tid1)
-  -- for k, v in pairs(chk_T) do print(k, v) end 
   assert(chk_T.State == "archived")
 
-  -- Reproduce test 1 of same testtype XYTest
-  local optargs = {}
+  -- Reproduce test 1 of same testtype 
   optargs.TestType = test_type
   local tid2 = mk_rand_test(optargs)
   local T2 = get_test_info(tid2)
+  assert(T2.name == T1.name)
 
   -- Publish
   S.publish(tid2)
-
   -- archived/delete the test
-  T2.NewState = "archived"
-  T2.Updater =  "joe" -- TODO Improve this hard coding
-  local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T2))
-  assert(status ~= 200)
+  S.archive(tid2)
 
+  print("Test t1 succeeded")
 end
 
 --===================================================

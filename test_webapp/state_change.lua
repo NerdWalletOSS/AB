@@ -28,21 +28,6 @@ local function change_state(
   if ( optargs ) then assert(type(optargs) == "table") end 
 
   local T = assert(get_test_info(test_id))
-  if ( new_state == "dormant" ) then 
-    assert ( (T.State == "dormant") or (T.State == "draft"))
-  elseif ( new_state == "started" ) then 
-    assert ( 
-             (T.State == "started") or 
-             (T.State == "dormant") or 
-             ( (T.State == "terminated") and (T.TestType == "XYTest" ) ) 
-             )
-  elseif ( new_state == "terminated" ) then 
-    assert ( (T.State == "terminated") or (T.State == "started"))
-  elseif ( new_state == "archived" ) then 
-    -- all is well 
-  else
-    assert(nil, "Invalid new state = " .. new_state)
-  end
   if ( optargs and optargs.Creator ) then 
     T.Updater = optargs.Creator
   else
@@ -59,7 +44,9 @@ local function change_state(
     end
   end
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
-  assert(status == 200)
+  -- for k, v in pairs(hdrs) do print(k, v) end 
+  -- print(outbody)
+  assert(status == 200, "failed to change " .. T.id .. " to " .. new_state)
   return true
 end
 

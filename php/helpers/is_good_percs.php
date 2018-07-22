@@ -4,7 +4,8 @@ require_once 'lkp.php';
 function is_good_percs(
   $P, // percentages
   $bin_type,
-  $N // names
+  $N, // names
+  $state
 )
 {
   rs_assert(isset($P));
@@ -24,7 +25,8 @@ function is_good_percs(
   }
   rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ),
     "sum of percentages must add up to 100");
-  if ( $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) { 
+  if ( ( $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok" ) && 
+    ( $state != "terminated" ) ) { 
     $idx = 0;
     $nV = count($P);
     $max_perc_non_control = floor(100.0 / ($nV-1.0));
