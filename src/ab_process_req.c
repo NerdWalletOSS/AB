@@ -104,10 +104,7 @@ ab_process_req(
       status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
-    case DeleteTest : /* done by C */
-      status = delete_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
+      /* DeleteTest uses AddTest where state == archived */
     case Diagnostics : /* done by C and Lua */
       status = diagnostics(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);

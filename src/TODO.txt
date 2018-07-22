@@ -1,12 +1,10 @@
+ Write a test to confirm that URL Router routing as expected
  Set separator for XYTests
  Make sure you cannot exceed percentages for ABTest
 
- I think resurrect is not unsetting is_final
+Write a test to confirm that resurrect is unsetting is_final
  
  Fix get_num_features
- Why do we run out of connections after approx 150 Reloads?
-
- Add DeleteTest, pure C implementation
 
  Finish ext_classify_ip
 

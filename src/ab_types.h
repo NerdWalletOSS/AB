@@ -17,7 +17,6 @@ typedef enum _ab_req_type {
   Classify, // Read & C 
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
-  DeleteTest, // Write & C (for testing)
   Diagnostics, // Read &  C  AND Lua
   DumpLog, // Read &  C
   EvalDT, // Read & C
