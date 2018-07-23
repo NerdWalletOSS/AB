@@ -95,7 +95,7 @@ $config = config_html($TestType);
 
 Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>&nbsp;
 <?php 
-if ( $mode == "View" ) 
+if (( $this_state == "started" ) || ( $this_state == "terminated" ) || ( $this_state == "archived" ) )
   {
     if (isset($Channel)) { echo $Channel;}
   }
