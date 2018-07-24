@@ -331,5 +331,6 @@ function test_basic(
    * we either return true or we return false or we rs_assert out
    * For db_get_test() 
    * we either return a table or we rs_assert out 
+   * For get_url(), let us discuss further.
    * */
 }
