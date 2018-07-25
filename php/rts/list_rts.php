@@ -17,7 +17,7 @@ function list_rts()
   switch ($config->{'AB'}->{'RTS_FINDER'}->{'METHOD'}->{'VALUE'}) {
   case "ecs":
     $client = EcsClient::factory(array(
-      'region'  => 'us-east-1',
+      'region'  => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_REGION'}->{'VALUE'},
       'version' => '2014-11-13',
     ));
     $result = $client->listTasks([
