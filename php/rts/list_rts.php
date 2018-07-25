@@ -6,72 +6,53 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../");
 require_once "rs_assert.php";
 require_once "load_configs.php";
 require_once "get_url.php";
+require_once 'aws.phar';
 
-function list_rts(
-)
+use Aws\Ecs\EcsClient;
+
+function list_rts()
 {
-  $servers = null;
-  $ports   = null;
-  // Load configs 
-  rs_assert(load_configs());
-  $conf_file = "/opt/abadmin/db2.json";
-  rs_assert(is_file($conf_file), "File not found $conf_file");
-  $configs = json_decode(file_get_contents($conf_file));
-  rs_assert($configs, "unable to JSON decode $conf_file");
-  //-----------------------------------------------------------
-  //--- Original case: just one server
-  if ( $configs->{'rts_finder_server'} == "" ) {
-    $server = $configs->{'ab_rts_server'};
-    $port   =  $configs->{'ab_rts_port'};
-    if ( ( $server == "" ) || ($port == "" ) )  {
-      echo("NO RTS found\n");
-      return null;
-    }
+  $config = read_config_file();
 
-    $SP = array(1);
-    $SP[0] = array('server' => $server, 'port' => $port);
-    if ( getenv("AB_WEBAPP_STANDALONE") == "true" ) {
-      $SP = null;
+  switch ($config->{'AB'}->{'RTS_FINDER'}->{'METHOD'}->{'VALUE'}) {
+  case "ecs":
+    $client = EcsClient::factory(array(
+      'region'  => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_REGION'}->{'VALUE'},
+      'version' => '2014-11-13',
+    ));
+    $result = $client->listTasks([
+      'desiredStatus' => 'RUNNING',
+      'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
+      'family' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_FAMILY'}->{'VALUE'},
+    ]);
+
+    $result = $client->describeTasks([
+      'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
+      'tasks' => $result['taskArns'],
+    ]);
+
+    $ret = array();
+    foreach ($result['tasks'] as $task) {
+      foreach ($task['containers'] as $container) {
+        $ret[] = array(
+          'server' => $container['networkBindings'][0]['bindIP'],
+          'port' => $container['networkBindings'][0]['hostPort'],
+        );
+      }
     }
-    return $SP;
-  }
-  //-----------------------------------------------------------
-  if ( ( $configs->{'rts_finder_server'} != "" ) && 
-       ( $configs->{'rts_finder_port'} != "" ) )  {
-    // do something 
-    $s = $configs->{'rts_finder_server'} ;
-    $p = $configs->{'rts_finder_port'} ;
-    $http_code = 0; $rslt = "";
-    get_url($s, $p, "DescribeInstances", $http_code, $rslt);
-    if ( $http_code != 200 ) { return null; }
-    $X = json_decode($rslt);
-    if ( !$X ) { return null; }
-    if ( !isset($X->{'server'}) ) { return null; } if ( !isset($X->{'port'}) ) { return null; }
-    $servers = $X->{'server'};
-    $ports = $X->{'port'};
-    if ( count($servers) != count($ports) )  { return null; }
-    $n = count($servers);
-    $SP = array($n);
-    for ( $i = 0; $i < $n; $i++ ) { 
-      $SP[$i] = array('server' => $servers[$i], 'port' => $ports[$i]);
+    return $ret;
+
+  case "local":
+    // our config comes from loaded JSON, which is all stdObject
+    // the code that consumes it is built to work with arrays, so this transforms our objects into arrays
+    $ret = array();
+    foreach ($config->{'AB'}->{'RTS_FINDER'}->{'SERVERS'}->{'VALUE'} as $server) {
+      $ret[] = (array) $server;
     }
-    return $SP;
-  }
-  else {
-    echo("NO RTS found\n");
-    return null;
-  }
-}
-/*
-$SP = list_rts();
-if ( $SP ) { 
-   foreach ( $SP as $sp ) { 
-     $server = $sp['server']; $port = $sp['port'];
-     echo "server = $server, port = $port \n";
+    return $ret;
+
+  default:
+    echo("Unknown RTS finder method");
+    die;
   }
 }
-else {
-  echo "Not using RTS\n";
-}
- */
-?>

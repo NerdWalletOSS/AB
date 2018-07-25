@@ -2,7 +2,6 @@
 // -- SET PATH
 require_once "set_path.php";
 // -- CALL REQUIRED FILES
-require_once "dbconn.php";
 require_once "db_get_row.php";
 
 function is_admin(
