@@ -8,6 +8,8 @@ require_once "load_configs.php";
 require_once "get_url.php";
 require_once 'aws.phar';
 
+use Aws\Credentials\CredentialProvider;
+use Aws\Ec2\Ec2Client;
 use Aws\Ecs\EcsClient;
 
 function list_rts()
@@ -16,26 +18,62 @@ function list_rts()
 
   switch ($config->{'AB'}->{'RTS_FINDER'}->{'METHOD'}->{'VALUE'}) {
   case "ecs":
-    $client = EcsClient::factory(array(
+    // We must construct an explicit credential chain that contains the ECS provider
+    // The default provider only does env, ini & instanceProfile.  See:
+    // https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_provider.html#chaining-providers
+    $credentials = CredentialProvider::memoize(
+      CredentialProvider::chain(
+        CredentialProvider::env(),
+        CredentialProvider::ini(),
+        CredentialProvider::ecsCredentials(),
+        CredentialProvider::instanceProfile([])
+      )
+    );
+
+    // Create our clients
+    $ecsClient = EcsClient::factory(array(
       'region'  => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_REGION'}->{'VALUE'},
       'version' => '2014-11-13',
+      'credentials' => $credentials,
     ));
-    $result = $client->listTasks([
+    $ec2Client = new Ec2Client([
+      'region' => 'us-east-1',
+      'version' => '2016-11-15',
+      'credentials' => $credentials,
+    ]);
+
+    // Get a list of running tasks
+    $result = $ecsClient->listTasks([
       'desiredStatus' => 'RUNNING',
       'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
       'family' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_FAMILY'}->{'VALUE'},
     ]);
 
-    $result = $client->describeTasks([
+    // Describe those tasks
+    $result = $ecsClient->describeTasks([
       'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
       'tasks' => $result['taskArns'],
     ]);
 
+    // Extract each container as an instance of our RTS
     $ret = array();
     foreach ($result['tasks'] as $task) {
+      // Lookup the container instance for this task
+      $containerInstance = $ecsClient->describeContainerInstances([
+        'cluster' => 'apps',
+        'containerInstances' => [$task['containerInstanceArn']],
+      ]);
+
+      // Describe the EC2 instance so we can get the private IP address
+      $ec2Instance = $ec2Client->describeInstances([
+        'InstanceIds' => [$containerInstance['containerInstances'][0]['ec2InstanceId']]
+      ]);
+      $hostIp = $ec2Instance['Reservations'][0]['Instances'][0]['PrivateIpAddress'];
+
+      // For each container 
       foreach ($task['containers'] as $container) {
         $ret[] = array(
-          'server' => $container['networkBindings'][0]['bindIP'],
+          'server' => $hostIp,
           'port' => $container['networkBindings'][0]['hostPort'],
         );
       }
