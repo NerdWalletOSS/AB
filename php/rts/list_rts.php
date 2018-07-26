@@ -37,7 +37,7 @@ function list_rts()
       'credentials' => $credentials,
     ));
     $ec2Client = new Ec2Client([
-      'region' => 'us-east-1',
+      'region'  => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_REGION'}->{'VALUE'},
       'version' => '2016-11-15',
       'credentials' => $credentials,
     ]);
