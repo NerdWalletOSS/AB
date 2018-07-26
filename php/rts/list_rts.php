@@ -60,7 +60,7 @@ function list_rts()
     foreach ($result['tasks'] as $task) {
       // Lookup the container instance for this task
       $containerInstance = $ecsClient->describeContainerInstances([
-        'cluster' => 'apps',
+        'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
         'containerInstances' => [$task['containerInstanceArn']],
       ]);
 
