@@ -1,5 +1,5 @@
 extern int 
-l_list_tests(
+list_tests(
     const char *args
     );
 extern int 

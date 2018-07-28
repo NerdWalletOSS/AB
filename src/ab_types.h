@@ -17,7 +17,6 @@ typedef enum _ab_req_type {
   Classify, // Read & C 
   ClassifyIP, // Read &  C
   ClassifyUA, // Read &  C
-  DeleteTest, // Write & C (for testing)
   Diagnostics, // Read &  C  AND Lua
   DumpLog, // Read &  C
   EvalDT, // Read & C
@@ -58,6 +57,7 @@ typedef struct _variant_rec_type {
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
+  char *test_as_str;
   char name[AB_MAX_LEN_TEST_NAME+1];
   int test_type; // whether AB_TEST_TYPE or XY_TEST_TYPE or ..
   uint32_t id; // external test id
@@ -76,8 +76,8 @@ typedef struct _test_meta_type {
   // If device specific is not set, we use device_idx = 0
   uint32_t num_devices; // redundant but useful.
   // above Should be same as g_n_justin_cat_lkp
-  uint32_t *final_variant_id; // [num_devices];
-  uint32_t *final_variant_idx; // [num_devices];
+  int *final_variant_id; // [num_devices];
+  int *final_variant_idx; // [num_devices];
   uint8_t **variant_per_bin; // [num_devices][AB_NUM_BINS];
 
 } TEST_META_TYPE;
@@ -107,10 +107,10 @@ typedef struct _service_type {
 
 typedef struct _mysql_type {
   int32_t  port;
-  char server[AB_MAX_LEN_MYSQL_PARAM+1];
+  char host[AB_MAX_LEN_MYSQL_PARAM+1];
   char user[AB_MAX_LEN_MYSQL_PARAM+1];
-  char password[AB_MAX_LEN_MYSQL_PARAM+1];
-  char database[AB_MAX_LEN_MYSQL_PARAM+1];
+  char pass[AB_MAX_LEN_MYSQL_PARAM+1];
+  char db[AB_MAX_LEN_MYSQL_PARAM+1];
 } MYSQL_TYPE;
 
 typedef struct _kafka_cfg_type {

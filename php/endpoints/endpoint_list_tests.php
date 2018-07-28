@@ -15,11 +15,19 @@ if ( ( !empty($_GET) ) && ( isset($_GET['TestType']) ) ) {
 else {
   $body = file_get_contents('php://input');
   if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-    echo '{ "ListTests" : "ERROR", "Message" : "No payload" }'; exit;
+    $err = '{ "ListTests" : "ERROR", "Message" : "No payload" }'; 
+    header("Error-Message: " . nl2br($err));
+    header("Error-Code: 400");
+    http_response_code(400);
+    exit;
   }
   $X = json_decode($body); 
   if ( !$X ) { 
-    echo '{ "ListTests" : "ERROR", "Message" : "Invalid JSON" }'; exit;
+    $err = '{ "ListTests" : "ERROR", "Message" : "Bad payload" }'; 
+    header("Error-Message: " . nl2br($err));
+    header("Error-Code: 400");
+    http_response_code(400);
+    exit;
   }
   $l_test_type = get_json_element($X, "TestType");
 }

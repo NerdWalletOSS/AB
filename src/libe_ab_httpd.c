@@ -34,8 +34,6 @@
 #include "ab_auxil.h"
 #include "make_guid.h"
 #include "dump_log.h"
-#include "l_load_config.h"
-#include "l_update_config.h"
 #include "setup.h"
 #include <sys/types.h>
 #include <sys/time.h>

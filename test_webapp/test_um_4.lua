@@ -29,14 +29,14 @@ tests.t1 = function (
     assert(reset_db())
   
      -- Make some random test
-    local tid1 = mk_rand_test(optargs)
+    local tid1 = mk_rand_test()
     local T1 = get_test_info(tid1)
     local vidx = math.random(1, #(T1.Variants))
-    winner = T1.Variants[vidx].name
+    local winner = T1.Variants[vidx].name
   
     S.publish(tid1)
     S.start(tid1)
-    S.terminate(tid1, { Winner =  winner})
+    S.terminate(tid1, { Winner = winner})
     -- Extract the percentage of the winner variant 
     T1 = get_test_info(tid1)
     --local winner_variant_data = get_variant(test_id_1, T1.Winner)

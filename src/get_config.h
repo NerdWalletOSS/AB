@@ -1,4 +1,4 @@
 extern int 
-l_get_config(
+get_config(
     void
     );

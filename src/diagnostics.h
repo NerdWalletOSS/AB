@@ -1,8 +1,8 @@
 extern int
-l_diagnostics(
+diagnostics(
     const char *args
     );
 extern int
-diagnostics(
+c_diagnostics(
     void
     );

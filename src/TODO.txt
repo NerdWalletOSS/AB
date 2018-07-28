@@ -1,17 +1,20 @@
-[RAMESH] Add DeleteTest, pure C implementation
+Confirm that logger is checking all fields
+Write a test to confirm that URL Router routing as expected
+Set separator for XYTests
+Make sure you cannot exceed percentages for ABTest
+Write a test to confirm that resurrect is unsetting is_final
+Fix get_num_features
 
-[RAMESH] Finish ext_classify_ip
+Make a sample db.json for both RTS and Webapp after cleaning up
 
-[RAMESH] Make a sample db.json for both RTS and Webapp after cleaning up
+Remove not needed functions from auxil.c ab_auxil.c
 
-[RAMESH] Remove not needed functions from auxil.c ab_auxil.c
+Use const char * const appropriately wherever needed
 
-[RAMESH] Use const char * const appropriately wherever needed
-
-[RAMESH]  statsd metrics 
-
-[RAMESH] database migration 
-
-[INDRAJEET] verify that we are firing events properly
+STATSD: verify that we are firing events properly
 
 NO WARNINGS in Makefile 
+
+P3/P4
+Finish ext_classify_ip
+database migration 

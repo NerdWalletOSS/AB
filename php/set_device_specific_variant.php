@@ -78,6 +78,5 @@ function set_device_specific_variant(
   $outJ["rts_code"] = $http_code;
   $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
   $outJ["TestID"] = $tid; 
-
   return $outJ;
 }

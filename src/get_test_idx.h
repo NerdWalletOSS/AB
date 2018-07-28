@@ -8,6 +8,11 @@ extern int get_state_enum(
     int *ptr_state_enum
     );
 extern int 
+get_test_type_enum(
+    const char *test_type,
+    int *ptr_test_type_enum
+    );
+extern int 
 get_test_type(
       const char *args, 
       int *ptr_test_type

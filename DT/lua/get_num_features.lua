@@ -1,4 +1,3 @@
-local cache = require "lua/cache"
 
 local function get_nested_length(table)
   --[[
@@ -17,9 +16,8 @@ local function get_nested_length(table)
 end
 
 local function get_num_features()
-  local dt_feature = assert(cache.get("dt_feature"), 
-    "dt_feature not in cache.")
-  return get_nested_length(dt_feature)
+  return 1  -- TODO P1 P1 P1 
+  -- return get_nested_length(dt_feature)
 end
 
 return get_num_features

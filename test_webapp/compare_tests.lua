@@ -16,7 +16,7 @@ local function set_id(T, key_tbl, k1, k2)
   end
 end
 ==]]
-local function test_compare(T1, T2)
+local function compare_tests(T1, T2)
   assert(T1)
   assert(T2)
   assert(type(T1) == "table")
@@ -42,4 +42,4 @@ local function test_compare(T1, T2)
   eq_if_set(T1, T2, "state_id")
   return true
 end
-return test_compare
+return compare_tests

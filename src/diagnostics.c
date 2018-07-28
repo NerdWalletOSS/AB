@@ -2,55 +2,29 @@
 #include "auxil.h"
 #include "ab_globals.h"
 #include "get_test_idx.h"
-#include "l_diagnostics.h"
+#include "diagnostics.h"
 
 int
-l_diagnostics(
+diagnostics(
     const char *args
     )
 {
   int status = 0;
-  int bufsz = 7;
-  char buf[bufsz+1]; 
-  status = extract_name_value(args, "Source=", '&', buf, bufsz);
-  cBYE(status);
-
-  if ( ( *buf == '\0' ) || ( strcmp(buf, "Lua") == 0 ) ) {
-    if ( g_L == NULL ) { go_BYE(-1); }
-    lua_getglobal(g_L, "diagnostics");
-    if ( !lua_isfunction(g_L, -1)) {
-      fprintf(stderr, "Function [diagnostics] does not exist \n");
-      lua_pop(g_L, 1); go_BYE(-1);
-    }
-    status = lua_pcall(g_L, 0, 0, 0);
-    if (status != 0) {
-      fprintf(stderr, "calling function [diagnostics] failed: %s\n", lua_tostring(g_L, -1));
-      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L, -1));
-      lua_pop(g_L, 1);
-    }
-  }
-  else if ( ( *buf != '\0' ) && ( strcmp(buf, "C") == 0 ) ) {
-    status = diagnostics(); cBYE(status);
-  }
-  else {
-    go_BYE(-1);
-  }
+  status = c_diagnostics(); cBYE(status);
 BYE:
   return status;
 }
 
 int
-diagnostics(
+c_diagnostics(
     )
 {
   int status = 0;
   int counter[AB_MAX_NUM_VARIANTS];
   // we will collect all variant IDs in all_vids and test for uniqueness
   int all_vids[AB_MAX_NUM_VARIANTS*AB_MAX_NUM_TESTS]; int n_all_vids = 0;
-  for ( int i = 0; i <  AB_MAX_NUM_VARIANTS; i++ ) { 
-    counter[i] = 0;
-  }
   for ( int i = 0; i < AB_MAX_NUM_TESTS; i++ ) { 
+    for ( int v = 0; v <  AB_MAX_NUM_VARIANTS; v++ ) { counter[v] = 0; }
     if ( g_tests[i].name_hash == 0 ) {
       if ( g_tests[i].name[0]           != '\0' ) { go_BYE(-1); }
       if ( g_tests[i].test_type         != 0 ) { go_BYE(-1); }
@@ -79,7 +53,7 @@ diagnostics(
         ( num_variants > AB_MAX_NUM_VARIANTS ) ) {
       go_BYE(-1);
     }
-    if ( g_tests[i].state == TEST_STATE_STARTED ) { 
+    if ( g_tests[i].state == TEST_STATE_STARTED ) {
       // not for terminated tests
       for ( uint32_t ii = 0; ii < num_devices; ii++ ) {
         for ( uint32_t jj = 0; jj < AB_NUM_BINS; jj++ ) {
@@ -88,14 +62,49 @@ diagnostics(
           counter[x]++;
         }
       }
+      if ( num_devices == 1 ) { 
+        for ( int v = 0; v < num_variants; v++ ) { 
+          double chk_perc = 100.0*counter[v]/(double)AB_NUM_BINS;
+          if ( g_tests[i].variants[v].percentage == 100 ) { 
+            if ( counter[v] != AB_NUM_BINS ) { go_BYE(-1); }
+          }
+          else if ( g_tests[i].variants[v].percentage == 0 ) { 
+            if ( counter[v] != 0 ) { go_BYE(-1); }
+          }
+          else {
+            if ( fabs((chk_perc - g_tests[i].variants[v].percentage)/
+                  (chk_perc + g_tests[i].variants[v].percentage)) > 0.1 ) {
+              if ( g_tests[i].test_type == AB_TEST_TYPE_XY ) { 
+                printf("BAD STUFF!!!! \n");
+              }
+              else {
+                go_BYE(-1);
+              }
+            }
+          }
+        }
+      }
     }
     float sum = 0;
     for ( int k = 0; k < num_variants; k++ ) {
       VARIANT_REC_TYPE vk = g_tests[i].variants[k];
-      if ( ( test_type == AB_TEST_TYPE_XY ) && ( vk.url == NULL ) )  {
+      if ( ( state == TEST_STATE_STARTED ) && ( num_devices == 1 ) ) {
+        if ( vk.percentage == 0 ) {
+          for ( uint32_t b = 0; b < AB_NUM_BINS; b++ ) { 
+            if ( g_tests[i].variant_per_bin[0][b] == k ) { go_BYE(-1); }
+          }
+        }
+        if ( vk.percentage == 100 ) {
+          for ( uint32_t b = 0; b < AB_NUM_BINS; b++ ) { 
+            if ( g_tests[i].variant_per_bin[0][b] != k ) { go_BYE(-1); }
+          }
+        }
+      }
+      if ( ( test_type == AB_TEST_TYPE_XY ) && 
+          ( ( vk.url == NULL ) || ( vk.url[0] == '\0' ) ) ) {
         go_BYE(-1);
       }
-      if ( vk.url == NULL ) { 
+      if ( ( vk.url == NULL ) || ( vk.url[0] == '\0' ) ) {
         if ( vk.separator != '\0' ) { go_BYE(-1); }
       }
       else {
@@ -130,10 +139,14 @@ diagnostics(
         }
       }
       if ( vk.custom_data != NULL ) {
-        if ( strlen(vk.custom_data) > AB_MAX_LEN_CUSTOM_DATA ) { go_BYE(-1); }
+        if ( strlen(vk.custom_data) > AB_MAX_LEN_CUSTOM_DATA ) { 
+          go_BYE(-1); 
+        }
         // TODO P3 Make sure it is valid JSON
       }
     }
+
+
     // TODO P3 Check that counter[] is similar to percentage
     if ( ( sum < 100-0.01 ) || ( sum > 100+0.01 ) ) { go_BYE(-1); }
     uint64_t external_id = g_tests[i].external_id;
@@ -164,6 +177,14 @@ diagnostics(
       if ( g_tests[i].variant_per_bin   != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
+      for ( unsigned int d = 0; d < g_tests[i].num_devices; d++ ) { 
+        if ( g_tests[i].final_variant_id[d] >= 1 ) {
+          if ( g_tests[i].final_variant_idx[d] < 0 ) { go_BYE(-1); }
+        }
+        else {
+          if ( g_tests[i].final_variant_idx[d] > 0 ) { go_BYE(-1); }
+        }
+      }
 
     }
     else if ( state == TEST_STATE_STARTED ) {

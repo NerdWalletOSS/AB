@@ -27,6 +27,8 @@ tests.t1 = function (
 
   for i = 1, num_trials do 
     assert(reset_db())
+    local status
+    local newTestType
      -- Make some random test
     local tid1 = mk_rand_test()
     local T1 = get_test_info(tid1)

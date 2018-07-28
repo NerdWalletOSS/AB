@@ -67,6 +67,27 @@ BYE:
 
 
 int 
+get_test_type_enum(
+    const char *test_type,
+    int *ptr_test_type_enum
+    )
+{
+  int status = 0;
+  if ( ( test_type == NULL ) || ( *test_type == '\0' ) )  { go_BYE(-1); }
+  if ( strcasecmp(test_type, "ABTest") == 0 ) {
+    *ptr_test_type_enum = AB_TEST_TYPE_AB;
+  }
+  else if ( strcasecmp(test_type, "XYTest") == 0 ) {
+    *ptr_test_type_enum = AB_TEST_TYPE_XY;
+  }
+  else {
+    go_BYE(-1);
+  }
+BYE:
+  return status;
+}
+
+int 
 get_state_enum(
     const char *state,
     int *ptr_state_enum
@@ -77,8 +98,11 @@ get_state_enum(
   if ( strcasecmp(state, "started") == 0 ) {
     *ptr_state_enum = TEST_STATE_STARTED;
   }
-  else if ( strcasecmp(state, "terminat ed") == 0 ) {
+  else if ( strcasecmp(state, "terminated") == 0 ) {
     *ptr_state_enum = TEST_STATE_TERMINATED;
+  }
+  else if ( strcasecmp(state, "archived") == 0 ) {
+    *ptr_state_enum = TEST_STATE_ARCHIVED;
   }
   else {
     go_BYE(-1);
@@ -110,6 +134,7 @@ get_test_type(
   }
   else { 
     g_log_bad_test_type++;
+    fprintf(stderr, "Bad test type = [%s]\n", str_test_type);
     STATSD_COUNT("bad_test_type", 1);
     go_BYE(-1); 
   }
