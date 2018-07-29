@@ -22,7 +22,7 @@ require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
 if (isset($Channel)) {
   $fo_tests =  find_tests_to_follow($Channel);
-  $nF = count($fo_tests);
+if (isset($fo_tests) && ($fo_tests != "")) {$nF = count($fo_tests);} else { $nF = 0;}
 } else {
   $Channel = "";
   $nF = 0;
@@ -130,7 +130,7 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 
 <table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></thead><tfoot> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></tfoot>
   <tbody id="TableData">
-<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { 
+<?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) { 
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>";
