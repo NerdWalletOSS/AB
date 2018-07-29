@@ -12,7 +12,7 @@ $inJ = json_decode($str_inJ); assert($inJ, "invalid JSON");
 $X = array();
 $X['TestType'] = get_json_element($inJ, 'TestType'); 
 $X['description'] = get_json_element($inJ, 'TestDescription');
-if($X['TestType'] == "XYTest") { $X['Channel'] = get_json_element($inJ, 'Channel'); }
+if($X['TestType'] == "XYTest") { $X['Channel'] = get_json_element($inJ, 'Channel', false); }
 $X['id']  = get_json_element($inJ, 'TestID');
 if ((isset($X['id'])) && ($X['id'] == "")) {
 $X['Creator']  = get_json_element($inJ, 'Creator');
