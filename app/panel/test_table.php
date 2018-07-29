@@ -25,7 +25,7 @@ function action_state($state_id) {
 <th>Check Test</th><th>Action</th> </tr></thead>
 <tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th></tr><tfoot>
   <tbody id="TableData">
-<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) {
+<?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['id']."</a></td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['name']."</a></td>";
