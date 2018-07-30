@@ -177,8 +177,42 @@ tests.t4 = function (
   if ( just_pr ) then print(description) return end
   print("completed test t4")
 end
--- tests.t4()
--- tests.t2()
--- tests.t3()
+tests.t5 = function (
+  just_pr
+  )
+  local description = [[
+  try to make  2 variants have same URL. Should fail
+  ]]
+  -- START: Make some test 
+  reset_db()
+  local tid = assert(mk_rand_test({TestType = "XYTest"}))
+  for i = 1, 2, 3 do 
+    local new_url 
+    local T1 = get_test_info(tid)
+    if ( i == 1 ) then 
+      -- do nothing
+    elseif ( i == 2 ) then 
+      S.publish(tid) 
+    elseif ( i == 3 ) then 
+      S.start(tid) 
+    else 
+      assert(nil)
+    end 
+    local new_url = "http://www.nerdwallet.com"
+    local T2 = mk_input_for_update(T1)
+    T2.OverWriteURL = "true"
+    T2.Variants[1].url = new_url
+    T2.Variants[2].url = new_url
+    local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T2))
+    -- for k, v in pairs(hdrs) do print(k, v) end 
+    assert(status ~= 200)
+  end
+  if ( just_pr ) then print(description) return end
+  print("completed test t5")
+end
+tests.t4()
+tests.t2()
+tests.t3()
 tests.t1()
+tests.t5()
 return tests
