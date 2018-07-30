@@ -127,6 +127,7 @@ local function rand_test(X)
   T.Channel = X.Channel or rand_chnl()
   T.Creator = X.Creator or rand_admn()
   T.description = X.description or rand_dscr()
+  T.State = "draft"
   T.TestType = X.TestType or rand_type()
   if ( T.TestType == "ABTest" ) then
     T.is_dev_specific = false

@@ -16,8 +16,8 @@ if ( ( empty($body) ) || ( trim($body) == "" ) ) {
   exit;
 }
 $rslts =  test_basic($body);
-header("TestID: ".$rslts["TestID"]);
 if ( is_array($rslts ) ) { 
+  header("TestID: ".$rslts["TestID"]);
   foreach ( $rslts as $key=> $val ) {
     $val = str_replace("\n", " ", $val);
     header("$key: $val");

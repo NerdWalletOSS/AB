@@ -15,6 +15,7 @@ local function mk_rand_test(
   local T1 = R.rand_test(X)
   local V1 = assert(T1.Variants)
   local hdrs, outbody, status = curl.post(tbp_url, nil, JSON:encode(T1))
+  -- for k, v in pairs(hdrs) do print(k, v) end ; print(outbody)
   assert(status == 200 )
   local tid = get_test_id(hdrs)
   -- check that basic data got added as required
