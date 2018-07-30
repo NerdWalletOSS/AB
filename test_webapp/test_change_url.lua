@@ -9,6 +9,7 @@ local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states         = require 'test_webapp/states'
 local S              = require 'test_webapp/state_change'
+local db_count       = require 'test_webapp/db_count'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
@@ -48,26 +49,32 @@ tests.t1 = function (
   T1 = get_test_info(tid)
   assert(T1.State == "started", T1.State)
   local nV = #T1.Variants
-  print("NumVariants = ", nV)
+  -- print("NumVariants = ", nV)
   --=================================
   local T2 = mk_input_for_update(T1)
   T2.OverWriteURL = "true"
   local new_url = "http://www.nerdwallet.com"
   local vidx = 1  --- index of variant to change 
   T2.Variants[vidx].url = new_url
+  local old_name = T2.Variants[vidx].name
   local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T2))
-  for k, v in pairs(hdrs) do print(k, v) end 
+  -- for k, v in pairs(hdrs) do print(k, v) end 
   assert(status == 200)
   local T3 = get_test_info(tid)
   for k, v in pairs(T3.Variants) do 
-    if ( k == vidx ) then 
-      assert(v.url == new_url)
+    if ( v.name == old_name ) then 
+      assert(v.url == new_url, v.url .. " <-->  " .. new_url )
       assert(v.id ~= T2.Variants[k].id)
-    else
-      assert(v.url == T2.Variants[k].url)
-      assert(v.id  == T2.Variants[k].id)
+    else -- no change to anybody else
+      for k2, v2 in pairs(T2.Variants) do
+        if ( v.name == v2.name ) then 
+          assert(v.url == v2.url)
+          assert(v.id  == v2.id)
+        end
+      end
     end
   end
+  assert(nV+1 == db_count("variant"))
   print("Completed test t1")
 end
 

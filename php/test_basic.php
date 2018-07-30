@@ -181,7 +181,6 @@ function test_basic(
         }
         if ( ( $test_type == "XYTest" ) && ( $state == "started" ) &&
              ( $is_overwrite ) ) { 
-          $outJ['XXXX'] = "YYYY";
           $R = db_get_row("variant", "id", $variant_ids[$i]);
           $old_url = $R['url'];
           $new_url = $variant_urls[$i];
