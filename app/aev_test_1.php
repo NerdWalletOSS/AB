@@ -120,7 +120,7 @@ for ( $i = 0; $i < $nC; $i++ ) {
 if ( isset($TestType) && ($TestType == "XYTest")) {
   if ( $mode == "Edit" ) {
     if ($this_state == "started") { ?>
-Change URL(s)?:&nbsp;&nbsp;<input form="addTest" type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="modify_url" value="1" >
+Change URL(s)?:&nbsp;&nbsp;<input form="addTest" type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="OverWriteURL" value="true" >
 <?php 
     } 
   } 
