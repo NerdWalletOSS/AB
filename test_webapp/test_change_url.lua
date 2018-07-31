@@ -210,9 +210,60 @@ tests.t5 = function (
   if ( just_pr ) then print(description) return end
   print("completed test t5")
 end
+tests.t6 = function (
+  just_pr
+  )
+  local description = [[
+  There was a bug where one URL could be changed but not > 1
+  This is a regression test against that bug
+  ]]
+  if ( just_pr ) then print(description) return end
+
+  -- START: Make some test 
+  reset_db()
+  local tid = assert(mk_rand_test({TestType = "XYTest"}))
+  local T1 = get_test_info(tid)
+  S.publish(tid)
+  S.start(tid)
+  T1 = get_test_info(tid)
+  assert(T1.State == "started", T1.State)
+  local nV = #T1.Variants
+  -- print("NumVariants = ", nV)
+  --=================================
+  local T2 = mk_input_for_update(T1)
+  T2.OverWriteURL = "true"
+  local url1 = "http://www.google.com"
+  local vidx1 = 1  
+  local url2 = "http://www.yahoo.com"
+  local vidx2 = 2  
+  T2.Variants[vidx1].url = url1
+  T2.Variants[vidx2].url = url2
+  local name1 = T2.Variants[vidx1].name
+  local name2 = T2.Variants[vidx2].name
+  local hdrs, outbody, status = curl.post(tburl, nil, JSON:encode(T2))
+  -- for k, v in pairs(hdrs) do print(k, v) end 
+  assert(status == 200)
+  local T3 = get_test_info(tid)
+  for k, v in pairs(T3.Variants) do 
+    if ( v.name == name1 ) then 
+      assert(v.url == url1, v.url .. " <-->  " .. url1 )
+      assert(v.id ~= T2.Variants[k].id)
+    end
+    if ( v.name == name2 ) then 
+      assert(v.url == url2, v.url .. " <-->  " .. url2 )
+      assert(v.id ~= T2.Variants[k].id)
+    end
+  end
+  assert(nV+2 == db_count("variant"))
+  print("Completed test t6")
+end
+
+
 tests.t4()
 tests.t2()
 tests.t3()
 tests.t1()
 tests.t5()
+
+tests.t6()
 return tests
