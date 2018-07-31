@@ -100,6 +100,7 @@ int alt_get_variant(
       for ( int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
         if ( strcmp(g_justin_cat_lkp[j].name, buf) == 0 ) { 
           device_idx = g_justin_cat_lkp[j].id - 1;
+          g_justin_cat_id = g_justin_cat_lkp[j].id;
         }
       }
     }

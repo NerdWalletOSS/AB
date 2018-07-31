@@ -31,7 +31,8 @@ local function update_test(
   elseif (type(T.has_filters) == "number") then
     has_filters = T.has_filters
   else
-    assert(nil)
+    has_filters = 0
+    -- TODO Improve this. I don't like silent stuff assert(nil)
   end
   assert( (has_filters == 0 ) or (has_filters == 1 ) )
   -- TODO P2 We still need to incorporate filters into the code
