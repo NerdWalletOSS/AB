@@ -185,8 +185,8 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input form="addTest" type='hidden' name='Creator' value='<?php echo $User; ?>'>
 <?php } else { ?>
 <input form="addTest"type='hidden' name='Updater' value='<?php echo $User; ?>'>
-<?php } ?>
 <input form="addTest" type='hidden' name='State' value='<?php echo $this_state; ?>'>
+<?php } ?>
 <input form="addTest" type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
 <input form="addTest" type='hidden' name='BinType' value='<?php if (isset($BinType)) { echo $BinType;} ?>'>
   <tr>
