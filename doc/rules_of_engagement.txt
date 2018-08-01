@@ -1,0 +1,21 @@
+Updating the version of OSS AB repo:
+
+* Look at the commit history for master: https://github.com/NerdWalletOSS/AB/commits/master
+* Find the SHA1 ID of the commit we want to have the NerdWallet deployable use
+* Create a new branch on https://github.com/NerdWallet/ab.nerdwallet
+* Update the contents of PINNED_AB to refer to the SHA1 from above (https://github.com/NerdWallet/ab.nerdwallet/blob/master/PINNED_AB)
+* Push the branch to origin
+* Open a Pull Request on GitHub
+* Tag Wyatt, Evan, Indrajeet
+* Once the build is green and the PR is approved merge to master
+* Once the build completes (15min) a new version will appear in Giftshop: https://giftshop.nerdwallet.io/applications/ab-oss
+* Deploy to stage, verify in stage
+* Deploy to prod, verify in prod
+
+
+Updating the AB Data Files:
+
+* Create a new branch on https://github.com/NerdWallet/ab.nerdwallet
+* Create an empty commit: git commit -m “Empty commit to pickup new data files” --allow-empty
+* Push the branch to origin
+* Open a pull request and deploy, as above
