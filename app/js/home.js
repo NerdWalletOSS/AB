@@ -83,9 +83,7 @@ $(document).ready(function() {
 						} else {  
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";
              }
-   /*         if (value['state_id'] < 5) {
-            TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button>"
-*/  
+ 
 					if (value['state_id'] == 3) {
             TableRow += "<td><a href='fix_to_a_winner.php?TestID=" + value['id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></a>";
 } else if (value['state_id'] == 5) {
@@ -116,11 +114,11 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             [0, "asc"]
           ]
         });
-      }
-      /*beforeSend: function() {
+      },
+      beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
         $("#error_message").html("Loading...")
-      }*/
+      }
     });
     option.prop('checked', true);
     return false;
@@ -128,12 +126,10 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 
 
  $(document).on("click", ".check_test", function() {
-    var name = $(this).attr('data-key'); // $(this) refers to button that was clicked
-    //e.preventDefault();
+    var name = $(this).attr('data-key');
     $.ajax({
       type: "POST",
       url: "processor/check_test_processor.php?TestName="+name,
-      //data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
@@ -146,8 +142,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         }
       },
       success: function(response, textStatus, XHR) {
-        //var id = XHR.getResponseHeader('TestID');
-        window.location = "home.php";
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
