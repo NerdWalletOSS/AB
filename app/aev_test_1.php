@@ -61,7 +61,7 @@ $config = config_html($TestType);
   </tr>
   <?php  if ($this_state == "started") { ?>
   <tr>
-  <td>Device: <input form="TestURL" type='hidden' name='nw_campaign_id' value='<?php echo $external_id; ?>'><input form='TestURL' type="text" name="device" ></td><td ><input class="btn btn-sm btn-primary btn-block" type="submit" form='TestURL' id="test_url" value="Test URL"></td><td>&nbsp;</td>
+  <td>Device (<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>"; } else { echo "<b style='color:red'>The test is NOT Device Specific</b>"; } ?> ): <input form="TestURL" type='hidden' name='nw_campaign_id' value='<?php echo $external_id; ?>'><input form='TestURL' type="text" name="device" ></td><td ><input class="btn btn-sm btn-primary btn-block" type="submit" form='TestURL' id="test_url" value="Test URL"></td><td>&nbsp;</td>
   </tr>
   <?php } 
           } 
@@ -136,7 +136,7 @@ Change URL(s)?:&nbsp;&nbsp;<input form="addTest" type="checkbox" data-toggle="mo
    <input form="addTest" type='hidden' name='VID_<?php echo $i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
     <td>Variant <?php echo $i + 1; ?>&nbsp;:<?php if ($mode == "Edit") {echo $rslt['Variants'][$i]['id'];} ?>&nbsp;&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
   <input form="addTest" type='text' size='16' name='VName_<?php echo $i; ?>' maxlength='15' pattern='^[A-Za-z0-9\S]{1,15}$' 
-value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly; if ($this_state == "started") { echo "readonly";}?> required></td>
+value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['name']; } ?>" <?php echo $readonly;   if ( $mode == "Edit" ) { if ($this_state == "started") { echo "readonly";} } ?> required></td>
   <td>Landing Page URL &nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title='Absolute URL of the landing page for this variant.'></span>
   <input form="addTest" type='url' class='btn btn-default'  name='VURL_<?php echo $i; ?>' value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['url'];} ?>" id="url_<?php echo $i; ?>" 
 <?php 
@@ -185,8 +185,8 @@ value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"
 <input form="addTest" type='hidden' name='Creator' value='<?php echo $User; ?>'>
 <?php } else { ?>
 <input form="addTest"type='hidden' name='Updater' value='<?php echo $User; ?>'>
-<input form="addTest" type='hidden' name='State' value='<?php echo $this_state; ?>'>
 <?php } ?>
+<input form="addTest" type='hidden' name='State' value='<?php echo $this_state; ?>'>
 <input form="addTest" type='hidden' name='TestType' value='<?php echo $TestType; ?>'>
 <input form="addTest" type='hidden' name='BinType' value='<?php if (isset($BinType)) { echo $BinType;} ?>'>
   <tr>

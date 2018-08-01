@@ -7,6 +7,7 @@ require_once "lkp.php";
 {
   if ($id == "") { 
     $mode = "Add"; 
+		$this_state = "draft";
   }
   else {
     $rslt = db_get_test($id);
