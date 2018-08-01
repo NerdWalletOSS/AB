@@ -26,7 +26,8 @@ function chk_test_basic(
   $test_dscr = get_json_element($inJ, 'description', false);
   $variants  = get_json_element($inJ, 'Variants');
   $bin_type  = get_json_element($inJ, 'BinType', false);
-  $state     = get_json_element($inJ, 'State');
+  $state     = get_json_element($inJ, 'State', false);
+  if ( !isset($state)  ) { $state = "draft"; }
 
   assert(is_array($variants));
   $nV = count($variants);

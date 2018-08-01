@@ -13,7 +13,7 @@ function get_url(
 {
   $ch = curl_init();
   curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, true);
+  curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, false);
   curl_setopt($ch, CURLOPT_POST, 0);
   if ( ( is_null($port) ) || ( $port == "" ) ) { 
     $S = $server . "/";
