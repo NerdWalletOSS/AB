@@ -1,3 +1,4 @@
+Write a test to confirm that cannot change name once started
 Confirm that logger is checking all fields
 Write a test to confirm that URL Router routing as expected
 Set separator for XYTests
