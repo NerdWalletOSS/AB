@@ -21,5 +21,7 @@ $rslt = "";
 $destination = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 header("URLReturned: ".$destination);
+header("StatusCodeReturned: ".$http_code);
+var_dump($rslt);
 
 ?>
