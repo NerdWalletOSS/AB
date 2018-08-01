@@ -25,7 +25,7 @@ if ( !$json_input ) {
 $rslt =  test_basic($json_input);
 // if ( $rslt['rts_code'] != 200 ) { do something } 
 // TODO Set the status code here 
-print_r($rslt);
+//print_r($rslt);
 header("TestID: ".$rslt["TestID"]);
 header("XXXXXX: YYYYYY");
 // RS TODO Is this needed? ob_flush();
