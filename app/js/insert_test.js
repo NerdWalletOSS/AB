@@ -49,25 +49,26 @@ $(document).ready(function() {
       url: "processor/test_url_processor.php",
       data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
+        console.log(response);
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
           $("#stack_trace").css('display', 'inline', 'important');
-          $("#error_message").html(response.getResponseHeader('Error-Message'));
+          $("#error_message").html(response);
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
         }
       },
       success: function(response, textStatus, XHR) {
-        //var id = XHR.getResponseHeader('TestID');
-        //window.location = "aev_test_1.php";
+        console.log(response);
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
           $("#stack_trace").css('display', 'inline', 'important');
-          $("#error_message").html(XHR.getResponseHeader('URLReturned'));
+          //$("#error_message").html(XHR.getResponseHeader('URLReturned'));
+					$("#error_message").html(response);
       },
       beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
