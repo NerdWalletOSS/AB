@@ -56,7 +56,8 @@ $(document).ready(function() {
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
           $("#stack_trace").css('display', 'inline', 'important');
-          $("#error_message").html(response);
+					var URLReturned = response.match(/(?:"[^"]*"|^[^"]*$)/)[0].replace(/"/g, "").replace(/Redirecting to /g,'');
+          $("#error_message").html(URLReturned);
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
         }
       },
@@ -66,9 +67,8 @@ $(document).ready(function() {
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
-          $("#stack_trace").css('display', 'inline', 'important');
-          //$("#error_message").html(XHR.getResponseHeader('URLReturned'));
-					$("#error_message").html(response);
+					var URLReturned = response.match(/(?:"[^"]*"|^[^"]*$)/)[0].replace(/"/g, "").replace(/Redirecting to /g,'');
+          $("#error_message").html(URLReturned);
       },
       beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
