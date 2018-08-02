@@ -74,11 +74,10 @@ typedef struct _test_meta_type {
   VARIANT_REC_TYPE *variants;
 
   // If device specific is not set, we use device_idx = 0
-  uint32_t num_devices; // redundant but useful.
   // above Should be same as g_n_justin_cat_lkp
-  int *final_variant_id; // [num_devices];
-  int *final_variant_idx; // [num_devices];
-  uint8_t **variant_per_bin; // [num_devices][AB_NUM_BINS];
+  int *final_variant_id; // [g_n_justin_cat_lkp];
+  int *final_variant_idx; // [g_n_justin_cat_lkp];
+  uint8_t **variant_per_bin; // [g_n_justin_cat_lkp][AB_NUM_BINS];
 
 } TEST_META_TYPE;
 

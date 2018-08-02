@@ -15,7 +15,7 @@ extern TEST_META_TYPE g_tests[AB_MAX_NUM_TESTS];
 extern char g_rslt[AB_MAX_LEN_RESULT+1];
 extern char g_err[AB_MAX_LEN_RESULT+1];
 extern int g_n_justin_cat_lkp;
-// int cdata[1];
+
 int
 add_test(
     const char *args
@@ -69,7 +69,8 @@ add_test(
     cBYE(status);
     if ( state == TEST_STATE_TERMINATED ) {
       status = free_variant_per_bin(test_idx); cBYE(status);
-      status = malloc_final_variant(test_idx); cBYE(status);
+      status = malloc_final_variant(test_idx, g_n_justin_cat_lkp); 
+      cBYE(status);
     }
     // update test  --- see below
   }
@@ -81,7 +82,8 @@ add_test(
       }
       else if ( g_tests[test_idx].state == TEST_STATE_STARTED ) {
         status = free_variant_per_bin(test_idx); cBYE(status);
-        status = malloc_final_variant(test_idx); cBYE(status);
+        status = malloc_final_variant(test_idx, g_n_justin_cat_lkp); 
+        cBYE(status);
         // update test --- see below
       }
     } 
@@ -95,7 +97,6 @@ add_test(
     }
   }
   // following set in malloc
-  if ( g_tests[test_idx].num_devices <= 0 ) { go_BYE(-1); }
   // Part of the update done on the C side 
   strncpy(g_tests[test_idx].name, test_name, AB_MAX_LEN_TEST_NAME);
   g_tests[test_idx].test_type = test_type;
@@ -135,7 +136,8 @@ add_test(
   }
   lua_pushlightuserdata(g_L, &(g_tests[test_idx]));
   lua_pushstring(g_L, args);
-  status = lua_pcall(g_L, 2, 0, 0);
+  lua_pushnumber(g_L, g_n_justin_cat_lkp);
+  status = lua_pcall(g_L, 3, 0, 0);
   if ( status != 0) {
     fprintf(stderr, "Lua function update_test failed: %s\n", 
         lua_tostring(g_L, -1));
