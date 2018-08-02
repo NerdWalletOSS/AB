@@ -39,8 +39,9 @@ function get_url(
 /*
 $http_code = 0;
 $rslt = "";
-$X = get_url("localhost", 8000, "TestInfo?TestName=Ramesh&TestType=XYTest", 200);
-$X = get_url("localhost", 8020, "DescribeInstances", $http_code, $rslt);
-    var_dump($rslt);
+$X=get_url("localhost", 8000, "Router?TestName=xytest4&Device=Tablet_iOS",
+  $http_code, $rslt, $destination);
+var_dump($http_code);
+var_dump($rslt);
  */
 ?>

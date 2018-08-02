@@ -138,7 +138,7 @@ int alt_get_variant(
   // STOP: Handle qmark 
 
   int nw = snprintf(g_redirect_url, AB_MAX_LEN_REDIRECT_URL,
-      "%s%c%s&VariantID=%uGUID=%s", 
+      "%s%c%s&VariantID=%u&GUID=%s", 
       g_tests[test_idx].variants[variant_idx].url, 
       separator, 
       args, 
