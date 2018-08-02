@@ -6,18 +6,19 @@ local JSON       = require 'lua/JSON'
 
 local function update_test(
   test,
-  args
+  args,
+  num_devices
   )
   test = ffi.cast("TEST_META_TYPE *", test)
   T = assert(JSON:decode(args))
+  assert(type(num_devices) == "number")
+  assert(num_devices > 0)
   
   test[0].id = tonumber(T.id)
   --[[ should be done in Lua but done in C because of uint64_t issues
   test[0].external_id = tonumber(T.external_id)
   test[0].seed = tonumber(T.seed)
   --]]
-  local num_devices = test[0].num_devices
-  assert(num_devices > 0)
   local is_dev_specific = test[0].is_dev_specific
   assert( ( is_dev_specific == true ) or ( is_dev_specific == false ) )
 
@@ -37,8 +38,8 @@ local function update_test(
   assert( (has_filters == 0 ) or (has_filters == 1 ) )
   -- TODO P2 We still need to incorporate filters into the code
 
-  if ( is_dev_specific ) then 
-    assert(num_devices > 1 )
+  if ( is_dev_specific == false ) then 
+    num_devices = 1
   end
 
   test[0].ramp = tonumber(T.ramp)
