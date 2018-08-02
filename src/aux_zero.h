@@ -23,5 +23,6 @@ free_variant_per_bin(
     );
 extern int
 malloc_final_variant(
-    uint32_t test_idx
+    uint32_t test_idx,
+    int num_devices
     );

@@ -145,7 +145,7 @@ BYE:
     if ( strcmp(api, "Router") == 0 ) { 
       evhttp_add_header(evhttp_request_get_output_headers(req), 
           "Location", g_redirect_url);
-      evbuffer_add_printf(opbuf, "Redirecting .....\n"); 
+      evbuffer_add_printf(opbuf, "Redirecting to %s\n", g_redirect_url); 
       evhttp_send_reply(req, HTTP_MOVETEMP, "OK", opbuf);
     }
     else {

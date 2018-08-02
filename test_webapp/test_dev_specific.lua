@@ -6,17 +6,6 @@ local db_count       = require 'test_webapp/db_count'
 
 local T = {}
 T.t1 = function(num_tests)
-  reset_db()
-  math.randomseed(os.time())
-  if ( not num_tests ) then num_tests = 100 end 
-  for i = 1, num_tests do 
-    local tid = mk_rand_test()
-    assert(S.publish(tid))
-    assert(S.start(tid))
-  end
-  print("Successfully added " .. num_tests .. " tests in test t1")
-end 
-T.t2 = function(num_tests)
   math.randomseed(os.time())
   if ( not num_tests ) then num_tests = 100 end 
   reset_db()
@@ -30,8 +19,8 @@ T.t2 = function(num_tests)
     cum_num_variants = cum_num_variants + num_variants
     assert(nV == cum_num_variants)
   end
-  print("Successfully added " .. num_tests .. " tests in test t2")
+  print("Successfully added " .. num_tests .. " tests in test t1")
 end 
-T.t1(1000) -- TO DELETE once LJT starts working
+-- T.t1(1000) -- TO DELETE once LJT starts working
 T.t2(100) -- TO DELETE once LJT starts working
 return T
