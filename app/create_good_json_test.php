@@ -18,8 +18,8 @@ $X['id']  = get_json_element($inJ, 'TestID');
 if ((isset($X['id'])) && ($X['id'] == "")) {
 $X['Creator']  = get_json_element($inJ, 'Creator');
 } else {
-$X['State']  = get_json_element($inJ, 'State');
 $X['Updater']  = get_json_element($inJ, 'Updater');
+$X['State']  = get_json_element($inJ, 'State');
 }
 $X['name']  = get_json_element($inJ, 'TestName');
 $X['BinType']  = get_json_element($inJ, 'BinType');
