@@ -10,14 +10,8 @@ require_once "chk_tests.php";
 
 //-----------------------------------------------------------
 //-------- ACCESS POST parameters
-
-ob_start();
-if ( !$_POST ) {
-  echo '{ "Check Tests" : "ERROR", "Message" : "No paylaod" }'; exit;
-}
-
 //-------------------------------------
 // Call to check tests
 $rslt =  chk_tests();
-ob_clean();
+
 ?>
