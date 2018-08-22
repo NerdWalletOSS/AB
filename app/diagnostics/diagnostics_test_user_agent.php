@@ -24,6 +24,7 @@ $url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
 $http_code = 0;
 $rslt = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
+
 if (!$data) {
 echo "<strong>User Agent unavailable</strong>";
 } else {
@@ -32,7 +33,8 @@ echo "<strong>User Agent unavailable</strong>";
 <table class="table table-striped" >
 <tr><td><b>KEY</b></td><td><b>VALUE</b></td></tr>
 <?php 
-  foreach ($rslt as $k => $v) {
+$result = json_decode($rslt);
+  foreach ($result as $k => $v) {
 	echo "<tr><td>".$k."</td><td>".$v."</td></tr>";
     }
 ?>
