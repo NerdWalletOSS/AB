@@ -41,7 +41,7 @@ $(document).ready(function() {
   }
   $('#jsTestTable').DataTable({
     "order": [
-      [0, "asc"]
+      [4, "desc"]
     ]
   });
   $("#error").css('display', 'none', 'important');
@@ -118,7 +118,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         $("#show-data").html(table);
         $('#jsTestTable').DataTable({
           "order": [
-            [0, "asc"]
+            [4, "desc"]
           ]
         });
       },
