@@ -22,8 +22,8 @@ function action_state($state_id) {
 <div id="show-data">
 <table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th>
 
-<th>Check Test</th><th>Action</th><th>Created On</th> </tr></thead>
-<tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th><th>Created On</th></tr><tfoot>
+<th>Check Test</th><th>Action</th><th>Updated On</th> </tr></thead>
+<tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr><tfoot>
   <tbody id="TableData">
 <?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
@@ -49,7 +49,7 @@ echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button typ
   }
 }
   echo "</td>";
-  $date = date_create($result[$i]['created_at']);
+  $date = date_create($result[$i]['updated_at']);
   $display_date = date_format($date, 'jS F Y');
   echo "<td>".$display_date."</td>";
   echo "</tr>";

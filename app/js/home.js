@@ -70,7 +70,7 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Created On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th><th>Created On</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -97,13 +97,11 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
             TableRow += "</td>";
-var display_date = new Date(value['created_at']).toLocaleDateString('en-GB', {
-    day : 'numeric',
-    month : 'short',
-    year : 'numeric'
-}).split(' ').join('-');
-  					 //var date = new Date(value['created_at']);
-  					//$display_date = date_format($date, 'jS F Y');
+						var display_date = new Date(value['updated_at']).toLocaleDateString('en-GB', {
+    				day : 'numeric',
+    				month : 'short',
+    				year : 'numeric'
+						}).split(' ').join('-');
   				  TableRow += "<td>" + display_date + "</td>";
 						TableRow +="</tr>";
             $(table).append(TableRow);
