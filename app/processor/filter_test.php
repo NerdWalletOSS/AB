@@ -15,18 +15,18 @@ if ( !$_POST ) {
 $option = $_POST['option'];
 switch ($option) {
     case "2":
-        $state = '1';
+        $state = "'1', '2'";
         break;
     case "3":
         $state = '5';
         break;
     default:
-        $state = "'2','3','4'";
+        $state = "'3','4'";
 }
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }
 if ($TestType == "XYTest") { $test_type_id = 2; }
-$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id IN (".$state.")");
+$result = db_get_rows("test", "test_type_id = ".$test_type_id." and state_id IN (".$state.") order by updated_at DESC");
 echo json_encode($result);
 }
 

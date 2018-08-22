@@ -10,7 +10,7 @@ require_once "header.php";
 require_once "dbconn.php";
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
-$state = "'2','3','4'";
+$state = "'3','4'";
 if (isset($TestType))
 	{
 		if ($TestType == "ABTest")
@@ -47,8 +47,8 @@ require_once "navbar.php";
 <div class="panel panel-primary">
 <div class="panel-heading">
   <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<input type="radio" name="option" value="'2','3','4'" id= "1" checked/>&nbsp;Dormant/Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" value="2" id="2"  />&nbsp;Draft &nbsp;&nbsp; 
+	<input type="radio" name="option" value="'3','4'" id= "1" checked/>&nbsp;Started/Terminated  &nbsp;&nbsp;
+  <input type="radio" name="option" value="2" id="2"  />&nbsp;Draft/Dormant &nbsp;&nbsp; 
   <input type="radio" name="option" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php

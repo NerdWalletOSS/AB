@@ -1,0 +1,2 @@
+export LUA_PATH="`pwd`/?.lua;;"
+# NOTE!!! The double semi-colon is important
