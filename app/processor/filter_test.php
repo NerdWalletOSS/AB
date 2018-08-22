@@ -15,13 +15,13 @@ if ( !$_POST ) {
 $option = $_POST['option'];
 switch ($option) {
     case "2":
-        $state = '1';
+        $state = "'1', '2'";
         break;
     case "3":
         $state = '5';
         break;
     default:
-        $state = "'2','3','4'";
+        $state = "'3','4'";
 }
 if (isset($TestType)) {
 if ($TestType == "ABTest") { $test_type_id = 1; }
