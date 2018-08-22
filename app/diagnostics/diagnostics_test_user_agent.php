@@ -27,7 +27,18 @@ $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 if (!$data) {
 echo "<strong>User Agent unavailable</strong>";
 } else {
-print("<pre>".print_r($rslt,true)."</pre>");
+?>
+			<div class="table-responsive">
+<table class="table table-striped" >
+<tr><td><b>KEY</b></td><td><b>VALUE</b></td></tr>
+<?php 
+  foreach ($rslt as $k => $v) {
+	echo "<tr><td>".$k."</td><td>".$v."</td></tr>";
+    }
+?>
+</table>
+            </div>
+<?php
 }
 ?>
           </div>
