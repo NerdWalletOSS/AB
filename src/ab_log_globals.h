@@ -89,3 +89,6 @@ EXTERN uint64_t g_log_num_probes;
 EXTERN uint64_t g_log_response_time; 
 /*C Time taken to respond to GetVariant(s) or Router */
 
+EXTERN uint64_t g_log_bad_test; 
+/*C Number of bad tests from database. Should be 0 */
+

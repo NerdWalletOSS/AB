@@ -3,7 +3,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../helpers/");
 
-require_once 'rs_assert.php';
 require_once 'list_rts.php';
 require_once 'post_url.php';
 require_once 'db_get_test.php';
@@ -31,7 +30,10 @@ function inform_rts(
       $url = "CheckTest";
     }
     post_url($server, $port, $url, $body, $http_code, $rslt);
-    if ( $http_code != 200 ) { $err_msg = $rslt; $is_ok = false; }
+    if ( $http_code != 200 ) { 
+      $err_msg .= $server . ":" . $port . ":" . $rslt; 
+      $is_ok = false; 
+    }
   }
   return $is_ok;
 }

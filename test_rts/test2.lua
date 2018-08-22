@@ -6,7 +6,6 @@ local plpath = require 'pl.path'
 
 local ltc1_url = "localhost:8000/ListTests?Source=C&TestType=ABTest"
 local ltc2_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
-local ltl_url = "localhost:8000/ListTests?Source=Lua&TestType=XYTest"
 local dc_url = "localhost:8000/Diagnostics?Source=C"
 local dl_url = "localhost:8000/Diagnostics?Source=Lua"
 
@@ -23,7 +22,8 @@ tests.t1 = function(
     test_php = false
   end
 
-  samples = { "abdb2_6", "abdb2_100", "abdb2_1000" }
+  local samples = { "abdb2_6", "abdb2_100", "abdb2_1000" }
+  -- samples = { "abdb2_6" }
   for _, filename in ipairs(samples) do 
     -- TODO Improve file path so that it can be executed from anywhere
     local sqlfile = plpath.currentdir() .. "/" .. filename .. ".sql"
@@ -37,11 +37,6 @@ tests.t1 = function(
       a, b, c = curl.get(ltc2_url);   assert(c == 200)
       local Lc2 = JSON:decode(b)
   
-      a, b, c = curl.get(ltl_url);   assert(c == 200)
-      local Ll = JSON:decode(b)
-      assert(#Ll == #Lc1 + #Lc2)
-  
-      a, b, c = curl.get(dl_url);   assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
   
       if ( test_php )  then
@@ -51,9 +46,11 @@ tests.t1 = function(
         end
         assert(c == 200)
       end
+      print("iter " .. i)
     end
+    print("filename =  " .. filename)
   end
-  print("Test t1 terminated")
+  print("Test t1 succeeded")
 end
 tests.t1(10, false) -- COMMENT once LJT starts working
 return tests

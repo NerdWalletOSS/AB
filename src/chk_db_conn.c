@@ -42,10 +42,10 @@ BYE:
 
 int
 internal_chk_db_conn(
-    const char *server,
+    const char *host,
     const char *user,
-    const char *password,
-    const char *database,
+    const char *pass,
+    const char *db,
     int32_t port
     )
 {
@@ -56,8 +56,8 @@ internal_chk_db_conn(
   conn = mysql_init (NULL);
   if ( conn == NULL) { go_BYE(-1); }
   /* connect to server */
-  vptr = mysql_real_connect (conn, server, user, 
-      password, database, port, NULL, 0);
+  vptr = mysql_real_connect (conn, host, user, 
+      pass, db, port, NULL, 0);
   if ( vptr == NULL ) { 
     fprintf (stderr, "mysql_real_connect() failed\n");
     if ( conn != NULL )  { mysql_close (conn); conn = NULL; }
@@ -79,10 +79,10 @@ chk_db_conn(
 {
   int status = 0;
   status = internal_chk_db_conn(
-      g_cfg.mysql.server, 
+      g_cfg.mysql.host, 
       g_cfg.mysql.user, 
-      g_cfg.mysql.password, 
-      g_cfg.mysql.database, 
+      g_cfg.mysql.pass, 
+      g_cfg.mysql.db, 
       g_cfg.mysql.port
       );
   cBYE(status);

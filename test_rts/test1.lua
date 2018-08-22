@@ -15,40 +15,43 @@ local tests = {}
 tests.t1 = function(
   num_tests
   )
-  local U = "localhost:8000/AddTest"
+  local at_url = "localhost:8000/AddTest"
   local H = nil
   local B = require 'test_rts/g1'
   assert(type(B) == "table")
+  assert(B.NumVariants)
   if not num_tests then num_tests = 1 end 
   --=======================================
   a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
   states = { "started", "terminated", "archived" }
   for _, state in ipairs(states) do
     for i = 1, num_tests do 
-      print(i, state)
+      -- print(i, state)
       local j = 1
       for k, v in pairs(B.Variants) do
         v.id = i*1000 + j
         j = j + 1
+        if ( ( state == "terminated" ) and ( k == 1 ) ) then
+          v.is_final = 1 
+        end
       end
       B.name = "Test_" .. i
-      B.id = i
-      B.external_id = i
-      B.seed = i
+      B.id = tostring(i)
+      B.external_id = tostring(i)
+      B.seed = tostring(i)
       B.State = state
       jB = JSON:encode(B)
-      a, b, c = curl.get(U, H, jB); assert(c == 200)
+      a, b, c = curl.get(at_url, H, jB); assert(c == 200)
       a, b, c = curl.get(dc_url);   assert(c == 200)
       a, b, c = curl.get(dl_url);   assert(c == 200)
       local Tc = nil -- Tc = test info using C
       local url = tic_url .. "&TestName=" .. B.name
       a, b, c = curl.get(url)
       if ( state == "archived" ) then 
-        print(url)
         assert(c ~= 200)
       else
         assert(c == 200)
-        local Tc = JSON:decode(b)
+        Tc = JSON:decode(b)
         assert(Tc.State == state, 
         "expected " .. state .. " got " .. Tc.State)
       end
@@ -61,7 +64,7 @@ tests.t1 = function(
         assert(c ~= 200)
       else
         assert(c == 200)
-        local Tl = JSON:decode(b)
+        Tl = JSON:decode(b)
         assert(Tc.State == state)
       end
      
@@ -76,11 +79,12 @@ tests.t1 = function(
 
       -- Ll = list tests using Lua
       
+
       a, b, c = curl.get(ltl_url);   assert(c == 200)
       local Ll = JSON:decode(b)
-      -- Lc should be same as Ll
       assert(#Ll == #Lc)
      
+
 
       -- check number of tests
       if ( state == "started" ) then
@@ -88,8 +92,9 @@ tests.t1 = function(
       elseif ( state == "terminated" ) then
         assert(#Lc == num_tests) 
       elseif ( state == "archived" ) then
-        print(#Lc, state)
-        assert(#L == (num_tests - i))
+        -- print(#Lc, state)
+        assert(#Lc == (num_tests - i))
+
       else
         assert(nil)
       end
@@ -98,5 +103,5 @@ tests.t1 = function(
   end
   print("Test t1 succeeded")
 end
-tests.t1(333) -- TO COMMENT OUT
+tests.t1(1000) -- TO COMMENT OUT
 return tests

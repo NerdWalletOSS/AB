@@ -40,12 +40,9 @@ function set_device_specific_variant(
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   if ( !$is_dev_specific ) { // Nothing to do. Quit early
-    $outJ["status_code"] = 200;
+    $outJ["rts_code"] = 0;
     $outJ["msg_stdout"] = "No change to device specific  info for $tid";
-  $outJ["TestID"] = $tid; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-    db_set_row("log_ui_to_webapp", $request_webapp_id, $outJ);
-    header("Error-Code: 200");
-    http_response_code(200);
+    $outJ["TestID"] = $tid; 
     return $outJ;
   }
   // TODO P1 Put updates in transaction
@@ -71,22 +68,15 @@ function set_device_specific_variant(
     }
   }
   //------------------------------------------
-  $http_code = 200;
-  $outJ["status_code"] = $http_code;
-  $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
-  $outJ["TestID"] = $tid; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-  $Y['msg_stdout']  = $outJ["msg_stdout"];
-  $Y['status_code'] = $outJ["status_code"];
-  db_set_row("log_ui_to_webapp", $request_webapp_id, $Y);
-  // Note it is possible for both msg_stdout and msg_stderr to be set
+  $http_code = 0;
   if ( $state == "started" ) {
+    $http_code = 200; 
+    $rts_error_msg = "";
     $status = inform_rts($test_id, $rts_err_msg);
-    if ( !$status ) { 
-      $http_code = 400; 
-      $Y['msg_stderr'] = $rts_err_msg;
-    }
+    if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
-  header("Error-Code: $http_code");
-  http_response_code($http_code);
+  $outJ["rts_code"] = $http_code;
+  $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
+  $outJ["TestID"] = $tid; 
   return $outJ;
 }

@@ -26,6 +26,7 @@ function chk_test_basic(
   $test_dscr = get_json_element($inJ, 'description', false);
   $variants  = get_json_element($inJ, 'Variants');
   $bin_type  = get_json_element($inJ, 'BinType', false);
+  $state     = get_json_element($inJ, 'State');
 
   assert(is_array($variants));
   $nV = count($variants);
@@ -70,8 +71,11 @@ function chk_test_basic(
     assert(is_string($perc) || is_numeric($perc));
     $perc = floatval($perc);
     $variant_percs[$vidx] = $perc;
-
+    if (isset($v->{'url'})){
     $variant_urls[$vidx] = $v->{'url'};
+    } else {
+    $variant_urls[$vidx] = "";
+    }
 
     $vidx++;
   }
@@ -79,7 +83,7 @@ function chk_test_basic(
   if ( $test_type == "XYTest" ) { 
     is_good_urls($variant_urls);
   }
-  is_good_percs($variant_percs, $bin_type, $variant_names);
+  is_good_percs($variant_percs, $bin_type, $variant_names, $state);
   $chk_rslt['variant_names']  = $variant_names;
   $chk_rslt['variant_urls']   = $variant_urls;
   $chk_rslt['variant_percs']  = $variant_percs;

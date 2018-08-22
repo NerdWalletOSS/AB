@@ -2,8 +2,6 @@ local function compare_T(
   T1,
   T2
   )
-  print(T1)
-  print(T2)
   assert(type(T1) == "table")
   assert(type(T2) == "table")
   assert(T1 ~= T2 )
@@ -34,8 +32,9 @@ local function compare_T(
     local found = false
     for _, v2 in pairs(V2) do
       if ( v1.name == v2.name ) then
-        assert( v1.id == v2.id )
-        assert( v1.percentage == v2.percentage )
+        assert( (tonumber(v1.id) == tonumber(v2.id)), 
+          v1.name .. "  " .. v2.name .. "  " .. v1.id .. " " .. v2.id)
+        assert( (tonumber(v1.percentage) == tonumber(v2.percentage)))
         if ( T1.TestType == "XYTest" ) then 
           assert(v1.url)
           assert(v1.url == v2.url)

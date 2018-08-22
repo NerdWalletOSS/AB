@@ -2,7 +2,9 @@
 
 // -- SET PATH
 require_once "set_path.php";
-require_once "header.php"; ?>
+require_once "header.php"; 
+require_once "html_header.php"; 
+?>
 <script src="js/fix_to_a_winner.js"></script>
 <?php 
 require_once "navbar.php"; 

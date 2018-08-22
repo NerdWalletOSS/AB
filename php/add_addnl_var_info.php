@@ -73,7 +73,7 @@ function add_addnl_var_info(
   // check custom data 
   rs_assert(strlen($custom_data) <= lkp("configs", "max_len_custom_data"));
   if ( $custom_data != "" ) {  // must be valid JSON
-    rs_assert(is_valid_json($custom_data));
+    rs_assert(is_valid_json($custom_data), "bad custom data $custom_data");
   }
   // check url 
   if ( $test_type == "XYTest" ) {
@@ -112,30 +112,26 @@ function add_addnl_var_info(
     $dbh->commit();
   } catch ( PDOException $ex ) {
     $dbh->rollBack();
-    $GLOBALS["err"] .= "ERROR: Transaction aborted\n";
-    $GLOBALS["err"] .= "FILE: " . __FILE__ . " :LINE: " . __LINE__ . "\n";
-    return false;
+    rs_assert(false, "ERROR: Transaction aborted");
   }
   // STOP: Database write
   //------------------------------------------
-  $http_code = 200;
+  $http_code = 0;
   if ( $state == "started" ) {
+    $http_code = 200; 
+    $rts_error_msg = "";
     $status = inform_rts($test_id, $rts_err_msg);
-    if ( !$status ) { 
-      $http_code = 400; 
-      $Y['msg_stderr'] = $rts_err_msg;
-    }
+    if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
   }
-  $Y['status_code'] = $outJ["status_code"] = $http_code;
-  $Y['msg_stdout'] = $outJ["msg_stdout"] = 
+  $outJ["status_code"] = $http_code;
+  $outJ["msg_stdout"] = 
     "Variant [$vname, $vid] of Test [$test_name, $test_id] updated";
-  $outJ["TestID"] = $test_id; // UTPAL: Added this line as after the completion, I need the test ID back to display the page.
-  $Y['msg_stderr']  = $outJ["msg_stderr"] = $err;
-  db_set_row("request_webapp", $request_webapp_id, $Y);
-  header("Error-Code: $http_code");
-  header("Error-Message: ".$err);
-  header("Description: <<$description>>");
-  http_response_code($http_code);
+
+  $outJ["TestID"] = $test_id; 
+  $outJ['description'] = $description;
+  $outJ['custom_data'] = $custom_data;
+  $outJ['url']         = $url;
+
   return $outJ;
 }
 ?>

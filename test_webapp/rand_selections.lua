@@ -53,7 +53,7 @@ end
 
 local function rand_dscr()
   salt = salt + 1
-  return tostring(math.random(1, 1000000000))
+  return tostring(math.random(1, 1000000000) + salt)
 end
 
 local function rand_type()
@@ -106,8 +106,8 @@ local function rand_vrnt(
     end
     local x = math.random(1, 10)
     if ( x == 1 ) then 
-      local y = math.random(1, 2)
       v.description = trim(tostring(math.random(1, 1000000000) .. salt))
+      local y = math.random(1, 2)
       if ( y == 1 ) then 
         v.custom_data = cd1
       else

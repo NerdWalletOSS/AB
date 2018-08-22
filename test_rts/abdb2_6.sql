@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.59, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.58, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: abdb2
 -- ------------------------------------------------------
--- Server version	5.5.59-0ubuntu0.14.04.1
+-- Server version	5.5.58-0ubuntu0.14.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -348,6 +348,153 @@ INSERT INTO `device_x_variant` VALUES (1,1,13,1,1,1,100),(2,1,13,1,2,1,0),(3,1,1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `log_cat_attr_val_test`
+--
+
+DROP TABLE IF EXISTS `log_cat_attr_val_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log_cat_attr_val_test` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `log_ime_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modification_type` char(8) DEFAULT NULL,
+  `id` int(8) DEFAULT NULL,
+  `api_id` int(8) DEFAULT NULL,
+  `request_webapp_id` int(8) DEFAULT NULL,
+  `test_id` int(8) DEFAULT NULL,
+  `attr_id` int(8) DEFAULT NULL,
+  `cat_attr_val_id` int(8) DEFAULT NULL,
+  `is_on` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_cat_attr_val_test`
+--
+
+LOCK TABLES `log_cat_attr_val_test` WRITE;
+/*!40000 ALTER TABLE `log_cat_attr_val_test` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_cat_attr_val_test` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `log_device_x_variant`
+--
+
+DROP TABLE IF EXISTS `log_device_x_variant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log_device_x_variant` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `log_ime_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modification_type` char(8) DEFAULT NULL,
+  `id` int(8) DEFAULT NULL,
+  `api_id` int(8) DEFAULT NULL,
+  `request_webapp_id` int(8) DEFAULT NULL,
+  `device_id` int(8) DEFAULT NULL,
+  `variant_id` int(8) DEFAULT NULL,
+  `test_id` int(8) DEFAULT NULL,
+  `percentage` int(8) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_device_x_variant`
+--
+
+LOCK TABLES `log_device_x_variant` WRITE;
+/*!40000 ALTER TABLE `log_device_x_variant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_device_x_variant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `log_test`
+--
+
+DROP TABLE IF EXISTS `log_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log_test` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `log_ime_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modification_type` char(8) DEFAULT NULL,
+  `id` int(8) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `api_id` int(8) DEFAULT NULL,
+  `request_webapp_id` int(8) DEFAULT NULL,
+  `ramp` int(8) DEFAULT NULL,
+  `test_type_id` int(8) DEFAULT NULL,
+  `bin_type_id` int(8) DEFAULT NULL,
+  `pred_id` int(8) DEFAULT NULL,
+  `channel_id` int(8) DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  `is_dev_specific` tinyint(1) DEFAULT NULL,
+  `has_filters` tinyint(1) DEFAULT NULL,
+  `seed` bigint(22) DEFAULT NULL,
+  `external_id` bigint(20) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `t_create` bigint(20) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `t_update` bigint(20) DEFAULT NULL,
+  `creator_id` int(8) DEFAULT NULL,
+  `updater_id` int(8) DEFAULT NULL,
+  `state_id` int(8) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_test`
+--
+
+LOCK TABLES `log_test` WRITE;
+/*!40000 ALTER TABLE `log_test` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_test` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `log_variant`
+--
+
+DROP TABLE IF EXISTS `log_variant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log_variant` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `log_ime_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modification_type` char(8) DEFAULT NULL,
+  `id` int(8) DEFAULT NULL,
+  `name` varchar(32) DEFAULT NULL,
+  `api_id` int(8) DEFAULT NULL,
+  `request_webapp_id` int(8) DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  `test_id` int(8) DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `is_final` tinyint(1) DEFAULT NULL,
+  `url` varchar(256) DEFAULT NULL,
+  `custom_data` varchar(2048) DEFAULT NULL,
+  `is_del` tinyint(1) DEFAULT NULL,
+  `pred_id` int(8) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `t_create` bigint(20) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `t_update` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_variant`
+--
+
+LOCK TABLES `log_variant` WRITE;
+/*!40000 ALTER TABLE `log_variant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_variant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `request_rts`
 --
 
@@ -564,7 +711,7 @@ CREATE TABLE `variant` (
 
 LOCK TABLES `variant` WRITE;
 /*!40000 ALTER TABLE `variant` DISABLE KEYS */;
-INSERT INTO `variant` VALUES (1,'v1',2,44,'test description of variant v1',1,0,1,'http://yahoo.co.in','{\"bdc\": \"bnbvnbhy\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:10:46',153072064682598700),(2,'v2',2,44,'description of v2',1,100,1,'http://google.com','{\"testing\": \"custom data of v2 variant\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:10:46',153072064682598700),(3,'v1',1,14,NULL,2,30,0,'http://yahoo.co.in',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:11:35',153072069580385900),(4,'v2',1,14,NULL,2,70,0,'http://gmail.com',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:11:35',153072069580385900),(5,'Control',2,27,NULL,3,0,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-06 09:56:49',153089620949849100),(6,'v1',2,27,NULL,3,100,1,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-06 09:56:49',153089620949849100),(7,'Control',2,41,NULL,4,100,1,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-07 09:37:22',153098144254866900),(8,'v1',2,41,NULL,4,0,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-07 09:37:22',153098144254866900),(9,'v1',1,48,NULL,5,20,0,'http://yahoo.co.in',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:40:49',153115084978185000),(10,'v2',3,49,'desc v2',5,80,0,'http://google.com','{\"yes\": \"no\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:40:49',153115084978185000),(11,'Control',1,54,NULL,6,30,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:54:26',153115166633422700),(12,'v1',3,55,'testing',6,70,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:54:26',153115166633422700);
+INSERT INTO `variant` VALUES (1,'v1',2,44,'test description of variant v1',1,0,0,'http://yahoo.co.in','{\"bdc\": \"bnbvnbhy\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:10:46',153072064682598700),(2,'v2',2,44,'description of v2',1,100,0,'http://google.com','{\"testing\": \"custom data of v2 variant\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:10:46',153072064682598700),(3,'v1',1,14,NULL,2,30,0,'http://yahoo.co.in',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:11:35',153072069580385900),(4,'v2',1,14,NULL,2,70,0,'http://gmail.com',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-04 09:11:35',153072069580385900),(5,'Control',2,27,NULL,3,0,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-06 09:56:49',153089620949849100),(6,'v1',2,27,NULL,3,100,1,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-06 09:56:49',153089620949849100),(7,'Control',2,41,NULL,4,100,1,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-07 09:37:22',153098144254866900),(8,'v1',2,41,NULL,4,0,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-07 09:37:22',153098144254866900),(9,'v1',1,48,NULL,5,20,0,'http://yahoo.co.in',NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:40:49',153115084978185000),(10,'v2',3,49,'desc v2',5,80,0,'http://google.com','{\"yes\": \"no\"}',0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:40:49',153115084978185000),(11,'Control',1,54,NULL,6,30,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:54:26',153115166633422700),(12,'v1',3,55,'testing',6,70,0,NULL,NULL,0,NULL,'0000-00-00 00:00:00',0,'2018-07-09 08:54:26',153115166633422700);
 /*!40000 ALTER TABLE `variant` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -577,4 +724,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-07-09 16:53:55
+-- Dump completed on 2018-07-22  0:29:37

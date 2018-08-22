@@ -58,9 +58,17 @@ get_string(
     handle = json_object_get(handle, key3);
     // fprintf(stderr, "%s:", key3);
   }
-  if ( handle == NULL ) { go_BYE(-1); }
+  if ( handle == NULL ) { 
+    fprintf(stderr, "Could not find %s", key1); 
+    if ( key2 != NULL ) { fprintf(stderr, ":%s", key2); }
+    if ( key3 != NULL ) { fprintf(stderr, ":%s", key3); }
+    fprintf(stderr, "\n");
+    go_BYE(-1); 
+  }
   const char *X = json_string_value(handle);
-  if ( X == NULL ) { go_BYE(-1); }
+  if ( X == NULL ) { 
+    go_BYE(-1); 
+  }
   if ( strlen(X) > maxlen ) { go_BYE(-1); }
   strcpy(dst, X);
   // fprintf(stderr, "%s", X);
@@ -107,7 +115,14 @@ get_int(
   int status = 0;
   char buf[32];
   memset(buf, '\0', 32);
-  status = get_string(root, key1, key2, key3, 31, buf); cBYE(status);
+  status = get_string(root, key1, key2, key3, 31, buf); 
+  if ( status < 0 ) { 
+    fprintf(stderr, "Could not find %s", key1); 
+    if ( key2 != NULL ) { fprintf(stderr, ":%s", key2); }
+    if ( key3 != NULL ) { fprintf(stderr, ":%s", key3); }
+    fprintf(stderr, "\n");
+    go_BYE(-1); 
+  }
   status = stoI4(buf, ptr_rslt); cBYE(status);
 BYE:
   return status;
@@ -226,7 +241,7 @@ read_conf_file(
     g_disable_lg = false;
     get_server(j_ab, "LOGGER", &(ptr_cfg->logger));
   }
-
+  //-------------------------------------
   json_t *j_kf = json_object_get(j_ab, "KAFKA");
   if ( j_kf == NULL ) { 
     g_disable_kf = true;
@@ -242,6 +257,19 @@ read_conf_file(
     get_string(j_kf, "MAX_BUFFERING_TIME", "VALUE", NULL, AB_MAX_LEN_KAFKA_PARAM,
         ptr_cfg->kafka.max_buffering_time);
   }
+  //-------------------------------------
+  json_t *j_my = json_object_get(j_ab, "MYSQL");
+  if ( j_my == NULL ) { go_BYE(-1); }
+  get_string(j_my, "SERVER", "VALUE", NULL, AB_MAX_LEN_MYSQL_PARAM,
+      ptr_cfg->mysql.host);
+  get_string(j_my, "USER", "VALUE", NULL, AB_MAX_LEN_MYSQL_PARAM,
+      ptr_cfg->mysql.user);
+  get_string(j_my, "PASSWORD", "VALUE", NULL, AB_MAX_LEN_MYSQL_PARAM,
+      ptr_cfg->mysql.pass);
+  get_string(j_my, "DATABASE", "VALUE", NULL, AB_MAX_LEN_MYSQL_PARAM,
+      ptr_cfg->mysql.db);
+  get_int(j_my, "PORT", "VALUE", NULL, &(ptr_cfg->mysql.port));
+  //-------------------------------------
 
   json_decref(root);
 BYE:
