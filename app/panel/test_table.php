@@ -22,8 +22,8 @@ function action_state($state_id) {
 <div id="show-data">
 <table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th>
 
-<th>Check Test</th><th>Action</th> </tr></thead>
-<tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th></tr><tfoot>
+<th>Check Test</th><th>Action</th><th>Created On</th> </tr></thead>
+<tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th><th>Created On</th></tr><tfoot>
   <tbody id="TableData">
 <?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
@@ -47,9 +47,12 @@ echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button typ
   if (($result[$i]['state_id'] == 4) && ($TestType == "XYTest")) {
     echo "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=".$result[$i]['id']."&state_id=".$result[$i]['state_id']."&action=resurrect'"."><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resurrect</button></a>";
   }
-  echo "</td>";
-  echo "</tr>";
 }
+  echo "</td>";
+  $date = date_create($result[$i]['created_at']);
+  $display_date = date_format($date, 'jS F Y');
+  echo "<td>".$display_date."</td>";
+  echo "</tr>";
 } ?>
 
 
