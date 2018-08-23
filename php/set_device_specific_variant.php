@@ -48,8 +48,8 @@ function set_device_specific_variant(
   $test_name = $T['name'];
   $state_id = $T['state_id'];
   $state = lkp("state", $state_id, "reverse");
-  rs_assert( ( ( $state == "draft" ) && ( $state == "dormant" ) ),
-    "cannot change device specific once test has started");
+  rs_assert( ( ( $state == "draft" ) || ( $state == "dormant" ) ),
+    "cannot change device specific once test has started. state = $state");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   if ( !$is_dev_specific ) { // Nothing to do. Quit early
