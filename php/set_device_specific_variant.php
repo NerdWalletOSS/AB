@@ -48,13 +48,14 @@ function set_device_specific_variant(
   $test_name = $T['name'];
   $state_id = $T['state_id'];
   $state = lkp("state", $state_id, "reverse");
-  rs_assert( ( ( $state == "draft" ) && ( $state == "dormant" ) ),
-    "cannot change device specific once test has started");
+  rs_assert( ( ( $state == "draft" ) || ( $state == "dormant" ) ),
+    "cannot change device specific once test has started. state = $state");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
-  if ( !$is_dev_specific ) { // Nothing to do. Quit early
-    $outJ["rts_code"] = 0;
-    $outJ["msg_stdout"] = "No change to device specific  info for $tid";
+  if ( $is_dev_specific === false ) { 
+    // TODO P1 Put updates in transaction
+    mod_cell("test", "is_dev_specific", $is_dev_specific, " id = $tid ");
+    $outJ["msg_stdout"] = "Test $test_name is NOT device specific ";
     $outJ["TestID"] = $tid; 
     return $outJ;
   }
