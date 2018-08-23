@@ -48,7 +48,7 @@ require_once "navbar.php";
 <div class="panel panel-primary">
 <div class="panel-heading">
   <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Admin &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select Admin to display the test cases created by them."></span>&nbsp;
+Admin &nbsp;&nbsp;
   <select form="FilterAdmin" name='TestAdmin' id = "TestAdmin" style='color:white;background-color:grey;'>";
   <option value=''>All</option>
 <?php 
