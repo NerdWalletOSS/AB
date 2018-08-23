@@ -60,7 +60,11 @@ $config = config_html($TestType);
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
   <tr>
-  <td>Device (<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>"; } else { echo "<b style='color:red'>The test is NOT Device Specific</b>"; } ?> ): <input form="TestURL" type='hidden' name='nw_campaign_id' value='<?php echo $external_id; ?>'><input form='TestURL' type="text" name="device" ></td><td ><input class="btn btn-sm btn-primary btn-block" type="submit" form='TestURL' id="test_url" value="Test URL"></td><td>&nbsp;</td>
+  <td>Device :<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>&nbsp;&nbsp;". "<input form='TestURL' type='text' name='device' ></td><td ><input class='btn btn-sm btn-primary btn-block' type='submit' form='TestURL' id='test_url' value='Test URL'>". "<input form='TestURL' type='hidden' name='nw_campaign_id' value=".$external_id.">"; } else { echo "<b style='color:red'>The test is NOT Device Specific</b>"; } ?> 
+
+
+
+</td><td>&nbsp;</td>
   </tr>
   <?php 
           } 
