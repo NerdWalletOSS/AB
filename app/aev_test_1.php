@@ -59,11 +59,10 @@ $config = config_html($TestType);
   <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?>' >
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
-  <?php  if ($this_state == "started") { ?>
   <tr>
   <td>Device (<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>"; } else { echo "<b style='color:red'>The test is NOT Device Specific</b>"; } ?> ): <input form="TestURL" type='hidden' name='nw_campaign_id' value='<?php echo $external_id; ?>'><input form='TestURL' type="text" name="device" ></td><td ><input class="btn btn-sm btn-primary btn-block" type="submit" form='TestURL' id="test_url" value="Test URL"></td><td>&nbsp;</td>
   </tr>
-  <?php } 
+  <?php 
           } 
    ?>
   <?php } elseif (($mode == "Add")) { ?>
@@ -149,7 +148,7 @@ if (($mode == "Edit") && ($this_state == "started")) {
   </td>
   <td>Distribution:&nbsp;&nbsp; 
   <input form="addTest" type='text' style='width:5em'  size='3' name='VPercentage_<?php echo $i; ?>' class='prop' 
-value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"required <?php echo $readonly; ?>></td></tr>
+value="<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['percentage'];} ?>"required <?php echo $readonly; ?> <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "readonly"; }?>></td></tr>
 <?php } }elseif ($TestType == "ABTest") { ?>
   <tr>
 <input form="addTest"  type='hidden' name='VID_0' value='<?php if ($mode != "Add") {echo $rslt['Variants'][0]['id']; } ?>'>
