@@ -20,7 +20,7 @@ T.t1 = function(num_tests)
     assert(nV == cum_num_variants)
   end
   print("Successfully added " .. num_tests .. " tests in test t1")
+  print("TODO This test needs more work")
 end 
--- T.t1(1000) -- TO DELETE once LJT starts working
-T.t2(100) -- TO DELETE once LJT starts working
+T.t1(1000) -- TO DELETE once LJT starts working
 return T

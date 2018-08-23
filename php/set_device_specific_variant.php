@@ -32,11 +32,24 @@ function set_device_specific_variant(
   $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $tid = get_json_element($inJ, 'id'); 
   $is_dev_specific = intval(get_json_element($inJ, 'is_dev_specific'));
+  if ( !is_bool($is_dev_specific) ) { 
+    if ( $is_dev_specific == 0 ) { 
+      $is_dev_specific = false;
+    }
+    else if ( $is_dev_specific == 1 ) { 
+      $is_dev_specific = true;
+    }
+    else {
+      rs_assert(false, "is_dev_specific invalid = $is_dev_specific");
+    }
+  }
   $T = db_get_row("test", "id", $tid);
   rs_assert($T);
   $test_name = $T['name'];
   $state_id = $T['state_id'];
   $state = lkp("state", $state_id, "reverse");
+  rs_assert( ( ( $state != "draft" ) && ( $state != "dormant" ) ),
+    "cannot change device specific once test has started");
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   if ( !$is_dev_specific ) { // Nothing to do. Quit early
@@ -68,14 +81,6 @@ function set_device_specific_variant(
     }
   }
   //------------------------------------------
-  $http_code = 0;
-  if ( $state == "started" ) {
-    $http_code = 200; 
-    $rts_error_msg = "";
-    $status = inform_rts($tid, $rts_err_msg);
-    if ( !$status ) {$http_code = 400; $outJ['msg_stderr'] = $rts_err_msg;}
-  }
-  $outJ["rts_code"] = $http_code;
   $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
   $outJ["TestID"] = $tid; 
   return $outJ;

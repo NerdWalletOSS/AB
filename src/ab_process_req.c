@@ -12,6 +12,7 @@
 #include "l_post_proc_preds.h"
 
 #include "add_test.h"
+#include "chk_db_conn.h"
 #include "reload.h"
 #include "test_info.h"
 #include "list_tests.h"

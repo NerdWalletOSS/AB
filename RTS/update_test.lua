@@ -14,13 +14,17 @@ local function update_test(
   assert(type(num_devices) == "number")
   assert(num_devices > 0)
   
+  local is_dev_specific = test[0].is_dev_specific
+  assert( ( is_dev_specific == true ) or ( is_dev_specific == false ) )
+  if ( is_dev_specific == false ) then 
+    num_devices = 1
+  end
+
   test[0].id = tonumber(T.id)
   --[[ should be done in Lua but done in C because of uint64_t issues
   test[0].external_id = tonumber(T.external_id)
   test[0].seed = tonumber(T.seed)
   --]]
-  local is_dev_specific = test[0].is_dev_specific
-  assert( ( is_dev_specific == true ) or ( is_dev_specific == false ) )
 
   local has_filters
   if (type(T.has_filters) == "boolean") then
@@ -37,10 +41,6 @@ local function update_test(
   end
   assert( (has_filters == 0 ) or (has_filters == 1 ) )
   -- TODO P2 We still need to incorporate filters into the code
-
-  if ( is_dev_specific == false ) then 
-    num_devices = 1
-  end
 
   test[0].ramp = tonumber(T.ramp)
   assert(test[0].ramp >= 0)

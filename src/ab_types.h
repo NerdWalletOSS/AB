@@ -54,6 +54,7 @@ typedef struct _variant_rec_type {
   char name[AB_MAX_LEN_VARIANT_NAME+1];
   char * url; // AB_MAX_LEN_VARIANT_URL+1
   char * custom_data; // AB_MAX_LEN_CUSTOM_DATA+1
+  int count; // as a quick and dirty check to see variant splitting
 } VARIANT_REC_TYPE;
 
 typedef struct _test_meta_type {
@@ -78,6 +79,7 @@ typedef struct _test_meta_type {
   int *final_variant_id; // [g_n_justin_cat_lkp];
   int *final_variant_idx; // [g_n_justin_cat_lkp];
   uint8_t **variant_per_bin; // [g_n_justin_cat_lkp][AB_NUM_BINS];
+  int **count_device_x_variant; // [g_n_justin_cat_lkp][num_variants];
 
 } TEST_META_TYPE;
 
