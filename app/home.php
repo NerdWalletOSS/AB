@@ -5,7 +5,8 @@ require_once "set_path.php";
 
 // -- STANDARD HEADER INFORMATION
 require_once "header.php";
-
+require_once "lkp.php";
+$user_id = lkp("admin", $User);
 // -- GET TESTS
 require_once "dbconn.php";
 require_once "db_get_rows.php";
@@ -23,7 +24,7 @@ if (isset($TestType))
 				$test_type_id = 2;
 			}
 
-		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ")");
+		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ") and creator_id = '".$user_id."' order by updated_at DESC");
         }
 require_once "html_header.php";
 ?>
@@ -46,10 +47,25 @@ require_once "navbar.php";
 <div class="col-xs-12">
 <div class="panel panel-primary">
 <div class="panel-heading">
-  <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<input type="radio" name="option" value="'3','4'" id= "1" checked/>&nbsp;Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" value="2" id="2"  />&nbsp;Draft/Dormant &nbsp;&nbsp; 
-  <input type="radio" name="option" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
+  <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Admin &nbsp;&nbsp;
+  <select form="FilterAdmin" name='TestAdmin' id = "TestAdmin" style='color:white;background-color:grey;'>";
+  <option value=''>All</option>
+<?php 
+$admin    = db_get_rows('admin');
+$nA = count($admin);
+for ( $i = 0; $i < $nA; $i++ ) { 
+  echo "<option value='".$admin[$i]['id']."'"; 
+  if((isset($User)) && ($User == $admin[$i]['name'])) {echo ' selected';}
+  echo ">".$admin[$i]['name']."</option>";
+} ?>
+  </select>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" checked/>&nbsp;Started/Terminated  &nbsp;&nbsp;
+  <input type="radio" name="option" class="opt" value="2" id="2"  />&nbsp;Draft/Dormant &nbsp;&nbsp; 
+  <input type="radio" name="option" class="opt" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php
 echo $TestType; 
