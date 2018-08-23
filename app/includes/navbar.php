@@ -27,7 +27,7 @@ else
           <a href="#">
           <h5>
 <?php
-  echo "Hello! " . $User;
+  echo "<strong>Hello! " . $User. "</strong>";
 ?>
          </h5>
          </a>
