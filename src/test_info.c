@@ -116,6 +116,10 @@ c_test_info(
         g_tests[test_idx].variants[i].id);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
+    sprintf(buf, "  \"count\" : \"%d\", \n", 
+        g_tests[test_idx].variants[i].count);
+    mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+
     sprintf(buf, "  \"name\" : \"%s\", \n", 
         g_tests[test_idx].variants[i].name);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
