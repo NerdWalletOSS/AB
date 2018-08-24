@@ -23,7 +23,7 @@
   { ?>
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_dev_specific" value="1"  
+<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked"; } else { // Do Nothing
 } 
 ?>
@@ -50,7 +50,7 @@ for ( $i = 0; $i < $nD; $i++ ) {
         echo "<td>".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."</td>";
       }
       elseif (($mode == "Edit")) {
-        echo "<td><input type='text' maxlength='3' size='3' name='".$all_device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."'></td>";
+        echo "<td><input type='text' class='dev_specific_variant' maxlength='3' size='3' name='".$all_device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."'"; if (!isset($T['is_dev_specific']) || ( $T['is_dev_specific'] != "1")) { echo "readonly"; } echo "></td>";
        } 
         else { // Do Nothing
        }

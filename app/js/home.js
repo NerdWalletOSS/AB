@@ -112,10 +112,10 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
           });
           return ($(table));
         };
-        var jsonData = eval(response);
+        var jsonData = eval(response); 
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
@@ -206,12 +206,12 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response);
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
         $("#show-data").html(table);
-        $('#jsTestTable').DataTable({
+       $('#jsTestTable').DataTable({
           "order": [
             [4, "desc"]
           ]
