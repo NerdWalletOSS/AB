@@ -9,6 +9,7 @@ require_once "lkp.php";
 $user_id = lkp("admin", $User);
 // -- GET TESTS
 require_once "dbconn.php";
+require_once "db_get_row.php";
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
 $state = "'3','4'";
@@ -23,6 +24,14 @@ if (isset($TestType))
 			{
 				$test_type_id = 2;
 			}
+
+if ((isset($_GET['TestID'])) && ($_GET['TestID'] != "")){
+  $id = $_GET['TestID'];
+  $rslt = db_get_row("test", "id", $id);
+  $state = $rslt["state_id"];
+  $user_id = $rslt["creator_id"];
+  $User = lkp("admin", $user_id, "reverse");
+}
 
 		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ") and creator_id = '".$user_id."' order by updated_at DESC");
         }
@@ -55,7 +64,7 @@ Admin &nbsp;&nbsp;
 $admin    = db_get_rows('admin');
 $nA = count($admin);
 for ( $i = 0; $i < $nA; $i++ ) { 
-  echo "<option value='".$admin[$i]['id']."'"; 
+  echo "<option value='".$admin[$i]['id']."'";
   if((isset($User)) && ($User == $admin[$i]['name'])) {echo ' selected';}
   echo ">".$admin[$i]['name']."</option>";
 } ?>
@@ -63,9 +72,9 @@ for ( $i = 0; $i < $nA; $i++ ) {
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" checked/>&nbsp;Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" class="opt" value="2" id="2"  />&nbsp;Draft/Dormant &nbsp;&nbsp; 
-  <input type="radio" name="option" class="opt" value="3" id="3"  />&nbsp;Archive &nbsp;&nbsp; 
+	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state == '3') || ($state == '4') ||($state == "'3','4'") ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
+  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state == '1') || ($state == '2')) {echo "checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
+  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state == '5') {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php
 echo $TestType; 

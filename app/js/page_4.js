@@ -21,13 +21,13 @@ $(document).ready(function() {
           $("#error_message").html(response.getResponseHeader('Error-Message'));
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
         } else {
-          //var id = response.getResponseHeader('TestID');
-          window.location = "home.php";
+          var id = response.getResponseHeader('TestID');
+          window.location = "home.php?TestID="+id;
         }
       },
       success: function(response, textStatus, XHR) {
-        //var id = XHR.getResponseHeader('TestID');
-        window.location = "home.php";
+        var id = XHR.getResponseHeader('TestID');
+        window.location = "home.php?TestID="+id;
       },
       beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
