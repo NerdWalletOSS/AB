@@ -1,16 +1,7 @@
 <?php session_start();
 error_reporting( E_ALL );
 # -- PARSE SESSION VARIABLES
-// -- PARSE SESSION VARIABLES
-if (isset($_SESSION['User']))
-	{
-		$User = $_SESSION['User'];
-	}
-else
-	{
-		header('Location: index.php?error=User name not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
-		return false;
-	}
+if (isset($_SESSION['User'])) { $User = $_SESSION['User'];}
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/helpers/");
@@ -44,17 +35,8 @@ function action_state($state_id) {
 }
 
 
-// GET DATA 
-if (isset($_GET['TestID']))
-	{
-		$tid = $_GET['TestID'];
-	}
-else
-	{
-		header('Location: home.php?error=Test ID not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
-		return false;
-	}
-$X = db_get_test($tid);
+// GET DATA
+$X = db_get_test($_GET['TestID']);
 
 // CASE: FIX TO A WINNER
 $X['NewState'] = action_state($_GET['state_id']);
@@ -76,6 +58,6 @@ $str_inJ = json_encode($X);
 // Call to set state
 $outJ = set_state($str_inJ);
 
-header('Location: ../home.php?TestID='.$tid);
+header('Location: ../home.php');
 
 ?>

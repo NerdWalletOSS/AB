@@ -1,5 +1,4 @@
   <?php
-
     switch ( $this_state ) {
     case "draft" : 
     case "dormant" : 
@@ -97,7 +96,7 @@ else
 ?>
 <td><input class="btn btn-lg btn-success btn-block" type="submit" form="set_filters" id="setFilters" value="Save"></td>
 <?php } ?>
-<td> <button onclick="window.location.href='home.php?TestID=<?php echo $_GET['TestID']; ?>'" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="location.href = 'home.php';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
