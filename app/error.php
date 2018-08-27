@@ -10,6 +10,7 @@ require_once "header.php";
 require_once "dbconn.php";
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
+require_once "html_header.php";
 $state = "'2','3','4'";
 if (isset($TestType))
 	{
