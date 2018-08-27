@@ -1,4 +1,4 @@
-<?php 
+<?php
 // -- SET PATH
 require_once "set_path.php";
 
@@ -14,10 +14,33 @@ if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
 		header('Location: error.php?error="TestID is not set"');
 		return false;
 	}
-# -- Check if number of TestID are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-$T = db_get_test($id);
+else {
+  $id = $_GET['TestID'];
+}
+// -- Get Test Type
+if (isset($_SESSION['TestType']))
+	{
+		$TestType = $_SESSION['TestType'];
+	}
+else
+	{
+		header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
+		return false;
+	}
 
+if (($TestType == "ABTest") && ($id != "") )
+  {
+		header('Location: home.php?TestID='.$id);    
+  }
+else if (($TestType == "ABTest") && ($id == "") )
+  {
+		header('Location: home.php');  
+  }
+else 
+  {
+    header('Location: error.php?error=Some is wrong. Please contact admin. FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . ''); 
+  }
+$T = db_get_test($id);
 require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
 if (isset($Channel)) {

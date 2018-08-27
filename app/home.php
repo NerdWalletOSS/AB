@@ -40,11 +40,7 @@ require_once "html_header.php";
 <!-- PAGE SPECIFIC FILE CALLS -->
   <link href="css/dataTables.min.css" rel="stylesheet">
   <script src="js/dataTables.min.js"></script>
-<!--
-  <script src="js/filter_test.js"></script>
-    <script src="js/check_test.js"></script>
--->
-    <script src="js/home.js"></script>
+  <script src="js/home.js"></script>
 </head>
 <body>
 <!-- STANDARD HEADER INFORMATION -->
@@ -61,13 +57,14 @@ Admin &nbsp;&nbsp;
   <select form="FilterAdmin" name='TestAdmin' id = "TestAdmin" style='color:white;background-color:grey;'>";
   <option value=''>All</option>
 <?php 
-$admin    = db_get_rows('admin');
+$admin = db_get_rows('admin');
 $nA = count($admin);
 for ( $i = 0; $i < $nA; $i++ ) { 
   echo "<option value='".$admin[$i]['id']."'";
   if((isset($User)) && ($User == $admin[$i]['name'])) {echo ' selected';}
   echo ">".$admin[$i]['name']."</option>";
-} ?>
+} 
+?>
   </select>
 
 
