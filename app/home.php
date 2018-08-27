@@ -28,11 +28,29 @@ if (isset($TestType))
 if ((isset($_GET['TestID'])) && ($_GET['TestID'] != "")){
   $id = $_GET['TestID'];
   $rslt = db_get_row("test", "id", $id);
-  $state = $rslt["state_id"];
+  $db_state = $rslt["state_id"];
   $user_id = $rslt["creator_id"];
   $User = lkp("admin", $user_id, "reverse");
 }
-
+switch ($db_state) {
+    case "1":
+        $state = "'1', '2'";
+        break;
+    case "2":
+        $state = "'1', '2'";
+        break;
+    case "3":
+        $state = "'3', '4'";
+        break;
+    case "4":
+        $state = "'3', '4'";
+        break;
+    case "5":
+        $state = '5';
+        break;
+    default:
+        $state = "'3','4'";
+}
 		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ") and creator_id = '".$user_id."' order by updated_at DESC");
         }
 require_once "html_header.php";
@@ -68,10 +86,10 @@ for ( $i = 0; $i < $nA; $i++ ) {
   </select>
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state == '3') || ($state == '4') ||($state == "'3','4'") ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state == '1') || ($state == '2')) {echo "checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
-  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state == '5') {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state == '3') || ($state == '4') ||($state == "'3', '4'") ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
+  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state == '1') || ($state == '2') || ($state == "'1', '2'")) {echo " checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
+  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state == "5") {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php
 echo $TestType; 
