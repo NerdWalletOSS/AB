@@ -81,3 +81,13 @@ else
 </div>
 </div>
 </div>
+<script>
+$("#is_dev_specific").change(function (e) {
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+    $('.dev_specific_variant').removeAttr('readonly');
+} else {
+    $('.dev_specific_variant').attr('readonly', true);
+}
+})
+</script>

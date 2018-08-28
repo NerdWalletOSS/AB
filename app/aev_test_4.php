@@ -32,13 +32,13 @@ if (($TestType == "ABTest") && ($id != "") )
   {
 		header('Location: home.php?TestID='.$id);    
   }
-else if (($TestType == "ABTest") && ($id == "") )
+elseif (($TestType == "ABTest") && ($id == "") )
   {
 		header('Location: home.php');  
   }
 else 
   {
-    header('Location: error.php?error=Some is wrong. Please contact admin. FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . ''); 
+  // DO NOTHING
   }
 $T = db_get_test($id);
 require_once "display_logic_aev_test.php";

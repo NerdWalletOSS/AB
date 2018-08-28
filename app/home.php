@@ -12,7 +12,8 @@ require_once "dbconn.php";
 require_once "db_get_row.php";
 require_once "db_get_rows.php";
 require_once "utility_functions.php";
-$state = "'3','4'";
+// Default
+$db_state = 'started';
 if (isset($TestType))
 	{
 		if ($TestType == "ABTest")
@@ -28,30 +29,42 @@ if (isset($TestType))
 if ((isset($_GET['TestID'])) && ($_GET['TestID'] != "")){
   $id = $_GET['TestID'];
   $rslt = db_get_row("test", "id", $id);
-  $db_state = $rslt["state_id"];
+  $db_state = lkp("state", $rslt["state_id"], "reverse");
   $user_id = $rslt["creator_id"];
   $User = lkp("admin", $user_id, "reverse");
 }
 switch ($db_state) {
-    case "1":
-        $state = "'1', '2'";
+    case "draft":
+        $state_1 = 'draft';
+				$state_2 = 'dormant';
         break;
-    case "2":
-        $state = "'1', '2'";
+    case "dormant":
+        $state_1 = 'draft';
+				$state_2 = 'dormant';
         break;
-    case "3":
-        $state = "'3', '4'";
+    case "started":
+        $state_1 = 'started';
+				$state_2 = 'terminated';
         break;
-    case "4":
-        $state = "'3', '4'";
+    case "terminated":
+        $state_1 = 'started';
+				$state_2 = 'terminated';
         break;
-    case "5":
-        $state = '5';
+    case "archived":
+        $state_1 = 'archived';
         break;
     default:
-        $state = "'3','4'";
+        $state_1 = 'started';
+				$state_2 = 'terminated';
 }
-		$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and state_id IN (" . $state . ") and creator_id = '".$user_id."' order by updated_at DESC");
+$state_id_1 = lkp("state", $state_1);
+$result = db_get_rows("test", "test_type_id = " . $test_type_id . " and (state_id = $state_id_1 ) and creator_id = '".$user_id."' order by updated_at DESC");
+// If 2 states are filtered
+if (isset($state_2)) 
+  { 
+  $state_id_2 = lkp("state", $state_2); 
+  $result = db_get_rows("test", "test_type_id = " . $test_type_id . " and (state_id = $state_id_1 or state_id = $state_id_2) and creator_id = '".$user_id."' order by updated_at DESC");
+}
         }
 require_once "html_header.php";
 ?>
@@ -87,9 +100,9 @@ for ( $i = 0; $i < $nA; $i++ ) {
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state == '3') || ($state == '4') ||($state == "'3', '4'") ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state == '1') || ($state == '2') || ($state == "'1', '2'")) {echo " checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
-  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state == "5") {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
+	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state_1 == 'started') || ($state_1 == 'terminated') ) {echo "checked";} ?>/>&nbsp;Started/erminated  &nbsp;&nbsp;
+  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state_1 == 'draft') || ($state_1 == 'dormant') ) {echo " checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
+  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state_1 == "archived") {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php
 echo $TestType; 
@@ -131,5 +144,4 @@ require_once "choose_num_variants.php";
 <?php
 require_once "footer.php";
  ?>
-
 
