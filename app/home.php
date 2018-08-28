@@ -145,4 +145,3 @@ require_once "choose_num_variants.php";
 require_once "footer.php";
  ?>
 
-
