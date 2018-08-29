@@ -12,6 +12,7 @@ local function rand_perc(
   TestType,
   NumVariants
   )
+  NumVariants = tonumber(NumVariants)
   math.randomseed(os.time())
   local P = {}
   if ( TestType == "XYTest" ) then
@@ -29,6 +30,7 @@ local function rand_perc(
     end
     -- last guy gets whateveris left over
     P[NumVariants] = balance
+    assert(#P == NumVariants, "#P = " .. #P .. " nV = " .. NumVariants)
   elseif ( TestType == "ABTest" ) then
     local x = math.floor(100.0 / NumVariants)
     local sum = 0

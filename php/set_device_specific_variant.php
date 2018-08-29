@@ -55,7 +55,7 @@ function set_device_specific_variant(
   if ( $is_dev_specific === false ) { 
     // TODO P1 Put updates in transaction
     mod_cell("test", "is_dev_specific", $is_dev_specific, " id = $tid ");
-    $outJ["msg_stdout"] = "Test $test_name is NOT device specific ";
+    $outJ["msg_stdout"] = "Test $test_name is NOT Device Specific ";
     $outJ["TestID"] = $tid; 
     return $outJ;
   }
@@ -65,24 +65,38 @@ function set_device_specific_variant(
     $device_id   = lkp("device", $d);
     rs_assert(is_array($v));
     $sum = 0;
-    foreach ( $v as $vv ) { 
+    foreach ( $v as $k => $vv ) { 
+      $result = var_export($vv, true);
+      $result = str_replace("\n", "__", $result);
+      $did = $vv->{'device_id'};
+      rs_assert($did, $result);
+      $vid = $vv->{'variant_id'};
+      rs_assert($vid, $result);
+      // $p = $vv->{'percentage'};
       $p = $vv->{'percentage'};
-      rs_assert(is_numeric($p), "percentage must be a number");
+      // TODO P4 Why this hackery?
+      if ( (int)$p != 0 ) { 
+      rs_assert($p, "percentage not provided, $vid, $did, [$result]");
+      }
+      rs_assert(is_numeric($p), "percentage must be a number. Got [$p]");
       rs_assert($p >=   0, "percentage must not be negative");
       rs_assert($p <= 100, "percentage cannot exceed 100");
       $sum += $p;
     }
     rs_assert(( $sum < 100 + 0.0001 ) && ( $sum > 100 - 0.0001 ) );
     foreach ( $v as $vv ) { 
-      $percentage = $vv->{'percentage'};
-      $variant_id = $vv->{'variant_id'};
-      $device_id  = $vv->{'device_id'};
-      mod_cell("device_x_variant", "percentage", $percentage, 
-        " device_id = $device_id and variant_id = $variant_id ");
+      $p = $vv->{'percentage'};
+      if ( is_null($p) ) { $p = $vv['percentage']; }
+      $vid = $vv->{'variant_id'};
+      if ( is_null($vid) ) { $vid = $vv['variant_id']; }
+      $did  = $vv->{'device_id'};
+      if ( is_null($did) ) { $did = $vv['device_id']; }
+      mod_cell("device_x_variant", "percentage", $p, 
+        " device_id = $did and variant_id = $vid ");
     }
   }
   //------------------------------------------
-  $outJ["msg_stdout"] = "Set Device Specific Variants for [$test_name] ";
+  $outJ["msg_stdout"] = "SET Device Specific Variants for [$test_name] ";
   $outJ["TestID"] = $tid; 
   return $outJ;
 }
