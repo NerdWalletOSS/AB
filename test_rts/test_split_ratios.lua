@@ -1,6 +1,8 @@
 local curl              = require 'lua/curl'
 local JSON              = require 'lua/JSON'
 local compare_T = require 'test_rts/compare_T'
+local mk_input_for_dev_specific_test 
+  = require 'test_webapp/mk_input_for_dev_specific_test'
 
 local gv_url = "localhost:8000/GetVariant?TestType=XYTest&TestName="
 local ti_url = "localhost:8000/TestInfo?TestType=XYTest&TestName="
@@ -9,23 +11,25 @@ local dc_url = "localhost:8000/Diagnostics"
 
 local tests = {}
 tests.t1 = function(
+  is_dev_specific,
   num_iters
   )
-  -- This is a non-device specific test 
-  local at_url = "localhost:8000/AddTest"
-  local H = nil
-  local B = require 'test_rts/g1'
-  assert(type(B) == "table")
-  assert(B.NumVariants)
-  local test_name = assert(B.name)
   if not num_iters then num_iters = 1000 end 
-  --=======================================
-  a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
-  a, b, c = curl.get(at_url, H, JSON:encode(B)); assert(c == 200)
-  a, b, c = curl.get(lt_url); assert(c == 200)
-  tests = JSON:decode(b)
-  assert(#tests == 1)
-  assert(tests[1] == test_name)
+  if ( is_dev_specific == false ) then 
+    a, b, c = curl.get("localhost:8000/Restart"); assert(c == 200)
+    local at_url = "localhost:8000/AddTest"
+    local H = nil
+    local B = require 'test_rts/g1'
+    assert(type(B) == "table")
+    local test_name = assert(B.name)
+    a, b, c = curl.get(at_url, H, JSON:encode(B)); assert(c == 200)
+    a, b, c = curl.get(lt_url); assert(c == 200)
+    tests = JSON:decode(b)
+    assert(#tests == 1)
+    assert(tests[1] == test_name)
+    --=======================================
+  else
+
   gv_url = gv_url .. test_name
   ti_url = ti_url .. test_name
   local actual_counts = {}
@@ -65,5 +69,6 @@ tests.t1 = function(
 
   print("Test t1 succeeded")
 end
-tests.t1(1000)
+tests.t1(false, 1000)
+tests.t1(true, 1000)
 return tests

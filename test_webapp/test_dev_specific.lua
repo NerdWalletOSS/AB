@@ -5,6 +5,7 @@ local S             = require 'test_webapp/state_change'
 local R             = require 'test_webapp/rand_selections'
 local reset_db      = require 'test_webapp/reset_db'
 local set_dev_specific      = require 'test_webapp/set_dev_specific'
+local mk_input_for_dev_specific_test      = require 'test_webapp/mk_input_for_dev_specific_test'
 
 local function did_changes_stick(out, tid, D)
   local T = get_test_info(tid)
@@ -32,27 +33,6 @@ local function did_changes_stick(out, tid, D)
   assert(num_checks == #D * T.NumVariants, "num_checks = " .. num_checks)
 end
 
-local function mk_input_for_test(tid, D, V, nV)
-  local out = {}
-  local X = {}
-  for device_id, d in pairs(D) do 
-    local t = {}
-    local P = assert(R.rand_perc("XYTest", nV))
-    for k, v in pairs(V) do
-      t[k] = {}
-      assert(P[k], " k = " .. k .. " #P = " .. #P)
-      t[k].percentage = P[k]
-      assert(device_id)
-      t[k].device_id = device_id
-      assert(v.id)
-      t[k].variant_id = assert(tonumber(v.id))
-    end
-    X[d] = t
-  end
-  out.DeviceCrossVariant = X
-  out.id = tid
-  return out
-end
 
 local function hdrs_contains(hdrs, msg)
   assert(type(msg) == "string")
@@ -91,7 +71,7 @@ local function xtest(State)
   local D = require 'devices'
   local V = T.Variants
   local nV = T.NumVariants
-  local out = mk_input_for_test(tid, D, V, nV)
+  local out = mk_input_for_dev_specific_test(tid, D, V, nV)
   assert(tonumber(T.is_dev_specific) == 0)
   -- if is_dev_specific == false, no change should be made
   out.is_dev_specific = false

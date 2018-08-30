@@ -87,8 +87,13 @@ local function rand_vrnt(
   NumVariants
   )
   local cwd = plpath.currentdir() 
-  local cd1 = trim(plfile.read(cwd .. "/custom_data_1.json"))
-  local cd2 = trim(plfile.read(cwd .. "/custom_data_2.json"))
+  local file1 = cwd .. "/../test_webapp/custom_data_1.json"
+  local file2 = cwd .. "/../test_webapp/custom_data_2.json"
+  assert(plpath.isfile(file1), "File not found " .. file1)
+  assert(plpath.isfile(file2), "File not found " .. file2)
+  local x = plfile.read(file1) assert(#x > 0)
+  local cd1 = trim(plfile.read(file1))
+  local cd2 = trim(plfile.read(file2))
   math.randomseed(os.time())
   assert(TestType)
   assert(NumVariants)
