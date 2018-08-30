@@ -1,1 +1,4 @@
-Add tests for StopTest and DeleteTest direct calls to RTS
+DONE Split is correct for non-device specific
+TODO Split is correct for device specific
+TODO Routing is correct
+
