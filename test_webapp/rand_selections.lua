@@ -131,13 +131,23 @@ local function rand_test(X)
   T.description = X.description or rand_dscr()
   T.State = "draft"
   T.TestType = X.TestType or rand_type()
+  -- NOTE: is_dev_specific does not take effect until
+  -- set_dev_specific is called
   if ( T.TestType == "ABTest" ) then
     T.is_dev_specific = false
   else
-    local x = math.random(1, 2)
-    if ( x == 1 ) then T.is_dev_specific = true 
-    elseif ( x == 2 ) then T.is_dev_specific = false 
-    else assert(nil) end
+    if ( X.is_dev_specific ~= nil ) then 
+      local x = math.random(1, 2)
+      if ( x == 1 ) then 
+        T.is_dev_specific = true 
+      elseif ( x == 2 ) then 
+        T.is_dev_specific = false 
+      else 
+        assert(nil) 
+      end
+    else
+      T.is_dev_specific = X.is_dev_specific 
+    end
     
   end
   T.NumVariants = X.NumVariants or math.random(2, 8)

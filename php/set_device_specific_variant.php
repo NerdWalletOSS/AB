@@ -31,31 +31,42 @@ function set_device_specific_variant(
   rs_assert(is_string($str_inJ), "input not string");
   $inJ = json_decode($str_inJ); rs_assert($inJ, "invalid JSON");
   $tid = get_json_element($inJ, 'id'); 
-  $is_dev_specific = intval(get_json_element($inJ, 'is_dev_specific'));
-  if ( !is_bool($is_dev_specific) ) { 
-    if ( $is_dev_specific == 0 ) { 
-      $is_dev_specific = false;
-    }
-    else if ( $is_dev_specific == 1 ) { 
-      $is_dev_specific = true;
-    }
-    else {
-      rs_assert(false, "is_dev_specific invalid = $is_dev_specific");
-    }
-  }
   $T = db_get_row("test", "id", $tid);
   rs_assert($T);
   $test_name = $T['name'];
   $state_id = $T['state_id'];
   $state = lkp("state", $state_id, "reverse");
-  rs_assert( ( ( $state == "draft" ) || ( $state == "dormant" ) ),
-    "cannot change device specific once test has started. state = $state");
+  rs_assert( ( ( $state != "archived" ) && ( $state != "terminated" ) ),
+    "Test $test_name NO CHANGE TO DEVICE SPECIFIC ");
+  if ( ( $state != "draft" ) && ( $state != "dormant" ) ) {
+    // cannot change device specific once test has started
+    $is_dev_specific = $T['is_dev_specific'];
+  }
+  else {
+    $is_dev_specific = intval(get_json_element($inJ, 'is_dev_specific'));
+  }
+    if ( !is_bool($is_dev_specific) ) { 
+      if ( $is_dev_specific == 0 ) { 
+        $is_dev_specific = false;
+      }
+      else if ( $is_dev_specific == 1 ) { 
+        $is_dev_specific = true;
+      }
+      else {
+        rs_assert(false, "is_dev_specific invalid = $is_dev_specific");
+      }
+    }
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   if ( $is_dev_specific === false ) { 
-    // TODO P1 Put updates in transaction
-    mod_cell("test", "is_dev_specific", $is_dev_specific, " id = $tid ");
-    $outJ["msg_stdout"] = "Test $test_name is NOT Device Specific ";
+    if ( ( $state == "draft" ) || ( $state == "dormant" ) ) {
+      // TODO P1 Put updates in transaction
+      mod_cell("test", "is_dev_specific", $is_dev_specific, " id = $tid ");
+      $outJ["msg_stdout"] = "Test $test_name DEVICE SPECIFIC SET OFF";
+    }
+    else {
+      $outJ["msg_stdout"] = "Test $test_name NO CHANGE TO IS DEVICE SPECIFIC";
+    }
     $outJ["TestID"] = $tid; 
     return $outJ;
   }
@@ -72,11 +83,10 @@ function set_device_specific_variant(
       rs_assert($did, $result);
       $vid = $vv->{'variant_id'};
       rs_assert($vid, $result);
-      // $p = $vv->{'percentage'};
       $p = $vv->{'percentage'};
       // TODO P4 Why this hackery?
       if ( (int)$p != 0 ) { 
-      rs_assert($p, "percentage not provided, $vid, $did, [$result]");
+        rs_assert($p, "percentage not provided, $vid, $did, [$result]");
       }
       rs_assert(is_numeric($p), "percentage must be a number. Got [$p]");
       rs_assert($p >=   0, "percentage must not be negative");
