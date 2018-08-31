@@ -2,20 +2,22 @@ local curl              = require 'lua/curl'
 local JSON              = require 'lua/JSON'
 local compare_T = require 'test_rts/compare_T'
 
-local tic_url = "localhost:8000/TestInfo?Source=C&TestType=XYTest"
-local til_url = "localhost:8000/TestInfo?Source=Lua&TestType=XYTest"
-
-local ltc_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
-local ltl_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
-
-local dc_url = "localhost:8000/Diagnostics?Source=C"
-local dl_url = "localhost:8000/Diagnostics?Source=Lua"
-
 local tests = {}
 tests.t1 = function(
   num_tests
   )
+  -- START set up some useful URLs
+  local tic_url = "localhost:8000/TestInfo?Source=C&TestType=XYTest"
+  local til_url = "localhost:8000/TestInfo?Source=Lua&TestType=XYTest"
+  
+  local ltc_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
+  local ltl_url = "localhost:8000/ListTests?Source=C&TestType=XYTest"
+  
+  local dc_url = "localhost:8000/Diagnostics?Source=C"
+  local dl_url = "localhost:8000/Diagnostics?Source=Lua"
+  
   local at_url = "localhost:8000/AddTest"
+  -- STOP  set up some useful URLs
   local H = nil
   local B = require 'test_rts/g1'
   assert(type(B) == "table")
