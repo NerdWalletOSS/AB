@@ -121,10 +121,10 @@ local function update_test(
           local percentage = v.percentage
           assert((percentage >= 0 ) and (percentage <= 100))
            -- find variant_idx corresponding to this
-          local variant_idx = 0
+          local variant_idx = -1
           for v = 1, NumVariants do 
             if ( Variants[v].id == variant_id ) then 
-              variant_id = v-1
+              variant_idx = v-1
               break
             end
           end
@@ -135,6 +135,7 @@ local function update_test(
           for l = 1, num_to_set do 
             assert(start+l <= consts.AB_NUM_BINS)
             test[0].variant_per_bin[device_id-1][start+l-1] = variant_idx
+            -- print(device_id-1, start+l-1, variant_idx)
           end
           num_set[device_id] = num_set[device_id] + num_to_set
         end
