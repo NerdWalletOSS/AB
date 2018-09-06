@@ -100,7 +100,7 @@ for ( $i = 0; $i < $nA; $i++ ) {
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state_1 == 'started') || ($state_1 == 'terminated') ) {echo "checked";} ?>/>&nbsp;Started/erminated  &nbsp;&nbsp;
+	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state_1 == 'started') || ($state_1 == 'terminated') ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
   <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state_1 == 'draft') || ($state_1 == 'dormant') ) {echo " checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
   <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state_1 == "archived") {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
