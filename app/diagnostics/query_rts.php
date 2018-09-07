@@ -30,26 +30,32 @@ require_once "includes/header_diagnostics.php";
 	<tr>
 		<td >Test Type: 
       <select form="QueryRTS" name='TestType'>";
+  <option value='XYTest' <?php if (isset($_POST['TestType']) && ($_POST['TestType'] == "XYTest"))  { echo 'selected'; } ?>>XY Test</option>
+  <option value='ABTest' <?php if (isset($_POST['TestType']) && ($_POST['TestType'] == "ABTest"))  { echo 'selected'; } ?>>AB Test</option>
+
+  </select>
 <?php 
-$test_type    = db_get_rows('test_type');
+/*
+$test_type    = db_get_rows('test_type', "order by ID desc");
 var_dump($test_type);
 $ntt = count($test_type);
 for ( $i = 0; $i < $ntt; $i++ ) { 
   echo "<option value='".$test_type[$i]['name']."'"; 
   echo ">".$test_type[$i]['name']."</option>";
-} ?>
-  </select>
+} 
+*/
+?>
    </td>
 
 		<td >Query Type: 
       <select form="QueryRTS" name='QueryType'>
-  <option value='Reload'>Reload</option>
-  <option value='ListTests'>List Tests</option>
-  <option value='TestInfo'>Test Information</option>
+  <option value='TestInfo' <?php if (isset($_POST['QueryType']) && ($_POST['QueryType'] == "TestInfo"))  { echo 'selected'; } ?>>Test Information</option>
+  <option value='ListTests' <?php if (isset($_POST['QueryType']) && ($_POST['QueryType'] == "ListTests"))  { echo 'selected'; } ?>>List Tests</option>
+
   </select>
    </td>
 
-		<td >Test Name: <input form="QueryRTS" type='text' name='TestName' ></td>
+		<td >Test Name: <input form="QueryRTS" type='text' name='TestName' value="<?php if (isset($_POST['TestName']))  { echo $_POST['TestName']; } ?>"></td>
 	</tr>
 <tr>
 <td colspan="3"><input class="btn btn-lg btn-success btn-block" type="submit" form="QueryRTS"  value="Query"></td>
