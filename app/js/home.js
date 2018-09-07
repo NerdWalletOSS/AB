@@ -74,7 +74,7 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -82,6 +82,7 @@ $(document).ready(function() {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
+            TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test btn btn-warning btn-xs' data-key ='"+ value['name'] + "'>Check Test</button></td>";
 						} else {  
@@ -115,7 +116,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response); 
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
@@ -165,7 +166,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -173,6 +174,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
+            TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test btn btn-warning btn-xs' data-key ='"+ value['name'] + "'>Check Test</button></td>";
 						} else {  
@@ -206,7 +208,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response);
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
