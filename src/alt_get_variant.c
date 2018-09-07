@@ -85,7 +85,7 @@ int alt_get_variant(
   g_log_get_alt_variant_calls++; // increment only if test is legit 
   get_tracer(args, in_tracer); 
 
-  int device_idx;
+  int device_idx = 0;
   int bin = RDTSC() % AB_NUM_BINS;
   if ( g_tests[test_idx].is_dev_specific ) {
     // To aid debugging, we allow over-ride from GET parameters
@@ -93,17 +93,23 @@ int alt_get_variant(
     if ( g_justin_cat_id == 0 ) { 
       g_justin_cat_id = g_justin_cat_other_id; 
     }
-    device_idx = g_justin_cat_id - 1;
+    // over-write g_justin_cat_id if valid Device provided
     char buf[16]; memset(buf, '\0', 16); 
     status = extract_name_value(args, "Device=", '&', buf, 16);
-    if ( *buf != '\0' ) { 
+    if ( *buf != '\0' ) {
       for ( int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
         if ( strcmp(g_justin_cat_lkp[j].name, buf) == 0 ) { 
-          device_idx = g_justin_cat_lkp[j].id - 1;
           g_justin_cat_id = g_justin_cat_lkp[j].id;
         }
       }
     }
+    device_idx = -1;
+    for ( int j = 0; j < g_n_justin_cat_lkp; j++ ) { 
+      if ( g_justin_cat_id == g_justin_cat_lkp[j].id ) {
+        device_idx = j; break;
+      }
+    }
+    if ( device_idx < 0 ) { go_BYE(-1); }
   }
   else {
     device_idx = 0; 
@@ -157,6 +163,13 @@ int alt_get_variant(
   lcl_payload.test_id    = test_id;
   lcl_payload.variant_id = variant_id;
 
+  // update counts
+  if ( g_tests[test_idx].is_dev_specific ) { 
+    g_tests[test_idx].count_device_x_variant[device_idx][variant_idx]++;
+  }
+  else {
+    g_tests[test_idx].variants[variant_idx].count++;
+  }
   status = log_decision(&lcl_payload); cBYE(status);
   cBYE(status);
 BYE:
