@@ -5,6 +5,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php");
 
+require_once "../../php/rts/list_rts.php";
 require_once "db_get_rows.php"; 
 require_once "get_url.php";
 require_once "includes/header_diagnostics.php"; 
@@ -28,23 +29,32 @@ require_once "includes/header_diagnostics.php";
 <form  id='QueryRTS' class="form-signin" action="" method="POST"></form>
 <input form="QueryRTS" type='hidden' name='server' value='<?php echo $_SERVER['SERVER_NAME']; ?>' >
 	<tr>
+<td ><b>RTS:</b>
+<?php
+$SP = list_rts();
+$nRTS = count($SP);
+if ( $nRTS == 0 ) {
+  echo "NO RTS AVAILABLE";
+} elseif ( $nRTS == 1 ) {
+  $server = $SP[0]['server']; $port = $SP[0]['port'];
+  echo " ".$server.":".$port;
+} else {
+  echo "<select form='QueryRTS' name='QueryType'>";
+  foreach ( $SP as $sp ) { 
+  $server = $sp['server']; $port = $sp['port'];
+  echo "<option value='".$server.":".$port."'"; 
+  echo ">".$server.":".$port."</option>";
+ }   
+  echo "</select>";
+}
+?>
+</td>
 		<td >Test Type: 
       <select form="QueryRTS" name='TestType'>";
   <option value='XYTest' <?php if (isset($_POST['TestType']) && ($_POST['TestType'] == "XYTest"))  { echo 'selected'; } ?>>XY Test</option>
   <option value='ABTest' <?php if (isset($_POST['TestType']) && ($_POST['TestType'] == "ABTest"))  { echo 'selected'; } ?>>AB Test</option>
 
   </select>
-<?php 
-/*
-$test_type    = db_get_rows('test_type', "order by ID desc");
-var_dump($test_type);
-$ntt = count($test_type);
-for ( $i = 0; $i < $ntt; $i++ ) { 
-  echo "<option value='".$test_type[$i]['name']."'"; 
-  echo ">".$test_type[$i]['name']."</option>";
-} 
-*/
-?>
    </td>
 
 		<td >Query Type: 
@@ -58,10 +68,10 @@ for ( $i = 0; $i < $ntt; $i++ ) {
 		<td >Test Name: <input form="QueryRTS" type='text' name='TestName' value="<?php if (isset($_POST['TestName']))  { echo $_POST['TestName']; } ?>"></td>
 	</tr>
 <tr>
-<td colspan="3"><input class="btn btn-lg btn-success btn-block" type="submit" form="QueryRTS"  value="Query"></td>
+<td colspan="4"><input class="btn btn-lg btn-success btn-block" type="submit" form="QueryRTS"  value="Query"></td>
 </tr>
 <tr>
-<td colspan="3">
+<td colspan="4">
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //-----------------------------------------------------------
