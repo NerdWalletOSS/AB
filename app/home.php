@@ -108,6 +108,7 @@ for ( $i = 0; $i < $nA; $i++ ) {
 echo $TestType; 
 ?>
 ">
+<!-- -->
   <a href="#" data-toggle="modal" data-target="#basicModal">
     <button type="button" class="btn btn-success btn-xl">
       <span style="font-size:25px;"><strong>+</strong></span>
@@ -139,6 +140,7 @@ else
 <!-- /container -->
 <?php
 require_once "choose_num_variants.php";
+require_once "prompt_clone_a_test.php";
  ?>
 <!-- FOOTER -->
 <?php
