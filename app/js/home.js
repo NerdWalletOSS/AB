@@ -271,35 +271,5 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 //------------------------------------------------------------------------------//
 
 //});
-// CLONE A TEST
-  $(".OpenCloneModal").click(function(e) {
-      e.preventDefault();       
-      $("#CloneModalTitle").html('Do you wish to clone the test '+$(this).data('name')+' ?');
-      $("#TestID").val($(this).data('id'));
-      $("#TestName").val($(this).data('name'));
-
-      $('#CloneModal').modal('show');
-
-  });
-
-$("#CloneModalSubmit").click(function(){
-      $.ajax({
-             url: 'processor/clone_test_processor.php',
-             data: {
-               id: $("#TestID").val(),
-               name: $("#TestName").val(),
-               clone: $("#CloneTestName").val()
-             },
-             dataType: 'json',
-             success: function(data)
-             {                 
-
-              $('#CloneModal').find('#modalAlert').addClass('alert-success');
-              $('#CloneModal').find('#modalAlert').html(data.message).show; 
-              $('#CloneModal').find('#modalAlert').removeClass('hidden');
-
-             }
-       });    
-  });
 
 });

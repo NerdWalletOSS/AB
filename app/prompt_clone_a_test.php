@@ -13,8 +13,8 @@
 <input type="text" value="" name="clone_name" id="CloneTestName" placeholder="Enter Clone Test Name">
 <label for="TestID" ></label>	
 <input type="hidden" id="TestID" name="TestID" value="" />
-<label for="TestName" ></label>	
-<input type="hidden" id="TestName" name="TestName" value="" />
+<label for="Creator" ></label>	
+<input type="hidden" id="Creator" name="Creator" value="" />
 </div>
 </div>
 <div class="modal-footer">
