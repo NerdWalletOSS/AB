@@ -41,37 +41,6 @@ $(document).ready(function() {
   }
 //----------------------------------------------------//
 
-// CLONE A TEST
-  $(".OpenCloneModal").click(function(e) {
-      e.preventDefault();       
-      $("#CloneModalTitle").html('Do you wish to clone the test '+$(this).data('name')+' ?');
-      $("#TestID").val($(this).data('id'));
-      $("#TestName").val($(this).data('name'));
-
-      $('#CloneModal').modal('show');
-
-  });
-
-$("#CloneModalSubmit").click(function(){
-      $.ajax({
-             url: 'processor/clone_test_processor.php',
-             data: {
-               id: $("#TestID").val(),
-               name: $("#TestName").val(),
-               clone: $("#CloneTestName").val()
-             },
-             dataType: 'json',
-             success: function(data)
-             {                 
-
-              $('#CloneModal').find('#modalAlert').addClass('alert-success');
-              $('#CloneModal').find('#modalAlert').html(data.message).show; 
-              $('#CloneModal').find('#modalAlert').removeClass('hidden');
-
-             }
-       });    
-  });
-
 //----------------------------------------------------//
 // FILTER TEST WITH RESPECT TO STATES
   $('#jsTestTable').DataTable({
@@ -114,7 +83,7 @@ $("#CloneModalSubmit").click(function(){
           $.each(jsonData, function(index, value) {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
-            TableRow +=  "<td><a href='#'  class='OpenCloneModal'  data-id="+ value['id'] +" data-name="+ value['name'] +"><button type='button' class='btn btn-warning btn-sm'><span style='font-size:15px;'><strong>+</strong></span></button></a></th>";
+            TableRow +=  "<td><a href='/'  class='OpenCloneModal'  data-id="+ value['id'] +" data-name="+ value['name'] +"><button type='button' class='btn btn-warning btn-sm'><span style='font-size:15px;'><strong>+</strong></span></button></a></th>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
             TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
@@ -136,6 +105,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
             TableRow += "</td>";
+
 						var display_date = new Date(value['updated_at']).toLocaleDateString('en-GB', {
     				day : 'numeric',
     				month : 'short',
@@ -145,6 +115,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 						TableRow +="</tr>";
             $(table).append(TableRow);
           });
+
           return ($(table));
         };
         var jsonData = eval(response); 
@@ -167,16 +138,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
       }
     });
     option.prop('checked', true);
-// CLONE A TEST
-  $(".OpenCloneModal").click(function(e) {
-      e.preventDefault();       
-      $("#CloneModalTitle").html('Do you wish to clone the test '+$(this).data('name')+' ?');
-      $("#TestID").val($(this).data('id'));
-      $("#TestName").val($(this).data('name'));
-
-      $('#CloneModal').modal('show');
-
-  });
     return false;
   });
 
@@ -310,5 +271,35 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 //------------------------------------------------------------------------------//
 
 //});
+// CLONE A TEST
+  $(".OpenCloneModal").click(function(e) {
+      e.preventDefault();       
+      $("#CloneModalTitle").html('Do you wish to clone the test '+$(this).data('name')+' ?');
+      $("#TestID").val($(this).data('id'));
+      $("#TestName").val($(this).data('name'));
+
+      $('#CloneModal').modal('show');
+
+  });
+
+$("#CloneModalSubmit").click(function(){
+      $.ajax({
+             url: 'processor/clone_test_processor.php',
+             data: {
+               id: $("#TestID").val(),
+               name: $("#TestName").val(),
+               clone: $("#CloneTestName").val()
+             },
+             dataType: 'json',
+             success: function(data)
+             {                 
+
+              $('#CloneModal').find('#modalAlert').addClass('alert-success');
+              $('#CloneModal').find('#modalAlert').html(data.message).show; 
+              $('#CloneModal').find('#modalAlert').removeClass('hidden');
+
+             }
+       });    
+  });
 
 });
