@@ -61,7 +61,7 @@ function test_clone(
 /*
 $in['OldTestID'] = 1;
 $in['Creator'] = "joe";
-$in['NewTestName'] = "new_test_name_3";
+$in['NewTestName'] = "new_test_name_1";
 $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
 print("ALL DONE\n");
