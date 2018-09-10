@@ -114,30 +114,34 @@ local function update_test(
         for d = 1, num_devices do
           num_set[d] = 0
         end
-        for k, v in pairs(T.DeviceCrossVariant) do 
-          local device_id = v.device_id
-          assert(( device_id >= 1 ) and ( device_id <= num_devices) )
-          local variant_id = v.variant_id
-          local percentage = v.percentage
-          assert((percentage >= 0 ) and (percentage <= 100))
+        for device, v in pairs(T.DeviceCrossVariant) do  -- endfor device
+          for i = 1, NumVariants do -- endfor bariant 
+            v2 = v[i]
+            local variant_id = v2.variant_id
+            local device_id  = tonumber(v2.device_id)
+            local percentage = tonumber(v2.percentage)
+            assert((percentage >= 0 ) and (percentage <= 100))
            -- find variant_idx corresponding to this
-          local variant_idx = -1
-          for v = 1, NumVariants do 
-            if ( Variants[v].id == variant_id ) then 
-              variant_idx = v-1
-              break
+            local variant_idx = -1
+            for v = 1, NumVariants do 
+              if ( Variants[v].id == variant_id ) then 
+                variant_idx = v-1
+                break
+              end
             end
+            assert(( variant_idx >= 0 )and( variant_idx < NumVariants))
+            --[[print("device, variant, variant_idx, percentage = ", 
+            device_id, variant_id, variant_idx, percentage)
+            --]]
+            local num_to_set = percentage / 100.0 * consts.AB_NUM_BINS
+            start = num_set[device_id]
+            print(device_id, variant_id, variant_idx, start, num_to_set)
+            for l = 1, num_to_set do 
+              assert(start+l <= consts.AB_NUM_BINS)
+              test[0].variant_per_bin[device_id-1][start+l-1] = variant_idx
+            end
+            num_set[device_id] = num_set[device_id] + num_to_set
           end
-          assert(( variant_idx >= 0 )and( variant_idx < NumVariants))
-          local num_to_set = percentage / 100.0 * consts.AB_NUM_BINS
-          start = num_set[device_id]
-          -- print(device_id, variant_id, start, num_to_set)
-          for l = 1, num_to_set do 
-            assert(start+l <= consts.AB_NUM_BINS)
-            test[0].variant_per_bin[device_id-1][start+l-1] = variant_idx
-            -- print(device_id-1, start+l-1, variant_idx)
-          end
-          num_set[device_id] = num_set[device_id] + num_to_set
         end
       end
     elseif ( T.TestType == "ABTest" ) then 

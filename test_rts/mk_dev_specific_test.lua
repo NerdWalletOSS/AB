@@ -21,7 +21,7 @@ local function mk_dev_specific_test()
   out.is_dev_specific = true
   local hdrs, body, status = set_dev_specific(out)
   S.start(tid)
-  return tid
+  return tid, T.name
 end
+-- local tid, name = mk_dev_specific_test() print(tid, name )
 return mk_dev_specific_test
--- local tid = mk_dev_specific_test() print(tid)

@@ -46,9 +46,9 @@ tests.t1 = function(
         end
         assert(c == 200)
       end
-      print("iter " .. i)
+      -- print("iter " .. i)
     end
-    print("filename =  " .. filename)
+    -- print("filename =  " .. filename)
   end
   print("Test t1 succeeded")
 end

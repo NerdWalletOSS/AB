@@ -15,16 +15,15 @@ CREATE TABLE api (
 
 insert into api values(NULL, 'insert_test_edit_test_basic', 
 "Create a test or edit basic information about test", 0);
-insert into api values(NULL, 'set_state', 
-"Change state of test", 0);
+insert into api values(NULL, 'set_state', "Change state of test", 0);
 insert into api values(NULL, 'additional_variant_info', 
 "Add/Edit Description and/or Custom Data to Variant", 0);
 insert into api values(NULL, 'set_percentage', 
 "Change percentages of variants", 0);
 insert into api values(NULL, 'set_device_specific_variant', 
 "Device Specific Routing", 0);
-insert into api values(NULL, 'set_follow_on', 
-"Set Follow On", 0);
+insert into api values(NULL, 'set_follow_on', "Set Follow On", 0);
+insert into api values(NULL, 'clone', "Clone a Test", 0);
 
 DROP TABLE IF EXISTS admin; -- config 
 CREATE TABLE admin (

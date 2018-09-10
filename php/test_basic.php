@@ -312,9 +312,9 @@ function test_basic(
     $outJ["OverWrite"] = "false";
   }
   header("TestID: $test_id"); // just for Lua test cases
+  return $outJ;
 
   // Note that state cannot be terminated or archived for this endpoint
-  return $outJ;
   /* always PHP code called from front-end returns outJ which has
    * 1) msg_stdout
    * 2) rts_code, 200 is good, anything else is bad
