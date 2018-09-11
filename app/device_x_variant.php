@@ -88,7 +88,7 @@ $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 //-----------------------------------------------------------
 
 ?>
-<div id="dcv_stats" class="table hidden">
+<div id="dcv_stats" class="show hidden">
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -166,9 +166,9 @@ $("#is_dcv_stats").change(function (e) {
     e.preventDefault();
     var ischecked= $(this).is(':checked');
     if(ischecked) {
-        $('#dcv_stats').removeClass('table hidden');
+        $('#dcv_stats').removeClass("table hidden");
 } else {
-        $('#dcv_stats').addClass('htable hidden');
+        $('#dcv_stats').addClass('table hidden');
 }
 })
 </script>
