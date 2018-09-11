@@ -52,7 +52,13 @@ $config = config_html($TestType);
 		<td colspan="3">Test ID: <?php echo $id; ?></td>
 	</tr>
 	<tr>
-		<td colspan="3">Test Name: <?php echo $TestName; ?><input form="addTest" type='hidden' name='TestName' value='<?php echo $TestName; ?>'></td>
+		<td colspan="3">Test Name: <?php echo $TestName; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Clone this test:</b> &nbsp;&nbsp;
+<a href='#'  class='OpenCloneModal'  data-id="<?php echo $id; ?>" data-name="<?php echo $TestName; ?>" data-creator="<?php echo $User; ?>">
+    <button type='button' class='btn btn-warning btn-sm'>
+      <span style='font-size:15px;'><strong>+</strong></span>
+     </button>
+      <input form="addTest" type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+  </td>
 	</tr>
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
   <tr>
@@ -216,7 +222,7 @@ else
   </table>
 
 <?php require_once "confirmation_modal.php"; ?>
-
+<?php require_once "prompt_clone_a_test.php"; ?>
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>

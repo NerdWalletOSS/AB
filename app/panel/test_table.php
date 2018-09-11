@@ -18,16 +18,22 @@ function action_state($state_id) {
     break;
   }
 }
+// data-toggle='modal' data-target='#CloneModal'
 ?>
 <div id="show-data">
-<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th>
+<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th>
 
 <th>Check Test</th><th>Action</th><th>Updated On</th> </tr></thead>
-<tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr><tfoot>
+<tfoot> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr><tfoot>
   <tbody id="TableData">
 <?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['id']."</a></td>";
+  echo "<td><a href='#'  class='OpenCloneModal'  data-id=".$result[$i]['id']." data-name=".$result[$i]['name'].">
+    <button type='button' class='btn btn-warning btn-sm'>
+      <span style='font-size:15px;'><strong>+</strong></span>
+     </button>
+  </a></th>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['name']."</a></td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['external_id']."</td>";
   if (($result[$i]['state_id'] == 3)|| ($result[$i]['state_id'] == 4)) {

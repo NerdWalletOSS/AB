@@ -42,7 +42,7 @@ function test_clone(
   rs_assert($old_test, "Test ID $tid not found");
   // Check that there is no un-archived test with same name
   $x = db_get_rows("test", 
-    "name = '$old_test_name' and state_id != $archived_id");
+    "name = '$new_test_name' and state_id != $archived_id");
   rs_assert($x == NULL);
   // STOP Check inputs
   // unset things that need to be unset
@@ -59,9 +59,10 @@ function test_clone(
   return $outJ;
 }
 /*
-$in['OldTestID'] = 1;
+$in['OldTestID'] = 4;
 $in['Creator'] = "joe";
-$in['NewTestName'] = "new_test_name_1";
+$in['NewTestName'] = "XYTest_15";
+
 $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
 print("ALL DONE\n");
