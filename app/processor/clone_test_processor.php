@@ -18,8 +18,9 @@ $in['Creator'] = $creator;
 $in['NewTestName'] = $clone_name;
 $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
+$tid = $x["TestID"];
 if ($x == true ) {
-echo json_encode(array('message' => 'Test Name '.$old_test_name.' cloned as '.$clone_name));
+echo json_encode(array('message' => 'Test Name '.$old_test_name.' cloned as <a href="aev_test_1.php?TestID='.$tid.'">'.$clone_name.'</a>'));
 } else {
 // Do Nothing
 }

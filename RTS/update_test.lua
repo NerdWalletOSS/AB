@@ -114,9 +114,9 @@ local function update_test(
         for d = 1, num_devices do
           num_set[d] = 0
         end
-        for device, v in pairs(T.DeviceCrossVariant) do  -- endfor device
-          for i = 1, NumVariants do -- endfor bariant 
-            v2 = v[i]
+        for device, v in pairs(T.DeviceCrossVariant) do  -- for device
+          for i = 1, NumVariants do -- for variant 
+            local v2 = v[i]
             local variant_id = v2.variant_id
             local device_id  = tonumber(v2.device_id)
             local percentage = tonumber(v2.percentage)
@@ -135,14 +135,14 @@ local function update_test(
             --]]
             local num_to_set = percentage / 100.0 * consts.AB_NUM_BINS
             start = num_set[device_id]
-            print(device_id, variant_id, variant_idx, start, num_to_set)
+            -- print(device_id, variant_id, variant_idx, start, num_to_set)
             for l = 1, num_to_set do 
               assert(start+l <= consts.AB_NUM_BINS)
               test[0].variant_per_bin[device_id-1][start+l-1] = variant_idx
             end
             num_set[device_id] = num_set[device_id] + num_to_set
-          end
-        end
+          end -- endfor variant 
+        end -- endfor device
       end
     elseif ( T.TestType == "ABTest" ) then 
       assert(num_devices == 1)

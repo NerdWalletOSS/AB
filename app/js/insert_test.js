@@ -116,12 +116,20 @@ $("#CloneModalSubmit").click(function(){
         $('#CloneModal').find('#modalAlert').addClass('alert-success');
         $('#CloneModal').find('#modalAlert').html(data.message).show; 
         $('#CloneModal').find('#modalAlert').removeClass('hidden');
+        $('#CloneModal').modal('toggle');
         }
       },
       success: function(response, textStatus, XHR) {
+<<<<<<< HEAD
         $('#CloneModal').find('#modalAlert').addClass('alert-success');
         $('#CloneModal').find('#modalAlert').html(response.message).show; 
         $('#CloneModal').find('#modalAlert').removeClass('hidden');
+=======
+        $('#modalAlert').addClass('alert-success');
+        $('#modalAlert').html(response.message).show; 
+        $('#modalAlert').removeClass('hidden');
+        $('#CloneModal').modal('toggle');
+>>>>>>> dev
       },
       beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');

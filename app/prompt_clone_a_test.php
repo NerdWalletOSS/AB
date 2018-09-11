@@ -7,8 +7,6 @@
 </div>
 <form class="test" name="test" >
 <div class="modal-body">
-
-<div class="alert hidden" role="alert" id="modalAlert"></div>
 <div id="error_clone">
   <div class="panel-group" id="accordion">
     <div class="panel panel-default">

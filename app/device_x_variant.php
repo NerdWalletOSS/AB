@@ -23,10 +23,10 @@
   { ?>
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific" >
+<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"  <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked";} ?>>
 <?php } ?>
   </td>
-<td colspan="2">Is variant stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" ></d>
+<td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" ></td>
 	</tr>
 <tr>
 <td>
@@ -81,14 +81,14 @@ else
 
 <?php
 require_once "get_url.php";
-$url = 'TestInfo?TestType=XYTest&TestName='.$id;
+$url = 'TestInfo?TestType=XYTest&TestName='.$TestName;
 $http_code = 0;
 $rslt = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 //-----------------------------------------------------------
 
 ?>
-<div id="dcv_stats">
+<div id="dcv_stats" class="table hidden">
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -109,27 +109,35 @@ $nD = count($all_device);
 for ( $i = 0; $i < $nD; $i++ ) { 
   echo "<td>".$all_device[$i]['name']."</td>";
 }
-
 echo "</tr>";
+/*
 
 for ( $i = 0; $i < $n_var; $i++ ) { 
   echo "<tr>";
   echo "<td>".$T['Variants'][$i]['name']."</td>";
   for ( $j = 0; $j < $nD; $j++ ) {
-    echo "<td>".$data['DeviceCrossVariant']."</td>";
+    echo "<td>".rand(0,10)."</td>";
    }
 }
 echo "</tr>"; 
 
+*/
 $result = json_decode($rslt);
+for ( $i = 0; $i < $n_var; $i++ ) { 
+  echo "<tr>";
+  echo "<td>".$T['Variants'][$i]['name']."</td>";
 foreach ($result as $k => $v) {
   if ($k == "DeviceCrossVariant") {
     foreach ($v as $k1 => $v1) {
       foreach($v1 as $k2 => $v2) {
+        if ($k2 == $T['Variants'][$i]['name']) {
         echo "<td>".$v2."</td>";
       }
     }
   }
+}
+}
+echo "</tr>"; 
 }
 ?>
 
@@ -144,6 +152,7 @@ foreach ($result as $k => $v) {
 
 <script>
 $("#is_dev_specific").change(function (e) {
+    e.preventDefault();
     var ischecked= $(this).is(':checked');
     if(ischecked) {
     $('.dev_specific_variant').removeAttr('readonly');
@@ -154,11 +163,12 @@ $("#is_dev_specific").change(function (e) {
 </script>
 <script>
 $("#is_dcv_stats").change(function (e) {
+    e.preventDefault();
     var ischecked= $(this).is(':checked');
     if(ischecked) {
-  $("#dcv_stats").css('display', '', 'important');
+        $('#dcv_stats').removeClass('table hidden');
 } else {
-  $("#dcv_stats").css('display', 'none', 'important');
+        $('#dcv_stats').addClass('htable hidden');
 }
 })
 </script>
