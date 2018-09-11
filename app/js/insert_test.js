@@ -99,7 +99,7 @@ $("#CloneModalSubmit").click(function(){
              url: 'processor/clone_test_processor.php',
              data: {
                id: $("#TestID").val(),
-               creator: $("#creator").val(),
+               creator: $("#Creator").val(),
                clone: $("#CloneTestName").val()
              },
              dataType: 'json',
