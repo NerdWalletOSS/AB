@@ -56,7 +56,14 @@ function test_clone(
   $new_test['name'] = $new_test_name;
 
   $outJ = test_basic(json_encode($new_test));
-  return $outJ;
+  rs_assert($outJ, "new test not created");
+  $new_test_id = $outJ['TestID'];
+  $save_outJ = $outJ;
+  rs_assert($new_test_id, "new test not created");
+  $new_test['id'] = $new_test_id;
+  $outJ = add_addnl_var_info(json_encode($new_test));
+  $outJ = set_device_specific_variant(json_encode($new_test));
+  return $save_outJ;
 }
 /*
 $in['OldTestID'] = 4;
