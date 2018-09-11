@@ -81,6 +81,70 @@ else
 </div>
 </div>
 </div>
+
+<?php
+require_once "get_url.php";
+$url = 'TestInfo?TestType=XYTest&TestName='.$id;
+$http_code = 0;
+$rslt = "";
+$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
+//-----------------------------------------------------------
+
+?>
+
+  <div class="row">
+  <div class="col-xs-12">
+  <div class="panel panel-primary">
+  <div class="panel-heading">
+  <h3 class="panel-title">Variant Stats Table</h3>
+  </div>
+  <div class="panel-body">
+
+  <!-- ADD/EDIT FORM START  -->
+  <table class="table table-striped table-condensed" style="space=5px">
+  <tbody>
+<?php
+echo "<tr>";
+echo "<td>Variants\Devices</td>";
+
+$all_device    = db_get_rows('device');
+$nD = count($all_device);
+for ( $i = 0; $i < $nD; $i++ ) { 
+  echo "<td>".$all_device[$i]['name']."</td>";
+}
+
+echo "</tr>";
+
+for ( $i = 0; $i < $n_var; $i++ ) { 
+  echo "<tr>";
+  echo "<td>".$T['Variants'][$i]['name']."</td>";
+  for ( $j = 0; $j < $nD; $j++ ) {
+    echo "<td>".$data['DeviceCrossVariant']."</td>";
+   }
+}
+echo "</tr>"; 
+
+$result = json_decode($rslt);
+foreach ($result as $k => $v) {
+  if ($k == "DeviceCrossVariant") {
+    foreach ($v as $k1 => $v1) {
+      foreach($v1 as $k2 => $v2) {
+        echo "<td>".$v2."</td>";
+      }
+    }
+  }
+}
+?>
+
+</tbody>
+ </table>
+
+</div>
+</div>
+</div>
+</div>
+
+
 <script>
 $("#is_dev_specific").change(function (e) {
     var ischecked= $(this).is(':checked');

@@ -11,7 +11,6 @@ $(document).ready(function() {
       data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
         console.log(response);
-        console.log("I AM HERE");
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
@@ -93,26 +92,42 @@ $(document).ready(function() {
       $('#CloneModal').modal('show');
 
   });
-
+  $("#error_clone").css('display', 'none', 'important');
 $("#CloneModalSubmit").click(function(){
       $.ajax({
              url: 'processor/clone_test_processor.php',
              data: {
                id: $("#TestID").val(),
+               name: $("#TestName").val(),
                creator: $("#Creator").val(),
                clone: $("#CloneTestName").val()
              },
              dataType: 'json',
-             success: function(data)
-             {                 
+        error: function(response, textStatus, XHR) {
+        if (response.getResponseHeader('Error-Code') != 200) {
+          var cssLink = "css/error.css";
+          $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
+          $("#error_clone").css('display', 'inline', 'important');
+          $("#error_message_clone").css('display', 'inline', 'important');
+          $("#stack_trace_clone").css('display', 'inline', 'important');
+          $("#error_message_clone").html(response.getResponseHeader('Error-Message'));
+          $("#stack_trace_clone").html(response.getResponseHeader('Error-BackTrace'));
+        } else {
+        $('#CloneModal').find('#modalAlert').addClass('alert-success');
+        $('#CloneModal').find('#modalAlert').html(data.message).show; 
+        $('#CloneModal').find('#modalAlert').removeClass('hidden');
+        }
+      },
+      success: function(response, textStatus, XHR) {
+        $('#CloneModal').find('#modalAlert').addClass('alert-success');
+        $('#CloneModal').find('#modalAlert').html(data.message).show; 
+        $('#CloneModal').find('#modalAlert').removeClass('hidden');
+      },
+      beforeSend: function() {
+        $("#error_message").css('display', 'inline', 'important');
+        $("#error_message").html("Loading...")
+      }
 
-              $('#CloneModal').find('#modalAlert').addClass('alert-success');
-              $('#CloneModal').find('#modalAlert').html(data.message).show; 
-              $('#CloneModal').find('#modalAlert').removeClass('hidden');
-
-             }
        });    
   });
-
-
 });
