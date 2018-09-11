@@ -61,10 +61,13 @@ local function get_test(
   --select percentage, device_id, variant_id from device_x_variant 
   --= 5;
   if ( test.TestType == "XYTest" ) then 
-    where_str = "test_id = " .. tid 
-    fld_str = " percentage, device_id, variant_id "
-    query_str = "select " .. fld_str .. " from device_x_variant where " .. where_str
-    test.DeviceCrossVariant = conn:query(query_str)
+    test.DeviceCrossVariant = {}
+    for device_id, device_name in pairs(aux.device) do 
+      where_str = "test_id = " .. tid .. " and device_id = " .. device_id
+      fld_str = " percentage, device_id, variant_id "
+      query_str = "select " .. fld_str .. " from device_x_variant where " .. where_str
+      test.DeviceCrossVariant[device_name] = conn:query(query_str)
+    end
   end
   --=======================================
   conn:close()
