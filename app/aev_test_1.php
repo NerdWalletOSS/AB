@@ -40,6 +40,7 @@ $config = config_html($TestType);
   <!-- AJAX ERROR DIV START -->
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
+<div class="alert hidden" id="modalAlert"></div>
   <!-- ADD/EDIT FORM START  -->
 
   <table class="table table-striped table-condensed" style="space=5px">

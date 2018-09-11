@@ -15,21 +15,18 @@
   <form class="form-signin" id='device_x_variant' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
-		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+		<td colspan="1">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td colspan="2">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
     <td colspan="2">Is Device Specific: 
 <?php if ( $mode == "View" ) 
   { ?>
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"
-<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked"; } else { // Do Nothing
-} 
-?>
->
+<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific" >
 <?php } ?>
   </td>
+<td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" ></d>
 	</tr>
 <tr>
 <td>
@@ -87,11 +84,11 @@ require_once "get_url.php";
 $url = 'TestInfo?TestType=XYTest&TestName='.$id;
 $http_code = 0;
 $rslt = "";
-$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
+//$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 //-----------------------------------------------------------
 
 ?>
-
+<div id="dcv_stats" class="table hidden">
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -119,21 +116,23 @@ for ( $i = 0; $i < $n_var; $i++ ) {
   echo "<tr>";
   echo "<td>".$T['Variants'][$i]['name']."</td>";
   for ( $j = 0; $j < $nD; $j++ ) {
-    echo "<td>".$data['DeviceCrossVariant']."</td>";
+    echo "<td>".rand(0,10)."</td>";
    }
 }
 echo "</tr>"; 
 
+/*
 $result = json_decode($rslt);
 foreach ($result as $k => $v) {
   if ($k == "DeviceCrossVariant") {
     foreach ($v as $k1 => $v1) {
       foreach($v1 as $k2 => $v2) {
-        echo "<td>".$v2."</td>";
+        echo "<td>".rand(0,100)."</td>";
       }
     }
   }
 }
+*/
 ?>
 
 </tbody>
@@ -143,7 +142,7 @@ foreach ($result as $k => $v) {
 </div>
 </div>
 </div>
-
+</div>
 
 <script>
 $("#is_dev_specific").change(function (e) {
@@ -152,6 +151,16 @@ $("#is_dev_specific").change(function (e) {
     $('.dev_specific_variant').removeAttr('readonly');
 } else {
     $('.dev_specific_variant').attr('readonly', true);
+}
+})
+</script>
+<script>
+$("#is_dcv_stats").change(function (e) {
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+        $('#dcv_stats').removeClass('hidden');
+} else {
+        $('#dcv_stats').addClass('hidden');
 }
 })
 </script>
