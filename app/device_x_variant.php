@@ -15,21 +15,18 @@
   <form class="form-signin" id='device_x_variant' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
-		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+		<td colspan="1">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td colspan="2">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
     <td colspan="2">Is Device Specific: 
 <?php if ( $mode == "View" ) 
   { ?>
 <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"
-<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked"; } else { // Do Nothing
-} 
-?>
->
+<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific" >
 <?php } ?>
   </td>
+<td colspan="2">Is variant stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" ></d>
 	</tr>
 <tr>
 <td>
@@ -91,7 +88,7 @@ $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 //-----------------------------------------------------------
 
 ?>
-
+<div id="dcv_stats">
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -143,7 +140,7 @@ foreach ($result as $k => $v) {
 </div>
 </div>
 </div>
-
+</div>
 
 <script>
 $("#is_dev_specific").change(function (e) {
@@ -152,6 +149,16 @@ $("#is_dev_specific").change(function (e) {
     $('.dev_specific_variant').removeAttr('readonly');
 } else {
     $('.dev_specific_variant').attr('readonly', true);
+}
+})
+</script>
+<script>
+$("#is_dcv_stats").change(function (e) {
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+  $("#dcv_stats").css('display', '', 'important');
+} else {
+  $("#dcv_stats").css('display', 'none', 'important');
 }
 })
 </script>

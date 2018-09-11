@@ -120,7 +120,7 @@ $("#CloneModalSubmit").click(function(){
       },
       success: function(response, textStatus, XHR) {
         $('#CloneModal').find('#modalAlert').addClass('alert-success');
-        $('#CloneModal').find('#modalAlert').html(data.message).show; 
+        $('#CloneModal').find('#modalAlert').html(response.message).show; 
         $('#CloneModal').find('#modalAlert').removeClass('hidden');
       },
       beforeSend: function() {

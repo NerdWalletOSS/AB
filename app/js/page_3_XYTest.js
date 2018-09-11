@@ -1,5 +1,6 @@
 $(document).ready(function() {
   $("#error").css('display', 'none', 'important');
+   $("#dcv_stats").css('display', 'none', 'important');
   $('#device_x_variant').submit(function(e) {
     e.preventDefault();
     $.ajax({
