@@ -7,12 +7,30 @@
 </div>
 <form class="test" name="test" >
 <div class="modal-body">
+
 <div class="alert hidden" role="alert" id="modalAlert"></div>
+<div id="error_clone">
+  <div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="error_message_clone" style="color: red;"></a>
+        </h4>
+      </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+          <div class="panel-body" id="stack_trace_clone" >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="form-group">
 <label for="CloneTestName" >Please enter Test Name of the clone:</label>	
 <input type="text" value="" name="clone_name" id="CloneTestName" placeholder="Enter Clone Test Name">
 <label for="TestID" ></label>	
 <input type="hidden" id="TestID" name="TestID" value="" />
+<label for="TestName" ></label>	
+<input type="hidden" id="TestName" name="TestName" value="" />
 <label for="Creator" ></label>	
 <input type="hidden" id="Creator" name="Creator" value="" />
 </div>

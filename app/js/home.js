@@ -45,19 +45,16 @@ $(document).ready(function() {
 // FILTER TEST WITH RESPECT TO STATES
   $('#jsTestTable').DataTable({
     "order": [
-      [6, "desc"]
+      [5, "desc"]
     ]
   });
   $("#error").css('display', 'none', 'important');
   $('input[type="radio"]').click(function() {
-  $("#error").css('display', 'none', 'important');
     var option = $(this).attr('id');
     var admin = $('#TestAdmin').val();
     $.ajax({
       type: "GET",
-      //url: "processor/filter_test.php",
       url: "processor/filter_test.php?admin="+admin+"&option="+option,
-      //data: JSON.stringify( { "option": option, "admin": admin } ), //$(this).serialize(),
       error: function(response, textStatus, XHR) {
         console.log(response);
         console.log(textStatus);
@@ -76,14 +73,13 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
           $.each(jsonData, function(index, value) {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
-            TableRow +=  "<td><a href='/'  class='OpenCloneModal'  data-id="+ value['id'] +" data-name="+ value['name'] +"><button type='button' class='btn btn-warning btn-sm'><span style='font-size:15px;'><strong>+</strong></span></button></a></th>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
             TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
@@ -121,14 +117,14 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response); 
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
         $("#show-data").html(table);
         $('#jsTestTable').DataTable({
           "order": [
-            [6, "desc"]
+            [5, "desc"]
           ]
         });
       },
@@ -143,9 +139,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
 
 //----------------------------------------------------//
 // FILTER TEST WITH RESPECT TO ADMIN NAME
-  $("#error").css('display', 'none', 'important');
   $('#TestAdmin').change(function() {
-  $("#error").css('display', 'none', 'important');
     var admin = $(this).val();
     var option = $('input[name=option]:checked').attr('id');
     $.ajax({
@@ -171,14 +165,13 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
           $.each(jsonData, function(index, value) {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
-            TableRow +=  "<td><a href='#'  class='OpenCloneModal'  data-id="+ value['id'] +" data-name="+ value['name'] +"><button type='button' class='btn btn-warning btn-sm'><span style='font-size:15px;'><strong>+</strong></span></button></a></th>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
             TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
@@ -214,14 +207,14 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response);
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Clone</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
         $("#show-data").html(table);
        $('#jsTestTable').DataTable({
           "order": [
-            [6, "desc"]
+            [5, "desc"]
           ]
         });
       },

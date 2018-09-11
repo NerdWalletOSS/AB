@@ -10,18 +10,17 @@ require_once "test_clone.php";
 //-----------------------------------------------------------
 $old_test_id = $_GET['id'];
 $creator = $_GET['creator'];
+$old_test_name = $_GET['name'];
 $clone_name = $_GET['clone'];
 
 $in['OldTestID'] = $old_test_id;
 $in['Creator'] = $creator;
 $in['NewTestName'] = $clone_name;
 $str_inJ = json_encode($in);
-var_dump($str_inJ);
 $x = test_clone($str_inJ);
-var_dump($x);
-if ($x != false ) {
+if ($x == true ) {
 echo json_encode(array('message' => 'Test Name '.$old_test_name.' cloned as '.$clone_name));
 } else {
-echo json_encode(array('message' => 'Failed to clone'));
+// Do Nothing
 }
 ?>
