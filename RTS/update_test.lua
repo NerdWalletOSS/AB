@@ -116,7 +116,7 @@ local function update_test(
         end
         for device, v in pairs(T.DeviceCrossVariant) do  -- endfor device
           for i = 1, NumVariants do -- endfor bariant 
-            v2 = v[i]
+            local v2 = v[i]
             local variant_id = v2.variant_id
             local device_id  = tonumber(v2.device_id)
             local percentage = tonumber(v2.percentage)
