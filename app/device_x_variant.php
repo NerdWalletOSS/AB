@@ -26,7 +26,7 @@
 <input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"  <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked";} ?>>
 <?php } ?>
   </td>
-<td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" ></td>
+<td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" data-id="<?php echo $id; ?>" ></td>
 	</tr>
 <tr>
 <td>
@@ -79,76 +79,8 @@ else
 </div>
 </div>
 
-<?php
-require_once "get_url.php";
-$url = 'TestInfo?TestType=XYTest&TestName='.$TestName;
-$http_code = 0;
-$rslt = "";
-$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
-//-----------------------------------------------------------
-
-?>
-<div id="dcv_stats" class="show hidden">
-  <div class="row">
-  <div class="col-xs-12">
-  <div class="panel panel-primary">
-  <div class="panel-heading">
-  <h3 class="panel-title">Variant Stats Table</h3>
-  </div>
-  <div class="panel-body">
-
-  <!-- ADD/EDIT FORM START  -->
-  <table class="table table-striped table-condensed" style="space=5px">
-  <tbody>
-<?php
-echo "<tr>";
-echo "<td>Variants\Devices</td>";
-
-$all_device    = db_get_rows('device');
-$nD = count($all_device);
-for ( $i = 0; $i < $nD; $i++ ) { 
-  echo "<td>".$all_device[$i]['name']."</td>";
-}
-echo "</tr>";
-/*
-
-for ( $i = 0; $i < $n_var; $i++ ) { 
-  echo "<tr>";
-  echo "<td>".$T['Variants'][$i]['name']."</td>";
-  for ( $j = 0; $j < $nD; $j++ ) {
-    echo "<td>".rand(0,10)."</td>";
-   }
-}
-echo "</tr>"; 
-
-*/
-$result = json_decode($rslt);
-for ( $i = 0; $i < $n_var; $i++ ) { 
-  echo "<tr>";
-  echo "<td>".$T['Variants'][$i]['name']."</td>";
-foreach ($result as $k => $v) {
-  if ($k == "DeviceCrossVariant") {
-    foreach ($v as $k1 => $v1) {
-      foreach($v1 as $k2 => $v2) {
-        if ($k2 == $T['Variants'][$i]['name']) {
-        echo "<td>".$v2."</td>";
-      }
-    }
-  }
-}
-}
-echo "</tr>"; 
-}
-?>
-
-</tbody>
- </table>
-
-</div>
-</div>
-</div>
-</div>
-</div>
+<!-- VARIANT STATS TABLE -- DATA WILL BE POPULATED ON CHECKING THE SHOW VARIANT STATS CHECKBOX -->
+<div id="dcv_stats" class="show hidden"></div>
 
 <script>
 $("#is_dev_specific").change(function (e) {
@@ -158,17 +90,6 @@ $("#is_dev_specific").change(function (e) {
     $('.dev_specific_variant').removeAttr('readonly');
 } else {
     $('.dev_specific_variant').attr('readonly', true);
-}
-})
-</script>
-<script>
-$("#is_dcv_stats").change(function (e) {
-    e.preventDefault();
-    var ischecked= $(this).is(':checked');
-    if(ischecked) {
-        $('#dcv_stats').removeClass("table hidden");
-} else {
-        $('#dcv_stats').addClass('table hidden');
 }
 })
 </script>

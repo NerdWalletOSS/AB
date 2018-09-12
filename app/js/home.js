@@ -144,9 +144,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
     var option = $('input[name=option]:checked').attr('id');
     $.ajax({
       type: "GET",
-      //url: "processor/filter_test.php",
       url: "processor/filter_test.php?admin="+admin+"&option="+option,
-      //data: JSON.stringify( { "option": option, "admin": admin } ), //$(this).serialize(),
       error: function(response, textStatus, XHR) {
         console.log(response);
         console.log(textStatus);
