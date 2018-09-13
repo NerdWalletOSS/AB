@@ -56,6 +56,7 @@ function test_clone(
   unset($old_test['State']);
   unset($old_test['state_id']);
   unset($old_test['OverWrite']);
+  unset($old_test['pred_id']);
   // set new stuff
   $new_test = $old_test;
   $new_test['Creator'] = $creator;
@@ -133,7 +134,7 @@ function test_clone(
   $outJ = set_device_specific_variant(json_encode($old_test));
   return $save_outJ;
 }
-
+/*
 $in['OldTestID'] = 4;
 $in['Creator'] = "joe";
 $in['NewTestName'] = "TTTD";
@@ -142,5 +143,5 @@ $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
 print("ALL DONE\n");
 var_dump($x);
-
+ */
 
