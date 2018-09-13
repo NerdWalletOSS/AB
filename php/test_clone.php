@@ -8,6 +8,8 @@ require_once 'db_get_test.php';
 require_once 'db_get_rows.php';
 require_once 'test_basic.php';
 require_once 'start_log.php';
+require_once "add_addnl_var_info.php";
+require_once "set_device_specific_variant.php";
 
 function test_clone(
   $str_inJ
@@ -54,24 +56,36 @@ function test_clone(
   $new_test = $old_test;
   $new_test['Creator'] = $creator;
   $new_test['name'] = $new_test_name;
+  $is_dev_specific = $old_test['is_dev_specific'];
+  $device_cross_variant = $old_test['device_cross_variant'];
 
   $outJ = test_basic(json_encode($new_test));
   rs_assert($outJ, "new test not created");
   $new_test_id = $outJ['TestID'];
-  $save_outJ = $outJ;
   rs_assert($new_test_id, "new test not created");
-  $new_test['id'] = $new_test_id;
+  $save_outJ = $outJ;
+
+  $new_test = db_get_test($new_test_id);
+  $new_test['Updater'] = $creator;
+  $new_test['is_dev_specific'] = $is_dev_specific;
+  $new_test['device_cross_variant'] = $device_cross_variant;
+
+  /* TODO 
   $outJ = add_addnl_var_info(json_encode($new_test));
+  print("=================\n"); var_dump($outJ);
+
   $outJ = set_device_specific_variant(json_encode($new_test));
+  print("=================\n"); var_dump($outJ);
+   */
   return $save_outJ;
 }
-/*
+
 $in['OldTestID'] = 4;
 $in['Creator'] = "joe";
-$in['NewTestName'] = "XYTest_15";
+$in['NewTestName'] = "clone17";
 
 $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
 print("ALL DONE\n");
 var_dump($x);
- */
+

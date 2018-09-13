@@ -45,17 +45,17 @@ function set_device_specific_variant(
   else {
     $is_dev_specific = intval(get_json_element($inJ, 'is_dev_specific'));
   }
-    if ( !is_bool($is_dev_specific) ) { 
-      if ( $is_dev_specific == 0 ) { 
-        $is_dev_specific = false;
-      }
-      else if ( $is_dev_specific == 1 ) { 
-        $is_dev_specific = true;
-      }
-      else {
-        rs_assert(false, "is_dev_specific invalid = $is_dev_specific");
-      }
+  if ( !is_bool($is_dev_specific) ) { 
+    if ( $is_dev_specific == 0 ) { 
+      $is_dev_specific = false;
     }
+    else if ( $is_dev_specific == 1 ) { 
+      $is_dev_specific = true;
+    }
+    else {
+      rs_assert(false, "is_dev_specific invalid = $is_dev_specific");
+    }
+  }
   $dxv = get_json_element($inJ, 'DeviceCrossVariant'); 
   rs_assert($dxv);
   if ( $is_dev_specific === false ) { 
@@ -104,6 +104,7 @@ function set_device_specific_variant(
       mod_cell("device_x_variant", "percentage", $p, 
         " device_id = $did and variant_id = $vid ");
     }
+    print("device_x_variant: percentage = $p, device_id = $did and variant_id = $vid ");
   }
   //------------------------------------------
   $outJ["msg_stdout"] = "SET Device Specific Variants for [$test_name] ";
