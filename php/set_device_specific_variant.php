@@ -103,8 +103,8 @@ function set_device_specific_variant(
       if ( is_null($did) ) { $did = $vv['device_id']; }
       mod_cell("device_x_variant", "percentage", $p, 
         " device_id = $did and variant_id = $vid ");
+      // print("device_x_variant: percentage = $p, device_id = $did and variant_id = $vid \n");
     }
-    print("device_x_variant: percentage = $p, device_id = $did and variant_id = $vid ");
   }
   //------------------------------------------
   $outJ["msg_stdout"] = "SET Device Specific Variants for [$test_name] ";
