@@ -67,12 +67,10 @@ echo "</tr>";
 }
 echo '
 </tbody>
- </table>
-<?php } ?>
+ </table>';
+} ?>
 </div>
 </div>
 </div>
 </div>
-</div>';
-}
-?>
+
