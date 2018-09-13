@@ -11,6 +11,10 @@ require_once 'start_log.php';
 require_once "add_addnl_var_info.php";
 require_once "set_device_specific_variant.php";
 
+function mk_vid_map($old_test, $new_test)
+{
+  // return $map_old_vids_to_new;
+}
 function test_clone(
   $str_inJ
 )
@@ -57,7 +61,7 @@ function test_clone(
   $new_test['Creator'] = $creator;
   $new_test['name'] = $new_test_name;
   $is_dev_specific = $old_test['is_dev_specific'];
-  $device_cross_variant = $old_test['device_cross_variant'];
+  $device_cross_variant = $old_test['DeviceCrossVariant'];
 
   $outJ = test_basic(json_encode($new_test));
   rs_assert($outJ, "new test not created");
@@ -69,6 +73,21 @@ function test_clone(
   $new_test['Updater'] = $creator;
   $new_test['is_dev_specific'] = $is_dev_specific;
   $new_test['device_cross_variant'] = $device_cross_variant;
+
+  // START: Now we need to create a map from old variant IDs to new ones
+  $old_variants = $old_test['Variants'];
+  foreach ( $old_variants as $k=> $old_variant ) { 
+    $variant_map[$old_variant['name']]['old_id'] = $old_variant['id'];
+  }
+
+  $new_variants = $new_test['Variants'];
+  foreach ( $new_variants as $k=> $new_variant ) { 
+    $variant_map[$new_variant['name']]['new_id'] = $new_variant['id'];
+  }
+  var_dump($variant_map);
+  exit;
+  // STOP: create a map from old variant IDs to new ones
+
 
   /* TODO 
   $outJ = add_addnl_var_info(json_encode($new_test));
@@ -82,7 +101,7 @@ function test_clone(
 
 $in['OldTestID'] = 4;
 $in['Creator'] = "joe";
-$in['NewTestName'] = "clone17";
+$in['NewTestName'] = "TT7";
 
 $str_inJ = json_encode($in);
 $x = test_clone($str_inJ);
