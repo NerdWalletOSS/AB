@@ -40,14 +40,13 @@ $(document).ready(function() {
     }
   }
 //----------------------------------------------------//
-
-//----------------------------------------------------//
-// FILTER TEST WITH RESPECT TO STATES
   $('#jsTestTable').DataTable({
     "order": [
       [5, "desc"]
     ]
   });
+//----------------------------------------------------//
+// FILTER TEST WITH RESPECT TO STATES
   $("#error").css('display', 'none', 'important');
   $('input[type="radio"]').click(function() {
     var option = $(this).attr('id');
@@ -107,7 +106,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
     				month : 'short',
     				year : 'numeric'
 						}).split(' ').join('-');
-  				  TableRow += "<td>" + display_date + "</td>";
+  				  TableRow += "<td><span class='hide'>" + value['updated_at'] + "</span>" + display_date + "</td>";
 						TableRow +="</tr>";
             $(table).append(TableRow);
           });
@@ -196,7 +195,7 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
     				month : 'short',
     				year : 'numeric'
 						}).split(' ').join('-');
-  				  TableRow += "<td>" + display_date + "</td>";
+  				  TableRow += "<td><span class='hide'>" + value['updated_at'] + "</span>" + display_date + "</td>";
 						TableRow +="</tr>";
             $(table).append(TableRow);
           });

@@ -53,7 +53,7 @@ echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button typ
   echo "</td>";
   $date = date_create($result[$i]['updated_at']);
   $display_date = date_format($date, 'jS F Y');
-  echo "<td>".$display_date."</td>";
+  echo "<td><span class='hide'>".$result[$i]['updated_at']."</span>".$display_date."</td>";
   echo "</tr>";
 } ?>
 
