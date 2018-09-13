@@ -4,7 +4,6 @@
 #include "zero_globals.h"
 #include "init.h"
 #include "update_config.h"
-#include "load_lkp.h"
 #include "load_user_agent_classifier.h"
 #include "l_get_num_features.h"
 #include "statsd.h"
