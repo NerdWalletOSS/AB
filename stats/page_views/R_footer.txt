@@ -1,0 +1,4 @@
+# unload the libraries
+#detach("package:nlme")
+# change back to the original directory
+setwd(initial.dir)

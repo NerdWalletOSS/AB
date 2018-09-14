@@ -1,0 +1,1 @@
+{"supp": 1, "metrics": {"ProbDiff": 0.05, "ProbLift": 0.1}, "outName": "FakeTest3_V1_V2_short", "data": {"NA": 662, "NB": 577, "MA": 207, "MB": 276}}

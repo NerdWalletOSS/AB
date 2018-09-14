@@ -1,0 +1,25 @@
+#!/usr/bin/env Rscript
+
+page_views_fit <- read.csv("./Output/FakeTest/C_4fit.csv")
+attach(page_views_fit)
+dflin <- data.frame(v=v, lU=log(U))
+linm <- lm(lU~v, data = dflin)
+U0_start <- exp(summary(linm)$coefficients[1,1])
+pv_start <- 1/(exp(-summary(linm)$coefficients[2,1]) - 1)
+dfnonlin <- data.frame(v=v, U=U, w = 1/U)
+expdecm <- nls(U ~ U0*(1+1/pv)^(-v), data = dfnonlin, weights = w, start = list(U0 = U0_start, pv = pv_start))
+write.csv(summary(expdecm)$coefficients, "./Output/FakeTest/summary_C.csv")
+detach(page_views_fit)
+
+
+page_views_fit <- read.csv("./Output/FakeTest/T_4fit.csv")
+attach(page_views_fit)
+dflin <- data.frame(v=v, lU=log(U))
+linm <- lm(lU~v, data = dflin)
+U0_start <- exp(summary(linm)$coefficients[1,1])
+pv_start <- 1/(exp(-summary(linm)$coefficients[2,1]) - 1)
+dfnonlin <- data.frame(v=v, U=U, w = 1/U)
+expdecm <- nls(U ~ U0*(1+1/pv)^(-v), data = dfnonlin, weights = w, start = list(U0 = U0_start, pv = pv_start))
+write.csv(summary(expdecm)$coefficients, "./Output/FakeTest/summary_T.csv")
+detach(page_views_fit)
+

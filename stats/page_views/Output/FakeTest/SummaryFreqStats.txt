@@ -1,0 +1,20 @@
+FakeTest
+
+Number of users in data = 2000
+Number of UUIDs with zero page_views =0
+
+Variant = C
+number of users = 648
+Mean page views = 1.87
+Var(Page Views) = 3.647
+SD(Page Views) = 1.91
+Var(mean_page_views) = 0.00563
+SE(mean_page_views) = 0.075
+
+Variant = T
+number of users = 1352
+Mean page views = 2.646
+Var(Page Views) = 7.186
+SD(Page Views) = 2.68
+Var(mean_page_views) = 0.00531
+SE(mean_page_views) = 0.073

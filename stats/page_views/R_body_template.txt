@@ -1,0 +1,14 @@
+# sink("FakeData_$variant.out")
+# load the dataset or do needful
+page_views_$variant <- read.csv("./Output/_$TestName_$variant.csv")
+
+png(filename = "./Output/_$TestName_$variant_hist.png")
+hist(page_views_$variant$pgviews)
+dev.off()
+
+png(filename = "./Output/_$TestName_$variant_density.png")
+plot(density(page_views_$variant$pgviews), log = "y")
+dev.off()
+
+# close the output file
+# sink()
