@@ -67,7 +67,12 @@ $config = config_html($TestType);
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
   <tr>
-  <td>Device :<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>&nbsp;&nbsp;". "<input form='TestURL' type='text' name='device' ></td><td ><input class='btn btn-sm btn-primary btn-block' type='submit' form='TestURL' id='test_url' value='Test URL'>". "<input form='TestURL' type='hidden' name='nw_campaign_id' value=".$external_id.">"; } else { echo "<b style='color:red'>The test is NOT Device Specific</b>"; } ?> 
+  <td>Device :<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>&nbsp;&nbsp;". "<input form='TestURL' type='text' name='device' ></td><td ><input class='btn btn-sm btn-primary btn-block' type='submit' form='TestURL' id='test_url' value='Test URL'>". "<input form='TestURL' type='hidden' name='nw_campaign_id' value=".$external_id.">"; } 
+else { 
+echo "<b style='color:red'>The test is NOT Device Specific</b>"; 
+echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Variant Stats? : &nbsp; &nbsp;<input type='checkbox' name='is_vc_stats' value='1'  id='is_vc_stats' data-id='".$id."' ></td>";
+} 
+?> 
 
 
 
@@ -229,6 +234,9 @@ else
   </div>
   </div>
   </div>
+
+<!-- VARIANT STATS TABLE -- DATA WILL BE POPULATED ON CHECKING THE SHOW VARIANT STATS CHECKBOX -->
+<div id="vc_stats" class="show hidden"></div>
   </div>
 <!-- /container -->
 <script>

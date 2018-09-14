@@ -19,14 +19,16 @@
 		<td colspan="2">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
     <td colspan="2">Is Device Specific: 
-<?php if ( $mode == "View" ) 
+<?php if (( $mode == "View" ) || ($this_state == "started"))  
   { ?>
-<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>True</b>"; echo "<input type='hidden' name='is_dev_specific' value='1'>";} else { echo "<b style='color:red'>Not Set</b>"; echo "<input type='hidden' name='is_dev_specific' value='0'>"; } ?>
 <?php } else { ?>
 <input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"  <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked";} ?>>
 <?php } ?>
   </td>
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { ?>
 <td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" data-id="<?php echo $id; ?>" ></td>
+<?php } else { echo "<td colspan='2'></td>"; } ?>
 	</tr>
 <tr>
 <td>

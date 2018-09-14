@@ -132,4 +132,40 @@ $("#CloneModalSubmit").click(function(){
 
        });    
   });
+//-------------------------------------------------------------
+// VARIANT COUNT TABLE
+
+ $("#is_vc_stats").change(function (e) {
+    e.preventDefault();
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+    var id = $(this).data('id');
+    $.ajax({
+      type: "POST",
+      url: "processor/variant_count_rts_processor.php?id="+id,
+      error: function(response, textStatus, XHR) {
+        if (response.getResponseHeader('Error-Code') != 200) {
+          var cssLink = "css/error.css";
+          $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
+          $("#error").css('display', 'inline', 'important');
+          $("#error_message").css('display', 'inline', 'important');
+          $("#stack_trace").css('display', 'inline', 'important');
+          $("#error_message").html(response.getResponseHeader('Error-Message'));
+          $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
+        }
+      },
+      success: function(response, textStatus, XHR) {
+          $("#vc_stats").html(response);
+          $('#vc_stats').removeClass("table hidden");
+      },
+      beforeSend: function() {
+        $("#error_message").css('display', 'inline', 'important');
+        $("#error_message").html("Loading...")
+      }
+    });
+    } else {
+    $('#vc_stats').addClass('table hidden');
+    }
+    return false;
+  });
 });
