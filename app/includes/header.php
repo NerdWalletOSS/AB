@@ -9,7 +9,7 @@ ini_set('display_errors', '1');
 if ((!isset($_SESSION['User'])) || (!isset($_SESSION['TestType'])))
 	{
 		header('Location: index.php?error=Login Please!');
-		return false;
+		exit;
 	}
 
 // -- PARSE SESSION VARIABLES
@@ -20,7 +20,7 @@ if (isset($_SESSION['User']))
 else
 	{
 		header('Location: index.php?error=User name not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
-		return false;
+		exit;
 	}
 
 if (isset($_SESSION['TestType']))
@@ -30,6 +30,6 @@ if (isset($_SESSION['TestType']))
 else
 	{
 		header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
-		return false;
+		exit;
 	}
 ?>
