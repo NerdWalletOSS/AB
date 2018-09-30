@@ -101,8 +101,12 @@ $http_code = 0;
 $rslt = "";
 $destination = "";
 $data = get_url( $server, '8000',$url, $http_code, $rslt, $destination );
-echo "<strong>QUERY: ".$url."</strong><br/>";
-echo "<pre><code>".$rslt."</code></pre>";
+echo "<strong>QUERY: ".$url."</strong><br/><br/>";
+if ($rslt == "") {
+  echo "<b style='color: red'>No response from RTS. Please contact Admin.</b>";
+} else {
+  echo "<pre><code>".$rslt."</code></pre>";
+}
 }
 ?>
 </td>

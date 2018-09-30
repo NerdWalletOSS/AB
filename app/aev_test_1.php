@@ -3,8 +3,8 @@
 require_once "set_path.php";
 // -- TEST TestID CREDENTIALS
 if (!isset($_GET['TestID'])) {
-		header('Location: error.php?error="TestID is not set"');
-		return false;
+  header('Location: error.php?error="TestID is not set"');
+	return false;
 	} else {
   $id = $_GET['TestID'];
 }
@@ -40,12 +40,12 @@ $config = config_html($TestType);
   <!-- AJAX ERROR DIV START -->
   <?php require_once "error_div.php"; ?>
   <!-- AJAX ERROR DIV END -->
-<div class="alert hidden" id="modalAlert"></div>
+  <div class="alert hidden" id="modalAlert"></div>
   <!-- ADD/EDIT FORM START  -->
 
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
-<form  id='TestURL' class="form-signin" method="POST"></form>
+  <form  id='TestURL' class="form-signin" method="POST"></form>
   <form class="form-signin" id='addTest' method='POST'></form>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
   <?php if(($mode == "Edit") || ($mode == "View")) { ?>
@@ -62,26 +62,30 @@ $config = config_html($TestType);
   </td>
 	</tr>
   <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
+<!-- START XYTest Specific Form Element -->
   <tr>
   <td colspan="3">Test URL: &nbsp;&nbsp;<a href='http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?>' >
   http://www.nerdwallet.com/ur2?nw_campaign_id=<?php echo $external_id; ?></a></td>
   </tr>
   <tr>
-  <td>Device :<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>&nbsp;&nbsp;". "<input form='TestURL' type='text' name='device' ></td><td ><input class='btn btn-sm btn-primary btn-block' type='submit' form='TestURL' id='test_url' value='Test URL'>". "<input form='TestURL' type='hidden' name='nw_campaign_id' value=".$external_id.">"; } 
+  <td>Device :
+<?php 
+if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { 
+  echo "<b style='color:blue'>The test is DEVICE SPECIFIC</b>&nbsp;&nbsp;". "<input form='TestURL' type='text' name='device' ></td><td ><input class='btn btn-sm btn-primary btn-block' type='submit' form='TestURL' id='test_url' value='Test URL'>". "<input form='TestURL' type='hidden' name='nw_campaign_id' value=".$external_id.">"; } 
 else { 
-echo "<b style='color:red'>The test is NOT Device Specific</b>"; 
-echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Variant Stats? : &nbsp; &nbsp;<input type='checkbox' name='is_vc_stats' value='1'  id='is_vc_stats' data-id='".$id."' ></td>";
+  echo "<b style='color:red'>The test is NOT Device Specific</b>"; 
+  echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Variant Stats? : &nbsp; &nbsp;<input type='checkbox' name='is_vc_stats' value='1'  id='is_vc_stats' data-id='".$id."' ></td>";
 } 
 ?> 
 
-
+<!-- END XYTest Specific Form Element -->
 
 </td><td>&nbsp;</td>
   </tr>
-  <?php 
-          } 
-   ?>
-  <?php } elseif (($mode == "Add")) { ?>
+<?php 
+  } 
+} elseif (($mode == "Add")) { 
+?>
   <tr>
   <td colspan="3">Test Name &nbsp; 
     <span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a descriptive name for your test that represents your vertical, date, and test. It should be easy to read and memorable. .Only Alphanumeric char without space">
@@ -94,20 +98,28 @@ echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Variant Stats? : &nbsp; &nbsp;<input ty
 
   </td>
   </tr>
-  <?php } else { /* Do Nothing value="<?php echo $TestName; ?>" <?php if ($id != "") {echo "readonly"; } ?> */ } ?>
+<?php 
+} 
+else { 
+/* Do Nothing */
+} 
+?>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
   <tr> 
   <td colspan="3">Description &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Provide a friendly description for what the test is for and what it is trying to validate. Please include a wiki link. "></span>
   <textarea form="addTest" class="form-control" rows="3" cols="20" name="TestDescription" 
-    maxlength="255" 
-    <?php echo $readonly; ?> required>
-  <?php if (isset($description)) {echo $description;}?>
+    maxlength="255" <?php echo $readonly; ?> required>
+<?php if (isset($description)) {
+  echo $description;
+}
+?>
   </textarea>
   </td>	
   </tr>
 <tr><td >
-  <?php if ( isset($TestType) && ($TestType == "XYTest")) { ?>
-
+<?php 
+if ( isset($TestType) && ($TestType == "XYTest")) { 
+?>
 Channel &nbsp;<span class="glyphicon glyphicon-question-sign" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Select to which channel does this experiment belongs to?"></span>&nbsp;
 <?php 
 if (($mode != "Add") && (( $this_state == "started" ) || ( $this_state == "terminated" ) || ( $this_state == "archived" ) ))
@@ -134,7 +146,8 @@ for ( $i = 0; $i < $nC; $i++ ) {
 <?php
 if ( isset($TestType) && ($TestType == "XYTest")) {
   if ( $mode == "Edit" ) {
-    if ($this_state == "started") { ?>
+    if ($this_state == "started") { 
+?>
 Change URL(s)?:&nbsp;&nbsp;<input form="addTest" type="checkbox" data-toggle="modal" data-target="#ConfirmationModal" name="OverWriteURL" value="true" >
 <?php 
     } 
@@ -146,7 +159,7 @@ Change URL(s)?:&nbsp;&nbsp;<input form="addTest" type="checkbox" data-toggle="mo
 <?php
   for ( $i = 0; $i < $num_var; $i++ ) { 
   $max_prop = (100 /($num_var));
-  ?>
+?>
   <tr> 
    <input form="addTest" type='hidden' name='VID_<?php echo $i; ?>' value='<?php if ($mode != "Add") {echo $rslt['Variants'][$i]['id']; } ?>'>
     <td>Variant <?php echo $i + 1; ?>&nbsp;:<?php if ($mode == "Edit") {echo $rslt['Variants'][$i]['id'];} ?>&nbsp;&nbsp;<span class='glyphicon glyphicon-question-sign' data-placement='top' data-toggle='tooltip' href='#' data-original-title=' Code-readable name for this variant as used by engineering. Should be descriptive with no spaces or special characters, i.e. apply_now_blue. Only Alphanumeric char without space'></span>
