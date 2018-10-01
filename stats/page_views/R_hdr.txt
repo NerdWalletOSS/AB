@@ -1,0 +1,8 @@
+#!/usr/bin/env Rscript
+# store the current directory
+# initial.dir<-getwd()
+# change to the new directory
+# setwd("/Users/ranjeettate/Documents/WORK/Statistics/PageViews")
+# load the necessary libraries
+# library(nlme)
+# set the output file

@@ -1,0 +1,15 @@
+# sink("FakeData_$variant.out")
+# load the dataset or do needful
+page_views_$var_cred <- read.csv("./Output/_$TestName_$var_cred.csv")
+
+attach(page_views_$var_cred)
+png(filename = "./Output/_$TestName_$var_cred.png")
+plot(delta, credibility, type = "b", main = "Credibility vs. delta, $TestName_$var")
+dev.off()
+
+png(filename = "./Output/_$TestName_$var_z.png")
+plot(delta, z, type = "b", main = "z vs. delta, $TestName_$var")
+dev.off()
+
+# close the output file
+# sink()

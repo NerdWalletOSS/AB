@@ -1,0 +1,13 @@
+# load the dataset or do needful
+page_views <- read.csv("$Variant_data.csv")
+
+attach(page_views)
+png(filename = "$Variant_hist.png")
+hist(pgviews, main = "Page Views Histogram $Variant")
+dev.off()
+
+png(filename = "$Variant_density.png")
+plot(density(pgviews), log = "y", main = "log(density) $Variant")
+dev.off()
+detach(page_views)
+

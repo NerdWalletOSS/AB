@@ -1,0 +1,977 @@
+%% \startreport{A/B Statistics}
+%% \reportauthor{Some Jokers}
+\documentclass[12pt]{report}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\newcommand{\be}{\begin{enumerate}} %% same as ramesh_abbr
+\newcommand{\ee}{\end{enumerate}} %% same as ramesh_abbr
+\newcommand{\beq}{\begin{equation}} %% new, no conflict
+\newcommand{\eeq}{\end{equation}} %% new, no conflict
+\newcommand{\bdm}{\begin{displaymath}} %% new, no conflict
+\newcommand{\edm}{\end{displaymath}} %% new, no conflict
+\newcommand{\bi}{\begin{itemize}} %% same as ramesh_abbr
+\newcommand{\ei}{\end{itemize}} %% same as ramesh_abbr
+\newcommand{\TBC}{\framebox{\textbf{TO BE COMPLETED}}} %% same as ramesh_abbr
+\newcommand{\reals}{{\rm I\! R}} %% new, no conflict
+\newcommand{\firstpartial}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\secondpartial}[1]{\frac{\partial^2}{\partial #1^2}}
+\newcommand{\sumge}[2]{\sum_{#1\ge #2}}
+
+%% From https://math.berkeley.edu/~gbergman/misc/hacks/langl_rangl.html
+\newcommand{\langl}{\begin{picture}(4.5,7)
+\put(1.1,2.5){\rotatebox{60}{\line(1,0){5.5}}}
+\put(1.1,2.5){\rotatebox{300}{\line(1,0){5.5}}}
+\end{picture}}
+
+\newcommand{\rangl}{\begin{picture}(4.5,7)
+\put(.9,2.5){\rotatebox{120}{\line(1,0){5.5}}}
+\put(.9,2.5){\rotatebox{240}{\line(1,0){5.5}}}
+\end{picture}}
+
+\newcommand{\mymean}[1]{\ensuremath{\langl{#1}\rangl}} %% new, no conflict
+\newcommand{\histtau}{\{\tau\}}
+
+\begin{document}
+
+\title{Analysis of data for page-visits by user}
+\author{Ranjeet S. Tate and The Golden Stats Warriors}
+\date{}
+\maketitle
+
+\section{Introduction}
+Users visit and navigate the NerdWallet website, moving from page to
+page and spending varying amounts of time on a page before eventually
+exiting the site or otherwise terminating a session. For the purposes
+of this analysis we will not do any time-series analysis nor get
+into the questions like the definition of a session. For a given
+subset of users (defined by context, demographics or as part of a
+test) we assume we have a count of the pages they have visited during
+each session. From this, we can construct the page visit histogram, by
+aggregating the users by the number of pages visited, so we obtain the
+distribution of users over page visits.
+
+\subsection{Cast (in Order of Appearance)}
+
+\beq
+\begin{split}
+  v &= \text{number of pages visited during a session}\\
+  u_v &= \text{number of users who visited {\em exactly }} v \text{pages}\\
+  V &= \text{maximum number of page visits by any user}\\
+  U_1 &= \text{total number of users to website}\\
+  \mymean{v} &= \text{mean number of pages visited, average page-visits per session}\\
+  var(v) &= \text{variance of the distribution of page-visits}\\
+  var(\mymean{v}) &= \text{variance of the mean page-visits}\\
+  U_v &= \text{number of users who visited {\em at least }} v \text{pages}\\
+  \tau &= \text{mean page transition probability across website}\\
+  \tau_v &= \text{page transition probability from } v^\text{th}\text{page}\\
+  N, M &= \text{number of trials and sucesses respectively}\\
+  f(\tau|N,M) &= \text{posterior distribution given } N,M \text{ for probability} \tau\\
+  &= \beta\tau|M+1,N-M+1)\\
+  P() &= \text{probability of some hypothesis}\\
+  o &= \frac{p}{1-p} = \text{odds ratio for probability} p\\
+  \tau_s &= \text{short time scale transition probability} = \frac{U_2}{U_1} 
+\end{split}
+\eeq
+
+\subsection{Page Visits Histogram}
+The histogram for the count of users (or sessions) over the number of
+p[ages visited is shown in Table~\ref{table:agg}
+\begin{center}\label{table:agg}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Page Visits & Count of Users  \\
+ \hline
+ 1 & \(u_1\) \\
+ ... & ... \\ 
+ \(v\) & \(u_v\) \\
+ ... & ... \\
+ \(V\) & \(u_V\) \\
+ \(V+1\) & 0 \\
+ \hline
+\end{tabular}
+\end{center}
+where \(V\) is the maximum number of pages visited by any user.
+
+Before going into the complications of an A/B test analysis, let us
+see what information we can extract from the histogram for a single
+set of users.
+
+There are surprisingly many approaches to analysing this data and we
+will discuss them one by one.
+
+\section{Frequentist Approach}\label{sec:freq}
+Summarizing the {\em Frequentist} approach: For a hypothesis linear in
+the metric whose distribution has been measured and for which one
+wants to calculate the descriptive stat.s, calculate the mean of the
+distribution and the variance of the mean, and use these values to
+calculate the \(z\) for the hypothesis. Then one makes an assumption,
+justified to different degrees, about the distribution the above
+parameters represent, and use that distribution, usually the {\em
+  Normal} distribution, to calculate \(p\)-values for rejecting the
+hypothesis. As much of Frequentism tends to be, this approach is {\em
+  non-phenomenological} in the sense that no thought is given to the
+underlying processes generating the observed data and the parameters
+have no meaning beyond the normal descriptive statistical one.
+
+Let the total number of users be
+\bdm
+U_1 = \sum_v u_v
+\edm
+The mean page visits per user is
+\bdm
+\mymean{v} = \frac{\sum_vu_v\cdot v}{U_1}
+\edm and the variance of the distribution is
+\bdm
+var(v) = \frac{\sum_v u_v\cdot v^2}{U_1} -\mymean{v}^2
+\edm
+Then the variance of the mean is
+\bdm
+var(\mymean{v}) = \frac{var(\mymean{v})}{U_1}
+\edm
+\(z\) is the value of the mean of the hypothesis in
+units of the Standard Error of the mean, and the Cumulative function
+of the normal distribution can be used to calculate \(p\)-values.
+
+\section{Phenomenological Approach}
+Consider a user on their \(v\)th page during a session. Whether or not
+they move to the \(v+1\)th page within some time defining a session is
+described by a Poisson process. We define the {\em page transition
+  probability} \(\tau\) as the probability that the user visits some
+other NerdWallet page within some fixed tome interval, subsequent to
+their current page. In general \(\tau\) will depend on
+\bi
+\item The demographic or segment of the user
+\item the page visit history
+\item the current page and the links on it
+\item the content and form of the current page or that of a page in
+  their (session) history
+\item their experience during a previous session
+\item possible contextual information
+\item other noisy or unmeasurable features
+\ei  
+For simplicity, to begin with we are going to assume a single
+intrinsic global (in the sense of website-wide), average page
+transition probability \(\tau\).
+
+\(\tau\) can be estimated by taking the ratio of the number of users
+who've visited at least \(v+1\) pages to the number of users who've
+visited at least \(v\) pages. How does this relate to
+the page visits histogram constructed earlier? The number of users
+who've visited {\em at least} \(v\) pages is
+\bdm
+U_v = \sum_{i\ge v}u_i
+\edm
+Clearly the number of users who've
+visited at least \(v\) pages is the number of users who've visited at
+least \(v+1\) pages plus the users who've visited exactly \(v\) pages
+\bdm
+U_v = U_{v+1} + u_v \ge U_{v+1}
+\edm
+so the histogram of minimum
+pages visited is monotonically decreasing.  The transition probability
+from the \(v\)th page visited is
+\beq\label{eq:tau}
+\tau_v = \frac{U_{v+1}}{U_v}
+\eeq
+Note that for the purposes of this analysis
+we are assuming \(\tau_v=\tau\).  and the data now looks like
+\begin{center}\label{table:cum}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+ Page Visits & Count of Users & Cum. Users \\
+ \hline
+ 1 & \(u_1\) & \(U_1\) \\
+ ... & ... & ... \\ 
+ \(v\) & \(u_v\) & \(U_v = \sum_{i\ge v}u_i\) \\ 
+ ... & ... & ... \\
+ \(V\) &\(u_V\) & \(U_V = u_V\) \\
+ \hline
+\end{tabular}
+\end{center}
+Note that the cumulative users \(U(v)\) is {\em not} a histogram or
+probability density, it is a cumulative function.
+
+\subsection{The phenomenological model}
+What is the shape of the cumulative user function? The recursion
+relation Eq.~\ref{eq:tau} can be solved to yield
+\beq\label{eq:cum_users_fn}
+U_v = \tau^{(v-1)} U_1 = U_1 e^{(v-1)\ln\tau}
+\eeq
+which is a {\em decaying exponential}. The {\em additional} number of
+page-visits by which the cumulative number of users drops to half -the
+{\em page-visit half-life} or the {\em site penetration depth} - is given by\footnote{See the
+Appendix Sec.~\ref{sec:penetration_depth} for the short derivation.}
+\bdm
+v_{frac12} = \frac{\ln 2}{\ln(1/\tau)}
+\edm
+from which we see that the page visit half life increases as the page
+transition probability increases, as we expect intuitively.
+Note that \(u_v\), the number of users who've visited {\em exactly}
+\(v\) pages is the number who've visited {\em at least} \(v\) minus
+the number who've visited at least one more page:
+\bdm
+u_v = U_v - U_{v+1}=(1-\tau)U_v=(1-\tau)\tau^{v-1}U_1
+\edm
+Since (by Geometric Series)
+\bdm
+\sumge{i}{1}\tau^i = \frac{\tau}{1-\tau}
+\edm
+calculating the total number of users leads to
+\bdm
+\sumge{i}{1} u_i = (1-\tau)U_1\sumge{i}{1} \tau^{i-1} = U_1
+\edm
+as expected.
+
+\subsection{Relation to Frequentist Parameters}
+In order to relate the parameters extracted from the Frequentist approach to
+the phenomenological model, let us calculate the descriptive statistics for
+the model.
+
+\subsubsection{Mean Page Visits}
+The mean number of page visits
+\beq
+\begin{split}
+  \mymean{v} &= \frac{\sumge{i}{1}i\cdot u_i}{U_1}=(1-\tau)\sumge{i}{1}i\cdot \tau^{i-1} \\
+  &=(1-\tau)\cdot\firstpartial{\tau}\left(\sumge{i}{1}\tau^i \right)= (1-\tau)\firstpartial{\tau}\left(\frac{\tau}{1-\tau}\right) \\
+  &= \frac{1}{1-\tau}
+\end{split}
+\eeq
+since
+\bdm
+\firstpartial{\tau}\left(\frac{\tau}{1-\tau}\right) = \firstpartial{\tau}\left(\frac{\tau}{1-\tau} - 1\right) = \frac{1}{(1-\tau)^2}
+\edm
+Note that for any further analysis of the page-visit histogram we are
+really interested in page-visits {\em after} the first since the first
+page counts only the number of people who showed up at the door, not
+the number of people who stayed for the party. Another way of thinking
+about it is to ask yourself if you would be at all satisfied with 1
+average page-visit per session, i.e. a bounce rate of 100\%.
+
+The mean page-visits ({\em post landing page}) per session is given by
+\beq\label{eq:mean_pv}
+\mymean{v'} = \tau\cdot\mymean{v} = \frac{\tau}{1-\tau}
+\eeq
+which is just the {\em odds ratio} associated with the probability \(\tau\)!
+
+\subsubsection{Variance of the Page-Visit Histogram}
+To calculate the variance of the model, let us first calculate
+\beq
+\begin{split}
+  \mymean{v^2} &= \frac{\sumge{i}{1}i^2\cdot u_i}{U_1}= (1-\tau)\sumge{i}{1} i^2 \cdot \tau^{i-1}\\
+  &=(1-\tau)\left( \tau\sumge{i}{1}i(i-1)\tau^{i-2} + \sumge{i}{1}i \tau^{i-1}\right)
+  =(1-\tau)\tau\secondpartial{\tau}\sumge{i}{1} \tau^i + \frac{1}{1-\tau}\\
+  &=(1-\tau)\tau\firstpartial{\tau}\frac{1}{(1-\tau)^2} + \frac{1}{1-\tau}= (1-\tau)\tau\frac{2}{(1-\tau)^3}+\frac{1}{1-\tau}\\
+  &= \frac{2\tau}{(1-\tau)^2}+\frac{1}{1-\tau} = \frac{1+\tau}{(1-\tau)^2}
+\end{split}
+\eeq
+where we have used the intermediate result
+\bdm
+\sumge{i}{1}i\cdot \tau^{i-1} = \firstpartial{\tau}\sumge{i}{1}\tau^i = \frac{1}{(1-\tau)^2}
+  \edm
+From the above, we have
+\bdm
+var(v) = \mymean{v^2}-\mymean{v}^2 = \frac{\tau}{(1-\tau)^2}
+\edm
+
+The model is, by construction, a {\em one parameter model}, so of
+course the mean and the variance are {\em not} independent of each
+other. However, the normal distribution, which is most frequently used
+in the Frequentist approach, has two parameters which are assumed
+independent of each other. So the Frequentist approach is totally
+furshlugginer\footnote{A.~E.~Newman, {\em MAD} ({\em ca.} 1951)} and
+leads to potrzebie\footnote{D.~E.~Knuth, {\em MAD} \#11 (May
+  1954).Sadly, you may have to read the entire issue to find the
+  article.} metrics.
+
+\subsection{Effect at short time scale}\label{sec:shorttime}
+Consider a situation in which are looking at the effect of a
+perturbation on a certain test page or at a determined point during
+the user session --a test of a change in the user experience rather
+than that of a change in user segment. There are two possible effects:
+to begin with we certainly expect the alternate treatment to affect
+the user propensities affecting their immediate response, which does
+not require any assumption of memory or long-term effect. In addition
+though, there could be some memory effect, where the user's experience
+on a given page influences their response during their session even at
+times well-removed from the perturbation itself, not to mention during
+later sessions. At the very least we should distinguish between and
+measure these two effects, before generalizing the model further.
+
+So while we said that we would treat \(\tau\) as a global parameter,
+let us relax that simplification just a little bit and split the
+parameter \(\tau\) associated with the user responses into two parts:
+the short time-scale response \(\tau_s = \tau_{v=1} =
+\frac{U_2}{U_1}\) which is the probability that the users transition
+from the {\em first} page to the next, and then the medium time-scale
+response \(\tau_m\) which measures the average page transition
+probability for the {\em second and later} pages visited during a
+session.
+
+If there are no memory or cumulative effects or interactions, we
+expect to see the strongest effect of the perturbation on the test
+page itself. So, to estimate the (distribution of the) short time
+scale page transition probability \(\tau_s\), we need only look at
+\bdm
+(U_1, U_2)
+\edm
+the number of users who landed on the first page and the number of
+users who went on to the second page. This pair of numbers for each
+variant of the perturbation can be analysed using the approaches
+(Frequentist or Bayesian) and the probability difference and lift
+metrics we've developed for the Binary A/B testing.
+
+\section{Effect at medium time scale}
+As the perturbation recedes into the past, we expect its effect on the
+user response or propensity to reduce. While in principle \(\tau =
+\tau(v)\) and we can build a more complex model, let us assume
+\(\tau(v| v\ge 2) = const. = \tau_m\). Then, the exponential decay
+model applies to the histogram
+\begin{center}\label{table:cum1}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+ Page Visits & Count of Users & Cum. Users \\
+ \hline
+ 2 & \(u_2\) & \(U_2\) \\
+ ... & ... & ... \\ 
+ \(i\) & \(u_i\) & \(U_i = \sum_{i\ge j}u_j\) \\ 
+ ... & ... & ... \\
+ \(I\) &\(u_I\) & \(U_I = u_I\) \\
+ \hline
+\end{tabular}
+\end{center}
+where \(U_i\) is modeled by
+\beq\label{eq:Umedium}
+U_i =\tau^{i-2}U_2
+\eeq
+
+There are four ways we can tackle this data for analysis, of which we
+detail the two closely related Bayesian approaches in the following
+subsections.  We leave the Frequentist approach to the
+Appendix~\ref{sec:freqpooled}.
+
+\subsection{Bayesian Approach to the pooled histogram}\label{sec:BayesPooled}
+Under our assumption that the underlying page transition probability
+is a function of only the user subset and is independent of the number
+of pages visited, we can think of the histogram as representing a
+collection of experiments on the {\em same} ``coin'' and we can
+calculate the ``global'' page transition probability as the ratio of
+all the successes to all the trials:
+\beq
+\begin{split}
+  N &= {\rm Total\quad trials} = \sum_{i\ge 2}U_j\\ 
+  M &= {\rm Total\quad successes} = \sum_{i\ge 3}U_j\\
+  \mymean{\tau} &= \frac{M}{N}
+\end{split}
+\eeq
+
+A Bayesian approach to analysing this would lead to the familiar Beta
+distribution for the transition probability \(\tau\):
+\beq\label{eq:BayesPooled}
+f(\tau|N,M)=\beta(\tau|M+1, N-M+1)= (N+1){N\choose M}\tau^M\cdot (1-\tau)^{N-M}
+\eeq
+using which we can calculate all the comparison metrics for a binary
+A/B test. The pair of numbers \((N,M)\) for each variant of the
+perturbation can be analysed using the approaches we've developed for
+the Binary A/B testing. Since we are presumably interested in
+optimizing the page-visits, the metric of choice would be either the
+difference or lift for page-visits Eq.~\ref{eq:mean_pv}.
+
+Note however, that the
+variance for this distribution is going to be very small when
+\(N>>1\):
+\bdm
+var_B(\tau) = \frac{\mymean{\tau}\cdot(1-\mymean{\tau})}{N}= \frac{\mymean{\tau}- \mymean{\tau}^2}{N}
+\edm
+where we are ignoring the ``\(+3\)'' term in the denominator for the
+variance of the Beta distribution.
+
+From its construction, we see that we lose all information about the
+variation of the individual \(\{\tau_v\}\). So we would have to set up
+a test of our assumption that there is single underlying page
+transition probability by calculating some \(p-\)value for obtaining the
+\(\{\tau_v\}\) from sampling the Poisson distribution.
+
+\subsection{Bayesian Approach to Unpooled Histogram}\label{sec:BayesUnpooled}
+For each count of page visits and the \(N_v=U_v\) trials and
+\(M_v=U_{v+1}\) successes, we know how to calculate the Bayesian
+probability distribution for the intrinsic transition probability
+\(\tau\)
+\beq\label{eq:beta}
+f(\tau|N_v,M_v) =\beta(\tau|M_v+1, N_v-M_v+1) = (N_v+1) {N_v\choose M_v}\tau^{M_v} (1-\tau)^{N_v-M_v}
+\eeq
+
+Assuming again that the intrinsic transition probability is
+independent of the number of pages visited, we have
+\begin{center}\label{table:fullbayesian}
+\begin{tabular}{ |c|c|c|c| } 
+ \hline
+ Page Visits & Trials & Successes & Amplitude for \(\tau\) \\
+ \hline
+ 2 & \(U_2\) & \(U_3\) & \(\beta(\tau|U_3+1, U_2-U_3+1)\)\\
+ ... & ... & ... & ... \\ 
+ \(v\) & \(U_v\) & \(U_{v+1}\) & \(\beta(\tau|U_{v+1}+1, U_v-U_{v+1}+1)\)\\
+ ... & ... & ... & ... \\
+ \hline
+\end{tabular}
+\end{center}
+We want to calculate
+\bdm
+f(\tau|\{U_v\})
+\edm
+the posterior probability distribution for \(\tau\) given the {\em
+  entire} collection of binary experimental outcomes \(\{U_v\}\)
+listed in Table~\ref{table:fullbayesian}.  Secondarily, we are also
+interested in whether this captures the variance due to the variation
+in the values of \(\tau_v\).
+
+From Eq.\ref{eq:beta} and as a consequence of the group property of
+beta distributions (See Appendix~\ref{sec:BayesUnpooledApp} for details.)
+\bdm
+f(\tau|(N,M)\cap (N',M'))\propto f(\tau|(N+N',M+M'))
+\edm
+By induction (and a re-normalization) it then follows that
+\beq\label{eq:bayes_unpooled}
+f(\tau|\{U_i\}) = \beta(\tau|M+1,N-M+1)
+\eeq
+where
+\beq
+\begin{split}
+  N &= {\rm Total\quad trials} = \sum_{i\ge 2}U_i\\ 
+  M &= {\rm Total\quad successes} = \sum_{i\ge 3}U_i
+\end{split}
+\eeq
+This is identical to the data obtained in
+Sec.\ref{sec:BayesPooled} for the Bayesian approach to the pooled
+histogram (See Eq.~\ref{eq:BayesPooled}.) and has the same issues
+discussed in Appendix~\ref{sec:issues}.
+
+\subsection{Phenomenological Model: Regression}
+Recall that in the non-phenomenological Frequentist approach we
+\be
+\item Calculate the mean page-visits and the variance in the mean
+  page-visits from the histogram \(u_v\), for each variant in the
+  test.
+\item Construct the \(z\) corresponding to some hypothesis to compare
+  variants. In general, \(z\) will be some difference function of mean
+  page-visits divided by the standard error of that function.
+\item Assume that \(z\) is normally distributed and use the CDF of the
+  normal distribution to calculate \(p\)-values for the hypothesis.
+\ee
+
+There are three problems with this approach
+\be
+\item Foremost, the phenomenological model of the process shows that
+  the mean and the variance of the distribution are not independent
+  parameters.
+\item The distribution, an exponential decay, is highly skewed, and
+  this is not accounted for in the Frequentist approach, at least as
+  we've outlined it. For the exponential distribution, of course the
+  skew parameter is not independent of the mean.
+\item Finally, the function corresponding to the hypothesis of
+  interest may be non-linear in the page-visits, and thus the
+  assumption or approximation of normality becomes problematic.
+\ee
+
+The first two problems at least can be taken care of by fitting the
+distribution to the phenomenological model and obtaining the single
+parameter of the model and its standard error for each variant. To
+compare variants, one can then proceed with the Frequentist approach
+as before. As far as the problem with the non-linearity of the
+difference metric, let's cross that bridge when we come to it.
+
+Note that we have a few options for the coefficients and how to
+extract them.
+
+\subsubsection{Non-Linear Regression for \(\tau\)}
+The model for the medium time-scale data (Eq.~\ref{eq:Umedium}) is
+\beq\label{eq:nl_tau}
+U_v[U_0,\tau]=U_0\cdot \tau^v
+\eeq
+We can perform a non-linear regression on the untransformed data to
+obtain both \(\tau\) and its standard error for each variant.
+
+\subsubsection{Linear Regression for \(\ln(\tau)\)}
+We know that the above model falls in the category of Generalized
+Linear Models. Taking the logarithm, we have
+\beq\label{eq:linear}
+\ln(U_v) = v\cdot\ln\tau + \ln U_0
+\eeq
+We can fit a linear model for the log of the data Eq.\ref{eq:linear}
+and obtain the slope parameter
+\bdm
+m=\ln\tau
+\edm
+and its variance \(var(m)\) (the square of the standard error in
+\(m\)). However, it is highly unlikely that this slope parameter is
+linearly related to any business metric; E.g. the mean page-visits is
+given by
+\bdm
+v = \frac{1}{1-e^{-m}}
+\edm
+To calculate the ``ensemble'' average of \(v\) and inferential
+staistics wold involve a series of approximations, see
+Appendix~\ref{sec:tau_from_m} to get an idea of the complexity.
+
+Another infrequently mentioned issue with the linear regression of
+GLMs is that ``the'' \(L^2\) error one is minimizing is different,
+e.g.
+\bdm
+\sum_i\left(f(x_i)-y_i\right)^2 \neq \sum_i\left( x_i-f^{-1}(y_i)\right)^2
+\edm
+and the difference cannot be corrected for by any weight function
+(which can only depend on \(y_i\)), so the problem one is solving is
+fundamentally different.
+
+\subsubsection{Non-Linear Regression for Mean Page Visits \(\pi\)}
+\label{sec:NLR}
+The model for the medium time-scale data (Eq.~\ref{eq:nl_tau}) can be
+re-written in terms of the mean page-visits \(\pi = \mymean{v} =
+\frac{\tau}{1-\tau}\) as \beq\label{eq:nl_pi} U_v[U_0,\pi]=U_0\cdot
+\left(\frac{1}{1+\frac{1}{\pi}}\right)^v \eeq We can perform a
+non-linear regression on the untransformed data to obtain both \(\pi\)
+and its standard error for each variant. We then assume that the
+difference between mean page visits is normally distributed and
+continue with the parametric approach to calculate inferential
+statistics. While this approach does not resolve the question of the
+normality of the distribution of \(\pi\), at least we don't have to
+make complicated approximations to calculate the mean, variance and
+\(z\) of the hypotheses before calculating the parametric
+\(p\)-values.
+
+\subsubsection{Weighting Function for Regression}\label{sec:weightsvariance}
+Not all data points are equal. For example, intuitively, the component
+of the error vector corresponding to a data point \(y_i\) with large
+standard error \(\delta_i\) should be weighted less than that
+corresponding to a low error data point. If we are doing Least Squares
+Regression, we may want to weight the errors so they are normalized
+w.r.t. the error in the data, in other words the function we are
+minimizing in the regression is the sum of the squared \(z_i\).
+
+Let \bdm y=f(x,\lambda) \edm be the model with parameters \(\lambda\)
+for the dataset \(\{(x_i,y_i)\}\) where each \(y_i\) has a standard
+error \(\delta_i\). Then the optimal values of the parameters are
+\beq\label{eq:l2z}
+\lambda = \text{argmin} \sum_i
+  \left(\frac{y_i-f(x_i)}{\delta_i}\right)^2
+\eeq
+and the corresponding weights for the \(L^2\)-error optimization are
+the inverses of the variance. See
+\url{https://en.wikipedia.org/wiki/Inverse-variance_weighting} for
+more details.
+
+\beq\label{eq:weightsvariance}
+w_i = \frac1{\delta^2_i}
+\eeq
+
+In our case, the \(y_i = U_i\) are the counts for the result of a
+Bernoulli process with true success probability \(\tau\) for
+\(U_{i-1}\) trials. Hence (see Appendix~\ref{sec:bernoulli})
+\beq\label{eq:bernerror}
+\delta_i = \delta(U_i) = \sqrt{U_i\cdot(1-\tau)}
+\eeq
+Since \(\tau\) is independent of \(i\) and the weights are only needed
+upto an overall scale, we can set the components of the weight vector
+\beq\label{eq:weights}
+w_i = \frac1{U_i}
+\eeq
+
+So the data we will use has the following form
+\begin{center}\label{table:data}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+ Page Visits \(x_v\) & Cum. Users \(y_v\) & \(L^2\)-weight \(w_v\)\\
+ \hline
+ 2 & \(U_2\) & \(\frac1{U_2}\) \\
+ ... & ... & ... \\ 
+ \(v\) & \(U_v\) & \(w_v = \frac1{U_v}\) \\ 
+ ... & ... & ... \\
+ \(V\) &\(U_V\) & \(\frac1{U_V}\) \\
+ \hline
+\end{tabular}
+\end{center}
+which we will fit to the model in Eq.~\ref{eq:nl_pi}
+\bdm
+U_v[U_0,\pi]=U_0\cdot \left(\frac{1}{1+\frac{1}{\pi}}\right)^v
+\edm
+
+
+\section{Plan of Action}
+\be
+\item Frequentist non-phenomenological approach to average page
+  visits, Sec.~\ref{sec:freq}: Calculated in Redshift SQL. Use the CDF
+  of the normal distribution for comparing differences in page visits
+  between two variants.
+\item First page or Short time scale transition probability: Calculate
+  \((U_1, U_2)\) and use the binary A/B testing analysis and code,
+  Sec.~\ref{sec:shorttime}. 
+\item Medium time scale: Binary data from the phenomenological model,
+  see either Sec.~\ref{sec:BayesPooled} or
+  Sec.~\ref{sec:BayesUnpooled}, for the Binary A/B testing analysis.
+\item Medium Time Scale Regression: Regress the untransformed data to
+  a decaying exponential, directly for the mean page-visits parameter,
+  see the data and model at the end of Sec.~\ref{sec:weightsvariance}.
+\ee
+  
+\section{Appendices}
+
+\subsection{Site Penetration Depth}\label{sec:penetration_depth}
+
+From Eq.~\ref{eq:cum_users_fn} we have
+\beq\label{eq:cuf1}
+U_v = \frac{U_1}\tau \cdot e^{v\cdot ln(\tau)}
+\eeq
+We want to know: After how many more page-visits \(\delta v =
+v_{\frac12}\) does the cumulative number of users \(U_v\) drop to a
+half \(U_{v+\delta v} = \frac12 U_v\), i.e.
+\beq\label{eq:cuf2}
+U_{v+v_{frac12}}=\frac{U_v}{2} = e^{(v+v_{\frac12})\cdot ln(\tau)}
+\eeq
+Dividing Eq.~\ref{eq:cuf1} by Eq.~\ref{eq:cuf2} we get
+\bdm
+2 = e^{-v_{\frac12}\cdot ln(\tau)}
+\edm
+taking the \(ln\) of which yields
+\bdm
+v_{\frac12} = \frac{ln2}{ln(1/\tau)}
+\edm
+
+\subsection{Frequentist Approach to the Pooled Histogram}\label{sec:freqpooled}
+For every \(i\), we have a binary outcome experiment in which we
+conduct \(U_i\) trials and find \(U_{i+1}\) successes. For each \(i\)
+we hence have a page transition probability \(\tau_i\) and its
+variance, given in the following additional columns
+\begin{center}\label{table:tau}
+\begin{tabular}{ |c|c|c|c|c| } 
+ \hline
+ Page Visits & Num. Trials & Num. Successes & Trans. Prob. & Variance \\
+ \hline
+ 2 & \(U_2\) & \(U_3\) & \(\tau_2 = \frac{U_3}{U_2}\) & \(var(\tau_2) = \frac{\tau_2\cdot(1-\tau_2)}{U_2}\) \\
+ ... & ... & ... & ... & ... \\ 
+ \(i\) & \(U_i = \sum_{i\ge j}u_j\) & \(U_{i+1}\) & \(\tau_i = \frac{U_{i+1}}{U_i}\) & \(var(\tau_i) = \frac{\tau_i\cdot(1-\tau_i)}{U_i}\) \\ 
+ ... & ... & ... & ... & ... \\
+ \(I\) & \(U_I = u_I\) & 0 & 0 & 0 \\
+ \hline
+\end{tabular}
+\end{center}
+So under our assumption that the underlying page transition
+probability is a function of only the user subset and is independent
+of the number of pages visited, we can think of the histogram as
+representing a collection of experiments on the {\em same} ``coin''
+and we can calculate the ``global'' page transition probability as the
+ratio of all the successes to all the trials:
+\beq
+\begin{split}
+  N &= {\rm Total\quad trials} = \sum_{i\ge 2}U_j\\ 
+  M &= {\rm Total\quad successes} = \sum_{i\ge 3}U_j\\
+  \mymean{\histtau} &= \frac{M}{N}
+\end{split}
+\eeq
+where \(\histtau=\{\tau_i|\forall i\ge 2\}\) is the set of measured values
+of the transition probabilities at each page visit count.
+We can rewrite this as the
+  (weighted) mean of all the \(\tau_i\):
+\bdm\label{eq:meantau}
+\mymean{\tau}= \mymean{\histtau} = \frac{\sum_{i\ge 3}U_i}{\sum_{i\ge 2}U_i} = \frac{\sum_{i\ge 2}U_i\cdot \tau_i}{\sum_{i\ge 2}U_i} 
+\edm
+
+The aggregate data now looks like
+\begin{center}\label{table:tau1}
+\begin{tabular}{ |c|c|c|c|c| } 
+ \hline
+ Page Visits & Num. Trials & Num. Successes & Trans. Prob. & Variance \\
+ \hline
+ 2 & \(U_2\) & \(U_3\) & \(\tau_2 = \frac{U_3}{U_2}\) & \(var(\tau_2) = \frac{\tau_2\cdot(1-\tau_2)}{U_2}\) \\
+ ... & ... & ... & ... & ... \\ 
+ \(i\) & \(U_i = \sum_{i\ge j}u_j\) & \(U_{i+1}\) & \(\tau_i = \frac{U_{i+1}}{U_i}\) & \(var(\tau_i) = \frac{\tau_i\cdot(1-\tau_i)}{U_i}\) \\ 
+ ... & ... & ... & ... & ... \\
+ \(I\) & \(U_I = u_I\) & 0 & 0 & 0 \\
+ \hline
+ Aggregate & \(N = \sum_{i\ge 2}U_j\) & \(M = \sum_{i\ge 3}U_j\) & \mymean{\histtau} & \(var(\histtau)\) \\
+ \hline
+\end{tabular}
+\end{center}
+
+To calculate the variance in \mymean{\tau}, note that there are two
+independent contributions, from the {\em Explicit} and the {\em
+  Indirect} variations
+\bdm
+var_{Total}(\mymean{\tau}) = var_{Exp}(\mymean{\tau}) + var_{Ind}(\mymean{\tau})  
+\edm
+As should become clear from the following, this nomenclature is in
+analogy with the definition of the {\em Total
+  Derivative} \url{https://en.wikipedia.org/wiki/Total_derivative} of a
+function.
+
+\subsubsection{Explicit Variance in Mean Transition Probability}
+This is the variance in \mymean{\tau} that arises from the fact that
+each ``measurement'' \(i\) yields a potentially different value
+\(\tau_i\). Since the mean is already defined as the weighted mean
+above, the variance of the distribution of \(\histtau\) is
+\bdm
+var(\histtau) = \mymean{\{\tau^2\}} - \mymean{\histtau}^2
+\edm
+where
+\bdm
+\mymean{\{\tau^2\}} = \frac{1}{N}\sum_{i\ge 2}U_j\cdot \tau_j^2 = \frac{1}{N}\sum_{i\ge 2}\frac{U_{j+1}^2}{U_j}
+\edm
+
+Since there are \(I\) experiments, the explicit variance of the mean is given by
+\bdm var_{Exp}(\mymean{\tau}) = \frac{var(\histtau)}{I} =
+\frac{\mymean{\{\tau^2\}} - \mymean{\histtau}^2}{I} \edm
+
+\subsubsection{Indirect Variance in Mean Transition Probability}
+This is the contribution to the variance in \mymean{\tau} that comes
+from the variance of its arguments. The familiar linear version which
+is used to calculate the variance of the mean from the variance of the
+stochastic variable states: the variance of a linear function of
+stochastic variables is the sum of the variances of the variables
+weighted by the squares of the coefficients. Hence from
+Eq.\ref{eq:meantau},
+\bdm
+  var_{Ind}(\mymean{\tau}) = \frac{1}{N^2}var\left(\sum_{i\ge 2}U_i\cdot \tau_i\right) 
+= \frac{1}{N^2}\sum_{i\ge 2}U_i^2\cdot var(\tau_i) 
+\edm
+where
+\bdm
+var(\tau_i) = \frac{\tau_i\cdot(1-\tau_i)}{U_i}
+\edm
+With some rewriting we have
+\bdm
+  var_{Ind}(\mymean{\tau}) = \frac{\mymean{\histtau}-\mymean{\{\tau^2\}}}{N}
+\edm
+
+It follows that
+\bdm
+var_{Total}(\mymean{\tau}) =
+\frac{\mymean{\{\tau^2\}} - \mymean{\histtau}^2}{I} +
+\frac{\mymean{\histtau}-\mymean{\{\tau^2\}}}{N}
+\edm
+As frequent and normal, we can use the \mymean{\tau} and its variance
+\(var_{Total}(\mymean{\tau})\) to calculate the \(z\) corresponding to
+a hypothesis and thence the \(p-\)value.
+
+\subsection{Meaning of Pooled Histogram Variances}\label{sec:issues}
+The following points lend some insight into the meaning and neccesity
+of the various variances we've calculated above:
+\bi
+\item The explicit contribution to the Frequentist variance of \mymean{\tau}
+  can be written as 
+  \bdm\label{eq:varexp}
+  var_{Exp}(\mymean{\tau}) = \frac{\mymean{\tau^2}-\mymean{\tau}^2}{I}
+  \edm
+\item The indirect contribution to the Frequentist variance of \mymean{\tau}
+  can be written as 
+  \bdm\label{eq:varind}
+  var_{Ind}(\mymean{\tau}) = \frac{\mymean{\tau}-\mymean{\tau^2}}{N}
+  \edm
+\item The Bayesian variance of \(\tau\) is
+  \bdm\label{eq:varb}
+  var_B(\tau) = \frac{\mymean{\tau}- \mymean{\tau}^2}{N}
+  \edm
+\item The difference between the Bayesian variance and the Indirect variance is
+  \bdm\label{eq:diffvarbind}
+  var_B(\tau)-var_{Ind}(\mymean\tau) = \frac{var(\histtau)}{N} \ge 0
+  \edm
+  Consider the (highly unlikely) situation when \(\tau_i = \tau\quad
+  \forall i\), i.e. the transition probabilities for all numbers of
+  pages visited are identical. Then the Bayesian variance and the
+  Indirect variance are identical to each other and their value is
+  \bdm
+  var_B(\tau) = var_{Ind}(\mymean\tau) = \frac{\tau\cdot(1-\tau)}{N}
+  \edm
+  as expected, and of course
+  \bdm
+  var_{Exp}(\mymean\tau) = 0
+  \edm
+\item Now consider another extreme, in which \(N_i\rightarrow
+  \infty\quad \forall i\). In this case \(var(\tau_i)\rightarrow 0\)
+  and so \(var_{Ind}(\mymean\tau) \rightarrow 0\). \(var_B(\tau)\)
+  also \(\rightarrow 0\), slower than \(var_{Ind}(\mymean\tau)\). But
+  if the \(\tau_i\) are dispersed then intuitively we expect to have
+  some uncertainty about the intrisic value of \(\tau\) and this is
+  captured by \(var_{Exp}(\mymean\tau)\) which is finite.
+\item In the general case
+  \beq
+  \begin{split}
+    var_{Total}(\mymean\tau) -var_{B}(\tau) &= var_{Exp}(\mymean\tau) + var_{Ind}(\mymean\tau) -var_B(\tau) \\
+    &= var_{Exp}(\mymean\tau) - \left( var_B(\tau) - var_{Ind}(\mymean\tau) \right) \\
+    &= \frac{var(\mymean\tau)}{I}-\frac{\mymean\tau)}{N}\\
+      &= var(\mymean\tau)\left(\frac{1}{I}-\frac{1}{N}\right) \ge 0
+  \end{split}
+  \eeq
+\ei
+  
+\subsection{Derivation of the Bayesian Approach to Unpooled Histogram}
+\label{sec:BayesUnpooledApp}
+For each count of page visits and the \(N_v=U_v\) trials and \(M_v=U_{v+1}\)
+successes, we know how to calculate the Bayesian probability
+distribution for the intrinsic transition probability \(\tau\)
+\beq\label{eq:beta1}
+f(\tau|N_v,M_v) =\beta(\tau|M_v+1, N_v-M_v+1) = (N_v+1) {N_v\choose M_v}\tau^{M_v} (1-\tau)^{N_v-M_v}
+\eeq
+Assuming that the intrinsic transition probability is independent of the
+number of pages visited, we have
+\begin{center}\label{table:fullbayesian1}
+\begin{tabular}{ |c|c|c|c| } 
+ \hline
+ Page Visits & Trials & Successes & Amplitude for \(\tau\) \\
+ \hline
+ 2 & \(U_2\) & \(U_3\) & \(\beta(\tau|U_3+1, U_2-U_3+1)\)\\
+ ... & ... & ... & ... \\ 
+ \(v\) & \(U_v\) & \(U_{v+1}\) & \(\beta(\tau|U_{v+1}+1, U_v-U_{v+1}+1)\)\\
+ ... & ... & ... & ... \\
+ \hline
+\end{tabular}
+\end{center}
+
+We want to calculate the posterior probability distribution for
+\(\tau\) given the {\em entire} collection of binary experimental
+outcomes \(\{U_v\}\) listed in Table~\ref{table:fullbayesian1}, i.e,
+we want to calculate
+\bdm
+f(\tau|\{U_v\})
+\edm
+Secondarily, we are also interested in whether this captures the
+variance due to the variation in the values of \(\tau_i\).
+
+Consider the situation where we only want to use the outcomes from two
+experiments: \((N,M)\) and \((N', M')\). Then, the Bayesian
+probability that the transition probability is in some small interval
+\([\tau, \tau+\delta\tau]\) given \(N,M\) is
+\bdm
+P([\tau, \tau+\delta\tau]|(N,M)) = f(\tau|N,M) \delta\tau
+\edm
+and the Bayesian probability that the transition probability \(\in
+[\tau, \tau+\delta\tau]\) given \(N',M'\) is
+\bdm
+P([\tau, \tau+\delta\tau]|(N',M')) = f(\tau|N',M') \delta\tau
+\edm
+We are interested in finding the Bayesian probability
+\bdm
+P([\tau, \tau+\delta\tau]|(N,M)\cap (N',M'))= f(\tau|(N,M)\cap (N',M'))\delta\tau
+\edm
+given {\em both} \((N,M)\) and \((N',M')\).
+
+\subsubsection{Combined Odds Formula}
+For this we will use the Combined Odds formula (derived
+elsewhere). Let \(C,A,B\) be three events and assume that \(A\) and
+\(B\) are independent. Further, let \(o(p) = \frac{p}{1-p}\) be the
+odds associated with a probability \(p\). Then the Combined Odds
+formula for the probability of the outcome given both conditions is
+\bdm
+\frac{o(C|A\cap B)}{o(C)}=\frac{o(C|A)}{o(C)}\cdot \frac{o(C|B)}{o(C)}
+\edm
+where \(o(C)\) are the incidence odds of the event \(C\) occuring
+without any conditions.
+
+Note that for all events, we need to calculate the odds relative to
+the incidence odds, or the odds for the event in question taking place
+given no conditions. In this case it amounts to knowing the
+probability that the transition probability is in some small interval
+\([\tau, \tau+\delta\tau]\) given no information at all, or zero
+trials: \((0,0)\). But this just corresponds to the uniform
+distribution \(f(\tau) =1\)\footnote{Which is consistent with
+  \(\beta(\tau|0,0)=1\)}. So the incidence probability is \(d\tau\)
+and the incidence odds are
+
+\bdm
+o([\tau, \tau+\delta\tau]) = \frac{\delta\tau}{1-\delta\tau}
+\edm
+Then,
+\bdm
+\frac{o([\tau, \tau+\delta\tau]|(N,M)\cap (N',M'))}{o([\tau, \tau+\delta\tau]}
+= \frac{o([\tau, \tau+\delta\tau]|(N,M))}{o([\tau, \tau+\delta\tau]}
+\cdot \frac{o([\tau, \tau+\delta\tau]|(N',M'))}{o([\tau, \tau+\delta\tau]} 
+\edm
+In the infinitesimal limit \(\delta\tau \rightarrow 0\), each term
+above reduces to the ratio of relative probabilities and we find that
+the probability distribution for the transition probability given both
+\((N,M)\) and \((N',M')\) is
+\bdm
+f(\tau|(N,M)\cap (N',M'))=f(\tau|(N,M))\cdot f(\tau| (N',M'))
+\edm
+
+While the ``product of the probability distributions'' answer seems
+obvious, a couple of points are in order here:
+\bi
+\item The ``product of probabilities'' only applies to joint outcomes,
+  not for joint conditions. See the derivation of the Combined Odds
+  formula for further elaboration on this point.
+\item We need the {\em relative} odds, and hence an assumption about
+  the incidence probability. Multiplying distributions is tricky, and
+  without the incidence odds in the denominator the weights of the
+  distribution --or the exponents of the infinitesimals-- don't work
+  out correctly.
+\ei
+  
+From Eq.\ref{eq:beta1} and the group property of beta distributions,
+it follows that
+\bdm
+f(\tau|N,M)\cdot f(\tau|N',M') \propto f(\tau|N+N', M+M')
+\edm
+Hence
+\bdm
+f(\tau|(N,M)\cap (N',M'))\propto f(\tau|(N+N',M+M'))
+\edm
+By induction (and a re-normalization) it then follows that
+\beq\label{eq:bayes_unpooled1}
+f(\tau|\{U_i\}) = \beta(\tau|M+1,N-M+1)
+\eeq
+where
+\beq
+\begin{split}
+  N &= {\rm Total\quad trials} = \sum_{i\ge 2}U_i\\ 
+  M &= {\rm Total\quad successes} = \sum_{i\ge 3}U_i
+\end{split}
+\eeq
+
+\subsection{Average Page Transition Probability From Linear Regression}\label{sec:tau_from_m}
+In order to calculate the estimated mean and variance of the
+transition probability (the parameter of interest to us) we will use
+the formula for the mean and variance of a function of stochastic
+variables, for which we need the functional form of \(\tau(m)\) as
+well as its first two derivatives:
+\beq
+\begin{split}
+  \tau(m) &= e^m \\
+  \tau' &= e^m \\
+  \tau'' &= e^m
+\end{split}
+\eeq
+
+We have
+\bdm
+\mymean{\tau} = \tau(\mymean{m}) + var(m)\cdot \frac{\tau''}{2} = e^m\cdot\left(1 + \frac{var(m)}{2}\right)
+\edm
+where we are identifying \(\mymean{m}\) with the regressed value
+\(m\). The variance in \(\tau\) is
+\bdm
+var(\tau) = \tau'^2\cdot var(m)= e^{2m}\cdot var(m)
+\edm
+where \(var(m)\) is the measured variance in \(M\).
+
+In case of some desperate need, a similar calculation can be performed
+for the mean page visits.
+
+As in the Frequentist, non-phenomenological approach
+Sec.\ref{sec:freq} or at the end of Sec.\ref{sec:freqpooled}, we can
+use the \mymean{\tau} and \(var(\tau)\) to compare the behavior of two
+populations statistically.
+
+\subsection{Error in counts for a Bernoulli process}\label{sec:bernoulli}
+Let \(\{b_i\in(0,1)|i=1,N\}\) be the \(N\) trials in a Bernoulli
+process with probability \(p\). Then the number of successes
+\bdm
+M = \sum_i b_i= N\cdot p
+\edm
+Since the \(var(b_i)=p\cdot(1-p)\), the variance in the successes or the count
+\bdm
+var(M) = sum_i var(b_i) = N\cdot p\cdot(1-p) = M\cdot(1-p)
+\edm
+See \url{https://en.wikipedia.org/wiki/Binomial_distribution#Variance}
+for more details.
+
+
+\end{document}
+

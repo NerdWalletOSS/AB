@@ -1,0 +1,132 @@
+%% \startreport{A/B Statistics}
+%% \reportauthor{Some Jokers}
+\documentclass[12pt]{report}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\newcommand{\be}{\begin{enumerate}} %% same as ramesh_abbr
+\newcommand{\ee}{\end{enumerate}} %% same as ramesh_abbr
+\newcommand{\beq}{\begin{equation}} %% new, no conflict
+\newcommand{\eeq}{\end{equation}} %% new, no conflict
+\newcommand{\bdm}{\begin{displaymath}} %% new, no conflict
+\newcommand{\edm}{\end{displaymath}} %% new, no conflict
+\newcommand{\bi}{\begin{itemize}} %% same as ramesh_abbr
+\newcommand{\ei}{\end{itemize}} %% same as ramesh_abbr
+\newcommand{\TBC}{\framebox{\textbf{TO BE COMPLETED}}} %% same as ramesh_abbr
+\newcommand{\reals}{{\rm I\! R}} %% new, no conflict
+
+\begin{document}
+
+\title{A or B? A Bayesian Approach for Binary outcome tests}
+\author{Ramesh Subramonian, Ranjeet S. Tate, Michael Shire, Abhinav Singh}
+\date{}
+\maketitle
+
+\section{Minimum Number of Trials}
+
+Our approach will be to find the minimum number of trials required to
+reject the
+
+Null Hypothesis: The test is equal to the control. 
+
+The estimated number of trials needed will be a function of the control
+group success rate (presumably known), the metric used
+for comparison, the threshold of importance for the metric and the
+desired p-value at which to reject the null hypothesis. The final
+statement will be :
+\begin{quote}
+  If we conduct an experiment with a minimum of \(n\) trials on a sample of the
+  control group with a known population success rate of \(\mu\),
+  then there is a less-than \(p-value\%\) likelihood that the experiment
+  will yield a metric \(M(\mu_e)\) which is better than the
+  control population's metric \(M(\mu)\) by an importance threshold of \(x\).
+\end{quote}
+
+\subsection{Explanation}
+If we ran the experiment with a test variant on a sample of the population,
+we hope to get better results than one would expect to obtain from a
+control variant of the experiment. However, even if we were to run the
+control variant itself on a sample, then due to statistical fluctuations
+there are a range of possible outcomes with different probabilities,
+many of which will also corresp[ond to better than population behavior. Only
+if it is highly unlikely (small \(p-\)value) that a random sample of control
+will yield results at least as good as the test can we be correspondingly
+confident (\(1-p\)) that the test is better than the control to the
+degree of importance we've established.
+
+Consider betting on a coin toss against an opponent who is using her
+coin. Suppose she tosses the coin only 10 times and wins (Heads) H times.
+If H is between 4 and 6 we don't consider the outcome important enough.
+However, if H were to be 7 or higher the difference in the mean behavior
+(0.7) of this coin from the expected (0.5) is large enough for us to be
+concerned. However, before we go accusing our opponent of using a loaded
+coin we want to eliminate the possibility of getting 7 or more H by chance
+from a fair coin. However, there is a 17\% probability that a fair coin
+will yield 7 or more H on 10 tosses, That is too high a \(p=\)-value to
+reject the null hypothesis that the coin is fair.
+Consider two other examples, in the first one we still have 10 tosses,
+but this time we get 8 H. The probability of this happening by random chance
+is only 5.5\%, and that is a small enough \(p\)-value to accuse our opponent
+of cheating. In the second example, the mean outcome remains the same (0.7)
+but the number of trials increases to say 20, so we get 14 H.
+The \(p\)-value drops to 5.8\% which is small enough to accuse our opponent
+of using a loaded coin. 
+
+\subsection{Derivation}
+Let the control population success rate be \(\mu\). In an experiment with
+\(n\) trials in each of the test and control groups we will get
+the Binomial 
+distribution of successes \(m\)
+\bdm
+  p(m|\mu,n)= {n \choose m}\cdot \mu^m \cdot (1-\mu)^{n-m}
+\edm
+For each possible outcome, we have the experimental success rate \(\mu_t=m_t/n\)
+and \(\mu_c=m_c/n\) respectively for the test and control groups. We can then
+calculate the odds-factor as in Sec \ref{sec:odds-factor} and ask for the
+probability that this is greater than some importance threshold \(\phi\):
+\bdm
+    {\tt p-value}[\frac{o_t}{o_c} > \phi] = \sum_{m_t}\sum_{m_c}\cdot
+    \theta(\frac{o_t}{o_c} > \phi)\cdot p(m_t|\mu,n)\cdot p(m_c|\mu,n)
+\edm
+
+Since we are integrating over all possible outcomes, we see that the p-value
+for \(\phi=0\) will be about 50\%, since the assumption is that both the
+test and the control group are samples of the population and behave similarly,
+in any experiment the probability is half that one group will beat the other.
+As \(phi\) increases, we expect the p-value to drop, and for any \(\phi>1\),
+as \(n\) increases we expect the p-value to drop as well. So we obtain the p-value as a function of \(\mu, n, \phi\).
+
+For a given \(\mu\) and for a few select values of
+\(\phi = (1.05, 1.10, 1.20)\) at what \(n\) will the p-value to reject the null
+hypothesis drop below \((0.05, 0.10, 0.15)\)?
+
+Can this be done or estimated ina way that allows building an on the fly
+calculator of \(n(\mu, \phi, {\tt p-value})\)?
+
+\subsection{Bees Knees}
+Let \(f^i\) be our best estimate of the probability density function
+of \(x\) given \(i\) trials. When \(i=0\), this is just the uniform
+distribution over \([0, 1]\). As \(i\) increases, we expect it to
+converge to \(f^{\infty}\). 
+
+Define \(\delta(f^i)\) to be the ``difference'' between \(f^i\) and
+\(f^0\)
+\bdm
+\delta(f^i) = \int_{x=0}^{x=1} ( f^i(x) - f^0(x) ) ^2
+\edm
+
+The ``best'' number of trials is where the knee of the curve
+occurs. There are several computational methods of estimating this
+e.g, ``Reliable computatons of knee point for a curve \ldots'' by
+Demetri Christopoulos
+
+\subsection{Knees of a curve}
+The knee of a curve is when the first derivative changes, so where the
+absolute value of the second derivative is high. To calculate the second
+derivative of a suitably smoothed (fit to a polynomial of a given degree)
+set of data points over a given window size, use the Savitzky-Golay
+coefficients. Description and history,
+\url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}
+Python implementation: \url{http://docs.scipy.org/doc/scipy-0.16.1/reference/generated/scipy.signal.savgol_filter.html}
+
+\end{document}

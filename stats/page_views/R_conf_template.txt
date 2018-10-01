@@ -1,0 +1,12 @@
+# load the dataset or do needful
+page_views_conf <- read.csv("$varA_$varB_conf.csv")
+
+attach(page_views_conf)
+png(filename = "$varA_$varB_conf.png")
+plot(lift, confidence_level, type = "b", main = "Confidence vs. Lift, $varA_$varB")
+dev.off()
+
+png(filename = "$varA_$varB_z.png")
+plot(lift, z, type = "b", main = "z vs. lift, $varA_$varB")
+dev.off()
+detach(page_views_conf)

@@ -1,0 +1,15 @@
+jpeg(filename = "./CF_n40_m4.jpeg")
+
+xydata <- read.csv("./_normCF_n40_m4.csv")
+attach(xydata)
+plot(p, NormalCumFn, type = 'l', main = 'CF_n40_m4', col = 'red', lwd = 2.5)
+detach(xydata)
+
+par(new=T)
+xydata <- read.csv("./_betaCF_n40_m4.csv")
+attach(xydata)
+plot(p, betaCumFn, type = 'l', axes = F, xlab = '', ylab = '', col = 'green', lwd=2.5)
+detach(xydata)
+legend('topleft', c('NormalCF','BetaCF'), lty=c(1,1), col=c('red', 'green'), lwd = c(2.5,2.5), bty ='n', cex = 0.75)
+par(new = F)
+dev.off()
