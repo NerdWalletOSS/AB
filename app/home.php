@@ -1,8 +1,6 @@
 <?php
-
 // -- SET PATH
 require_once "set_path.php";
-
 // -- STANDARD HEADER INFORMATION
 require_once "header.php";
 require_once "lkp.php";
@@ -79,36 +77,47 @@ require_once "html_header.php";
 require_once "navbar.php";
  ?>
 <div class="container theme-showcase" role="main"> 
-<div class="row">
-<div class="col-xs-12">
-<div class="panel panel-primary">
-<div class="panel-heading">
-  <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Admin &nbsp;&nbsp;
-  <select form="FilterAdmin" name='TestAdmin' id = "TestAdmin" style='color:white;background-color:grey;'>";
-  <option value=''>All</option>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Test Table &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Admin  &nbsp;&nbsp;
+            <select form="FilterAdmin" name='TestAdmin' id = "TestAdmin" style='color:white;background-color:grey;'>";
+              <option value=''>All</option>
 <?php 
 $admin = db_get_rows('admin');
 $nA = count($admin);
 for ( $i = 0; $i < $nA; $i++ ) { 
   echo "<option value='".$admin[$i]['id']."'";
-  if((isset($User)) && ($User == $admin[$i]['name'])) {echo ' selected';}
+  if((isset($User)) && ($User == $admin[$i]['name'])) {
+    echo ' selected';
+    }
   echo ">".$admin[$i]['name']."</option>";
 } 
 ?>
-  </select>
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="option" class="opt" value="'3','4'" id= "1" <?php if (($state_1 == 'started') || ($state_1 == 'terminated') ) {echo "checked";} ?>/>&nbsp;Started/Terminated  &nbsp;&nbsp;
-  <input type="radio" name="option" class="opt" value="2" id="2" <?php if (($state_1 == 'draft') || ($state_1 == 'dormant') ) {echo " checked";} ?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
-  <input type="radio" name="option" class="opt" value="3" id="3" <?php if ($state_1 == "archived") {echo "checked";} ?> />&nbsp;Archive &nbsp;&nbsp; 
+              </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	          <input type="radio" name="option" class="opt" value="'3','4'" id= "1" 
+<?php if (($state_1 == 'started') || ($state_1 == 'terminated') ) {
+  echo "checked";
+} 
+?>
+/>&nbsp;Started/Terminated  &nbsp;&nbsp;
+  <input type="radio" name="option" class="opt" value="2" id="2" 
+<?php if (($state_1 == 'draft') || ($state_1 == 'dormant') ) {
+  echo " checked";
+} 
+?> />&nbsp;Draft/Dormant &nbsp;&nbsp; 
+  <input type="radio" name="option" class="opt" value="3" id="3" 
+<?php if ($state_1 == "archived") {
+  echo "checked";
+} 
+?> />&nbsp;Archive &nbsp;&nbsp; 
 	<input type="hidden" name="TestType" id="TestType" value="
 <?php
-echo $TestType; 
+  echo $TestType; 
 ?>
 ">
-<!-- -->
+<!-- Call Modal -->
   <a href="#" data-toggle="modal" data-target="#basicModal">
     <button type="button" class="btn btn-success btn-xl">
       <span style="font-size:25px;"><strong>+</strong></span>
@@ -117,9 +126,9 @@ echo $TestType;
   </h3>
 </div>
 <div class="panel-body">
-  <!-- AJAX ERROR DIV START -->
-  <?php require_once "error_div.php"; ?>
-  <!-- AJAX ERROR DIV END -->
+<!-- AJAX ERROR DIV START -->
+<?php require_once "error_div.php"; ?>
+<!-- AJAX ERROR DIV END -->
 <?php
 if (isset($TestType))
 	{
