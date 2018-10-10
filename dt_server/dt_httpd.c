@@ -6,6 +6,9 @@
 #include "auxil.h"
 #include "dt_auxil.h"
 #include "dt_process_req.h"
+#include "extract_api_args.h"
+#include "get_body.h"
+#include "get_req_type.h"
 #include "setup.h"
 #include "zero_globals.h"
 
@@ -53,7 +56,7 @@ generic_handler(
   if ( req_type == Undefined ) { go_BYE(-1); }
   status = get_body(req_type, req, g_body, DT_MAX_LEN_BODY, &g_sz_body); 
   cBYE(status);
-  status = ab_process_req(req_type, api, args, g_body); cBYE(status);
+  status = dt_process_req(req_type, api, args, g_body); cBYE(status);
   //--------------------------------------
   if ( strcmp(api, "Halt") == 0 ) {
     // TODO: P4 Need to get loopbreak to wait for these 3 statements

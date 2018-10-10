@@ -82,7 +82,7 @@ load_mdl.o : load_mdl.c load_mdl.h
 ../lua-5.1.3/src/liblua.a :
 	make -C ../lua-5.1.3/src/ linux
 
-../dt_interpreter/src/dt.so : ./libs/libmaxminddb.so ../jansson-2.10/src/.libs/libjansson.so
+../dt_interpreter/src/dt.so : ../jansson-2.10/src/.libs/libjansson.so
 	make -C ../dt_interpreter/src/
 
 ../libevent-2.0.22-stable/.libs/libevent.so : 
@@ -105,7 +105,8 @@ dt_httpd : $(COBJS)  \
 	./libs/dt.so \
 	./libs/libevent.so
 	$(CC) $(CFLAGS) $(COBJS) \
-	  -o ab_httpd  \
+	  -o dt_httpd  \
+	./libs/libevent.so \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
 	../jansson-2.10/src/.libs/libjansson.so \
 	./libs/dt.so \
@@ -123,3 +124,5 @@ clean:
 
 qclean :
 	rm -r -f ab_httpd $(COBJS) *.o _*
+	rm -f libs/*
+	rm -f dt_httpd

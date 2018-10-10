@@ -2,31 +2,8 @@
 #include "auxil.h"
 #include "dt_auxil.h"
 #include "mmap.h"
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; // For C: ab_process_req()
 
-#ifdef XXXX
-//<hdr>
-int 
-chk_test_name(
-    const char *X
-    )
-//</hdr>
-{
-  int status = 0;
-
-  if ( ( X == NULL ) || ( *X == '\0' ) )  { 
-    g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
-  }
-  if ( strlen(X) > AB_MAX_LEN_TEST_NAME ) { 
-    g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
-  }
-  for ( const char *cptr = X; *cptr != '\0'; cptr++ ) {
-    if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { 
-      g_log_bad_test_name++; STATSD_COUNT("bad_test_name", 1); go_BYE(-1); 
-    }
-  }
-BYE:
-  return status;
-}
 int
 add_to_buf(
     char *in,
@@ -71,8 +48,8 @@ mk_json_output(
     )
 {
   int status = 0;
-  memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
-  int n_out = 0; int sz_out = AB_MAX_LEN_RESULT;
+  memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
+  int n_out = 0; int sz_out = DT_MAX_LEN_RESULT;
   if ( n_out >= sz_out ) { go_BYE(-1); } out[n_out++] = '{';
   status = add_to_buf(api, "API", g_rslt, sz_out, &n_out); cBYE(status);
   if ( n_out >= sz_out ) { go_BYE(-1); } out[n_out++] = ',';
@@ -84,4 +61,3 @@ mk_json_output(
 BYE:
   return status;
 }
-#endif

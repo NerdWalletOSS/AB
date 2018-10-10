@@ -1,9 +1,7 @@
 #include "dt_incs.h"
 #include "dt_globals.h"
 #include "zero_globals.h"
-#include "aux_zero.h"
 #include "auxil.h"
-#include "load_lkp.h"
 #include "dt_types.h"
 extern DT_REC_TYPE *g_dt_map;
 extern size_t g_len_dt_file;
@@ -14,8 +12,8 @@ zero_cfg(
     void
     )
 {
-  memset(g_cfg.dt_dir, '\0', AB_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.model_name, '\0', AB_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.dt_dir, '\0', DT_MAX_LEN_FILE_NAME+1);
+  memset(g_cfg.model_name, '\0', DT_MAX_LEN_FILE_NAME+1);
 
   g_cfg.port         = 0;
   g_cfg.verbose      = false;
@@ -55,9 +53,9 @@ zero_globals(
 
   g_halt = false;
   zero_cfg();
-  memset(g_err, '\0', AB_ERR_MSG_LEN+1);
-  memset(g_buf, '\0', AB_ERR_MSG_LEN+1);
-  memset(g_rslt, '\0', AB_MAX_LEN_RESULT+1);
+  memset(g_err, '\0', DT_ERR_MSG_LEN+1);
+  memset(g_buf, '\0', DT_ERR_MSG_LEN+1);
+  memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
 
   g_dt_feature_vector = NULL;
   g_n_dt_feature_vector = 0;

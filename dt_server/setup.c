@@ -1,10 +1,13 @@
 #include "dt_incs.h"
+#include "dt_httpd_types.h"
 #include "zero_globals.h"
 #include "init.h"
 #include "update_config.h"
+#include "l_update_config.h"
 #include "read_conf_file.h"
 #include "validate_config.h"
 #include "setup.h"
+extern  CFG_TYPE g_cfg; // Set by Lua . Config variables
 
 int
 setup(

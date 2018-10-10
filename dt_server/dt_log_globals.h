@@ -1,4 +1,4 @@
-#ifdef __AB_MAIN_PROGRAM
+#ifdef __DT_MAIN_PROGRAM
 #define EXTERN extern
 #else
 #define EXTERN 

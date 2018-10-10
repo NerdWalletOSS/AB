@@ -10,36 +10,14 @@
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
 
-#include "reload.h"
-#include "test_info.h"
-#include "list_tests.h"
 #include "get_config.h"
 
-#include "num_tests.h"
-#include "chk_logger_conn.h"
-#include "kafka_check_conn.h"
 #include "diagnostics.h"
-#include "to_kafka.h"
 #include "dump_log.h"
-#include "add_fake_test.h"
-#include "route_get_variant.h"
-#include "ping_server.h"
-#include "router.h"
 #include "update_config.h"
 #include "zero_globals.h"
 #include "classify.h"
-#include "classify_ua.h"
-#include "ext_classify_ip.h"
-#include "ext_classify_ua.h"
 #include "setup.h"
-
-
-#include "delete_test.h"
-#include "stop_test.h"
-#include "get_utm_kv.h"
-#ifdef KAFKA
-#include "kafka_close_conn.h"
-#endif
 
 extern char g_config_file[DT_MAX_LEN_FILE_NAME+1];
 
