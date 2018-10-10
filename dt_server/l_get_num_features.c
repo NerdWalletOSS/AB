@@ -1,7 +1,12 @@
 #include "dt_incs.h"
+#include "dt_httpd_types.h"
+#include <lua.h>
 #include "auxil.h"
-#include "dt_globals.h"
 #include "l_get_num_features.h"
+extern lua_State *g_L_DT; 
+extern  CFG_TYPE g_cfg; 
+extern bool g_disable_lua;
+extern char g_err[DT_ERR_MSG_LEN+1]; 
 
 extern CFG_TYPE g_cfg;
 // Ideally returns the number of features.
@@ -15,7 +20,6 @@ l_get_num_features(
   if ( g_disable_lua ) { 
     *ptr_num_features = 1; return status; 
   }
-  if ( g_L == NULL ) { go_BYE(-1); }
   if ( *g_cfg.dt_dir == '\0' ) { go_BYE(-1); }
   *ptr_num_features = 0;
 

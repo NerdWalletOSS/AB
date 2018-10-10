@@ -30,10 +30,8 @@ EXTERN int g_n_dt_feature_vector  ;  // Set by Lua after reading configs
 EXTERN char g_valid_chars_in_url[256]; // Set by C
 
 //------------------------ For Lua
-EXTERN lua_State *g_L; // Set by C
 EXTERN lua_State *g_L_DT; // Set by C
 EXTERN bool g_disable_lua; // used for testing, normally false
-EXTERN bool g_disable_dt; // set to false if no decision tree
 
 
 #include "dt_log_globals.h"

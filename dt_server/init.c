@@ -11,12 +11,10 @@ init_lua(
     )
 {
   int status = 0;
-  if ( g_disable_lua ) { return status; }
-  g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
-  luaL_openlibs(g_L);  
-  status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
-
-  if ( !g_disable_dt ) { 
+  if ( g_disable_lua ) { 
+    fprintf(stderr, "WARNING! Not initializing Lua\n");
+  }
+  else {
     g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
     luaL_openlibs(g_L_DT);  
     status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);

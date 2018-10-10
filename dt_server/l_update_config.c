@@ -13,7 +13,7 @@ l_update_config(
   if ( g_L_DT == NULL ) { go_BYE(-1); }
   lua_getglobal(g_L_DT, "update_config");
   if ( !lua_isfunction(g_L_DT, -1)) {
-    fprintf(stderr, "update_config() does not exist in %s\n");
+    fprintf(stderr, "update_config() does not exist\n");
     lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }

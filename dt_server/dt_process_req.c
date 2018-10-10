@@ -32,8 +32,7 @@ dt_process_req(
   // STOP FUNC DECL
 {
   int status = 0;
-  char server[DT_MAX_LEN_SERVER_NAME+1];
-  int num_features, itemp;
+  int num_features;
   //-----------------------------------------
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', DT_ERR_MSG_LEN+1);

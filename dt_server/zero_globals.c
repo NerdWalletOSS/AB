@@ -37,7 +37,6 @@ free_globals(
     munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
   }
   if ( !g_disable_lua ) { 
-    if ( g_L    != NULL ) { lua_close(g_L);    g_L    = NULL; }
     if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
   }
   free_if_non_null(g_predictions); g_n_mdl = 0;
@@ -62,7 +61,6 @@ zero_globals(
 
   memset(g_valid_chars_in_url, '\0', 256);
 
-  g_L    =  NULL;
   g_L_DT = NULL;
   g_dt  = NULL; g_n_dt = 0;
   g_rf  = NULL; g_n_rf = 0;
@@ -70,7 +68,6 @@ zero_globals(
   g_predictions = NULL;
 
   zero_log();
-BYE:
   return status;
 }
 

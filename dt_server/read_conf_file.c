@@ -6,8 +6,6 @@
 #include "read_conf_file.h"
 #include "zero_globals.h"
 
-extern  bool g_disable_dt; // set to false if no decision tree
-
 int
 get_string(
     json_t *root,
@@ -133,16 +131,10 @@ read_conf_file(
 
   //----------------------
   json_t *j_dt = json_object_get(root, "DT");
-  if ( j_dt == NULL ) { 
-    g_disable_dt = true;
-  } 
-  else {
-    g_disable_dt = false;
-    status = get_string(j_dt, "DT_DIR","VALUE", NULL, DT_MAX_LEN_FILE_NAME, 
-        ptr_cfg->dt_dir);
-    status = get_string(j_dt, "MODEL_NAME","VALUE", NULL, 
-        DT_MAX_LEN_FILE_NAME, ptr_cfg->model_name);
-  }
+  status = get_string(j_dt, "DT_DIR","VALUE", NULL, DT_MAX_LEN_FILE_NAME, 
+      ptr_cfg->dt_dir);
+  status = get_string(j_dt, "MODEL_NAME","VALUE", NULL, 
+      DT_MAX_LEN_FILE_NAME, ptr_cfg->model_name);
   json_decref(root);
 BYE:
   free_if_non_null(cbuf);
