@@ -6,6 +6,8 @@ get_mdl_loc      = require 'DT/get_mdl_loc'
 get_mdl_meta     = require 'DT/get_mdl_meta'
 set_model_name   = require 'DT/set_model_name'
 get_num_features = require 'DT/get_num_features'
+get_num_models   = require 'DT/get_num_models'
+make_feature_vector =  require 'DT/make_feature_vector'
 get_port = require 'DT/get_port'
 
 local _, model_name = get_mdl_loc()

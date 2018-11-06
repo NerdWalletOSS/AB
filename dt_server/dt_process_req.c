@@ -73,8 +73,13 @@ dt_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
-    case MakeFeatureVector : /* done by Lua */
+    case MakeFeatureVector : 
+      /* Just for debugging */
       status = l_make_feature_vector(body);
+      status =  get_num_features(&num_features); cBYE(status);
+      for ( int i = 0; i < num_features; i++ ) { 
+        fprintf(stderr,"%d: %f \n", i, g_dt_feature_vector[i]);
+      }
       cBYE(status);
       break;
       //--------------------------------------------------------

@@ -1,0 +1,87 @@
+\startreport{The Random Forest Server}
+\reportauthor{Ramesh Subramonian}
+
+\section{Introduction}
+\TBC
+
+\subsection{Limitations}
+
+\be
+\item 
+Currently, we do not support categorical attributes. 
+We support only numeric and boolean attributes. 
+\ee
+
+\subsection{What do you need to provided to launch a model?}
+
+To deploy a model, 
+\be
+\item you need to create a directory that is accessible to the server. 
+\item the directory name should contain only alphanumeric characters 
+and the underscore character
+\item The directory should contain the following files
+\be
+\item \verb+dt.csv   +
+\item \verb+mdl_meta.lua  +
+\item \verb+dt_features.lua  +
+\item \verb+mdl_map.lua   +
+\item \verb+sample_input.json   +
+\item \verb+sample_output.json+
+\ee
+\ee
+We will now describe how you go about creating these files.
+
+\section{Step by Step Guide}
+
+\subsection{Build Random Forest using sklearn}
+Assume that you have used sklearn to build your random forest.
+\be
+\item ``Pickle'' the model. Call this {\tt MODEL.pkl}.  MODEL.pkl should 
+either 
+\be
+\item be a sklearn tree-based model, or 
+\item a dictionary of: \begin{verbatim}
+{model_name: sklearn tree-based model}
+\end{verbatim}
+\ee
+\item Convert it into a format that the server likes:
+\be
+\item \verb+virtualenv venv+
+\item \verb+source venv/bin/activate+
+\item \verb+pip install -u upgrade pip+
+\item \verb+pip install -r requirements.txt+
+\item \verb+python convert_dt.py MODEL.pkl dt.csv mdl_map.lua+
+\item \verb+deactivate+
+\item \verb+rm -rf venv+
+\ee
+\ee
+
+This will generate two files
+\be
+\item \verb+dt.csv+, Section~\ref{dt_csv}
+\item \verb+mdl_map.lua+ , Section~\ref{mdl_map}
+\ee
+
+\subsubsection{The Model CSV File}
+\label{dt_csv}
+The file \verb+dt.csv+ is a 9 column CSV file that looks like
+\begin{verbatim}
+model_idx,tree_idx,node_idx,lchild_idx,rchild_idx,feature_idx,threshold,neg,pos
+0,0,0,1,114,51,0.00450000027195,2726,1875
+0,0,1,2,105,6,0.035000000149,1975,274
+0,0,2,3,96,52,0.173999994993,1960,175
+0,0,3,4,75,15,0.114999994636,1938,128
+0,0,4,5,74,26,0.00499999988824,1841,78
+\end{verbatim}
+
+Details to be written \TBC
+
+\subsubsection{The Model Map File}
+\label{mdl_map}
+The model map file lists the various models for which random forests 
+have been produced. It is a Lua table indexed as 1, 2, \ldots As an example,
+\begin{verbatim}
+return {[1]='model', [2] = 'some_other_model', [3] = 'yet_another_model'}
+\end{verbatim}
+
+

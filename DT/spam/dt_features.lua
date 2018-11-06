@@ -4,6 +4,6 @@
 -- The feature names are feature_0, feature_1, ...
 local dt_features = {}
 for i = 1, 57 do
-  dt_features[i] = "feature_" .. tostring(i - 1)
+  dt_features[i] = "feature_" .. tostring(i-1)
 end
 return dt_features
