@@ -10,18 +10,6 @@ extern DT_REC_TYPE *g_dt_map;
 extern size_t g_len_dt_file;
 extern uint32_t g_num_dt_map;
 
-void
-zero_cfg(
-    void
-    )
-{
-  memset(g_cfg.dt_dir, '\0', DT_MAX_LEN_FILE_NAME+1);
-  memset(g_cfg.model_name, '\0', DT_MAX_LEN_FILE_NAME+1);
-
-  g_cfg.port         = 0;
-  g_cfg.verbose      = false;
-}
-
 //<hdr>
 void
 free_globals(
@@ -53,7 +41,6 @@ zero_globals(
   int status = 0;
 
   g_halt = false;
-  zero_cfg();
   memset(g_err, '\0', DT_ERR_MSG_LEN+1);
   memset(g_buf, '\0', DT_ERR_MSG_LEN+1);
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);

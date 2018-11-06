@@ -11,8 +11,6 @@
 #include <lauxlib.h>
 #include <pthread.h>
 
-EXTERN CFG_TYPE g_cfg; // Set by Lua . Config variables
-//
 EXTERN bool g_halt; // For C TODO IS THIS NEEDED?
 //-----------------------------------------------------------------
 EXTERN char g_err[DT_ERR_MSG_LEN+1]; // For C: ab_process_req()

@@ -6,7 +6,6 @@
 #include "init.h"
 
 #include "l_mdl_meta.h"
-#include "l_get_num_features.h"
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
 
@@ -59,7 +58,7 @@ dt_process_req(
       break;
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
-      status = l_get_num_features(&num_features); cBYE(status);
+      status = get_num_features(&num_features); cBYE(status);
       sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
       break;
       //--------------------------------------------------------

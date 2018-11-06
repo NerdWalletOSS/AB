@@ -11,6 +11,7 @@
 #include "get_req_type.h"
 #include "setup.h"
 #include "init.h"
+#include "get_from_lua.h"
 
 // #include <event.h>
 #include <evhttp.h>
@@ -102,6 +103,7 @@ main(
   int status = 0;
   struct evhttp *httpd;
   struct event_base *base;
+  int port = 0;
 
   zero_globals();
   //----------------------------------
@@ -110,14 +112,15 @@ main(
   if ( strlen(argv[1]) > DT_MAX_LEN_FILE_NAME ) { go_BYE(-1); }
   strcpy(g_config_file, argv[1]); 
   status = setup(g_config_file); cBYE(status);
+  status = get_port(&port); cBYE(status);
   //----------------------------------
   base = event_base_new();
   httpd = evhttp_new(base);
   evhttp_set_max_headers_size(httpd, DT_MAX_HEADERS_SIZE);
   evhttp_set_max_body_size(httpd, DT_MAX_LEN_BODY);
-  status = evhttp_bind_socket(httpd, "0.0.0.0", g_cfg.port); 
+  status = evhttp_bind_socket(httpd, "0.0.0.0", port); 
   if ( status < 0 ) { 
-    fprintf(stderr, "Port %d busy \n", g_cfg.port); go_BYE(-1);
+    fprintf(stderr, "Port %d busy \n", port); go_BYE(-1);
   }
   evhttp_set_gencb(httpd, generic_handler, base);
   event_base_dispatch(base);    
