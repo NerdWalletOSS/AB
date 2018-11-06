@@ -16,32 +16,11 @@ get_req_type(
   else if (strcasecmp(api, "DumpLog") == 0) {
     return DumpLog;
   }
-  else if (strcasecmp(api, "EvalDT") == 0) {
-    return EvalDT;
-  }
   else if (strcasecmp(api, "GetConfig") == 0) {
     return GetConfig;
   }
-  else if (strcasecmp(api, "GetDomain") == 0) {
-    return GetDomain;
-  }
-  else if (strcasecmp(api, "GetHost") == 0) {
-    return GetHost;
-  }
   else if (strcasecmp(api, "GetNumFeatures") == 0) {
     return GetNumFeatures;
-  }
-  else if (strcasecmp(api, "GetVariant") == 0) {
-    return GetVariant;
-  }
-  else if (strcasecmp(api, "get_variant") == 0) {
-    return GetVariant;
-  }
-  else if (strcasecmp(api, "GetVariants") == 0) {
-    return GetVariants;
-  }
-  else if (strcasecmp(api, "get_variants") == 0) {
-    return GetVariants;
   }
   else if (strcasecmp(api, "Halt") == 0) {
     return Halt;
@@ -52,14 +31,8 @@ get_req_type(
   else if (strcasecmp(api, "Ignore") == 0) {
     return Ignore;
   }
-  else if (strcasecmp(api, "IgnoreKafkaErrors") == 0) {
-    return IgnoreKafkaErrors;
-  }
-  else if (strcasecmp(api, "ListTests") == 0) {
-    return ListTests;
-  }
-  else if (strcasecmp(api, "LoadConfig") == 0) {
-    return LoadConfig;
+  else if (strcasecmp(api, "LoadModels") == 0) {
+    return LoadModels;
   }
   else if (strcasecmp(api, "MakeFeatureVector") == 0) {
     return MakeFeatureVector;
@@ -67,35 +40,11 @@ get_req_type(
   else if (strcasecmp(api, "MdlMeta") == 0) {
     return MdlMeta;
   }
-  else if (strcasecmp(api, "NumTests") == 0) {
-    return NumTests;
-  }
-  else if (strcasecmp(api, "PingServer") == 0) {
-    return PingServer;
-  }
   else if (strcasecmp(api, "PostProcPreds") == 0) {
     return PostProcPreds;
   }
-  else if (strcasecmp(api, "Reload") == 0) {
-    return Reload;
-  }
   else if (strcasecmp(api, "Restart") == 0) {
     return Restart;
-  }
-  else if (strcasecmp(api, "Router") == 0) {
-    return Router;
-  }
-  else if (strcasecmp(api, "StopTest") == 0) {
-    return StopTest;
-  }
-  else if (strcasecmp(api, "TestInfo") == 0) {
-    return TestInfo;
-  }
-  else if (strcasecmp(api, "ToKafka") == 0) {
-    return ToKafka;
-  }
-  else if (strcasecmp(api, "UTMKV") == 0) {
-    return UTMKV;
   }
   else if (strcasecmp(api, "ZeroCounters") == 0) {
     return ZeroCounters;

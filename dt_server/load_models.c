@@ -3,6 +3,7 @@
 #include "auxil.h"
 #include "init.h"
 #include "load_models.h"
+#include "get_from_lua.h"
 
 #include "load_dt.h"
 #include "load_rf.h"
@@ -54,11 +55,11 @@ load_models(
   }
   //--------------------------------------------------------
   // dt, rf, mdl
-  free_if_non_null(g_dt_feature_vector); 
+  free_if_non_null(g_dt_feature_vector);  g_n_dt_feature_vector = 0;
   free_if_non_null(g_predictions); 
-  rs_munmap(g_dt,  g_len_dt_file);
-  rs_munmap(g_rf,  g_len_rf_file);
-  rs_munmap(g_mdl, g_len_mdl_file);
+  rs_munmap(g_dt,  g_len_dt_file);  g_n_dt = 0;
+  rs_munmap(g_rf,  g_len_rf_file);  g_n_rf = 0;
+  rs_munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
 
   buflen = strlen(dt_dir) + strlen(model_name) + 32;
   buf = malloc(buflen); return_if_malloc_failed(buf);
@@ -85,5 +86,31 @@ load_models(
   //--------------------------------------------------------
 BYE:
   free_if_non_null(buf);
+  return status;
+}
+
+int
+x_load_models(
+    const char * const args
+    )
+{
+  int status = 0;
+  const char *dt_dir = NULL, *old_model_name = NULL;
+  status = get_mdl_loc(&dt_dir, &old_model_name); cBYE(status);
+  char model_name[DT_MAX_LEN_FILE_NAME+1];
+  memset(model_name, '\0', DT_MAX_LEN_FILE_NAME+1);
+  status = extract_name_value(args, "ModelName=", '&', model_name, 
+      DT_MAX_LEN_FILE_NAME); cBYE(status);
+  // Check that model name is good
+  mcr_chk_non_null(model_name);
+  for ( char *cptr = model_name; *cptr != '\0'; cptr++ ) { 
+    if ( !isascii(*cptr) ) { go_BYE(-1); }
+    if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { go_BYE(-1); }
+  }
+  //----------------------------------------
+  status = load_models(dt_dir, model_name); cBYE(status);
+  // Inform Lua that model name has changed
+  status = set_model_name(model_name); cBYE(status);
+BYE:
   return status;
 }

@@ -15,7 +15,7 @@ classify(
 {
   int status = 0;
   if ( body == NULL ) { go_BYE(-1); }
-  status = l_make_feature_vector(body, false); cBYE(status);
+  status = l_make_feature_vector(body); cBYE(status);
   status = eval_mdl(g_dt_feature_vector, g_n_dt_feature_vector, 
       g_dt, g_n_dt, g_rf, g_n_rf, g_mdl, g_n_mdl, g_predictions);
   cBYE(status);

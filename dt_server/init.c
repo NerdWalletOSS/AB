@@ -53,6 +53,12 @@ zero_globals(
   g_rf  = NULL; g_n_rf = 0;
   g_mdl = NULL; g_n_mdl = 0;
   g_predictions = NULL;
+  //------------
+  const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=/_:";
+  memset(g_valid_chars_in_url, '\0', 256);
+  for ( char *cptr = (char *)str; *cptr != '\0'; cptr++ ) {
+    g_valid_chars_in_url[(uint8_t)(*cptr)] = true;
+  }
 
   zero_log();
   return status;

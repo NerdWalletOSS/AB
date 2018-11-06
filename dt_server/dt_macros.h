@@ -23,6 +23,9 @@
 }
 
 #define unlink_if_non_null(x) { if ( x != NULL ) { unlink( x ); } }
+#define mcr_chk_non_null(x) { \
+  if ( ( x == NULL ) && ( *x == '\0' ) ) { go_BYE(-1); } \
+}
 
 #define mcr_alloc_null_str(x, sz) { \
   x = (char *)malloc(sz * sizeof(char)); \

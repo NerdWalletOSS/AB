@@ -1,5 +1,4 @@
 extern int 
 l_make_feature_vector(
-    const char *body,
-    bool is_debug 
+    const char * const fvec_as_json
     );

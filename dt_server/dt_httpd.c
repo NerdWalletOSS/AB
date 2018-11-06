@@ -82,11 +82,12 @@ BYE:
   }
   evbuffer_free(opbuf);
   //--- Log time seen by clients
-  if ( req_type == Router ) { // TODO FIX 
+  if ( req_type == Classify ) { // TODO FIX 
     uint64_t t_stop = RDTSC();
     if ( t_stop > t_start ) { 
       uint64_t t_delta = t_stop - t_start;
       g_log_response_time += t_delta;
+      g_log_num_classify++;
     }
   }
   //--------------------

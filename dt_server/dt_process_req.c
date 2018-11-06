@@ -1,23 +1,17 @@
 #include "dt_incs.h"
-#include "auxil.h"
 #include "dt_globals.h"
 #include "dt_process_req.h"
 
-#include "init.h"
-
-#include "l_mdl_meta.h"
-#include "l_make_feature_vector.h"
-#include "l_post_proc_preds.h"
-
-#include "get_config.h"
-
+#include "auxil.h"
+#include "classify.h"
+#include "get_from_lua.h"
 #include "diagnostics.h"
 #include "dump_log.h"
 #include "init.h"
-#include "classify.h"
+#include "load_models.h"
+#include "l_make_feature_vector.h"
+#include "l_post_proc_preds.h"
 #include "setup.h"
-
-extern char g_config_file[DT_MAX_LEN_FILE_NAME+1];
 
 // START FUNC DECL
 int
@@ -31,6 +25,7 @@ dt_process_req(
 {
   int status = 0;
   int num_features;
+  const char *cptr = NULL;
   //-----------------------------------------
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
   memset(g_err,  '\0', DT_ERR_MSG_LEN+1);
@@ -54,12 +49,13 @@ dt_process_req(
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
-      status = get_config(); cBYE(status);
+      status = get_config(&cptr); cBYE(status);
+      snprintf(g_rslt, DT_MAX_LEN_RESULT, "%s\n", cptr);
       break;
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
       status = get_num_features(&num_features); cBYE(status);
-      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\", \"GNumfeatures\" : \"%d\" } \n", num_features, g_n_dt_feature_vector);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\" } \n", num_features);
       break;
       //--------------------------------------------------------
     case Halt : /* done by C */
@@ -72,13 +68,19 @@ dt_process_req(
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
+    case LoadModels : 
+      status = x_load_models(args); cBYE(status);
+      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
+      break;
+      //--------------------------------------------------------
     case MakeFeatureVector : /* done by Lua */
-      status = l_make_feature_vector(body, true);
+      status = l_make_feature_vector(body);
       cBYE(status);
       break;
       //--------------------------------------------------------
     case MdlMeta : /* done by Lua */
-      status = l_mdl_meta(); cBYE(status);
+      status = get_mdl_meta(&cptr); cBYE(status);
+      snprintf(g_rslt, DT_MAX_LEN_RESULT, "%s\n", cptr);
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */

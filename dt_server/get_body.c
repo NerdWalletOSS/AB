@@ -17,9 +17,6 @@ get_body(
   struct evbuffer *inbuf = NULL;
 
   *ptr_sz_body = 0;
-  if ( ( req_type == GetVariant ) ||  ( req_type == GetVariants ) ) {
-    return status;
-  }
   memset(body, '\0', n_body+1);
   inbuf = evhttp_request_get_input_buffer(req);
   if ( evbuffer_get_length(inbuf) > 0 ) {
