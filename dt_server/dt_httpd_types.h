@@ -10,8 +10,6 @@ typedef enum _dt_req_type {
   CheckKafkaConnectivity, // Read &  C
   CheckDBConnectivity, // Config &  Lua
   Classify, // Read & C 
-  ClassifyIP, // Read &  C
-  ClassifyUA, // Read &  C
   Diagnostics, // Read &  C  AND Lua
   DumpLog, // Read &  C
   EvalDT, // Read & C

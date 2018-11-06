@@ -14,8 +14,7 @@
 
 #include "diagnostics.h"
 #include "dump_log.h"
-#include "update_config.h"
-#include "zero_globals.h"
+#include "init.h"
 #include "classify.h"
 #include "setup.h"
 
@@ -82,7 +81,6 @@ dt_process_req(
     case MdlMeta : /* done by Lua */
       status = l_mdl_meta(); cBYE(status);
       break;
-      //--------------------------------------------------------
       //--------------------------------------------------------
     case PostProcPreds : /* done by C */
       status = l_post_proc_preds(args, g_predictions, g_n_mdl,

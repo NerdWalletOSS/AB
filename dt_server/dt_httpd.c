@@ -10,7 +10,7 @@
 #include "get_body.h"
 #include "get_req_type.h"
 #include "setup.h"
-#include "zero_globals.h"
+#include "init.h"
 
 // #include <event.h>
 #include <evhttp.h>
@@ -104,14 +104,6 @@ main(
   struct event_base *base;
 
   zero_globals();
-  //--------------------------------------------
-  g_disable_lua = false; // NORMALLY FALSE. Just for testing
-  if ( g_disable_lua ) { 
-    fprintf(stderr, "\n\n\n");
-    fprintf(stderr, "WARNING!! WARNING!! WARNING!! WARNING!! \n");
-    fprintf(stderr, "LUA DISABLED LUA DISABLED LUA DISABLED \n");
-    fprintf(stderr, "\n\n\n");
-  }
   //----------------------------------
   memset(g_config_file, '\0', DT_MAX_LEN_FILE_NAME+1);
   if ( argc != 2 ) { go_BYE(-1); }

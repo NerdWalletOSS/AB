@@ -7,26 +7,8 @@ get_req_type(
     const char *api
     )
 {
-  if (strcasecmp(api, "AddFakeTest") == 0) {
-    return AddFakeTest;
-  }
-  else if (strcasecmp(api, "AddTest") == 0) {
-    return AddTest;
-  }
-  else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
-    return CheckLoggerConnectivity;
-  }
-  else if (strcasecmp(api, "CheckLoggerConnectivity") == 0) {
-    return CheckDBConnectivity;
-  }
-  else if (strcasecmp(api, "Classify") == 0) {
+  if (strcasecmp(api, "Classify") == 0) {
     return Classify;
-  }
-  else if (strcasecmp(api, "ClassifyIP") == 0) {
-    return ClassifyIP;
-  }
-  else if (strcasecmp(api, "ClassifyUA") == 0) {
-    return ClassifyUA;
   }
   else if (strcasecmp(api, "Diagnostics") == 0) {
     return Diagnostics;

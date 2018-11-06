@@ -13,8 +13,9 @@ write_log(
     uint64_t n
     )
 {
-  char temp[1024];
-  sprintf(temp, " \"%s\" : %" PRIu64 ",", label, n);
+  int sz = 1024;
+  char temp[sz];
+  snprintf(temp, sz, " \"%s\" : %" PRIu64 ",", label, n);
   int len = strlen(temp);
   if ( ( *ptr_buf_idx + len ) <= buf_sz ) { 
     *ptr_buf_idx += len;
@@ -40,58 +41,9 @@ dump_log(
 
   write_log(g_rslt, &ridx, n, "StartTime", g_log_start_time);
 
-  write_log(g_rslt, &ridx, n, "NoUserAgent",  g_log_no_user_agent);
-  write_log(g_rslt, &ridx, n, "BadUserAgent", g_log_bad_user_agent);
-  write_log(g_rslt, &ridx, n, "BadABArgs",    g_log_bad_ab_args);
+  write_log(g_rslt, &ridx, n, "ResponseTime", g_log_response_time);
+  write_log(g_rslt, &ridx, n, "NumClassify",  g_log_num_classify);
 
-
-  write_log(g_rslt, &ridx, n, "SessionServiceCalls", g_log_ss_calls);
-  write_log(g_rslt, &ridx, n, "SessionServiceBadCode", g_log_ss_bad_code);
-  write_log(g_rslt, &ridx, n, "SessionServiceTimeout", g_log_ss_timeout);
-  write_log(g_rslt, &ridx, n, "SessionServiceNonAscii", g_log_ss_non_ascii);
-  write_log(g_rslt, &ridx, n, "SessionServiceBadJSON", g_log_ss_bad_json);
-  write_log(g_rslt, &ridx, n, "SessionServiceNoSession", g_log_ss_no_session);
-  write_log(g_rslt, &ridx, n, "SessionServiceBadCall", g_log_ss_bad_calls);
-
-  write_log(g_rslt, &ridx, n, "MissingTest",   g_log_missing_test);
-
-  write_log(g_rslt, &ridx, n, "NoTestName",    g_log_no_test_name);
-  write_log(g_rslt, &ridx, n, "NoTestNames",   g_log_no_test_names);
-  write_log(g_rslt, &ridx, n, "NoUUID",        g_log_no_uuid);
-  write_log(g_rslt, &ridx, n, "NoTestType",    g_log_no_test_type);
-  write_log(g_rslt, &ridx, n, "NoTracer",      g_log_no_tracer);
-
-
-  write_log(g_rslt, &ridx, n, "NumDroppedPosts", g_log_dropped_posts);
-  write_log(g_rslt, &ridx, n, "NumPosts",        g_log_posts);
-  write_log(g_rslt, &ridx, n, "BadPosts",        g_log_bad_posts);
-  write_log(g_rslt, &ridx, n, "FailedPosts",     g_log_failed_posts);
-
-
-  write_log(g_rslt, &ridx, n, "BadUUID",     g_log_bad_uuid);
-  write_log(g_rslt, &ridx, n, "BadTestType", g_log_bad_test_type);
-  write_log(g_rslt, &ridx, n, "BadTestName", g_log_bad_test_name);
-  write_log(g_rslt, &ridx, n, "BadTracer",   g_log_bad_tracer);
-
-  write_log(g_rslt, &ridx, n, "NumGetAltVariantCalls", g_log_get_alt_variant_calls);
-  write_log(g_rslt, &ridx, n, "NumGetVariantCalls", g_log_get_variant_calls);
-  write_log(g_rslt, &ridx, n, "NumGetVariantsCalls", g_log_get_variant_calls);
-  write_log(g_rslt, &ridx, n, "NumRouterCalls",     g_log_router_calls);
-  write_log(g_rslt, &ridx, n, "NumBadRouterCalls",  g_log_bad_router_calls);
-  write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
-  write_log(g_rslt, &ridx, n, "ResponseTime",       g_log_response_time);
-
-  write_log(g_rslt, &ridx, n, "NumBadTests",        g_log_bad_test);
-
-
-  double avg_time = (g_log_response_time)/(double)
-    ((g_log_get_variant_calls + g_log_get_alt_variant_calls));
-  char buf[1024];
-  sprintf(buf, " \"AverageResponseTime\" : \"%lf\" , ", avg_time);
-  strcat(g_rslt, buf);
-
-  if ( strlen(g_rslt) > DT_MAX_LEN_RESULT - 32 ) { WHEREAMI; return -1; }
   strcat(g_rslt, "\"LastKey\" : 0 } \n");
   return status;
 }
-
