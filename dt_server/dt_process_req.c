@@ -24,7 +24,6 @@ dt_process_req(
   // STOP FUNC DECL
 {
   int status = 0;
-  int num_features;
   const char *cptr = NULL;
   //-----------------------------------------
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
@@ -39,32 +38,32 @@ dt_process_req(
       status = classify(body, g_rslt, DT_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
-    case Diagnostics : /* done by C and Lua */
+    case Diagnostics : 
       status = diagnostics(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
-    case DumpLog : /* done by C */
+    case DumpLog : 
       status = dump_log(); cBYE(status);
       break;
       //--------------------------------------------------------
-    case GetConfig : /* done by Lua */
+    case GetConfig : 
       status = get_config(&cptr); cBYE(status);
       snprintf(g_rslt, DT_MAX_LEN_RESULT, "%s\n", cptr);
       break;
       //--------------------------------------------------------
-    case GetNumFeatures : /* done by Lua */
-      status = get_num_features(&num_features); cBYE(status);
-      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\" } \n", num_features);
+    case GetNumFeatures : 
+      status = get_num_features(&g_n_dt_feature_vector); cBYE(status);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\" } \n", g_n_dt_feature_vector);
       break;
       //--------------------------------------------------------
-    case Halt : /* done by C */
+    case Halt : 
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       g_halt = true;
       break;
       //--------------------------------------------------------
-    case HealthCheck :  /* done by C */
-    case Ignore :  /* done by C */
+    case HealthCheck : 
+    case Ignore :
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -76,25 +75,25 @@ dt_process_req(
     case MakeFeatureVector : 
       /* Just for debugging */
       status = l_make_feature_vector(body);
-      status =  get_num_features(&num_features); cBYE(status);
-      for ( int i = 0; i < num_features; i++ ) { 
+      status =  get_num_features(&g_n_dt_feature_vector); cBYE(status);
+      for ( int i = 0; i < g_n_dt_feature_vector; i++ ) { 
         fprintf(stderr,"%d: %f \n", i, g_dt_feature_vector[i]);
       }
       cBYE(status);
       break;
       //--------------------------------------------------------
-    case MdlMeta : /* done by Lua */
+    case MdlMeta : 
       status = get_mdl_meta(&cptr); cBYE(status);
       snprintf(g_rslt, DT_MAX_LEN_RESULT, "%s\n", cptr);
       break;
       //--------------------------------------------------------
-    case PostProcPreds : /* done by C */
+    case PostProcPreds : /* just for testing */
       status = l_post_proc_preds(args, g_predictions, g_n_mdl,
           g_rslt, DT_MAX_LEN_RESULT);
       cBYE(status);
       break;
       //--------------------------------------------------------
-    case ZeroCounters : /* done by C */
+    case ZeroCounters : 
       zero_log();
       break;
       //--------------------------------------------------------
