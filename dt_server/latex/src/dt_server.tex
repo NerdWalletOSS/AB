@@ -4,12 +4,13 @@
 \section{Introduction}
 \TBC
 
-\subsection{Limitations}
+\subsection{Current Limitations}
 
 \be
 \item 
-Currently, we do not support categorical attributes. 
-We support only numeric and boolean attributes. 
+We do not support categorical attributes, 
+only numeric and boolean attributes. 
+\item We do not support unknown values. 
 \ee
 
 \subsection{What do you need to provided to launch a model?}
@@ -21,12 +22,11 @@ To deploy a model,
 and the underscore character
 \item The directory should contain the following files
 \be
-\item \verb+dt.csv   +
-\item \verb+mdl_meta.lua  +
-\item \verb+dt_features.lua  +
-\item \verb+mdl_map.lua   +
-\item \verb+sample_input.json   +
-\item \verb+sample_output.json+
+\item \verb+dt.csv+, Section~\ref{dt_csv}
+\item \verb+mdl_meta.lua+, Section~\ref{mdl_meta}
+\item \verb+dt_features.lua  +, Section~\ref{dt_features}
+\item \verb+mdl_map.lua+, Section~\ref{mdl_map}
+\item \verb+sample_input.json+ and \verb+sample_output.json+, Section~\ref{test_files}
 \ee
 \ee
 We will now describe how you go about creating these files.
@@ -56,10 +56,11 @@ either
 \ee
 \ee
 
-This will generate two files
+This will generate three files
 \be
 \item \verb+dt.csv+, Section~\ref{dt_csv}
 \item \verb+mdl_map.lua+ , Section~\ref{mdl_map}
+\item \verb+dt_features.lua+ , Section~\ref{dt_features}
 \ee
 
 \subsubsection{The Model CSV File}
@@ -84,4 +85,29 @@ have been produced. It is a Lua table indexed as 1, 2, \ldots As an example,
 return {[1]='model', [2] = 'some_other_model', [3] = 'yet_another_model'}
 \end{verbatim}
 
+\subsubsection{The Features for the Decision Tree}
+\label{dt_features}
+
+The input to the DT server is a JSON string e.g.,
+\begin{verbatim}
+{ "age" : 30, "height" : 175, "bp" : 120, "weight" = 210,  }
+\end{verbatim}
+The DT server maintains an array of floats, the size of which is equal to the
+number of features. In this case, we would have \verb+float X[4]+ in C.
+We need to consistently map each feature to a unique index in the C array. This is done
+by the \verb+dt_features.lua+ file looking like 
+\begin{verbatim}
+return {[1]='age', [2] = 'height', [3] = 'weight', [4] = 'bp', }
+\end{verbatim}
+
+\subsubsection{Meta Data for Model}
+\label{mdl_meta}
+The file \verb+mdl_meta.lua+ is optional. If provided, it should be 
+a set of key-value pairs, where both keys and values are strings. 
+
+\subsubsection{Files for testing}
+\label{test_files}
+The data scientist should create at least one sample input for which the output,
+produced by the sklearn package, is known. These help provide a basic sanity
+test. 
 

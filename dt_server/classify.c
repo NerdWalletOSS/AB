@@ -19,7 +19,7 @@ classify(
   status = eval_mdl(g_dt_feature_vector, g_n_dt_feature_vector, 
       g_dt, g_n_dt, g_rf, g_n_rf, g_mdl, g_n_mdl, g_predictions);
   cBYE(status);
-  status = l_post_proc_preds(NULL, g_predictions, g_n_mdl, rslt, sz_rslt);
+  status = l_post_proc_preds(NULL, g_predictions, g_n_mdl);
   cBYE(status);
 BYE:
   return status;

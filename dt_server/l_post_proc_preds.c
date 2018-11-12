@@ -7,9 +7,7 @@ int
 l_post_proc_preds(
     const char *args,
     float *pred_vector, // this is g_predictions [n_pred_vector]
-    int n_pred_vector,
-    char *X,
-    size_t nX
+    int n_pred_vector
     )
 {
   int status = 0;
@@ -32,9 +30,7 @@ l_post_proc_preds(
   }
   lua_pushlightuserdata(g_L_DT, pred_vector);
   lua_pushnumber(g_L_DT, n_pred_vector);
-  lua_pushlightuserdata(g_L_DT, X);
-  lua_pushnumber(g_L_DT, nX);
-  status = lua_pcall(g_L_DT, 4, 0, 0);
+  status = lua_pcall(g_L_DT, 2, 1, 0);
   if ( status != 0 ) {
     fprintf(stderr, "calling function %s failed: %s\n", 
         lua_fn, lua_tostring(g_L_DT, -1));
@@ -42,6 +38,11 @@ l_post_proc_preds(
     lua_pop(g_L_DT, 1);
     go_BYE(-1);
   }
+  if (!lua_isstring(g_L_DT, -1)) {
+    fprintf(stderr, "%s: return must be a string\n", __func__); go_BYE(-1); 
+  }
+  const char *x = lua_tostring(g_L_DT, -1);
+  strncpy(g_rslt, lua_tostring(g_L_DT, -1), DT_MAX_LEN_RESULT);
 BYE:
   return status;
 }

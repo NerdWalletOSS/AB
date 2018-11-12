@@ -88,8 +88,7 @@ dt_process_req(
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* just for testing */
-      status = l_post_proc_preds(args, g_predictions, g_n_mdl,
-          g_rslt, DT_MAX_LEN_RESULT);
+      status = l_post_proc_preds(args, g_predictions, g_n_mdl);
       cBYE(status);
       break;
       //--------------------------------------------------------
