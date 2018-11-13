@@ -53,8 +53,10 @@ dt_process_req(
       break;
       //--------------------------------------------------------
     case GetNumFeatures : 
-      status = get_num_features(&g_n_dt_feature_vector); cBYE(status);
-      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\" } \n", g_n_dt_feature_vector);
+      status = get_num_features(&(g_interp[0].n_dt_feature_vector)); 
+      cBYE(status);
+      sprintf(g_rslt, " { \"NumFeatures\" : \"%d\" } \n", 
+          g_interp->n_dt_feature_vector);
       break;
       //--------------------------------------------------------
     case Halt : 
@@ -75,9 +77,10 @@ dt_process_req(
     case MakeFeatureVector : 
       /* Just for debugging */
       status = l_make_feature_vector(body);
-      status =  get_num_features(&g_n_dt_feature_vector); cBYE(status);
-      for ( int i = 0; i < g_n_dt_feature_vector; i++ ) { 
-        fprintf(stderr,"%d: %f \n", i, g_dt_feature_vector[i]);
+      status =  get_num_features(&(g_interp[0].n_dt_feature_vector)); 
+      cBYE(status);
+      for ( int i = 0; i < g_interp->n_dt_feature_vector; i++ ) { 
+        fprintf(stderr,"%d: %f \n", i, g_interp->dt_feature_vector[i]);
       }
       cBYE(status);
       break;
@@ -88,7 +91,8 @@ dt_process_req(
       break;
       //--------------------------------------------------------
     case PostProcPreds : /* just for testing */
-      status = l_post_proc_preds(args, g_predictions, g_n_mdl);
+      status = l_post_proc_preds(args, g_interp->predictions, 
+          g_interp->n_mdl);
       cBYE(status);
       break;
       //--------------------------------------------------------

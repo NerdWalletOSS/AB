@@ -41,7 +41,6 @@ l_post_proc_preds(
   if (!lua_isstring(g_L_DT, -1)) {
     fprintf(stderr, "%s: return must be a string\n", __func__); go_BYE(-1); 
   }
-  const char *x = lua_tostring(g_L_DT, -1);
   strncpy(g_rslt, lua_tostring(g_L_DT, -1), DT_MAX_LEN_RESULT);
 BYE:
   return status;

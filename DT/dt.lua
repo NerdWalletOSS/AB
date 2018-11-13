@@ -32,3 +32,10 @@ mdl_map = require(mdl_map_file)
 assert(type(mdl_map) == "table")
 --===========================================
 -- for k, v in pairs(mdl_meta) do print(k, v) end 
+--===========================================
+-- loaded dt.so 
+-- cdef all necessary types, ....
+-- malloc g_predictions  [ g_n_mdl ]
+-- malloc g_dt_feature_vector [ g_n_dt_feature_vector]
+-- read_random_forest(...) -- this returns a struct that we will keep
+--

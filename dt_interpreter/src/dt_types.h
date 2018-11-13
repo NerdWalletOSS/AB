@@ -29,4 +29,19 @@ typedef struct _mdl_rec_type {
   float prob; // will get set at run time 
 } MDL_REC_TYPE;
 
+typedef struct _dt_interpreter_type {
+  DT_REC_TYPE *dt; /* decision tree [n_dt]  */
+  uint32_t n_dt;
+  size_t len_dt_file; 
+  RF_REC_TYPE *rf; /* random forest * [n_rf] */
+  uint32_t n_rf;
+  size_t len_rf_file; 
+  MDL_REC_TYPE *mdl; /* models [n_mdl] */
+  uint32_t n_mdl;
+  size_t len_mdl_file; 
+
+  float *predictions;  /* [n_mdl] */
+  float *dt_feature_vector; 
+  int n_dt_feature_vector  ;  // Set by Lua after reading configs
+} DT_INTERPRETER_TYPE;
 #endif

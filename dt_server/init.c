@@ -6,31 +6,36 @@
 #include "dt_types.h"
 extern lua_State *g_L_DT; // Set by C
 
-extern DT_REC_TYPE *g_dt_map;
-extern size_t g_len_dt_file;
-extern uint32_t g_num_dt_map;
 
-//<hdr>
 void
 free_globals(
     void
     )
+{
+  free_interp(g_interp);
+  if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
+}
+
+//<hdr>
+void
+free_interp(
+    DT_INTERPRETER_TYPE *interp
+    )
   //</hdr>
 {
-  if ( ( g_dt != NULL ) && ( g_len_dt_file > 0 ) ) { 
-    munmap(g_dt, g_len_dt_file); g_n_dt = 0;
+  if ( interp != NULL ) {
+    if ( ( interp->dt != NULL ) && ( interp->len_dt_file > 0 ) ) { 
+      munmap(interp->dt, interp->len_dt_file); interp->n_dt = 0;
+    }
+    if ( ( interp->rf != NULL ) && ( interp->len_rf_file > 0 ) ) { 
+      munmap(interp->rf, interp->len_rf_file); interp->n_rf = 0;
+    }
+    if ( ( interp->mdl != NULL ) && ( interp->len_mdl_file > 0 ) ) { 
+      munmap(interp->mdl, interp->len_mdl_file); interp->n_mdl = 0;
+    }
+    free_if_non_null(interp->predictions); interp->n_mdl = 0;
+    free_if_non_null(interp->dt_feature_vector); interp->n_dt_feature_vector = 0;
   }
-  if ( ( g_rf != NULL ) && ( g_len_rf_file > 0 ) ) { 
-    munmap(g_rf, g_len_rf_file); g_n_rf = 0;
-  }
-  if ( ( g_mdl != NULL ) && ( g_len_mdl_file > 0 ) ) { 
-    munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
-  }
-  if ( !g_disable_lua ) { 
-    if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
-  }
-  free_if_non_null(g_predictions); g_n_mdl = 0;
-  free_if_non_null(g_dt_feature_vector); g_n_dt_feature_vector = 0;
 }
 
 int
@@ -45,14 +50,9 @@ zero_globals(
   memset(g_buf, '\0', DT_ERR_MSG_LEN+1);
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
 
-  g_dt_feature_vector = NULL;
-  g_n_dt_feature_vector = 0;
+  g_interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
+  memset(g_interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
 
-  g_L_DT = NULL;
-  g_dt  = NULL; g_n_dt = 0;
-  g_rf  = NULL; g_n_rf = 0;
-  g_mdl = NULL; g_n_mdl = 0;
-  g_predictions = NULL;
   //------------
   const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=/_:";
   memset(g_valid_chars_in_url, '\0', 256);

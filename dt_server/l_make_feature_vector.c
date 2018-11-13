@@ -16,8 +16,8 @@ l_make_feature_vector(
     lua_pop(g_L_DT, 1); go_BYE(-1);
   }
   lua_pushstring(g_L_DT, fvec_as_json); 
-  lua_pushlightuserdata(g_L_DT, g_dt_feature_vector);
-  lua_pushnumber(g_L_DT, g_n_dt_feature_vector);
+  lua_pushlightuserdata(g_L_DT, g_interp->dt_feature_vector);
+  lua_pushnumber(g_L_DT, g_interp->n_dt_feature_vector);
   status = lua_pcall(g_L_DT, 3, 1, 0);
   if ( status != 0 ) {
     fprintf(stderr, "calling function %s failed: %s\n", 

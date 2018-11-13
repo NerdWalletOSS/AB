@@ -8,9 +8,6 @@
 #include "load_dt.h"
 #include "load_rf.h"
 #include "load_mdl.h"
-extern DT_REC_TYPE *g_dt_map;  /* [g_num_dt_map] */
-extern uint32_t g_num_dt_map; 
-extern size_t g_len_dt_file; 
 
 static bool
 do_binary_files_exist(
@@ -52,37 +49,60 @@ load_models(
   if ( !do_binary_files_exist(dt_dir, model_name) ) {
     fprintf(stderr, "Creating binary files for model \n");
     go_BYE(-1);
+    /*
+  status = read_random_forest(random_forest_file_name, 
+      &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
+  cBYE(status);
+  predictions = malloc(n_mdl * sizeof(float));
+  return_if_malloc_failed(predictions);
+  //  Write binary output files 
+  //---------------------------------------------------
+  ofp = fopen(dt_file_name, "wb");
+  return_if_fopen_failed(ofp, dt_file_name, "wb");
+  fwrite(dt, sizeof(DT_REC_TYPE), n_dt, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(rf_file_name, "wb");
+  return_if_fopen_failed(ofp, rf_file_name, "wb");
+  fwrite(rf, sizeof(RF_REC_TYPE), n_rf, ofp);
+  fclose_if_non_null(ofp);
+  //---------------------------------------------------
+  ofp = fopen(mdl_file_name, "wb");
+  return_if_fopen_failed(ofp, mdl_file_name, "wb");
+  fwrite(mdl, sizeof(MDL_REC_TYPE), n_mdl, ofp);
+  fclose_if_non_null(ofp);
+      */
   }
   //--------------------------------------------------------
   // dt, rf, mdl
-  free_if_non_null(g_dt_feature_vector);  g_n_dt_feature_vector = 0;
-  free_if_non_null(g_predictions); 
-  rs_munmap(g_dt,  g_len_dt_file);  g_n_dt = 0;
-  rs_munmap(g_rf,  g_len_rf_file);  g_n_rf = 0;
-  rs_munmap(g_mdl, g_len_mdl_file); g_n_mdl = 0;
+  free_if_non_null(g_interp->dt_feature_vector);  g_interp->n_dt_feature_vector = 0;
+  free_if_non_null(g_interp->predictions); 
+  rs_munmap(g_interp->dt,  g_interp->len_dt_file);  g_interp->n_dt = 0;
+  rs_munmap(g_interp->rf,  g_interp->len_rf_file);  g_interp->n_rf = 0;
+  rs_munmap(g_interp->mdl, g_interp->len_mdl_file); g_interp->n_mdl = 0;
 
   buflen = strlen(dt_dir) + strlen(model_name) + 32;
   buf = malloc(buflen); return_if_malloc_failed(buf);
   memset(buf, '\0', buflen); 
 
   sprintf(buf, "%s/%s/_dt.bin", dt_dir, model_name); 
-  status = load_dt(buf, &g_dt, &g_len_dt_file, &g_n_dt);
+  status = load_dt(buf, &g_interp->dt, &g_interp->len_dt_file, &g_interp->n_dt);
   cBYE(status);
 
   sprintf(buf, "%s/%s/_rf.bin", dt_dir, model_name); 
-  status = load_rf(buf, &g_rf, &g_len_rf_file, &g_n_rf);
+  status = load_rf(buf, &g_interp->rf, &g_interp->len_rf_file, &g_interp->n_rf);
   cBYE(status);
 
   sprintf(buf, "%s/%s/_mdl.bin", dt_dir, model_name); 
-  status = load_mdl(buf, &g_mdl, &g_len_mdl_file, &g_n_mdl);
+  status = load_mdl(buf, &g_interp->mdl, &g_interp->len_mdl_file, &g_interp->n_mdl);
   cBYE(status);
 
-  g_predictions = malloc(g_n_mdl * sizeof(float));
-  return_if_malloc_failed(g_predictions);
+  g_interp->predictions = malloc(g_interp->n_mdl * sizeof(float));
+  return_if_malloc_failed(g_interp->predictions);
 
-  status = get_num_features(&g_n_dt_feature_vector ); cBYE(status); 
-  g_dt_feature_vector = malloc(g_n_dt_feature_vector * sizeof(float));
-  return_if_malloc_failed(g_dt_feature_vector);
+  status = get_num_features(&(g_interp[0].n_dt_feature_vector) ); cBYE(status); 
+  g_interp->dt_feature_vector = malloc(g_interp->n_dt_feature_vector * sizeof(float));
+  return_if_malloc_failed(g_interp->dt_feature_vector);
   //--------------------------------------------------------
 BYE:
   free_if_non_null(buf);
