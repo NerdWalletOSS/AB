@@ -6,8 +6,8 @@
 #include "load_models.h"
 #include "setup.h"
 #include "get_from_lua.h"
-extern char g_err[DT_ERR_MSG_LEN+1]; 
 extern lua_State *g_L_DT; 
+extern DT_INTERPRETER_TYPE *g_interp;
 
 int
 setup(
@@ -22,7 +22,7 @@ setup(
   zero_globals();
   status = init_lua(); cBYE(status); 
   status = get_mdl_loc(&dt_dir, &model_name); cBYE(status);
-  status = load_models(dt_dir, model_name); cBYE(status);
+  status = load_models(dt_dir, model_name, g_interp); cBYE(status);
 BYE:
   return status;
 }

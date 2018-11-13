@@ -13,6 +13,7 @@ free_globals(
     )
 {
   free_interp(g_interp);
+  free_if_non_null(g_interp);
   if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
 }
 
@@ -51,6 +52,7 @@ zero_globals(
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
 
   g_interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
+  return_if_malloc_failed(g_interp);
   memset(g_interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
 
   //------------
@@ -61,6 +63,7 @@ zero_globals(
   }
 
   zero_log();
+BYE:
   return status;
 }
 

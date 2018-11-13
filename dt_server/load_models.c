@@ -1,5 +1,4 @@
 #include "dt_incs.h"
-#include "dt_globals.h"
 #include "auxil.h"
 #include "init.h"
 #include "load_models.h"
@@ -39,7 +38,8 @@ BYE:
 int
 load_models(
     const char * const dt_dir,
-    const char * const model_name
+    const char * const model_name,
+    DT_INTERPRETER_TYPE *interp
     )
 {
   int status = 0;
@@ -75,40 +75,41 @@ load_models(
   }
   //--------------------------------------------------------
   // dt, rf, mdl
-  free_if_non_null(g_interp->dt_feature_vector);  g_interp->n_dt_feature_vector = 0;
-  free_if_non_null(g_interp->predictions); 
-  rs_munmap(g_interp->dt,  g_interp->len_dt_file);  g_interp->n_dt = 0;
-  rs_munmap(g_interp->rf,  g_interp->len_rf_file);  g_interp->n_rf = 0;
-  rs_munmap(g_interp->mdl, g_interp->len_mdl_file); g_interp->n_mdl = 0;
+  free_if_non_null(interp->dt_feature_vector);  interp->n_dt_feature_vector = 0;
+  free_if_non_null(interp->predictions); 
+  rs_munmap(interp->dt,  interp->len_dt_file);  interp->n_dt = 0;
+  rs_munmap(interp->rf,  interp->len_rf_file);  interp->n_rf = 0;
+  rs_munmap(interp->mdl, interp->len_mdl_file); interp->n_mdl = 0;
 
   buflen = strlen(dt_dir) + strlen(model_name) + 32;
   buf = malloc(buflen); return_if_malloc_failed(buf);
   memset(buf, '\0', buflen); 
 
   sprintf(buf, "%s/%s/_dt.bin", dt_dir, model_name); 
-  status = load_dt(buf, &g_interp->dt, &g_interp->len_dt_file, &g_interp->n_dt);
+  status = load_dt(buf, &interp->dt, &interp->len_dt_file, &interp->n_dt);
   cBYE(status);
 
   sprintf(buf, "%s/%s/_rf.bin", dt_dir, model_name); 
-  status = load_rf(buf, &g_interp->rf, &g_interp->len_rf_file, &g_interp->n_rf);
+  status = load_rf(buf, &interp->rf, &interp->len_rf_file, &interp->n_rf);
   cBYE(status);
 
   sprintf(buf, "%s/%s/_mdl.bin", dt_dir, model_name); 
-  status = load_mdl(buf, &g_interp->mdl, &g_interp->len_mdl_file, &g_interp->n_mdl);
+  status = load_mdl(buf, &interp->mdl, &interp->len_mdl_file, &interp->n_mdl);
   cBYE(status);
 
-  g_interp->predictions = malloc(g_interp->n_mdl * sizeof(float));
-  return_if_malloc_failed(g_interp->predictions);
+  interp->predictions = malloc(interp->n_mdl * sizeof(float));
+  return_if_malloc_failed(interp->predictions);
 
-  status = get_num_features(&(g_interp[0].n_dt_feature_vector) ); cBYE(status); 
-  g_interp->dt_feature_vector = malloc(g_interp->n_dt_feature_vector * sizeof(float));
-  return_if_malloc_failed(g_interp->dt_feature_vector);
+  status = get_num_features(&(interp[0].n_dt_feature_vector) ); cBYE(status); 
+  interp->dt_feature_vector = malloc(interp->n_dt_feature_vector * sizeof(float));
+  return_if_malloc_failed(interp->dt_feature_vector);
   //--------------------------------------------------------
 BYE:
   free_if_non_null(buf);
   return status;
 }
 
+extern DT_INTERPRETER_TYPE *g_interp;
 int
 x_load_models(
     const char * const args
@@ -128,7 +129,7 @@ x_load_models(
     if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { go_BYE(-1); }
   }
   //----------------------------------------
-  status = load_models(dt_dir, model_name); cBYE(status);
+  status = load_models(dt_dir, model_name, g_interp); cBYE(status);
   // Inform Lua that model name has changed
   status = set_model_name(model_name); cBYE(status);
 BYE:
