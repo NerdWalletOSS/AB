@@ -43,18 +43,21 @@ all : lupa_dt.so
 
 $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a 
 
+../dt_interpreter/src/dt.so : 
+	make -C ../dt_interpreter/src/
+
 lupa_dt.so : $(COBJS)  \
-	../LuaJIT-2.1.0-beta3/src/libluajit.a 
+	../LuaJIT-2.1.0-beta3/src/libluajit.a  \
+	../dt_interpreter/src/dt.so 
 	$(CC) -shared $(CFLAGS) $(COBJS) \
+	  ../dt_interpreter/src/dt.so \
 	  -o lupa_dt.so  \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
 	-lm  -lpthread -ldl 
 
 clean:
-	rm -r -f dt_httpd $(COBJS) 
 	make -i -C ../LuaJIT-2.1.0-beta3/src/ clean 
-	make -C ../dt_intepreter/src clean
-	rm -f ../dt_interpreter/src/*.so 
+	make -C ../dt_interpreter/src clean
 	echo "ALL CLEAN"
 
 qclean :
