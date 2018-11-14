@@ -21,12 +21,7 @@ local function post_proc_preds(
     out[v] = opvec[k-1]
   end
   -- TODO: do more error checking
-  print("===============")
-  for k, v in pairs(out) do print(k, v) end 
-  print("===============")
   local x = assert(JSON:encode(out))
-  print(x)
-  print("===============")
   return x
 end
 return post_proc_preds
