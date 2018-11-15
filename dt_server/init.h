@@ -16,7 +16,7 @@ zero_log(
     );
 extern int
 init_lua(
-    void
+    const char *const config_file
     );
 extern void
 free_interp(

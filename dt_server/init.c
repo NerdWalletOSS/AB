@@ -80,12 +80,13 @@ zero_log(
 
 int
 init_lua(
-    void
+    const char * const config_file
     )
 {
   int status = 0;
   g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L_DT);  
+  // TODO Send config file to dt.lua 
   status = luaL_dostring(g_L_DT, "require 'DT/dt'"); 
   if ( status != 0 ) { 
     fprintf(stderr, "Lua load : %s\n", lua_tostring(g_L_DT, -1));

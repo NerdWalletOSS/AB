@@ -11,6 +11,7 @@ typedef struct _dt_rec_type {
   float threshold;
   int nneg;
   int npos;
+  float xgb_val;
 } DT_REC_TYPE;
 
 typedef struct _rf_rec_type { 

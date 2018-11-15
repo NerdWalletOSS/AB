@@ -20,7 +20,7 @@ setup(
 
   free_globals(); 
   zero_globals();
-  status = init_lua(); cBYE(status); 
+  status = init_lua(config_file); cBYE(status); 
   status = get_mdl_loc(&dt_dir, &model_name); cBYE(status);
   status = load_models(dt_dir, model_name, g_interp); cBYE(status);
 BYE:

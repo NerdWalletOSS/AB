@@ -28,7 +28,7 @@ read_random_forest(
   // tree_idx,node_idx,lchild_idx,rchild_idx,feature_idx,threshold,nnneg,npos
   const char *const q_data_dir = "/tmp/";
   const char *const infile = file_name;
-  uint32_t nC = 9; // HARD CODED
+  uint32_t nC = 10; // HARD CODED
   uint64_t nR = 0;
   char *fldtypes[nC];
   for ( uint32_t i = 0; i < nC; i++ ) { fldtypes[i] = NULL; }
@@ -41,6 +41,7 @@ read_random_forest(
   fldtypes[6] = strdup("F4");
   fldtypes[7] = strdup("I4"); 
   fldtypes[8] = strdup("I4"); 
+  fldtypes[9] = strdup("F4"); 
   bool is_hdr = true;
   bool is_load[nC]; 
   for ( uint32_t i = 0; i < nC; i++ ) { is_load[i] = true; }
@@ -106,6 +107,11 @@ read_random_forest(
   status = rs_mmap(out_files[8], &X, &nX, 0); cBYE(status);
   iptr = (int *)X; 
   for ( int i = 0; i < n_dt; i++ ) { dt[i].npos = iptr[i]; }
+  mcr_rs_munmap(X, nX);
+  //----------------------------------------------------
+  status = rs_mmap(out_files[9], &X, &nX, 0); cBYE(status);
+  fptr = (float *)X; 
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].xgb_val = fptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   // calculate number of models, alloc and initialize

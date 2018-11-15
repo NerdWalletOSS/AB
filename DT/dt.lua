@@ -1,4 +1,5 @@
 local isfile = require 'DT/isfile'
+-- TODO Following is bad. This should not be hard coded but sent as argument
 conf = dofile('../dt_server/dt.conf.lua')
 
 get_config       = require 'DT/get_config'
