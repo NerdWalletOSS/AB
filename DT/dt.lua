@@ -35,7 +35,4 @@ assert(type(mdl_map) == "table")
 --===========================================
 -- loaded dt.so 
 -- cdef all necessary types, ....
--- malloc g_predictions  [ g_n_mdl ]
--- malloc g_dt_feature_vector [ g_n_dt_feature_vector]
--- read_random_forest(...) -- this returns a struct that we will keep
---
+-- init() which calls load_models() which calls .....
