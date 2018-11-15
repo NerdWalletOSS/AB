@@ -6,6 +6,19 @@ local set_perc = require 'test_webapp/set_perc'
 local reset_db = require 'test_webapp/reset_db'
 
 
+local function compare_percs(
+  P,
+  V
+  )
+  assert(type(P) == "table")
+  assert(type(V) == "table")
+  assert(#P == #V)
+  for i = 1, #P do
+    -- print(i, V[i].name, V[i].percentage, P[i])
+    assert(tonumber(P[i]) == tonumber(V[i].percentage))
+  end
+end
+
 local T = {}
 T.t1 = function(num_iters)
   reset_db()
@@ -18,7 +31,8 @@ T.t1 = function(num_iters)
     --= change percentages. it should work 
     P  = set_perc(tid)
     T3 = get_test_info(tid)
-    -- assert(compare_test_info(T2, T3))
+    compare_percs(P, T3.Variants)
+
     -- publish it  and change percentages. it should work.
     S.publish(tid)
     P  = set_perc(tid)

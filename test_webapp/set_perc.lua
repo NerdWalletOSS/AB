@@ -11,19 +11,21 @@ local tbp_url = "localhost:8080/AB/php/endpoints/endpoint_test_basic.php"
 --]]
 local function set_perc(
   tid,
-  P
+  inP
   )
   local T = assert(get_test_info(tid))
   T.Updater = T.Creator
   local Variants = T.Variants
-  if ( not P ) then 
+  local P 
+  if ( not inP ) then 
     P = R.rand_perc(T.TestType, #Variants)
   else
-    assert(type(P) == "table")
-    assert(#P == #Variants)
-    for k1, v1 in pairs(P) do 
-      Variants[k1].percentage = v1.percentage
-    end
+    P = inP
+  end
+  assert(type(P) == "table")
+  assert(#P == #Variants)
+  for k1, p in pairs(P) do 
+    Variants[k1].percentage = p
   end
   local a, b, c = curl.post(tbp_url, nil, JSON:encode(T))
   assert(c == 200)
