@@ -64,13 +64,15 @@ main(
   FILE *fp = NULL;
   FILE *ofp = NULL;
   float *predictions = NULL;
+  char *forest_type;
   if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   dt_file_name            = argv[2];
   rf_file_name            = argv[3];
   mdl_file_name           = argv[4];
-  if ( argc == 6 ) { 
-    test_data_file_name     = argv[5];
+  forest_type             = argv[5];
+  if ( argc == 7 ) { 
+    test_data_file_name     = argv[6];
   }
 
   status = is_uq(argc, argv); cBYE(status);
@@ -144,7 +146,7 @@ main(
       uint64_t t2a = get_time_usec();
       uint64_t t1a = RDTSC(); 
       status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl,
-          predictions);
+          forest_type, predictions);
       uint64_t t1b = RDTSC(); 
       uint64_t t2b = get_time_usec();
       uint64_t d1 = (t1b - t1a);

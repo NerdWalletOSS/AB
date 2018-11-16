@@ -17,10 +17,11 @@ fi
 dtfile=_dt.bin
 rffile=_rf.bin
 mdlfile=_mdl.bin
+foresttype="random_forest"
 VG="valgrind --leak-check=full"
 VG=""
-echo ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 
-$VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 1>_out 2>&1
+echo ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $foresttype $testfile 
+$VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $foresttype $testfile 1>_out 2>&1
 if [ "$VG" != "" ]; then 
   grep "ERROR SUMMARY: 0 errors" _out 1>/dev/null 2>&1
 fi

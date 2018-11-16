@@ -11,8 +11,14 @@ typedef struct _dt_rec_type {
   float threshold;
   int nneg;
   int npos;
-  float xgb_val;
+  float xgb; // value for XGBoost
 } DT_REC_TYPE;
+
+typedef struct _rf_val_rec_type { 
+  int npos;
+  int nneg;
+  float xgb;
+} RF_EVAL_REC_TYPE;
 
 typedef struct _rf_rec_type { 
   int tree_idx;
