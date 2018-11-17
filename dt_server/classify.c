@@ -23,7 +23,7 @@ classify(
       g_interp->dt, g_interp->n_dt, 
       g_interp->rf, g_interp->n_rf, 
       g_interp->mdl, g_interp->n_mdl, 
-      g_interp->predictions);
+      g_interp->forest_type, g_interp->predictions);
   cBYE(status);
   status = l_post_proc_preds(NULL, 
       g_interp->predictions, 

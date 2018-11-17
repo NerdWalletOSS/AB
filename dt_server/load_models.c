@@ -24,7 +24,10 @@ do_binary_files_exist(
   memset(buf, '\0', buflen); 
 
   sprintf(buf, "%s/%s/_dt.bin", dt_dir, model_name); 
-  if ( !isfile(buf) ) { go_BYE(-1); }
+  if ( !isfile(buf) ) { 
+    fprintf(stderr, "File not found %s \n", buf); 
+    go_BYE(-1); 
+  }
 
   sprintf(buf, "%s/%s/_rf.bin", dt_dir, model_name); 
   if ( !isfile(buf) ) { go_BYE(-1); }

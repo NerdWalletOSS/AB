@@ -1,3 +1,5 @@
+#include "dt_consts.h"
+
 #ifndef __DT_TYPES_H
 #define __DT_TYPES_H
 
@@ -50,5 +52,7 @@ typedef struct _dt_interpreter_type {
   float *predictions;  /* [n_mdl] */
   float *dt_feature_vector; 
   int n_dt_feature_vector  ;  // Set by Lua after reading configs
+
+  char *forest_type; // [DT_MAX_LEN_LABEL+1]; 
 } DT_INTERPRETER_TYPE;
 #endif

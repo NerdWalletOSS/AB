@@ -20,15 +20,4 @@ typedef enum _dt_req_type {
   ZeroCounters // Write &  C
 } DT_REQ_TYPE;
 
-
-typedef struct _cfg_type {
-
-  char dt_dir[DT_MAX_LEN_FILE_NAME+1]; // For decision tree
-  char model_name[DT_MAX_LEN_FILE_NAME+1]; // For decision tree
-
-  int32_t  port;  // port on which AB RTS will run
-  bool verbose;    // how chatty should RTS be
-
-} CFG_TYPE;
-
 #endif

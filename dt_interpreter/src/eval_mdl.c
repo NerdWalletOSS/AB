@@ -59,7 +59,7 @@ eval_mdl(
         rf, n_rf, rf_lb, rf_ub, rf_eval);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
-    double sum_prob = 0; 
+    double sum = 0; 
     int npos;
     int nneg;
     float prob;
@@ -70,14 +70,22 @@ eval_mdl(
           npos = rf_eval[j].npos;
           nneg = rf_eval[j].nneg;
           prob = (float)npos / (float)(npos + nneg);
-          sum_prob += prob;
+          sum  += prob;
           break;
         case XGBOOST : 
           xgb = rf_eval[j].xgb;
+          sum += xgb;
           break;
       }
     }
-    predictions[i] = sum_prob / l_n_rf;
+    switch ( forest_type ) { 
+      case RANDOM_FOREST : 
+        predictions[i] = sum / l_n_rf;
+        break;
+      case XGBOOST : 
+        predictions[i] = 1.0 / ( 1 + exp(-1.0 * sum));
+        break;
+    }
   }
   cBYE(status);
 BYE:
