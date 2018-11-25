@@ -184,3 +184,30 @@ set_model_name(
 BYE:
   return status;
 }
+int
+get_forest_type(
+    const char **ptr_forest_type
+    )
+{
+  int status = 0;
+  const char *const lua_fn = "get_forest_type";
+  lua_getglobal(g_L_DT, lua_fn);
+  if ( !lua_isfunction(g_L_DT, -1)) {
+    fprintf(stderr, "Lua function %s missing\n", lua_fn);
+    lua_pop(g_L_DT, 1); go_BYE(-1);
+  }
+  status = lua_pcall(g_L_DT, 0, 1, 0);
+  if (status != 0) {
+    fprintf(stderr, "Lua function %s failed: %s\n", lua_fn,
+          lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1);
+    go_BYE(-1);
+  }
+  if (!lua_isstring(g_L_DT, -1)) {
+    fprintf(stderr, "%s: return 1 must be a string\n", __func__); go_BYE(-1); 
+  }
+  *ptr_forest_type = lua_tostring(g_L_DT, -1);
+BYE:
+  return status;
+}

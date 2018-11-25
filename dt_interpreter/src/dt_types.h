@@ -52,6 +52,6 @@ typedef struct _dt_interpreter_type {
   float *dt_feature_vector; 
   int n_dt_feature_vector  ;  // Set by Lua after reading configs
 
-  char *forest_type; // [DT_MAX_LEN_LABEL+1]; 
+  int forest_type; 
 } DT_INTERPRETER_TYPE;
 #endif

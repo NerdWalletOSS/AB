@@ -17,6 +17,7 @@ setup(
   int status = 0;
   const char *model_dir = NULL;
   const char *model_name = NULL;
+  const char *forest_type = NULL;
   int num_features;
 
   free_globals(); 
@@ -29,7 +30,9 @@ setup(
   status = init_lua(config_file); cBYE(status); 
   status = get_mdl_loc(&model_dir, &model_name); cBYE(status);
   status = get_num_features(&num_features); cBYE(status);
-  status = load_models(model_dir, num_features, g_interp); cBYE(status);
+  status = get_forest_type(&forest_type); cBYE(status);
+  status = load_models(model_dir, forest_type, num_features, g_interp); 
+  cBYE(status);
 BYE:
   return status;
 }

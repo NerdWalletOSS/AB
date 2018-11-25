@@ -20,10 +20,9 @@ local function make_feature_vector(
     fidx_seen[i] = false
   end
   --=================================
-  for k, v in pairs(dt_feature_to_idx) do print(k, v) end 
+  -- for k, v in pairs(dt_feature_to_idx) do print(k, v) end 
   --=================================
   for k, v in pairs(fvec_tbl) do
-    print(k, v)
     local fidx = assert(dt_feature_to_idx[k])
     assert( ( fidx >=1 ) and ( fidx <= n_fvec ) )
     assert(type(v) == "number")

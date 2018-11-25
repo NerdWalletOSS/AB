@@ -3,8 +3,6 @@
 #include "eval_rf.h"
 #include "eval_mdl.h"
 
-#define RANDOM_FOREST 1
-#define XGBOOST       2
 int
 eval_mdl(
   float *features, /* [n_features] */
@@ -15,7 +13,7 @@ eval_mdl(
   int n_rf, /* number of decision trees in random forest */
   MDL_REC_TYPE *mdl, /* [n_mdl] */
   int n_mdl, /* number of models */
-  const char *const str_forest_type,
+  int forest_type,
   float *predictions /* [n_mdl] */
   )
 {
@@ -23,15 +21,13 @@ eval_mdl(
   for ( int i = 0; i < n_mdl; i++ ) {
     predictions[i] = 0;
   }
-  int forest_type = -1;
-  if ( strcasecmp(str_forest_type, "random_forest") == 0 ) { 
-    forest_type = RANDOM_FOREST;
-  }
-  if ( strcasecmp(str_forest_type, "xgboost") == 0 ) { 
-    forest_type = XGBOOST;
-  }
-  else {
-    go_BYE(-1);
+  switch ( forest_type ) { 
+    case RANDOM_FOREST : 
+    case XGBOOST : 
+      break;
+    default :
+      go_BYE(-1);
+      break;
   }
 
   if ( dt == NULL ) { go_BYE(-1); }

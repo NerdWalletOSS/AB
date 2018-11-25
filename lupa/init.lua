@@ -3,9 +3,16 @@ local ffi = require 'ffi'
 lupa_dt = ffi.load('liblupa_dt')
 require 'DT/init'
 local load_model = require 'DT/load_model'
-local function init(model_dir)
+local function init(model_dir, forest_type)
   conf = {} -- this is a global
   conf.DECISION_TREE_DIRECTORY = model_dir
+  if ( not forest_type ) then 
+    forest_type = "random_forest"
+  end
+  forest_type = string.lower(forest_type)
+  assert(( forest_type == "random_forest")or(forest_type == "xgboost"))
+  conf.FOREST_TYPE = forest_type
+  --================================================
   assert(load_model(model_dir))
   --  cdef necessary structures
   local tbl = {}
@@ -23,20 +30,26 @@ local function init(model_dir)
   ffi.cdef([[
   extern int load_models(
     const char * const model_dir,
+    const char * const forest_type,
     int num_features,
+    DT_INTERPRETER_TYPE *interp
+    );
+  extern void free_interp(
+    DT_INTERPRETER_TYPE *interp
+    );
+  extern int lua_eval_mdl(
     DT_INTERPRETER_TYPE *interp
     );
   ]])
   --===========================================
+  -- g_interp is a global
   g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
   ffi.fill(g_interp, ffi.sizeof("DT_INTERPRETER_TYPE"))
+  g_interp = ffi.cast("DT_INTERPRETER_TYPE *", g_interp)
   local num_features = get_num_features()
-  print(num_features)
-  status = lupa_dt.load_models(model_dir, num_features, g_interp)
+  status = lupa_dt.load_models(model_dir, forest_type, num_features, g_interp)
   assert(status)
 
   return true
 end
-init('../DT/spam')
-print("Success")
--- return init
+return init

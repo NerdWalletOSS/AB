@@ -1,11 +1,28 @@
 #include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 #include "dt_incs.h"
-#include "dt_globals.h"
+#include "dt_incs.h"
 #include "init.h"
 #include "auxil.h"
 #include "dt_types.h"
+#include "free_interp.h"
 extern lua_State *g_L_DT; 
 extern char g_err[DT_ERR_MSG_LEN+1]; 
+extern bool g_halt; 
+extern char g_err[DT_ERR_MSG_LEN+1]; 
+extern char g_buf[DT_ERR_MSG_LEN+1]; 
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; 
+extern char g_valid_chars_in_url[256]; 
+
+//------------------------ For Lua
+lua_State *g_L_DT; // Set by C
+
+#include "dt_log_globals.h"
+
+#include "dt_types.h"
+
+DT_INTERPRETER_TYPE *g_interp;
 
 void
 free_globals(
@@ -15,28 +32,6 @@ free_globals(
   free_interp(g_interp);
   free_if_non_null(g_interp);
   if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
-}
-
-//<hdr>
-void
-free_interp(
-    DT_INTERPRETER_TYPE *interp
-    )
-  //</hdr>
-{
-  if ( interp != NULL ) {
-    if ( ( interp->dt != NULL ) && ( interp->len_dt_file > 0 ) ) { 
-      munmap(interp->dt, interp->len_dt_file); interp->n_dt = 0;
-    }
-    if ( ( interp->rf != NULL ) && ( interp->len_rf_file > 0 ) ) { 
-      munmap(interp->rf, interp->len_rf_file); interp->n_rf = 0;
-    }
-    if ( ( interp->mdl != NULL ) && ( interp->len_mdl_file > 0 ) ) { 
-      munmap(interp->mdl, interp->len_mdl_file); interp->n_mdl = 0;
-    }
-    free_if_non_null(interp->predictions); interp->n_mdl = 0;
-    free_if_non_null(interp->dt_feature_vector); interp->n_dt_feature_vector = 0;
-  }
 }
 
 void

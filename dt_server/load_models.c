@@ -39,11 +39,24 @@ BYE:
 int
 load_models(
     const char * const model_dir,
+    const char * const str_forest_type,
     int num_features,
     DT_INTERPRETER_TYPE *interp
     )
 {
   int status = 0;
+
+  if ( ( str_forest_type == NULL ) || 
+      ( *str_forest_type == '\0' ) )  { go_BYE(-1); }
+  if ( strcasecmp(str_forest_type, "random_forest") == 0 ) { 
+    interp->forest_type = RANDOM_FOREST;
+  }
+  else if ( strcasecmp(str_forest_type, "xgboost") == 0 ) { 
+    interp->forest_type = XGBOOST;
+  }
+  else {
+    go_BYE(-1);
+  }
 
   char *buf = NULL;  int buflen = 0;
   if ( ( model_dir == NULL ) || ( *model_dir == '\0' ) ) { go_BYE(-1); }
@@ -100,6 +113,9 @@ load_models(
 
   interp->predictions = malloc(interp->n_mdl * sizeof(float));
   return_if_malloc_failed(interp->predictions);
+  for ( unsigned int i = 0;  i < interp->n_mdl; i++ ) { 
+    interp->predictions[i] = -99999;
+  }
 
   if ( num_features < 1 ) { go_BYE(-1); } 
   interp[0].n_dt_feature_vector = num_features;

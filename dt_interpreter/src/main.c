@@ -64,20 +64,26 @@ main(
   FILE *fp = NULL;
   FILE *ofp = NULL;
   float *predictions = NULL;
-  char *forest_type;
+  char *str_forest_type;
+  int forest_type;
   if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   dt_file_name            = argv[2];
   rf_file_name            = argv[3];
   mdl_file_name           = argv[4];
-  forest_type             = argv[5];
+  str_forest_type             = argv[5];
   if ( argc == 7 ) { 
     test_data_file_name     = argv[6];
   }
-
-  status = is_uq(argc, argv); cBYE(status);
-
-  g_num_compares = 0;
+  if ( strcasecmp(str_forest_type, "random_forest") == 0 ) { 
+    forest_type = RANDOM_FOREST;
+  }
+  else if ( strcasecmp(str_forest_type, "xgboost") == 0 ) { 
+    forest_type = XGBOOST;
+  }
+  else {
+    go_BYE(-1);
+  }
 
   status = read_random_forest(random_forest_file_name, 
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 

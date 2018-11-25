@@ -39,6 +39,8 @@ CSRCS += $(CSRCS) \
 	../dt_server/load_models.c  \
 	../dt_server/auxil.c  \
 	../dt_server/mmap.c  \
+	../dt_server/classify.c  \
+	../dt_server/free_interp.c  \
 	../dt_server/load_rf.c \
 	../dt_server/load_dt.c  \
 	../dt_server/load_mdl.c 
@@ -69,4 +71,5 @@ clean:
 	echo "ALL CLEAN"
 
 qclean :
+	make -C ../dt_server/ qclean
 	rm -r -f *.o *.so

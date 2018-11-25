@@ -3,6 +3,7 @@
 #include "dt_globals.h"
 
 #include "auxil.h"
+#include "init.h"
 #include "dt_auxil.h"
 #include "dt_process_req.h"
 #include "extract_api_args.h"
