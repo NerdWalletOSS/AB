@@ -27,6 +27,7 @@ local function init(model_dir, forest_type)
   tbl[#tbl+1] = " void free(void *ptr); "
   ffi.cdef(table.concat(tbl, "\n"))
   -- now cdef all the C functions you will need
+  -- TODO FOllowng hard coding should be avooided 
   ffi.cdef([[
   extern int load_models(
     const char * const model_dir,
@@ -43,6 +44,7 @@ local function init(model_dir, forest_type)
   ]])
   --===========================================
   -- g_interp is a global
+  -- TODO use ffi.gc to set automatic free
   g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
   ffi.fill(g_interp, ffi.sizeof("DT_INTERPRETER_TYPE"))
   g_interp = ffi.cast("DT_INTERPRETER_TYPE *", g_interp)

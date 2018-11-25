@@ -5,7 +5,7 @@ local init     = require 'lupa/init'
 local release  = require 'lupa/release'
 local classify = require 'lupa/classify'
 -- make_feature_vector is a global function
-init('../DT/spam')
+init('../DT/spam', "random_forest")
 body = plfile.read("../DT/spam/sample_input.json")
 assert(JSON:decode(body))
 local rslt = classify(body)
