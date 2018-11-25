@@ -34,7 +34,9 @@ local function init(model_dir, forest_type)
   ffi.cdef(table.concat(tbl, "\n"))
   --===========================================
   -- g_interp is a global
-  g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), release)
+  -- g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), lupa_dt.free_interp)
+  -- g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), release)
+  g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
   ffi.fill(g_interp, ffi.sizeof("DT_INTERPRETER_TYPE"))
   g_interp = ffi.cast("DT_INTERPRETER_TYPE *", g_interp)
   local num_features = get_num_features()

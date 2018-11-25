@@ -8,9 +8,12 @@ local classify = require 'lupa/classify'
 init('../DT/spam', "random_forest")
 body = plfile.read("../DT/spam/sample_input.json")
 assert(JSON:decode(body))
-local rslt = classify(body)
+for i = 1, 100 do 
+  local rslt = classify(body)
+  print(i)
+end
 print("Result = ", rslt)
 print("Success")
 -- Introduced the explicit call to collectgarbage() because of the os.exit() statement
-collectgarbage()
+-- collectgarbage()
 os.exit() -- Needed because of LuaJIT and OpenMP
