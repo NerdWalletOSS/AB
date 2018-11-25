@@ -1,6 +1,5 @@
 #include "dt_constants.h"
 #include "dt_incs.h"
-#define __DT_MAIN_PROGRAM
 #include "dt_globals.h"
 
 #include "auxil.h"
@@ -10,8 +9,7 @@
 #include "get_body.h"
 #include "get_req_type.h"
 #include "setup.h"
-#include "init.h"
-#include "get_from_lua.h"
+#include "get_from_lua.h" // get_port()
 
 // #include <event.h>
 #include <evhttp.h>
@@ -93,7 +91,6 @@ BYE:
   //--------------------
 }
 
-char g_config_file[DT_MAX_LEN_FILE_NAME+1];
 int 
 main(
     int argc, 

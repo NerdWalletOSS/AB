@@ -15,19 +15,21 @@ setup(
     )
 {
   int status = 0;
-  const char *dt_dir = NULL;
+  const char *model_dir = NULL;
   const char *model_name = NULL;
-  char *buf = NULL; size_t bufsz = 0;
+  int num_features;
 
   free_globals(); 
   zero_globals();
+  //-- allocate C structure that stores decision trees
+  g_interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE));
+  return_if_malloc_failed(g_interp);
+  memset(g_interp, '\0',  1 * sizeof(DT_INTERPRETER_TYPE));
+  //-----------------------------
   status = init_lua(config_file); cBYE(status); 
-  status = get_mdl_loc(&dt_dir, &model_name); cBYE(status);
-  bufsz = strlen(dt_dir) + strlen(model_name) + 8;
-  buf = malloc(bufsz); return_if_malloc_failed(buf);
-  sprintf(buf, "%s/%s", dt_dir, model_name);
-  status = load_models(buf, &g_interp); cBYE(status);
+  status = get_mdl_loc(&model_dir, &model_name); cBYE(status);
+  status = get_num_features(&num_features); cBYE(status);
+  status = load_models(model_dir, num_features, g_interp); cBYE(status);
 BYE:
-  free_if_non_null(buf);
   return status;
 }

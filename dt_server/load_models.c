@@ -2,7 +2,6 @@
 #include "auxil.h"
 #include "init.h"
 #include "load_models.h"
-#include "get_from_lua.h"
 
 #include "load_dt.h"
 #include "load_rf.h"
@@ -33,21 +32,18 @@ do_binary_files_exist(
   sprintf(buf, "%s/_mdl.bin", model_dir);
   if ( !isfile(buf) ) { go_BYE(-1); }
 BYE:
+  free_if_non_null(buf);
   if ( status < 0 ) { return false; } else { return true; }
 }
 
 int
 load_models(
     const char * const model_dir,
-    DT_INTERPRETER_TYPE **ptr_interp
+    int num_features,
+    DT_INTERPRETER_TYPE *interp
     )
 {
   int status = 0;
-  *ptr_interp = NULL;
-  DT_INTERPRETER_TYPE *interp = NULL;
-  interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
-  return_if_malloc_failed(interp);
-  memset(interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
 
   char *buf = NULL;  int buflen = 0;
   if ( ( model_dir == NULL ) || ( *model_dir == '\0' ) ) { go_BYE(-1); }
@@ -105,45 +101,11 @@ load_models(
   interp->predictions = malloc(interp->n_mdl * sizeof(float));
   return_if_malloc_failed(interp->predictions);
 
-  status = get_num_features(&(interp[0].n_dt_feature_vector) ); cBYE(status); 
+  if ( num_features < 1 ) { go_BYE(-1); } 
+  interp[0].n_dt_feature_vector = num_features;
   interp->dt_feature_vector = malloc(interp->n_dt_feature_vector * sizeof(float));
   return_if_malloc_failed(interp->dt_feature_vector);
   //--------------------------------------------------------
-  *ptr_interp = interp;
-BYE:
-  if ( status < 0 ) { free_if_non_null(interp); }
-  free_if_non_null(buf);
-  return status;
-}
-
-extern DT_INTERPRETER_TYPE *g_interp;
-int
-x_load_models(
-    const char * const args
-    )
-{
-  int status = 0;
-  char *buf = NULL; size_t bufsz = 0;
-  const char *dt_dir = NULL, *old_model_name = NULL;
-  status = get_mdl_loc(&dt_dir, &old_model_name); cBYE(status);
-  char model_name[DT_MAX_LEN_FILE_NAME+1];
-  memset(model_name, '\0', DT_MAX_LEN_FILE_NAME+1);
-  status = extract_name_value(args, "ModelName=", '&', model_name, 
-      DT_MAX_LEN_FILE_NAME); cBYE(status);
-  // Check that model name is good
-  mcr_chk_non_null(model_name);
-  for ( char *cptr = model_name; *cptr != '\0'; cptr++ ) { 
-    if ( !isascii(*cptr) ) { go_BYE(-1); }
-    if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { go_BYE(-1); }
-  }
-  //----------------------------------------
-
-  bufsz = strlen(dt_dir) + strlen(model_name) + 8;
-  buf = malloc(bufsz); return_if_malloc_failed(buf);
-  sprintf(buf, "%s/%s", dt_dir, model_name);
-  status = load_models(buf, &g_interp); cBYE(status);
-  // Inform Lua that model name has changed
-  status = set_model_name(model_name); cBYE(status);
 BYE:
   free_if_non_null(buf);
   return status;

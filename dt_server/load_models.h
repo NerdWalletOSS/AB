@@ -1,7 +1,8 @@
 extern int
 load_models(
     const char *const model_dir,
-    DT_INTERPRETER_TYPE **ptr_interp
+    int num_features,
+    DT_INTERPRETER_TYPE *interp
     );
 extern int
 x_load_models(

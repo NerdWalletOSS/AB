@@ -22,7 +22,7 @@ CC= gcc
 CSRCS := $(wildcard *.c)
 COBJS = $(CSRCS:.c=.o)
 
-all : lupa_dt.so 
+all : liblupa_dt.so 
 
 ./libs:
 	mkdir libs
@@ -35,6 +35,14 @@ all : lupa_dt.so
 		sed -i '114s/#//' src/Makefile && \
 		make TARGET_FLAGS=-pthread
 
+CSRCS += $(CSRCS) \
+	../dt_server/load_models.c  \
+	../dt_server/auxil.c  \
+	../dt_server/mmap.c  \
+	../dt_server/load_rf.c \
+	../dt_server/load_dt.c  \
+	../dt_server/load_mdl.c 
+
 .c.o : 
 	$(CC) -c -o $@ $< $(CFLAGS)  $(INCS) $(DBGFLAGS)
 
@@ -46,12 +54,12 @@ $(COBJS) : ../LuaJIT-2.1.0-beta3/src/libluajit.a
 ../dt_interpreter/src/dt.so : 
 	make -C ../dt_interpreter/src/
 
-lupa_dt.so : $(COBJS)  \
+liblupa_dt.so : $(COBJS)  \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a  \
 	../dt_interpreter/src/dt.so 
 	$(CC) -shared $(CFLAGS) $(COBJS) \
 	  ../dt_interpreter/src/dt.so \
-	  -o lupa_dt.so  \
+	  -o liblupa_dt.so  \
 	../LuaJIT-2.1.0-beta3/src/libluajit.a \
 	-lm  -lpthread -ldl 
 

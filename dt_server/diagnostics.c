@@ -1,5 +1,4 @@
 #include "dt_incs.h"
-#include "dt_globals.h"
 #include "diagnostics.h"
 
 int
