@@ -9,9 +9,8 @@ local function classify(
   -- print(body)
   -- local x = assert(JSON:decode(body))
   -- for k, v in pairs(x) do print(k, v) end
-  local fvec   = ffi.cast("float *", g_interp[0].dt_feature_vector)
-  local n_fvec = g_interp[0].n_dt_feature_vector
-  assert(make_feature_vector(body, fvec, n_fvec))
+  assert(make_feature_vector(body, 
+  g_interp.dt_feature_vector, g_interp.n_dt_feature_vector))
   -- call C classification
   local status = lupa_dt.lua_eval_mdl(g_interp)
   assert(status)
