@@ -10,29 +10,27 @@
 
 static bool
 do_binary_files_exist(
-    const char * const dt_dir,
-    const char * const model_name
+    const char * const model_dir
     )
 {
   int status = 0;
   char *buf = NULL;
   // does directory exist
-  if ( !isdir(dt_dir) ) { go_BYE(-1); }
+  if ( !isdir(model_dir) ) { go_BYE(-1); }
   // do relevant binary files exist
-  int buflen = strlen(dt_dir) + strlen(model_name) + 32;
+  int buflen = strlen(model_dir) + 32;
   buf = malloc(buflen); return_if_malloc_failed(buf);
   memset(buf, '\0', buflen); 
 
-  sprintf(buf, "%s/%s/_dt.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_dt.bin", model_dir);
   if ( !isfile(buf) ) { 
-    fprintf(stderr, "File not found %s \n", buf); 
-    go_BYE(-1); 
+    fprintf(stderr, "File not found %s \n", buf); go_BYE(-1); 
   }
 
-  sprintf(buf, "%s/%s/_rf.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_rf.bin", model_dir);
   if ( !isfile(buf) ) { go_BYE(-1); }
 
-  sprintf(buf, "%s/%s/_mdl.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_mdl.bin", model_dir);
   if ( !isfile(buf) ) { go_BYE(-1); }
 BYE:
   if ( status < 0 ) { return false; } else { return true; }
@@ -40,16 +38,20 @@ BYE:
 
 int
 load_models(
-    const char * const dt_dir,
-    const char * const model_name,
-    DT_INTERPRETER_TYPE *interp
+    const char * const model_dir,
+    DT_INTERPRETER_TYPE **ptr_interp
     )
 {
   int status = 0;
+  *ptr_interp = NULL;
+  DT_INTERPRETER_TYPE *interp = NULL;
+  interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
+  return_if_malloc_failed(interp);
+  memset(interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
+
   char *buf = NULL;  int buflen = 0;
-  if ( ( dt_dir == NULL ) || ( *dt_dir == '\0' ) ) { go_BYE(-1); }
-  if ( ( model_name == NULL ) || ( *model_name == '\0' ) ) { go_BYE(-1); }
-  if ( !do_binary_files_exist(dt_dir, model_name) ) {
+  if ( ( model_dir == NULL ) || ( *model_dir == '\0' ) ) { go_BYE(-1); }
+  if ( !do_binary_files_exist(model_dir) ) {
     fprintf(stderr, "Creating binary files for model \n");
     go_BYE(-1);
     /*
@@ -84,19 +86,19 @@ load_models(
   rs_munmap(interp->rf,  interp->len_rf_file);  interp->n_rf = 0;
   rs_munmap(interp->mdl, interp->len_mdl_file); interp->n_mdl = 0;
 
-  buflen = strlen(dt_dir) + strlen(model_name) + 32;
+  buflen = strlen(model_dir) + 32;
   buf = malloc(buflen); return_if_malloc_failed(buf);
   memset(buf, '\0', buflen); 
 
-  sprintf(buf, "%s/%s/_dt.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_dt.bin", model_dir);
   status = load_dt(buf, &interp->dt, &interp->len_dt_file, &interp->n_dt);
   cBYE(status);
 
-  sprintf(buf, "%s/%s/_rf.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_rf.bin", model_dir);
   status = load_rf(buf, &interp->rf, &interp->len_rf_file, &interp->n_rf);
   cBYE(status);
 
-  sprintf(buf, "%s/%s/_mdl.bin", dt_dir, model_name); 
+  sprintf(buf, "%s/_mdl.bin", model_dir);
   status = load_mdl(buf, &interp->mdl, &interp->len_mdl_file, &interp->n_mdl);
   cBYE(status);
 
@@ -107,7 +109,9 @@ load_models(
   interp->dt_feature_vector = malloc(interp->n_dt_feature_vector * sizeof(float));
   return_if_malloc_failed(interp->dt_feature_vector);
   //--------------------------------------------------------
+  *ptr_interp = interp;
 BYE:
+  if ( status < 0 ) { free_if_non_null(interp); }
   free_if_non_null(buf);
   return status;
 }
@@ -119,6 +123,7 @@ x_load_models(
     )
 {
   int status = 0;
+  char *buf = NULL; size_t bufsz = 0;
   const char *dt_dir = NULL, *old_model_name = NULL;
   status = get_mdl_loc(&dt_dir, &old_model_name); cBYE(status);
   char model_name[DT_MAX_LEN_FILE_NAME+1];
@@ -132,9 +137,14 @@ x_load_models(
     if ( ( !isalnum(*cptr) ) && ( *cptr != '_' ) ) { go_BYE(-1); }
   }
   //----------------------------------------
-  status = load_models(dt_dir, model_name, g_interp); cBYE(status);
+
+  bufsz = strlen(dt_dir) + strlen(model_name) + 8;
+  buf = malloc(bufsz); return_if_malloc_failed(buf);
+  sprintf(buf, "%s/%s", dt_dir, model_name);
+  status = load_models(buf, &g_interp); cBYE(status);
   // Inform Lua that model name has changed
   status = set_model_name(model_name); cBYE(status);
 BYE:
+  free_if_non_null(buf);
   return status;
 }

@@ -17,12 +17,17 @@ setup(
   int status = 0;
   const char *dt_dir = NULL;
   const char *model_name = NULL;
+  char *buf = NULL; size_t bufsz = 0;
 
   free_globals(); 
   zero_globals();
   status = init_lua(config_file); cBYE(status); 
   status = get_mdl_loc(&dt_dir, &model_name); cBYE(status);
-  status = load_models(dt_dir, model_name, g_interp); cBYE(status);
+  bufsz = strlen(dt_dir) + strlen(model_name) + 8;
+  buf = malloc(bufsz); return_if_malloc_failed(buf);
+  sprintf(buf, "%s/%s", dt_dir, model_name);
+  status = load_models(buf, &g_interp); cBYE(status);
 BYE:
+  free_if_non_null(buf);
   return status;
 }

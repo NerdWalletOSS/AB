@@ -51,10 +51,6 @@ zero_globals(
   memset(g_buf, '\0', DT_ERR_MSG_LEN+1);
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
 
-  g_interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
-  return_if_malloc_failed(g_interp);
-  memset(g_interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
-
   //------------
   const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=/_:";
   memset(g_valid_chars_in_url, '\0', 256);

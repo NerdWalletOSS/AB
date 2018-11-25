@@ -1,7 +1,6 @@
 #include "dt_incs.h"
 #include "auxil.h"
 
-extern DT_INTERPRETER_TYPE *g_interp;
 #include "classify.h"
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
@@ -9,6 +8,7 @@ extern DT_INTERPRETER_TYPE *g_interp;
 
 int 
 classify(
+    DT_INTERPRETER_TYPE *g_interp,
     const char *body,
     char *rslt, /* [sz_rslt] */
     size_t sz_rslt
