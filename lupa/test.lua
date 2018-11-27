@@ -10,6 +10,7 @@ body = plfile.read("../DT/spam/sample_input.json")
 assert(JSON:decode(body))
 local rslt = classify(body)
 print("Result = ", rslt)
-release()
 print("Success")
+-- Introduced the explicit call to collectgarbage() because of the os.exit() statement
+collectgarbage()
 os.exit() -- Needed because of LuaJIT and OpenMP

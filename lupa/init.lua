@@ -4,6 +4,7 @@ lupa_dt = ffi.load('liblupa_dt')
 require 'DT/init'
 local load_model = require 'DT/load_model'
 local cdef_list = require 'lupa/cdef_list'
+local release = require 'lupa/release'
 
 local function init(model_dir, forest_type)
   conf = {} -- this is a global
@@ -33,8 +34,7 @@ local function init(model_dir, forest_type)
   ffi.cdef(table.concat(tbl, "\n"))
   --===========================================
   -- g_interp is a global
-  -- TODO use ffi.gc to set automatic free
-  g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
+  g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), release)
   ffi.fill(g_interp, ffi.sizeof("DT_INTERPRETER_TYPE"))
   g_interp = ffi.cast("DT_INTERPRETER_TYPE *", g_interp)
   local num_features = get_num_features()
