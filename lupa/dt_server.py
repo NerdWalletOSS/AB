@@ -4,19 +4,35 @@
 """
 
 import dt_interp
-from flask import json
+from flask import json, g
 from flask import Flask, request
+import time, logging
 
 
 # initialize dt_interp
 dt_interp.init('../DT/spam', "random_forest")
 
 app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)
+
+
+@app.before_request
+def start_timer():
+    g.start = time.time()
+
+
+@app.after_request
+def log_request(response):
+    now = time.time()
+    duration = round(now - g.start, 6)
+    app.logger.debug("processing time : {} ms".format(duration*1000))
+    return response
+
 
 @app.route('/classify', methods = ['POST'])
 def classify():
     if request.headers['Content-Type'] == 'application/json':
-        json_body = json.dumps(request.json)
+        json_body = json.dumps(request.get_json())
         result = dt_interp.classify(json_body)
         return "JSON Message: " + result + "\n"
     else:
