@@ -13,17 +13,17 @@ init_str = \
 
 classify_str = \
     """
-    function(json_body)
+    function(g_inerp, json_body)
         local classify = require 'lupa/classify'
-        return classify(json_body)
+        return classify(g_inerp, json_body)
     end
     """
 
 release_str = \
     """
-    function()
+    function(g_interp)
         local release = require 'lupa/release'
-        return release()
+        return release(g_interp)
     end
     """
 
@@ -34,13 +34,13 @@ def init(model_dir, forest_type=None):
     return result
 
 
-def classify(json_body):
+def classify(g_inerp, json_body):
     func = executor.eval(classify_str)
-    result = func(json_body)
+    result = func(g_inerp, json_body)
     return result
 
 
-def release():
+def release(g_inerp):
     func = executor.eval(release_str)
-    result = func()
+    result = func(g_inerp)
     return result

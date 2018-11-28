@@ -4,6 +4,7 @@ lupa_dt = ffi.load('liblupa_dt')
 -- make_feature_vector is a global function
 -- post_proc_preds is a global function
 local function classify(
+  g_interp,
   body
   )
   -- print(body)

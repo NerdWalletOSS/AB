@@ -36,13 +36,13 @@ local function init(model_dir, forest_type)
   -- g_interp is a global
   -- g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), lupa_dt.free_interp)
   -- g_interp = ffi.gc(ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE")), release)
-  g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
+  local g_interp = ffi.C.malloc(1 * ffi.sizeof("DT_INTERPRETER_TYPE"))
   ffi.fill(g_interp, ffi.sizeof("DT_INTERPRETER_TYPE"))
   g_interp = ffi.cast("DT_INTERPRETER_TYPE *", g_interp)
   local num_features = get_num_features()
   status = lupa_dt.load_models(model_dir, forest_type, num_features, g_interp)
   assert(status)
 
-  return true
+  return g_interp
 end
 return init
