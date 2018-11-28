@@ -10,7 +10,7 @@ import time, logging
 
 
 # initialize dt_interp
-dt_interp.init('../DT/spam', "random_forest")
+g_interp = dt_interp.init('../DT/spam', "random_forest")
 
 app = Flask(__name__)
 
@@ -32,7 +32,7 @@ def log_request(response):
 def classify():
     if request.headers['Content-Type'] == 'application/json':
         json_body = json.dumps(request.get_json())
-        result = dt_interp.classify(json_body)
+        result = dt_interp.classify(g_interp, json_body)
         return "JSON Message: " + result + "\n"
     else:
         return "415 Unsupported Media Type"
