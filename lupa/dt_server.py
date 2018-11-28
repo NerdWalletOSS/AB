@@ -13,7 +13,6 @@ import time, logging
 dt_interp.init('../DT/spam', "random_forest")
 
 app = Flask(__name__)
-app.logger.setLevel(logging.DEBUG)
 
 
 @app.before_request
@@ -39,5 +38,5 @@ def classify():
         return "415 Unsupported Media Type"
 
 if __name__ == '__main__':
-   app.run()
+   app.run(host='0.0.0.0', port=5000, debug=True)
 
