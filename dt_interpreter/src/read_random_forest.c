@@ -142,7 +142,7 @@ read_random_forest(
   //----------------------------------------------------
   //  Basic integrity testing
   int n_fixed = 0;
-  for ( int i = 1; i < n_dt; i++ ) { 
+  for ( int i = 1; i < n_dt; i++ ) {
     if ( dt[i].node_idx != i ) { 
       go_BYE(-1); }
     if ( dt[i].tree_idx < dt[i-1].tree_idx ) { go_BYE(-1); }
@@ -167,6 +167,11 @@ read_random_forest(
     if ( ( dt[i].lchild_idx ==  dt[i].rchild_idx ) && 
          ( dt[i].lchild_idx != -1 ) ) {
       go_BYE(-1); }
+    switch ( forest_type ) { 
+      case RANDOM_FOREST : 
+        if ( ( dt[i].npos < 0 ) || ( dt[i].nneg < 0 ) ) { go_BYE(-1); }
+        break;
+    }
   }
   if ( n_fixed > 0 ) { 
     printf("Fixed %d \n", n_fixed); go_BYE(-1);
