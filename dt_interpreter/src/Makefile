@@ -9,12 +9,12 @@ WARN=  -std=gnu99 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-proto
 # found (required by ./test_dt)
 INCS= -I.  -I../../src/ 
 
-DBGFLAGS= -g -DDEBUG
 DBGFLAGS= 
+DBGFLAGS= -g -DDEBUG
 
-OPTFLAGS= 
 OPTFLAGS= -O4
 OPTFLAGS= -O4 -fopenmp
+OPTFLAGS= 
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) -DLOCAL_DEPLOY 
 CFLAGS= $(LFLAGS)  -DRASPBERRY_PI

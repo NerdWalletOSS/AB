@@ -28,6 +28,7 @@ int n_rf = 0;
 MDL_REC_TYPE *mdl = NULL;
 int n_mdl = 0;
 
+/*
 static int
 is_uq(
     int argc,
@@ -48,6 +49,7 @@ is_uq(
 BYE:
   return status;
 }
+*/
 int
 main(
     int argc,
@@ -85,7 +87,7 @@ main(
     go_BYE(-1);
   }
 
-  status = read_random_forest(random_forest_file_name, 
+  status = read_random_forest(random_forest_file_name,  forest_type,
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
   predictions = malloc(n_mdl * sizeof(float));
@@ -160,7 +162,8 @@ main(
       sum1 += d1;
       sum2 += d2;
       n_trials++;
-      printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, n_trials, d1, d2);
+      printf("%d, %d, d1 = %lf, d2 = %lf \n", iters, n_trials, 
+          (double)d1, (double)d2);
       cBYE(status);
     }
     fclose_if_non_null(fp);
@@ -170,7 +173,7 @@ main(
   }
   lno--; // remove header line 
   printf("Number of trials = %d \n", n_trials);
-  printf("Number of compares = %d \n", g_num_compares);
+  printf("Number of compares = %lf \n", (double)g_num_compares);
   printf("#Test = %d, cycles = %lf\n", lno, sum1 / (double)n_trials);
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
   printf("COMPLETED\n");
