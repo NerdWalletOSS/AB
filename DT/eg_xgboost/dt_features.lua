@@ -1,1 +1,19 @@
-return {vantage_score_3 = 1, percent_on_time_payments = 2, percent_utilization = 3, num_quarterly_accounts = 4, num_two_year_accounts = 5, num_open_accounts = 6, num_derog_accounts = 7, has_open_mortgages = 8, oldest_open_account_age = 9, average_open_account_age = 10, credit_limit = 11, debt_to_credit_limit_ratio = 12, most_recent_payment = 13, monthly_repayment_ratio = 14, num_30_day_delinquent_accounts = 15, num_60_day_delinquent_accounts = 16, num_90_day_delinquent_accounts = 17}
+return {
+  f1 = 1, 
+  f2 = 2, 
+  f3 = 3,
+  f4 = 4,
+  f5 = 5,
+  f6 = 6,
+  f7 = 7,
+  f8 = 8,
+  f9 = 9,
+  f10 = 10,
+  f11 = 11,
+  f12 = 12,
+  f13 = 13,
+  f14 = 14,
+  f15 = 15,
+  f16 = 16,
+  f17 = 17,
+}
