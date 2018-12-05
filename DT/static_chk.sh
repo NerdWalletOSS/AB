@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-if [ $# != 2 ]; then echo "Error. Usage is $0 <directory>"; fi 
+if [ $# != 2 ]; then 
+  echo "Error. Usage is $0 <directory> <random_forest|xgboost>"; fi 
 dir=$1
 foresttype=$2
 test -d $dir
