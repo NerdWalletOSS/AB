@@ -27,3 +27,8 @@ lua_State *g_L_DT; // Set by C
 #include "dt_types.h"
 
 DT_INTERPRETER_TYPE *g_interp;
+// auxiliary  for interpreter
+char g_dt_features[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
+int g_n_dt_features;
+char g_dt_models[DT_MAX_NUM_MODELS][DT_MAX_LEN_MODEL+1];
+int g_n_models;

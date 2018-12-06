@@ -6,6 +6,7 @@ local function make_feature_vector(
   fvec, -- feature vector , C array [n_fvec] */
   n_fvec -- number of elements in C feature vector 
   )
+  assert(type(fvec_as_json) == "string")
   local fvec_tbl = assert(JSON:decode(fvec_as_json), 
     "Feature vector not valid JSON")
   assert(fvec)

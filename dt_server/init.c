@@ -8,15 +8,19 @@
 #include "dt_types.h"
 #include "free_interp.h"
 extern lua_State *g_L_DT; 
-extern char g_err[DT_ERR_MSG_LEN+1]; 
 extern bool g_halt; 
+
 extern char g_err[DT_ERR_MSG_LEN+1]; 
 extern char g_buf[DT_ERR_MSG_LEN+1]; 
 extern char g_rslt[DT_MAX_LEN_RESULT+1]; 
+
 extern char g_valid_chars_in_url[256]; 
 
-//------------------------ For Lua
-lua_State *g_L_DT; // Set by C
+extern char g_dt_features[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
+extern int  g_n_dt_features;
+
+extern char g_dt_models[DT_MAX_NUM_MODELS][DT_MAX_LEN_MODEL+1];
+extern int  g_n_models;
 
 #include "dt_log_globals.h"
 
@@ -39,6 +43,12 @@ zero_globals(
     void
     )
 {
+  for ( int i = 0; i < DT_MAX_NUM_FEATURES; i++ ) { 
+    memset(g_dt_features[i], '\0', DT_MAX_LEN_FEATURE+1);
+  }
+  for ( int i = 0; i < DT_MAX_NUM_MODELS; i++ ) { 
+    memset(g_dt_models[i], '\0', DT_MAX_LEN_MODEL+1);
+  }
   g_halt = false;
   memset(g_err, '\0', DT_ERR_MSG_LEN+1);
   memset(g_buf, '\0', DT_ERR_MSG_LEN+1);

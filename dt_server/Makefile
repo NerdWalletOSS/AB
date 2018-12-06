@@ -8,11 +8,11 @@ INCS= -I. \
 	-I../dt_interpreter/src/  \
 	-I../jansson-2.10/src/ \
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) 
 

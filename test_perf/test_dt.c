@@ -1,4 +1,7 @@
-/* ./test_dt ../DT/cc_member_models/sample_input.json */
+/* 
+gcc -O4 -std=gnu99 test_dt.c -I../src/ ../src/mmap.c -lcurl -o test_dt
+./test_dt ../DT/spam/sample_input.json 
+*/
 #include <stdio.h>
 #include <curl/curl.h>
 #include "ab_incs.h"
@@ -57,13 +60,16 @@ int main(
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 
 
+  double ghz = 2500;
   /* Perform the request, res will get the return code */ 
   uint64_t t_total = 0, n_total = 0;
+  double time_per; 
   for ( int i = 0; i < 100000; i++ ) { 
     uint64_t t_start = RDTSC();
     res = curl_easy_perform(curl);
     t_total += (RDTSC() - t_start);
     n_total++;
+    time_per = (double)t_total/(ghz * (double)n_total);
     /* Check for errors */ 
     if ( res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
@@ -71,11 +77,11 @@ int main(
     }
     if ( ( i % 1000 ) == 0 ) {
       fprintf(stdout, "Trials = %" PRIu64 ", time per = %lf \n",
-          n_total, (double)t_total/(double)n_total);
+          n_total, time_per);
     }
   }
   fprintf(stdout, "Trials = %" PRIu64 ", time per = %lf \n",
-      n_total, (double)t_total/(double)n_total);
+      n_total, time_per);
 
 BYE:
   /* always cleanup */ 

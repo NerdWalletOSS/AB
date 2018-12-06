@@ -27,3 +27,7 @@ extern int
 get_forest_type(
     const char **ptr_forest_type
     );
+extern int
+get_features(
+    void
+    );
