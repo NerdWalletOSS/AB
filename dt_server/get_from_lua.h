@@ -31,3 +31,7 @@ extern int
 get_features(
     void
     );
+extern int
+get_models(
+    void
+    );

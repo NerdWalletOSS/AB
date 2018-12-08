@@ -55,11 +55,15 @@ alt_make_feature_vector(
 
   for ( int i = 0; i < g_n_dt_features; i++ ) { 
     json_t *feature_handle = json_object_get(root, g_dt_features[i]);
-    if ( feature_handle == NULL ) { go_BYE(-1); }
+    if ( feature_handle == NULL ) { 
+      fprintf(stderr, "hello world\n");
+      go_BYE(-1); 
+    }
     double feature_val = json_number_value(feature_handle);
     g_interp->dt_feature_vector[i] = feature_val;
     // fprintf(stderr, "%d:%s -> %lf \n", i, g_dt_features[i], feature_val);
   }
+  json_decref(root);
 
 BYE:
   return status;

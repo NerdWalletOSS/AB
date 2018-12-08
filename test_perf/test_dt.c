@@ -1,6 +1,7 @@
 /* 
 gcc -O4 -std=gnu99 test_dt.c -I../src/ ../src/mmap.c -lcurl -o test_dt
 ./test_dt ../DT/spam/sample_input.json 
+./test_dt ../DT/eg_xgboost/1_input.json 
 */
 #include <stdio.h>
 #include <curl/curl.h>
@@ -64,7 +65,7 @@ int main(
   /* Perform the request, res will get the return code */ 
   uint64_t t_total = 0, n_total = 0;
   double time_per; 
-  for ( int i = 0; i < 100000; i++ ) { 
+  for ( int i = 0; i < 1000000; i++ ) { 
     uint64_t t_start = RDTSC();
     res = curl_easy_perform(curl);
     t_total += (RDTSC() - t_start);

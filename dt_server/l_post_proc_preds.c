@@ -5,6 +5,7 @@
 
 extern char g_rslt[DT_MAX_LEN_RESULT+1]; // For C: ab_process_req()
 extern char g_err[DT_ERR_MSG_LEN+1]; // For C: ab_process_req()
+extern char g_buf[DT_ERR_MSG_LEN+1]; // For C: ab_process_req()
 extern DT_INTERPRETER_TYPE *g_interp;
 extern lua_State *g_L_DT;
 
@@ -47,6 +48,27 @@ l_post_proc_preds(
     fprintf(stderr, "%s: return must be a string\n", __func__); go_BYE(-1); 
   }
   strncpy(g_rslt, lua_tostring(g_L_DT, -1), DT_MAX_LEN_RESULT);
+BYE:
+  return status;
+}
+
+extern char g_dt_models[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
+extern int g_n_dt_models;
+int 
+alt_post_proc_preds(
+    const char *args,
+    float *pred_vector, // this is g_predictions [n_pred_vector]
+    int n_pred_vector
+    )
+{
+  int status = 0;
+  sprintf(g_err, "{ ");
+  for ( int i = 0; i < n_pred_vector; i++ ) { 
+    sprintf(g_buf, " \"%s\" : %lf , ", g_dt_models[i], pred_vector[i]);
+    strcat(g_err, g_buf);
+  }
+  strcat(g_err, " \"last_key\" : 0 } ");
+
 BYE:
   return status;
 }

@@ -33,14 +33,15 @@ classify(
 {
   int status = 0;
   if ( body == NULL ) { go_BYE(-1); }
-  status = l_make_feature_vector(body); cBYE(status);
   /*
-  status = alt_make_feature_vector(body); cBYE(status);
+  status = l_make_feature_vector(body); cBYE(status);
   */
+  status = alt_make_feature_vector(body); cBYE(status);
   status = lua_eval_mdl(interp); cBYE(status);
-  status = l_post_proc_preds(NULL, 
-      interp->predictions, 
-      interp->n_mdl);
+  /*
+  status = l_post_proc_preds(NULL, interp->predictions, interp->n_mdl);
+  */
+  status = alt_post_proc_preds(NULL, interp->predictions, interp->n_mdl);
   cBYE(status);
 BYE:
   return status;

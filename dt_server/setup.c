@@ -8,8 +8,12 @@
 #include "get_from_lua.h"
 extern lua_State *g_L_DT; 
 extern DT_INTERPRETER_TYPE *g_interp;
+
 extern char g_dt_features[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
 extern int g_n_dt_features;
+
+extern char g_dt_models[DT_MAX_NUM_MODELS][DT_MAX_LEN_MODEL+1];
+extern int g_n_dt_models;
 
 int
 setup(
@@ -36,8 +40,9 @@ setup(
   status = load_models(model_dir, forest_type, num_features, g_interp); 
   //-- Set up features on C sise of the fence`
   g_n_dt_features = num_features;
-  status = get_features(); 
-  cBYE(status);
+  status = get_features(); cBYE(status); 
+  g_n_dt_models = g_interp->n_mdl;
+  status = get_models(); cBYE(status);
 BYE:
   return status;
 }
