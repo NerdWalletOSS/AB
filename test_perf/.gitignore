@@ -1,5 +1,6 @@
 add_tests
 sblaster
 pblaster
-test_dt
+pdt
+sdt
 _*

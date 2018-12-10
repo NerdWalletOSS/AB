@@ -47,7 +47,7 @@ ADD_TEST_OBJS = \
 
 BLASTER_INCS = ../src/ab_incs.h
 
-all : sblaster pblaster add_tests test_dt
+all : sblaster pblaster add_tests sdt pdt
 
 add_tests : $(ADD_TEST_OBJS) $(BLASTER_INCS) 
 	$(CC) $(LFLAGS) $(ADD_TEST_OBJS) -o add_tests  \
@@ -61,8 +61,12 @@ sblaster : $(SBLASTER_OBJS) $(BLASTER_INCS)
 	$(CC) $(LFLAGS) $(SBLASTER_OBJS) -o sblaster \
 	../src/libs/libcurl.so 
 
-test_dt : test_dt.o mmap.o
-	$(CC) $(LFLAGS) mmap.o test_dt.o -o test_dt \
+pdt : pdt.o mmap.o auxil.o setup_curl.o execute.o
+	$(CC) $(LFLAGS) mmap.o pdt.o execute.o setup_curl.o auxil.o -o pdt \
+	../src/libs/libcurl.so 
+
+sdt : sdt.o mmap.o auxil.o
+	$(CC) $(LFLAGS) mmap.o sdt.o auxil.o -o sdt \
 	../src/libs/libcurl.so 
 
 auxil.o : 
