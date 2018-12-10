@@ -99,5 +99,10 @@
 #define DT_MAX_LEN_STATSD_BUF 127 
 
 #define  DT_LOGEVENT_VERSION_NUM 1 // Change VERY carefully!
+#define DT_MAX_NUM_FEATURES 1024
+#define DT_MAX_LEN_FEATURE  63
+#define DT_MAX_NUM_MODELS   128
+#define DT_MAX_LEN_MODEL    63
+int g_n_models;
 #endif
 

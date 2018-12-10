@@ -1,8 +1,12 @@
 #include "dt_incs.h"
+#include <lua.h>
 #include "auxil.h"
-#include "dt_globals.h"
 #include "l_mdl_meta.h"
 
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern char g_err[DT_ERR_MSG_LEN+1]; // For C: ab_process_req()
+extern DT_INTERPRETER_TYPE *g_interp;
+extern lua_State *g_L_DT;
 int 
 l_mdl_meta(
     void

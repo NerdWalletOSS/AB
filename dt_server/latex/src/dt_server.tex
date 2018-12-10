@@ -65,17 +65,36 @@ This will generate three files
 
 \subsubsection{The Model CSV File}
 \label{dt_csv}
-The file \verb+dt.csv+ is a 9 column CSV file that looks like
-\begin{verbatim}
-model_idx,tree_idx,node_idx,lchild_idx,rchild_idx,feature_idx,threshold,neg,pos
-0,0,0,1,114,51,0.00450000027195,2726,1875
-0,0,1,2,105,6,0.035000000149,1975,274
-0,0,2,3,96,52,0.173999994993,1960,175
-0,0,3,4,75,15,0.114999994636,1938,128
-0,0,4,5,74,26,0.00499999988824,1841,78
-\end{verbatim}
 
-Details to be written \TBC
+\begin{definition}
+We define a vector, \(X\) be ``sequential'' if \(X_0 = 0\) and
+\(X_i = X_{i-1}\) or \(X_i = X_{i-1}+1\)
+\end{definition}
+
+The file \verb+dt.csv+ is a CSV file.
+Types of the various fields are defined in Table~\ref{valid_types}. Note that
+you {\bf cannot} provide 1.0 if the value is expected to be an integer.
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|l|l|} \hline \hline
+{\bf ID} & {\bf Field } & {\bf Type} & {\bf Checks} \\ \hline
+1 & \verb+model_idx+ & \verb+int32_t+ & sequential \\ \hline
+2 & \verb+tree_idx+  & \verb+int32_t+ & sequential \\ \hline
+3 & \verb+node_idx+  & \verb+int32_t+ & sequential \\ \hline
+4 & \verb+lchild_idx+  & \verb+int32_t+ & \\ \hline
+5 & \verb+rchild_idx+  & \verb+int32_t+ & \\ \hline
+6 & \verb+feature_idx+  & \verb+int32_t+ & \\ \hline
+7 & \verb+threshold+  & \verb+float+ \\ \hline
+8 & \verb+nneg+  & \verb+int32_t+ & non-negative integer\\ \hline
+9 & \verb+npos+  & \verb+int32_t+ & non-negative integer\\ \hline
+10 & \verb+xgb_val+  & \verb+float+ & \\ \hline
+\end{tabular}
+\label{tbl_data_sets}
+\caption{Data Sets used for experimentation}
+\end{table}
+
+There are a lot more invariants to check. \TBC
 
 \subsubsection{The Model Map File}
 \label{mdl_map}

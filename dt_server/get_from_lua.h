@@ -23,3 +23,15 @@ extern int
 set_model_name(
     const char * const model_name
     );
+extern int
+get_forest_type(
+    const char **ptr_forest_type
+    );
+extern int
+get_features(
+    void
+    );
+extern int
+get_models(
+    void
+    );

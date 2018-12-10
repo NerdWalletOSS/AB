@@ -184,3 +184,92 @@ set_model_name(
 BYE:
   return status;
 }
+int
+get_forest_type(
+    const char **ptr_forest_type
+    )
+{
+  int status = 0;
+  const char *const lua_fn = "get_forest_type";
+  lua_getglobal(g_L_DT, lua_fn);
+  if ( !lua_isfunction(g_L_DT, -1)) {
+    fprintf(stderr, "Lua function %s missing\n", lua_fn);
+    lua_pop(g_L_DT, 1); go_BYE(-1);
+  }
+  status = lua_pcall(g_L_DT, 0, 1, 0);
+  if (status != 0) {
+    fprintf(stderr, "Lua function %s failed: %s\n", lua_fn,
+          lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1);
+    go_BYE(-1);
+  }
+  if (!lua_isstring(g_L_DT, -1)) {
+    fprintf(stderr, "%s: return 1 must be a string\n", __func__); go_BYE(-1); 
+  }
+  *ptr_forest_type = lua_tostring(g_L_DT, -1);
+BYE:
+  return status;
+}
+
+extern char g_dt_features[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
+extern int g_n_dt_features;
+int
+get_features(
+    void
+    )
+{
+  int status = 0;
+  const char *const lua_fn = "pass_features_to_C";
+  for ( int i = 0; i < g_n_dt_features; i++ ) {
+    lua_getglobal(g_L_DT, lua_fn);
+    if ( !lua_isfunction(g_L_DT, -1)) {
+      fprintf(stderr, "Lua function %s missing\n", lua_fn);
+      lua_pop(g_L_DT, 1); go_BYE(-1);
+    }
+    lua_pushlightuserdata(g_L_DT, (char *)g_dt_features[i]);
+    lua_pushnumber(g_L_DT, i+1); // Lua is 1 offset
+    lua_pushnumber(g_L_DT, DT_MAX_LEN_FEATURE );
+    status = lua_pcall(g_L_DT, 3, 0, 0);
+    if (status != 0) {
+      fprintf(stderr, "Lua function %s failed: %s\n", lua_fn,
+          lua_tostring(g_L_DT, -1));
+      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+      lua_pop(g_L_DT, 1);
+      go_BYE(-1);
+    }
+  }
+BYE:
+  return status;
+}
+
+extern char g_dt_models[DT_MAX_NUM_MODELS][DT_MAX_LEN_MODEL+1]; 
+extern int g_n_dt_models;
+int
+get_models(
+    void
+    )
+{
+  int status = 0;
+  const char *const lua_fn = "pass_models_to_C";
+  for ( int i = 0; i < g_n_dt_models; i++ ) {
+    lua_getglobal(g_L_DT, lua_fn);
+    if ( !lua_isfunction(g_L_DT, -1)) {
+      fprintf(stderr, "Lua function %s missing\n", lua_fn);
+      lua_pop(g_L_DT, 1); go_BYE(-1);
+    }
+    lua_pushlightuserdata(g_L_DT, (char *)g_dt_models[i]);
+    lua_pushnumber(g_L_DT, i+1); // Lua is 1 offset
+    lua_pushnumber(g_L_DT, DT_MAX_LEN_MODEL );
+    status = lua_pcall(g_L_DT, 3, 0, 0);
+    if (status != 0) {
+      fprintf(stderr, "Lua function %s failed: %s\n", lua_fn,
+          lua_tostring(g_L_DT, -1));
+      sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+      lua_pop(g_L_DT, 1);
+      go_BYE(-1);
+    }
+  }
+BYE:
+  return status;
+}

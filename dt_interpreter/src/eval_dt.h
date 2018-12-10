@@ -7,5 +7,6 @@ eval_dt(
   int dt_ub,
   int root_idx,
   int *ptr_npos, // return values
-  int *ptr_nneg // return values
+  int *ptr_nneg, // return values
+  float *ptr_xgb // return values
   );

@@ -6,7 +6,7 @@ extern void
 free_globals(
     void
     );
-extern int
+extern void
 zero_globals(
     void
     );

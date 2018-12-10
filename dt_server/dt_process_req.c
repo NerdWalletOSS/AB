@@ -1,5 +1,5 @@
 #include "dt_incs.h"
-#include "dt_globals.h"
+#include "dt_httpd_types.h"
 #include "dt_process_req.h"
 
 #include "auxil.h"
@@ -12,6 +12,12 @@
 #include "l_make_feature_vector.h"
 #include "l_post_proc_preds.h"
 #include "setup.h"
+
+extern DT_INTERPRETER_TYPE *g_interp;
+extern bool g_halt; 
+extern char g_err[DT_ERR_MSG_LEN+1]; 
+extern char g_buf[DT_ERR_MSG_LEN+1]; 
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; 
 
 // START FUNC DECL
 int
@@ -35,7 +41,7 @@ dt_process_req(
       go_BYE(-1);
       break;
     case Classify : /* done by C */
-      status = classify(body, g_rslt, DT_MAX_LEN_RESULT); cBYE(status);
+      status = classify(g_interp, body, g_rslt, DT_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
     case Diagnostics : 

@@ -2,7 +2,6 @@
 #include "eval_dt.h"
 #include "eval_rf.h"
 #include "eval_mdl.h"
-extern uint64_t g_num_models;
 
 int
 eval_mdl(
@@ -14,6 +13,7 @@ eval_mdl(
   int n_rf, /* number of decision trees in random forest */
   MDL_REC_TYPE *mdl, /* [n_mdl] */
   int n_mdl, /* number of models */
+  int forest_type,
   float *predictions /* [n_mdl] */
   )
 {
@@ -21,6 +21,15 @@ eval_mdl(
   for ( int i = 0; i < n_mdl; i++ ) {
     predictions[i] = 0;
   }
+  switch ( forest_type ) { 
+    case RANDOM_FOREST : 
+    case XGBOOST : 
+      break;
+    default :
+      go_BYE(-1);
+      break;
+  }
+
   if ( dt == NULL ) { go_BYE(-1); }
   if ( n_dt == 0 ) { go_BYE(-1); }
   if ( rf == NULL ) { go_BYE(-1); }
@@ -40,21 +49,39 @@ eval_mdl(
     // Below: Avoiding malloc but introducing some ugliness
 #define MAX_NUM_RF 1024 
     if ( l_n_rf > MAX_NUM_RF ) { l_status = -1; continue; }
-    int rf_pos[MAX_NUM_RF];
-    int rf_neg[MAX_NUM_RF];
+    RF_EVAL_REC_TYPE rf_eval[MAX_NUM_RF];
     //-----------------------------
     l_status = eval_rf(features, n_features, dt, n_dt, 
-        rf, n_rf, rf_lb, rf_ub, rf_pos, rf_neg);
+        rf, n_rf, rf_lb, rf_ub, rf_eval);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
-    double sum_prob = 0;
+    double sum = 0; 
+    int npos;
+    int nneg;
+    float prob;
+    float xgb;
     for ( int j = 0; j < l_n_rf; j++ ) { 
-      int npos = rf_pos[j];
-      int nneg = rf_neg[j];
-      float prob = (float)npos/(float)(npos+nneg);
-      sum_prob += prob;
+      switch ( forest_type ) { 
+        case RANDOM_FOREST : 
+          npos = rf_eval[j].npos;
+          nneg = rf_eval[j].nneg;
+          prob = (float)npos / (float)(npos + nneg);
+          sum  += prob;
+          break;
+        case XGBOOST : 
+          xgb = rf_eval[j].xgb;
+          sum += xgb;
+          break;
+      }
     }
-    predictions[i] = sum_prob / l_n_rf;
+    switch ( forest_type ) { 
+      case RANDOM_FOREST : 
+        predictions[i] = sum / l_n_rf;
+        break;
+      case XGBOOST : 
+        predictions[i] = 1.0 / ( 1 + exp(-1.0 * sum));
+        break;
+    }
   }
   cBYE(status);
 BYE:

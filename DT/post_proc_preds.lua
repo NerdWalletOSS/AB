@@ -14,12 +14,14 @@ local function post_proc_preds(
   opvec, -- vector, now a float* of n_opvec length
   n_opvec -- number of elements in vector
   )
+  assert(opvec)
   opvec = ffi.cast("float*", opvec)
   local out = {}
   for k, v in pairs(mdl_map) do 
     assert( ( k >=1 ) and ( k <= n_opvec ) )
     out[v] = opvec[k-1]
   end
+  -- for k, v in pairs(out) do print(k, v) end
   -- TODO: do more error checking
   local x = assert(JSON:encode(out))
   return x

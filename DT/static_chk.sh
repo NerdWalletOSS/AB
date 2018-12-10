@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
-if [ $# != 1 ]; then echo "Error. Usage is $0 <directory>"; fi 
+if [ $# != 2 ]; then 
+  echo "Error. Usage is $0 <directory> <random_forest|xgboost>"; fi 
 dir=$1
+foresttype=$2
 test -d $dir
 cd $dir
 test -f dt.csv
@@ -17,8 +19,8 @@ cwd=$PWD
 echo "XXXX $cwd"
 pushd .
 cd ../../dt_interpreter/src/
-echo bash mk_dt_bin.sh $cwd/dt.csv
-bash mk_dt_bin.sh $cwd/dt.csv
+echo bash mk_dt_bin.sh $cwd/dt.csv "$foresttype"
+bash mk_dt_bin.sh $cwd/dt.csv "$foresttype"
 test -f _dt.bin;  mv _dt.bin  $cwd
 test -f _rf.bin;  mv _rf.bin  $cwd
 test -f _mdl.bin; mv _mdl.bin $cwd

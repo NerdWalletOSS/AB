@@ -7,6 +7,7 @@
 int
 read_random_forest(
   const char *const file_name,
+  int forest_type,
   DT_REC_TYPE **ptr_dt,
   int *ptr_n_dt, /* number of nodes in decision tree */
   RF_REC_TYPE **ptr_rf,
@@ -42,6 +43,7 @@ read_random_forest(
   fldtypes[7] = strdup("I4"); 
   fldtypes[8] = strdup("I4"); 
   fldtypes[9] = strdup("F4"); 
+  //----------------------------------------
   bool is_hdr = true;
   bool is_load[nC]; 
   for ( uint32_t i = 0; i < nC; i++ ) { is_load[i] = true; }
@@ -54,6 +56,20 @@ read_random_forest(
   char *str_for_lua = NULL;
   size_t sz_str_for_lua = 0;
   int n_str_for_lua = 0;
+  switch ( forest_type ) { 
+    case XGBOOST : 
+    has_nulls[7] = true;
+    has_nulls[8] = true;
+    has_nulls[9] = true;
+    break;
+    case RANDOM_FOREST : 
+    has_nulls[9] = true;
+    break;
+    default : 
+    go_BYE(-1);
+    break;
+  }
+  //----------------------------------------
 
   status = load_csv_fast( q_data_dir, infile, nC, &nR, fldtypes, is_hdr, 
       is_load, has_nulls, num_nulls, &out_files, &nil_files, 
@@ -111,7 +127,7 @@ read_random_forest(
   //----------------------------------------------------
   status = rs_mmap(out_files[9], &X, &nX, 0); cBYE(status);
   fptr = (float *)X; 
-  for ( int i = 0; i < n_dt; i++ ) { dt[i].xgb_val = fptr[i]; }
+  for ( int i = 0; i < n_dt; i++ ) { dt[i].xgb  = fptr[i]; }
   mcr_rs_munmap(X, nX);
   //----------------------------------------------------
   // calculate number of models, alloc and initialize
@@ -126,7 +142,7 @@ read_random_forest(
   //----------------------------------------------------
   //  Basic integrity testing
   int n_fixed = 0;
-  for ( int i = 1; i < n_dt; i++ ) { 
+  for ( int i = 1; i < n_dt; i++ ) {
     if ( dt[i].node_idx != i ) { 
       go_BYE(-1); }
     if ( dt[i].tree_idx < dt[i-1].tree_idx ) { go_BYE(-1); }
@@ -151,6 +167,11 @@ read_random_forest(
     if ( ( dt[i].lchild_idx ==  dt[i].rchild_idx ) && 
          ( dt[i].lchild_idx != -1 ) ) {
       go_BYE(-1); }
+    switch ( forest_type ) { 
+      case RANDOM_FOREST : 
+        if ( ( dt[i].npos < 0 ) || ( dt[i].nneg < 0 ) ) { go_BYE(-1); }
+        break;
+    }
   }
   if ( n_fixed > 0 ) { 
     printf("Fixed %d \n", n_fixed); go_BYE(-1);

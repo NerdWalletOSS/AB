@@ -6,6 +6,7 @@ local function make_feature_vector(
   fvec, -- feature vector , C array [n_fvec] */
   n_fvec -- number of elements in C feature vector 
   )
+  assert(type(fvec_as_json) == "string")
   local fvec_tbl = assert(JSON:decode(fvec_as_json), 
     "Feature vector not valid JSON")
   assert(fvec)
@@ -20,10 +21,9 @@ local function make_feature_vector(
     fidx_seen[i] = false
   end
   --=================================
-  for k, v in pairs(dt_feature_to_idx) do print(k, v) end 
+  -- for k, v in pairs(dt_feature_to_idx) do print(k, v) end 
   --=================================
   for k, v in pairs(fvec_tbl) do
-    print(k, v)
     local fidx = assert(dt_feature_to_idx[k])
     assert( ( fidx >=1 ) and ( fidx <= n_fvec ) )
     assert(type(v) == "number")

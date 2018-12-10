@@ -11,13 +11,5 @@ outfile=$dir/sample_output.json
 test -f $outfile
 jq . $outfile 1>/dev/null 2>&1
 
-body=`cat $infile`
-
-curl -s -XPOST "http://localhost:8000/Classify" \
-  --data "$body" \
-  --header "Content-Type: application/json" -o _out.json
-jq . _rslt 1>/dev/null 2>&1
-echo ""
-luajit lua/compare_predictions.lua _out.json $outfile
-echo $rslt
-echo "Completed $0 in $PWD"
+luajit test_classify.lua $infile $outfile
+echo SUCCESS

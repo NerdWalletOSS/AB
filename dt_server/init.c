@@ -1,11 +1,32 @@
 #include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 #include "dt_incs.h"
-#include "dt_globals.h"
+#include "dt_incs.h"
 #include "init.h"
 #include "auxil.h"
 #include "dt_types.h"
-extern lua_State *g_L_DT; // Set by C
+#include "free_interp.h"
+extern lua_State *g_L_DT; 
+extern bool g_halt; 
 
+extern char g_err[DT_ERR_MSG_LEN+1]; 
+extern char g_buf[DT_ERR_MSG_LEN+1]; 
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; 
+
+extern char g_valid_chars_in_url[256]; 
+
+extern char g_dt_features[DT_MAX_NUM_FEATURES][DT_MAX_LEN_FEATURE+1]; 
+extern int  g_n_dt_features;
+
+extern char g_dt_models[DT_MAX_NUM_MODELS][DT_MAX_LEN_MODEL+1];
+extern int  g_n_models;
+
+#include "dt_log_globals.h"
+
+#include "dt_types.h"
+
+DT_INTERPRETER_TYPE *g_interp;
 
 void
 free_globals(
@@ -17,43 +38,21 @@ free_globals(
   if ( g_L_DT != NULL ) { lua_close(g_L_DT); g_L_DT = NULL; }
 }
 
-//<hdr>
 void
-free_interp(
-    DT_INTERPRETER_TYPE *interp
-    )
-  //</hdr>
-{
-  if ( interp != NULL ) {
-    if ( ( interp->dt != NULL ) && ( interp->len_dt_file > 0 ) ) { 
-      munmap(interp->dt, interp->len_dt_file); interp->n_dt = 0;
-    }
-    if ( ( interp->rf != NULL ) && ( interp->len_rf_file > 0 ) ) { 
-      munmap(interp->rf, interp->len_rf_file); interp->n_rf = 0;
-    }
-    if ( ( interp->mdl != NULL ) && ( interp->len_mdl_file > 0 ) ) { 
-      munmap(interp->mdl, interp->len_mdl_file); interp->n_mdl = 0;
-    }
-    free_if_non_null(interp->predictions); interp->n_mdl = 0;
-    free_if_non_null(interp->dt_feature_vector); interp->n_dt_feature_vector = 0;
-  }
-}
-
-int
 zero_globals(
     void
     )
 {
-  int status = 0;
-
+  for ( int i = 0; i < DT_MAX_NUM_FEATURES; i++ ) { 
+    memset(g_dt_features[i], '\0', DT_MAX_LEN_FEATURE+1);
+  }
+  for ( int i = 0; i < DT_MAX_NUM_MODELS; i++ ) { 
+    memset(g_dt_models[i], '\0', DT_MAX_LEN_MODEL+1);
+  }
   g_halt = false;
   memset(g_err, '\0', DT_ERR_MSG_LEN+1);
   memset(g_buf, '\0', DT_ERR_MSG_LEN+1);
   memset(g_rslt, '\0', DT_MAX_LEN_RESULT+1);
-
-  g_interp = malloc(1 * sizeof(DT_INTERPRETER_TYPE ));
-  return_if_malloc_failed(g_interp);
-  memset(g_interp, '\0', 1 * sizeof(DT_INTERPRETER_TYPE ));
 
   //------------
   const char *str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=/_:";
@@ -63,8 +62,6 @@ zero_globals(
   }
 
   zero_log();
-BYE:
-  return status;
 }
 
 void
@@ -86,15 +83,34 @@ init_lua(
   int status = 0;
   g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L_DT);  
-  // TODO Send config file to dt.lua 
-  status = luaL_dostring(g_L_DT, "require 'DT/dt'"); 
+  status = luaL_dostring(g_L_DT, "require 'DT/init'"); 
   if ( status != 0 ) { 
     fprintf(stderr, "Lua load : %s\n", lua_tostring(g_L_DT, -1));
     sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
     lua_pop(g_L_DT, 1); go_BYE(-1);
   }
   cBYE(status);
-
+  //--- Now process the config file 
+  const char *const lua_fn = "proc_config_file";
+  lua_getglobal(g_L_DT, lua_fn);
+  if ( !lua_isfunction(g_L_DT, -1)) {
+    fprintf(stderr, "Lua Function %s undefined\n", lua_fn);
+    lua_pop(g_L_DT, 1); go_BYE(-1);
+  }
+  lua_pushstring(g_L_DT, config_file);
+  status = lua_pcall(g_L_DT, 1, 1, 0);
+  if ( status != 0 ) {
+    fprintf(stderr, "calling function %s failed: %s\n", 
+        lua_fn, lua_tostring(g_L_DT, -1));
+    sprintf(g_err, "{ \"error\": \"%s\"}",lua_tostring(g_L_DT, -1));
+    lua_pop(g_L_DT, 1); go_BYE(-1);
+  }
+  if (!lua_isboolean(g_L_DT, -1)) {
+    fprintf(stderr, "%s: return 1 must be a boolean\n", __func__); go_BYE(-1); 
+  }
+  bool l_status = lua_toboolean(g_L_DT, -1);
+  if ( l_status != true ) { go_BYE(-1); }
+  // --------------------
 BYE:
   return status;
 }

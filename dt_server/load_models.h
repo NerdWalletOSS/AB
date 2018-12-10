@@ -1,7 +1,8 @@
 extern int
 load_models(
-    const char *const dt_dir,
-    const char *const model_name,
+    const char *const model_dir,
+    const char *const forest_type,
+    int num_features,
     DT_INTERPRETER_TYPE *interp
     );
 extern int

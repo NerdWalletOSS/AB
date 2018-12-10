@@ -8,11 +8,11 @@ INCS= -I. \
 	-I../dt_interpreter/src/  \
 	-I../jansson-2.10/src/ \
 
-DBGFLAGS= 
 DBGFLAGS= -g -DDEBUG
+DBGFLAGS= 
 
-OPTFLAGS= -O4
 OPTFLAGS= 
+OPTFLAGS= -O4
 
 LFLAGS= $(DBGFLAGS) $(OPTFLAGS)  $(WARN) 
 
@@ -116,7 +116,7 @@ clean:
 	rm -r -f dt_httpd $(COBJS) 
 	make -i -C ../LuaJIT-2.1.0-beta3/src/ clean 
 	make -i -C ../libevent-2.0.22-stable/ distclean 
-	make -C ../dt_intepreter/src clean
+	make -C ../dt_intepreter/src/ clean
 	rm -f ../dt_interpreter/src/*.so 
 	rm -f ../USER_AGENT_CLASSIFIER/src/*.so 
 	rm -r -f ../jansson-2.10/* # TODO P3 Check with Indrajeet

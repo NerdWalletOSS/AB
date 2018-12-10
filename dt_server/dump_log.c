@@ -1,8 +1,13 @@
 #include "dt_incs.h"
 #include "dt_types.h"
-#include "dt_globals.h"
 #include "auxil.h"
 #include "dump_log.h"
+
+extern char g_rslt[DT_MAX_LEN_RESULT+1]; // For C: ab_process_req()
+extern uint64_t g_log_start_time;
+extern uint64_t g_log_response_time; 
+extern uint64_t g_log_num_classify; 
+
 
 void
 write_log(
