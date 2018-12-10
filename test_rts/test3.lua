@@ -16,7 +16,7 @@ tests.t1 = function(
     assert(c == 200)
     a, b, c = curl.get("localhost:8000/Diagnostics?Source=C"); 
     assert(c == 200)
-    print("iter " .. i)
+    -- print("iter " .. i)
   end
   print("Test t1 succeeded")
 end

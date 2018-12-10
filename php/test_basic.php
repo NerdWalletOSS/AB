@@ -42,12 +42,7 @@ function test_basic(
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   //-----------------------------------------------
-  $is_overwrite = false;
-  $x         = get_json_element($inJ, 'OverWriteURL', false);
-  if ( $x === "true" ) {
-    $is_overwrite = true;
-  }
-  $state     = get_json_element($inJ, 'State', false);
+  $state     = "draft"; // this may be changed later on
   $test_name = get_json_element($inJ, 'name'); 
   $test_type = get_json_element($inJ, 'TestType'); 
   $test_dscr = get_json_element($inJ, 'description', false);
@@ -67,6 +62,7 @@ function test_basic(
     $channel_id = lkp("channel", $channel);
   }
   //-------------------------------------------------
+  $is_overwrite = true;
   // Decide whether to update or insert 
   $is_new = is_new_test($inJ);
   if ( $is_new ) { // if insert
@@ -89,6 +85,15 @@ function test_basic(
     if ( $channel_id != $T['channel_id'] ) { 
       $pred_id = "__NULL__";
     }
+    $state_id = $T['state_id'];
+    $state   = lkp("state", $state_id, "reverse");
+    if ( $state == "started" ) {
+      $is_overwrite = false;
+      $x         = get_json_element($inJ, 'OverWriteURL', false);
+      if ( $x === "true" ) {
+        $is_overwrite = true;
+      }
+    }
   }
   if ( empty($channel) ) {
     $channel_id = "__NULL__";
@@ -106,7 +111,6 @@ function test_basic(
       rs_assert(null, "Invalid test type $test_type");
       break;
     }
-    $inJ->{'State'}   = $state = "draft";
     $inJ->{'BinType'} = $bin_type;
   }
   else {
@@ -139,8 +143,8 @@ function test_basic(
   $X5['request_webapp_id']  = $request_webapp_id;
   $X5['api_id']       = $api_id;
   if ( $test_id > 0 ) {  // update
-    if ( $pred_id ) { 
-      $X1['pred_id'] == $pred_id;
+    if ( isset($pred_id) ) { 
+      $X1['pred_id'] = $pred_id;
     }
     $action = "updated";
     $state = get_json_element($inJ, 'State');
@@ -160,38 +164,38 @@ function test_basic(
       //--- Update test table 
       mod_row("test", $X1, "where id = $test_id ");
       //--- Update variant table 
+      unset($X2);
       $X2['t_update'] = $t_update;
       $X2['updated_at'] = $updated_at;
       for ( $i = 0; $i < count($variants); $i++ ) {
-        // can change name only in dormant mode 
-        if ( $state == "draft" ) {
+        // can change name, URL only in draft or dormant mode 
+        if ( ( $state == "draft" ) || ( $state == "dormant" ) ) {
           $X2['name']        = $variant_names[$i];
-        }
-        if ( ( $state == "draft" ) || ( $state == "dormant" ) ||
-          ( $state == "started" ) ) {
-            if ( !$is_dev_specific ) { 
-              // can change percentage only if not device specific
-              $X2['percentage']  = $variant_percs[$i];
-            }
-            if ( $test_type == "XYTest" ) {
-              $X2['url']        = $variant_urls[$i];
-            }
-            if ( ( $test_type == "XYTest" ) && ( $state == "started" ) ) { 
-              $R = db_get_row("variant", "id", $variant_ids[$i]);
-              $old_url = $R['url'];
-              $new_url = $variant_urls[$i];
-              if ( $old_url != $new_url ) { 
-                $new_variant_id  = dup_row("variant", $variant_ids[$i],
-                  array( "is_del" => true), 
-                  array( "url" => $new_url));
-                // Update device_x_variant table???
-                $X6['variant_id'] = $new_variant_id;
-                mod_row("device_x_variant", $X6, 
-                 "  where variant_id = " . $variant_ids[$i]);
-                $variant_ids[$i] = $new_variant_id;
-              }
-            }
+          if ( $test_type == "XYTest" ) {
+            $X2['url']        = $variant_urls[$i];
           }
+        }
+        if ( !$is_dev_specific ) { 
+          // can change percentage only if not device specific
+          $X2['percentage']  = $variant_percs[$i];
+        }
+        if ( ( $test_type == "XYTest" ) && ( $state == "started" ) &&
+             ( $is_overwrite ) ) { 
+          $R = db_get_row("variant", "id", $variant_ids[$i]);
+          $old_url = $R['url'];
+          $new_url = $variant_urls[$i];
+          if ( $old_url != $new_url ) { 
+            $new_variant_id  = dup_row("variant", $variant_ids[$i],
+              array( "is_del" => true), 
+              array( "url" => $new_url));
+            // Update device_x_variant table???
+            $X6['variant_id'] = $new_variant_id;
+            mod_row("device_x_variant", $X6, 
+              "  where variant_id = " . $variant_ids[$i]);
+            $variant_ids[$i] = $new_variant_id;
+          }
+          $X2['url']        = $variant_urls[$i];
+        }
         mod_row("variant", $X2, "where id = " . $variant_ids[$i]);
       }
       //--- Update device_x_variant table --------
@@ -301,31 +305,36 @@ function test_basic(
   $outJ["msg_stdout"] = "Test [$test_name] with ID [$test_id] $action";
 
   $outJ["TestID"] = $test_id;
-  $outJ["OverWrite"] = $is_overwrite;
+  if ( $is_overwrite ) { 
+    $outJ["OverWrite"] = "true";
+  }
+  else {
+    $outJ["OverWrite"] = "false";
+  }
   header("TestID: $test_id"); // just for Lua test cases
+  return $outJ;
 
   // Note that state cannot be terminated or archived for this endpoint
-  return $outJ;
   /* always PHP code called from front-end returns outJ which has
    * 1) msg_stdout
    * 2) rts_code, 200 is good, anything else is bad
    * Note one exception: 0 means that the RTS was not called at all
-      header("TestID: $test_id"); // just for Lua test cases
-      NO other place in code has header(..)
-   * Anything custom to the page e.g.
-   * 1) TestID
-   * 2) IsOverWrite
-   * If there is a PHP error, rs_assert() will happen
-   * If there was no rs_assert => all is well
-   * All PHP endpoints will return a table called outJ. 
-   * Should never have any return statement in code except at end
-   * PHP code interacts with RTS through inform_rts() nothing else
-   *
-   *
-   * For functions that do not interact with RTS (add_admin), we follow 
-   * same protocol as above except that rts_code is always 0
-   *
-   * For chk_test() and chk_tests(), 
+   header("TestID: $test_id"); // just for Lua test cases
+  NO other place in code has header(..)
+    * Anything custom to the page e.g.
+    * 1) TestID
+    * 2) IsOverWrite
+    * If there is a PHP error, rs_assert() will happen
+    * If there was no rs_assert => all is well
+    * All PHP endpoints will return a table called outJ. 
+    * Should never have any return statement in code except at end
+    * PHP code interacts with RTS through inform_rts() nothing else
+      *
+      *
+      * For functions that do not interact with RTS (add_admin), we follow 
+      * same protocol as above except that rts_code is always 0
+      *
+      * For chk_test() and chk_tests(), 
    * we either return true or we rs_assert out
    * For chk_url() 
    * we either return true or we return false or we rs_assert out

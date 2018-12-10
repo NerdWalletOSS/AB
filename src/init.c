@@ -60,11 +60,21 @@ init_lua(
   g_L = luaL_newstate(); if ( g_L == NULL ) { go_BYE(-1); }
   luaL_openlibs(g_L);  
   status = luaL_dostring(g_L, "require 'RTS/ab'"); cBYE(status);
+  if ( status != 0 ) { 
+    fprintf(stderr, "Loading RTS/ab failed: %s\n", 
+        lua_tostring(g_L, -1));
+    lua_pop(g_L, 1); go_BYE(-1);
+  }
 
-  if ( !g_disable_dt ) { 
+  if ( !g_disable_dt ) {
     g_L_DT = luaL_newstate(); if ( g_L_DT == NULL ) { go_BYE(-1); }
     luaL_openlibs(g_L_DT);  
     status = luaL_dostring(g_L_DT, "require 'DT/dt'"); cBYE(status);
+    if ( status != 0 ) { 
+      fprintf(stderr, "Loading DT/dt failed: %s\n", 
+          lua_tostring(g_L_DT, -1));
+      lua_pop(g_L_DT, 1); go_BYE(-1);
+    }
   }
 
 BYE:
@@ -187,7 +197,7 @@ init_globals(
     g_valid_chars_in_ua[(uint8_t)(*cptr)] = true;
   }
 
-  const char *arg_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=";
+  const char *arg_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&=_";
   for ( char *cptr = (char *)arg_str; *cptr != '\0'; cptr++ ) {
     g_valid_chars_in_ab_args[(uint8_t)(*cptr)] = true;
   }

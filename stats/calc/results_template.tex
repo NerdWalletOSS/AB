@@ -1,0 +1,61 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{ifthen}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{fancyheadings}
+\usepackage{hyperref}
+\usepackage{comment}
+\pagestyle{fancy}
+\usepackage{pmc}
+\usepackage{graphicx}
+\setlength\textwidth{6.5in}
+\setlength\textheight{8.5in}
+\input{../../../../latex/styles/ramesh_abbreviations}
+
+\newcommand{\beq}{\begin{equation}} %% new, no conflict
+\newcommand{\eeq}{\end{equation}} %% new, no conflict
+\newcommand{\bdm}{\begin{displaymath}} %% new, no conflict
+\newcommand{\edm}{\end{displaymath}} %% new, no conflict
+% \newcommand{\reals}{{\rm I\! R}} %% new, no conflict
+\newcommand{\reals}{\cal{R}} %% new, no conflict
+%\newcommand{\iff}{\LeftRightArrow}
+\newcommand{\bb}[1]{\mathbf{#1}}
+\newboolean{longform}
+\setboolean{longform}{false}
+\newboolean{blogpost}
+\setboolean{blogpost}{true}
+%% Another option is \usepackage{comment}
+%% \includecomment(answer} or excludecomment{answer} % then
+%% \begin{answer} ... \end{answer}
+
+
+%% From https://math.berkeley.edu/~gbergman/misc/hacks/langl_rangl.html
+\newcommand{\langl}{\begin{picture}(4.5,7)
+\put(1.1,2.5){\rotatebox{60}{\line(1,0){5.5}}}
+\put(1.1,2.5){\rotatebox{300}{\line(1,0){5.5}}}
+\end{picture}}
+
+\newcommand{\rangl}{\begin{picture}(4.5,7)
+\put(.9,2.5){\rotatebox{120}{\line(1,0){5.5}}}
+\put(.9,2.5){\rotatebox{240}{\line(1,0){5.5}}}
+\end{picture}}
+
+\newcommand{\mymean}[1]{\ensuremath{\langl{#1}\rangl}} %% new, no conflict
+
+\begin{document}
+\title{Bayesian Analysis for $testname}
+\author{Test Owner}
+\maketitle
+%\thispagestyle{fancy}
+%\lhead{}
+%\chead{}
+%\rhead{}
+%\lfoot{}
+
+\input{analysis.tex}
+
+\end{document}
+

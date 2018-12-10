@@ -1,0 +1,17 @@
+{
+	"supp": 1,
+	"outName": "RST_default",
+	"data": {
+		"NA": 200,
+		"MA": 40,
+		"NB": 100,
+		"MB": 15
+	},
+	"metrics": {
+		"ProbDiff": 0.05,
+		"ProbLift": 0.1,
+		"OddsFactor": 1.1,
+		"PageViewsDiff": 0.05,
+		"PageViewsLift": 0.1
+	}
+}

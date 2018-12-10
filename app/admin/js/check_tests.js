@@ -5,8 +5,8 @@ $(document).ready(function() {
       type: "POST",
       url: "processor/check_tests_processor.php",
       error: function(response, textStatus, XHR) {
-        if (response.getResponseHeader('Error-Code') != 200) {
-          var cssLink = "css/error.css";
+        if (response != true) {
+          var cssLink = "../css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
@@ -14,7 +14,7 @@ $(document).ready(function() {
           $("#error_message").html(response.getResponseHeader('Error-Message'));
           $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
         } else {
-          var cssLink = "css/error.css";
+          var cssLink = "../css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');
@@ -22,7 +22,7 @@ $(document).ready(function() {
         }
       },
       success: function(response, textStatus, XHR) {
-          var cssLink = "css/error.css";
+          var cssLink = "../css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
           $("#error_message").css('display', 'inline', 'important');

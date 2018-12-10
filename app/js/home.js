@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+// DECLARING REQUIRED HELPER FUNCTIONS
   function confirm() {
     confirm("Are you sure, you want to change the state?");
   }
@@ -39,19 +39,21 @@ $(document).ready(function() {
       break;
     }
   }
+//----------------------------------------------------//
   $('#jsTestTable').DataTable({
     "order": [
-      [0, "asc"]
+      [5, "desc"]
     ]
   });
+//----------------------------------------------------//
+// FILTER TEST WITH RESPECT TO STATES
   $("#error").css('display', 'none', 'important');
   $('input[type="radio"]').click(function() {
-  $("#error").css('display', 'none', 'important');
-    var option = $(this).val();
+    var option = $(this).attr('id');
+    var admin = $('#TestAdmin').val();
     $.ajax({
-      type: "POST",
-      url: "processor/filter_test.php",
-      data: $(this).serialize(),
+      type: "GET",
+      url: "processor/filter_test.php?admin="+admin+"&option="+option,
       error: function(response, textStatus, XHR) {
         console.log(response);
         console.log(textStatus);
@@ -70,7 +72,7 @@ $(document).ready(function() {
       success: function(response, textStatus, XHR) {
         // Make customised table
         $.makeTable = function(jsonData) {
-          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Check Test</th><th>Action</th></tr></tfoot>');
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
           for (var k in jsonData[0])
             var tblHeader = "";
           tblHeader += "<th>" + k[0] + "</th>";
@@ -78,14 +80,13 @@ $(document).ready(function() {
             var TableRow = "<tr>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
             TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
+            TableRow += "<td>" + value['external_id'] + "</td>";
             if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test btn btn-warning btn-xs' data-key ='"+ value['name'] + "'>Check Test</button></td>";
 						} else {  
             TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";
              }
-   /*         if (value['state_id'] < 5) {
-            TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button>"
-*/  
+ 
 					if (value['state_id'] == 3) {
             TableRow += "<td><a href='fix_to_a_winner.php?TestID=" + value['id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></a>";
 } else if (value['state_id'] == 5) {
@@ -98,7 +99,104 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
             } 
             if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
             TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
-            TableRow += "</td></tr>";
+            TableRow += "</td>";
+
+						var display_date = new Date(value['updated_at']).toLocaleDateString('en-GB', {
+    				day : 'numeric',
+    				month : 'short',
+    				year : 'numeric'
+						}).split(' ').join('-');
+  				  TableRow += "<td><span class='hide'>" + value['updated_at'] + "</span>" + display_date + "</td>";
+						TableRow +="</tr>";
+            $(table).append(TableRow);
+          });
+
+          return ($(table));
+        };
+        var jsonData = eval(response); 
+        if (jsonData == null) {
+          var TableRow = "";
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
+        } else {
+          var table = $.makeTable(jsonData);
+        }
+        $("#show-data").html(table);
+        $('#jsTestTable').DataTable({
+          "order": [
+            [5, "desc"]
+          ]
+        });
+      },
+      beforeSend: function() {
+        $("#error_message").css('display', 'inline', 'important');
+        $("#error_message").html("Loading...")
+      }
+    });
+    option.prop('checked', true);
+    return false;
+  });
+
+//----------------------------------------------------//
+// FILTER TEST WITH RESPECT TO ADMIN NAME
+  $('#TestAdmin').change(function() {
+    var admin = $(this).val();
+    var option = $('input[name=option]:checked').attr('id');
+    $.ajax({
+      type: "GET",
+      url: "processor/filter_test.php?admin="+admin+"&option="+option,
+      error: function(response, textStatus, XHR) {
+        console.log(response);
+        console.log(textStatus);
+        console.log(XHR);
+        console.log(response.getAllResponseHeaders());
+        if (response.getResponseHeader('Error-Code') != 200) {
+          var cssLink = "css/error.css";
+          $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
+          $("#error").css('display', 'inline', 'important');
+          $("#error_message").css('display', 'inline', 'important');
+          $("#stack_trace").css('display', 'inline', 'important');
+          $("#error_message").html(response.getResponseHeader('Error-Message'));
+          $("#stack_trace").html(response.getResponseHeader('Error-BackTrace'));
+        }
+      },
+      success: function(response, textStatus, XHR) {
+        // Make customised table
+        $.makeTable = function(jsonData) {
+          var table = $('<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr></tfoot>');
+          for (var k in jsonData[0])
+            var tblHeader = "";
+          tblHeader += "<th>" + k[0] + "</th>";
+          $.each(jsonData, function(index, value) {
+            var TableRow = "<tr>";
+            TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['id'] + "</a></td>";
+            TableRow += "<td><a href='aev_test_1.php?TestID=" + value['id'] + "'>" + value['name'] + "</a></td>";
+            TableRow += "<td>" + value['external_id'] + "</td>";
+            if ((value['state_id'] == 3) || (value['state_id'] == 4)) {
+            TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><button class='check_test btn btn-warning btn-xs' data-key ='"+ value['name'] + "'>Check Test</button></td>";
+						} else {  
+            TableRow +=  "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>N/A</td>";
+             }
+ 
+					if (value['state_id'] == 3) {
+            TableRow += "<td><a href='fix_to_a_winner.php?TestID=" + value['id'] + "'><button type='button' class='btn btn-primary btn-xs'>" + action_state(value['state_id']) + "</button></a>";
+} else if (value['state_id'] == 5) {
+  TableRow += "<td><strong>No Action</strong>";
+}  else {
+TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>" + action_state(value['state_id']) + "</button></a>"; 
+}          
+ if (value['state_id'] == 1) {
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=delete" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Delete</button>";
+            } 
+            if ((value['state_id'] == 4) && (value['test_type_id'] == 2)) {
+            TableRow += "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=" + value['id'] + "&state_id=" + value['state_id'] + "&action=resurrect" + "'><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resuurect</button>";}      
+            TableRow += "</td>";
+						var display_date = new Date(value['updated_at']).toLocaleDateString('en-GB', {
+    				day : 'numeric',
+    				month : 'short',
+    				year : 'numeric'
+						}).split(' ').join('-');
+  				  TableRow += "<td><span class='hide'>" + value['updated_at'] + "</span>" + display_date + "</td>";
+						TableRow +="</tr>";
             $(table).append(TableRow);
           });
           return ($(table));
@@ -106,34 +204,34 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         var jsonData = eval(response);
         if (jsonData == null) {
           var TableRow = "";
-          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></thead><tfoot> <tr><th>ID</  th><th>Name</th><th>Action</th> </tr></tfoot>'
+          var table = '<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></thead><tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th> <th>Updated On</th></tr></tfoot>'
         } else {
           var table = $.makeTable(jsonData);
         }
         $("#show-data").html(table);
-        $('#jsTestTable').DataTable({
+       $('#jsTestTable').DataTable({
           "order": [
-            [0, "asc"]
+            [5, "desc"]
           ]
         });
-      }
-      /*beforeSend: function() {
+      },
+      beforeSend: function() {
         $("#error_message").css('display', 'inline', 'important');
         $("#error_message").html("Loading...")
-      }*/
+      }
     });
     option.prop('checked', true);
     return false;
   });
 
+//---------------------------------------------------------------------//
+// CHECK TEST
 
  $(document).on("click", ".check_test", function() {
-    var name = $(this).attr('data-key'); // $(this) refers to button that was clicked
-    //e.preventDefault();
+    var name = $(this).attr('data-key');
     $.ajax({
       type: "POST",
       url: "processor/check_test_processor.php?TestName="+name,
-      //data: $(this).serialize(),
       error: function(response, textStatus, XHR) {
         if (response.getResponseHeader('Error-Code') != 200) {
           var cssLink = "css/error.css";
@@ -146,8 +244,6 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
         }
       },
       success: function(response, textStatus, XHR) {
-        //var id = XHR.getResponseHeader('TestID');
-        window.location = "home.php";
           var cssLink = "css/error.css";
           $("head").append("<link href=" + cssLink + " rel='stylesheet' />");
           $("#error").css('display', 'inline', 'important');
@@ -162,5 +258,8 @@ TableRow += "<td><a href='processor/set_state_processor.php?TestID=" + value['id
     });
     return false;
   });
+//------------------------------------------------------------------------------//
+
+//});
 
 });

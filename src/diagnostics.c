@@ -34,7 +34,6 @@ c_diagnostics(
       if ( g_tests[i].is_dev_specific   != 0 ) { go_BYE(-1); }
       if ( g_tests[i].state             != 0 ) { go_BYE(-1); }
       if ( g_tests[i].seed              != 0 ) { go_BYE(-1); }
-      if ( g_tests[i].num_devices       != 0 ) { go_BYE(-1); }
       if ( g_tests[i].num_variants      != 0 ) { go_BYE(-1); }
       if ( g_tests[i].variants          != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  != NULL ) { go_BYE(-1); }
@@ -45,8 +44,9 @@ c_diagnostics(
     int test_type = g_tests[i].test_type;
     int state = g_tests[i].state;
     int has_filters = g_tests[i].has_filters;
-    int is_dev_specific = g_tests[i].is_dev_specific;
-    uint32_t num_devices = g_tests[i].num_devices;
+    bool is_dev_specific = g_tests[i].is_dev_specific;
+    uint32_t num_devices = 1;
+    if ( is_dev_specific ) { num_devices = g_n_justin_cat_lkp; }
     if ( num_devices < 1 ) { go_BYE(-1); }
     int num_variants = g_tests[i].num_variants;
     if ( ( num_variants < AB_MIN_NUM_VARIANTS ) || 
@@ -161,12 +161,14 @@ c_diagnostics(
     }
     if ( g_tests[i].final_variant_id  != NULL ) { 
       for ( uint32_t d = 0; d < num_devices; d++ ) { 
+        if ( g_tests[i].final_variant_id == NULL ) { go_BYE(-1); }
         if ( g_tests[i].final_variant_id[d] <= 0 ) { 
           go_BYE(-1); 
         }
       }
       for ( uint32_t d = 0; d < num_devices; d++ ) { 
-        if ( g_tests[i].final_variant_idx[d] >= (uint32_t)num_variants ) {
+        if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
+        if ( g_tests[i].final_variant_idx[d] >= num_variants ) {
           go_BYE(-1);
         }
       }
@@ -177,7 +179,7 @@ c_diagnostics(
       if ( g_tests[i].variant_per_bin   != NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_id  == NULL ) { go_BYE(-1); }
       if ( g_tests[i].final_variant_idx == NULL ) { go_BYE(-1); }
-      for ( unsigned int d = 0; d < g_tests[i].num_devices; d++ ) { 
+      for ( unsigned int d = 0; d < num_devices; d++ ) { 
         if ( g_tests[i].final_variant_id[d] >= 1 ) {
           if ( g_tests[i].final_variant_idx[d] < 0 ) { go_BYE(-1); }
         }

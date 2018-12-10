@@ -12,6 +12,7 @@ local function rand_perc(
   TestType,
   NumVariants
   )
+  NumVariants = tonumber(NumVariants)
   math.randomseed(os.time())
   local P = {}
   if ( TestType == "XYTest" ) then
@@ -29,6 +30,7 @@ local function rand_perc(
     end
     -- last guy gets whateveris left over
     P[NumVariants] = balance
+    assert(#P == NumVariants, "#P = " .. #P .. " nV = " .. NumVariants)
   elseif ( TestType == "ABTest" ) then
     local x = math.floor(100.0 / NumVariants)
     local sum = 0
@@ -85,8 +87,13 @@ local function rand_vrnt(
   NumVariants
   )
   local cwd = plpath.currentdir() 
-  local cd1 = trim(plfile.read(cwd .. "/custom_data_1.json"))
-  local cd2 = trim(plfile.read(cwd .. "/custom_data_2.json"))
+  local file1 = cwd .. "/../test_webapp/custom_data_1.json"
+  local file2 = cwd .. "/../test_webapp/custom_data_2.json"
+  assert(plpath.isfile(file1), "File not found " .. file1)
+  assert(plpath.isfile(file2), "File not found " .. file2)
+  local x = plfile.read(file1) assert(#x > 0)
+  local cd1 = trim(plfile.read(file1))
+  local cd2 = trim(plfile.read(file2))
   math.randomseed(os.time())
   assert(TestType)
   assert(NumVariants)
@@ -127,14 +134,25 @@ local function rand_test(X)
   T.Channel = X.Channel or rand_chnl()
   T.Creator = X.Creator or rand_admn()
   T.description = X.description or rand_dscr()
+  T.State = "draft"
   T.TestType = X.TestType or rand_type()
+  -- NOTE: is_dev_specific does not take effect until
+  -- set_dev_specific is called
   if ( T.TestType == "ABTest" ) then
     T.is_dev_specific = false
   else
-    local x = math.random(1, 2)
-    if ( x == 1 ) then T.is_dev_specific = true 
-    elseif ( x == 2 ) then T.is_dev_specific = false 
-    else assert(nil) end
+    if ( X.is_dev_specific ~= nil ) then 
+      local x = math.random(1, 2)
+      if ( x == 1 ) then 
+        T.is_dev_specific = true 
+      elseif ( x == 2 ) then 
+        T.is_dev_specific = false 
+      else 
+        assert(nil) 
+      end
+    else
+      T.is_dev_specific = X.is_dev_specific 
+    end
     
   end
   T.NumVariants = X.NumVariants or math.random(2, 8)

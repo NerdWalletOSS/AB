@@ -36,7 +36,7 @@ else
 </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
   <input class="btn btn-success" type="submit" value="Add Test" id="submit">
 </div>
 </form>

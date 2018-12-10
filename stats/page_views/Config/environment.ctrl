@@ -1,0 +1,6 @@
+s3_access_key='REDACTED'
+s3_secret_key='REDACTED'
+pdbHost='redshift.nerdwallet.com'
+pport='5439'
+pusername='rtate'
+pdatabase='dev'

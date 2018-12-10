@@ -6,13 +6,12 @@
 
 int 
 get_empty_spot(
-    const char *const name,
+    uint64_t name_hash,
     int *ptr_idx
     )
 //</hdr>
 {
   int status = 0; int idx = -1;
-  uint64_t name_hash = spooky_hash64(name, strlen(name), g_seed1);
   int start = name_hash % AB_MAX_NUM_TESTS;
   for ( int i = start; i < AB_MAX_NUM_TESTS; i++ ) { 
     if ( g_tests[i].name_hash == 0 ) { idx = i; break; }
@@ -182,10 +181,10 @@ add_fake_test(
   // Determine numberof devices, nD
   int nD;
   if ( is_dev_specific ) { 
-    g_tests[idx].num_devices = nD = g_n_justin_cat_lkp;
+    nD = g_n_justin_cat_lkp;
   }
   else {
-    g_tests[idx].num_devices = nD = 1; 
+    nD = 1; 
   }
   if ( nD < 1 ) { go_BYE(-1); }
 

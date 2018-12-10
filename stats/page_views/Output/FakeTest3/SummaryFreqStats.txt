@@ -1,0 +1,27 @@
+FakeTest3
+
+Number of users in data = 2000
+
+Variant = V1
+number of users = 662
+Mean page views = 1.955
+Var(Page Views) = 3.868
+SD(Page Views) = 1.97
+Var(mean_page_views) = 0.00584
+SE(mean_page_views) = 0.076
+
+Variant = V2
+number of users = 577
+Mean page views = 2.778
+Var(Page Views) = 8.363
+SD(Page Views) = 2.89
+Var(mean_page_views) = 0.01449
+SE(mean_page_views) = 0.12
+
+Variant = V3
+number of users = 761
+Mean page views = 3.155
+Var(Page Views) = 10.431
+SD(Page Views) = 3.23
+Var(mean_page_views) = 0.01371
+SE(mean_page_views) = 0.117

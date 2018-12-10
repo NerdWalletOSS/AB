@@ -116,6 +116,10 @@ c_test_info(
         g_tests[test_idx].variants[i].id);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
 
+    sprintf(buf, "  \"count\" : \"%d\", \n", 
+        g_tests[test_idx].variants[i].count);
+    mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+
     sprintf(buf, "  \"name\" : \"%s\", \n", 
         g_tests[test_idx].variants[i].name);
     mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
@@ -157,6 +161,34 @@ c_test_info(
 
   sprintf(buf, "  ] \n");
   mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+
+  if ( g_tests[test_idx].is_dev_specific ) { 
+    sprintf(buf, "  , \"DeviceCrossVariant\" : { \n");
+    mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+    for ( int i = 0; i  < g_n_justin_cat_lkp; i++ ) { 
+      if ( i > 0 ) { 
+        sprintf(buf, " ,\n"); 
+        mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+      }
+      // TODO P1 Check indexing below
+      sprintf(buf, "  \"%s\" : { ", g_justin_cat_lkp[i].name); 
+      mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+      for ( int j = 0; j  < g_tests[test_idx].num_variants; j++ ) {
+        if ( j > 0 ) { 
+          sprintf(buf, " ,\n"); 
+          mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+        }
+        sprintf(buf, "  \"%s\" : %d ", g_tests[test_idx].variants[j].name,
+        g_tests[test_idx].count_device_x_variant[i][j]);
+        mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+      }
+      sprintf(buf, "  }"); 
+      mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+    }
+    sprintf(buf, "  } \n");
+    mcr_chk_buflen(buf, Xlen, nX); strcat(X, buf);
+
+  }
 
 
   sprintf(buf, "} \n");

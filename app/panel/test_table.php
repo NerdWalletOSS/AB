@@ -18,17 +18,19 @@ function action_state($state_id) {
     break;
   }
 }
+// data-toggle='modal' data-target='#CloneModal'
 ?>
 <div id="show-data">
-<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th>
+<table id="jsTestTable" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th>Name</th><th>Campaign ID</th>
 
-<th>Check Test</th><th>Action</th> </tr></thead>
-<tfoot> <tr><th>ID</th><th>Name</th><th>Check Test</th><th>Action</th></tr><tfoot>
+<th>Check Test</th><th>Action</th><th>Updated On</th> </tr></thead>
+<tfoot> <tr><th>ID</th><th>Name</th><th>Campaign ID</th><th>Check Test</th><th>Action</th><th>Updated On</th></tr><tfoot>
   <tbody id="TableData">
-<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) {
+<?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) {
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['id']."</a></td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'><a href='aev_test_1.php?TestID=".$result[$i]['id']."' >".$result[$i]['name']."</a></td>";
+  echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['external_id']."</td>";
   if (($result[$i]['state_id'] == 3)|| ($result[$i]['state_id'] == 4)) {
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>
 <button class='check_test btn btn-warning btn-xs' data-key ='".$result[$i]['name']."'>Check Test</button></td>";
@@ -47,9 +49,12 @@ echo "<td><a href='fix_to_a_winner.php?TestID=".$result[$i]['id']."'><button typ
   if (($result[$i]['state_id'] == 4) && ($TestType == "XYTest")) {
     echo "&nbsp;&nbsp;<a href='processor/set_state_processor.php?TestID=".$result[$i]['id']."&state_id=".$result[$i]['state_id']."&action=resurrect'"."><button type='button' class='btn btn-primary btn-xs' data-toggle='confirmation' data-title='Are you sure?'>Resurrect</button></a>";
   }
-  echo "</td>";
-  echo "</tr>";
 }
+  echo "</td>";
+  $date = date_create($result[$i]['updated_at']);
+  $display_date = date_format($date, 'jS F Y');
+  echo "<td><span class='hide'>".$result[$i]['updated_at']."</span>".$display_date."</td>";
+  echo "</tr>";
 } ?>
 
 

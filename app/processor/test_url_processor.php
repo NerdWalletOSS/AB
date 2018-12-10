@@ -20,6 +20,5 @@ $http_code = 0;
 $rslt = "";
 $destination = "";
 $data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
-header("URLReturned: ".$destination);
-
+echo $rslt;
 ?>

@@ -24,17 +24,18 @@ if(!isset($_POST['is_dev_specific']))  {
 if (isset($_POST['is_dev_specific'])) {
   $T['is_dev_specific'] = $_POST['is_dev_specific'];
 
-$nV = count($T['Variants']);
-$this_device    = db_get_rows('device');
-$nD = count($this_device);
-for ( $i = 0; $i < $nV; $i++ ) { 
-  for ( $j = 0; $j < $nD; $j++ ) {
-    $T['DeviceCrossVariant'][$this_device[$j]['name']][$i]['percentage'] = $_POST[$this_device[$j]["name"].'_'.$i];
+  $nV = count($T['Variants']);
+  $this_device    = db_get_rows('device');
+  $nD = count($this_device);
+  for ( $i = 0; $i < $nV; $i++ ) { 
+    for ( $j = 0; $j < $nD; $j++ ) {
+      $T['DeviceCrossVariant'][$this_device[$j]['name']][$i]['percentage'] = $_POST[$this_device[$j]["name"].'_'.$i];
+    }
   }
-}
 }
 //-------------------------------------
 // Call to Set Device Specific Variant
+var_dump(json_encode($T));
 $rslt =  set_device_specific_variant(json_encode($T));
 print_r($rslt);
 header("TestID: ".$rslt["TestID"]);

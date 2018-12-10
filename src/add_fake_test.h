@@ -4,6 +4,6 @@ add_fake_test(
     );
 extern int 
 get_empty_spot(
-    const char *const name,
+    uint64_t name_hash,
     int *ptr_idx
     );
