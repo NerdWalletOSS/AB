@@ -25,6 +25,9 @@ eval_rf(
   if ( rf_ub > n_rf ) { go_BYE(-1); }
   if ( rf_ub <= rf_lb ) { go_BYE(-1); }
   int idx = 0;
+  // TODO: Need to put an if condition so that we parallelize this
+  // loop if we did NOT parallelize eval_mdl and if enough trees in this
+  // random forest
   for ( int i = rf_lb; i < rf_ub; i++, idx++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;

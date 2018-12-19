@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# sample call: bash static_chk.sh spam random_forest
 if [ $# != 2 ]; then 
   echo "Error. Usage is $0 <directory> <random_forest|xgboost>"; fi 
 dir=$1

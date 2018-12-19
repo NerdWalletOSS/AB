@@ -39,6 +39,7 @@ eval_mdl(
   // TODO P1 Why does it work worse when we do not specify num_threads
   // Seems to me that system is using 8 threads 
   // (beacause of hyper-threading) but that makes matters worse
+  // TODO: Need to put an if condition into pragma if n_mdl small
 #pragma omp parallel for schedule(static, 1) num_threads(4)
   for ( int i = 0; i < n_mdl; i++ ) {
     int l_status = 0;
