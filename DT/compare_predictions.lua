@@ -19,3 +19,5 @@ local function compare_predictions(str1, str2, threshold, epsilon)
   end
   return true
 end
+
+return compare_predictions
