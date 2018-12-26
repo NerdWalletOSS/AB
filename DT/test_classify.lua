@@ -23,10 +23,10 @@ assert(n_in == n_op)
 assert(n_in > 0)
 for k, v in pairs(invals) do 
   local str = assert(JSON:encode(v))
-  print(str)
+  -- print(str)
   local hdrs, body, status = curl.post(url, nil, str)
   assert(status == 200 )
-  print(body)
+  -- print(body)
   assert(cmp(body, body))
 end
 

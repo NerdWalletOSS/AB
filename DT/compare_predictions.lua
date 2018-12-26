@@ -6,6 +6,8 @@ local function compare_predictions(str1, str2, threshold, epsilon)
   if ( not threshold ) then threshold = 0.001 end 
   if ( not epslion ) then epsilon   = 0.001 end
   
+  -- print("str1 = ", str1)
+  -- print("str2 = ", str2)
   local P1 = assert(JSON:decode(str1))
   local P2 = assert(JSON:decode(str2))
   for k1, v1 in pairs(P1) do 
@@ -19,3 +21,4 @@ local function compare_predictions(str1, str2, threshold, epsilon)
   end
   return true
 end
+return compare_predictions

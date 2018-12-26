@@ -62,12 +62,12 @@ alt_post_proc_preds(
     )
 {
   int status = 0;
-  sprintf(g_err, "{ ");
+  sprintf(g_rslt, "{ ");
   for ( int i = 0; i < n_pred_vector; i++ ) { 
     sprintf(g_buf, " \"%s\" : %lf , ", g_dt_models[i], pred_vector[i]);
-    strcat(g_err, g_buf);
+    strcat(g_rslt, g_buf);
   }
-  strcat(g_err, " \"last_key\" : 0 } ");
+  strcat(g_rslt, " \"last_key\" : 0 } ");
 
 BYE:
   return status;
