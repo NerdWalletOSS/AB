@@ -12,7 +12,8 @@ eval_dt(
   int dt_ub,
   int *ptr_npos, // return values
   int *ptr_nneg, // return values
-  float *ptr_xgb// return values
+  float *ptr_xgb,// return values
+  int forest_type
   )
 {
   int status = 0;
@@ -37,11 +38,24 @@ eval_dt(
     float val       = features[fidx];
     float threshold = dt[tidx].threshold;
 
-    if ( val <= threshold ) { 
-      is_left = true; 
+    if ( forest_type == XGBOOST ) {
+      if ( val < threshold ) {  // NOTE comparison is < 
+        is_left = true; 
+      }
+      else {
+        is_left = false;
+      }
+    }
+    else if ( forest_type == RANDOM_FOREST ) {
+      if ( val <= threshold ) { // NOTE comparison is <= 
+        is_left = true; 
+      }
+      else {
+        is_left = false;
+      }
     }
     else {
-      is_left = false;
+      WHEREAMI;
     }
     if ( ( is_left )  && ( dt[tidx].lchild_idx < 0 ) ) {
       break;
@@ -58,6 +72,7 @@ eval_dt(
   }
   *ptr_npos = dt[tidx].npos;
   *ptr_nneg = dt[tidx].nneg;
+  // fprintf(stderr,"XXXX %6d \n", tidx);
   // TODO: Any restrictions on xgb val?
   *ptr_xgb  = dt[tidx].xgb;
   if ( ( *ptr_npos < 0 ) || ( *ptr_nneg < 0 ) ) { go_BYE(-1); }

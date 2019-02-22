@@ -8,5 +8,6 @@ eval_dt(
   int root_idx,
   int *ptr_npos, // return values
   int *ptr_nneg, // return values
-  float *ptr_xgb // return values
+  float *ptr_xgb, // return values
+  int forest_type
   );

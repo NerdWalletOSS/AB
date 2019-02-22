@@ -53,7 +53,7 @@ eval_mdl(
     RF_EVAL_REC_TYPE rf_eval[MAX_NUM_RF];
     //-----------------------------
     l_status = eval_rf(features, n_features, dt, n_dt, 
-        rf, n_rf, rf_lb, rf_ub, rf_eval);
+        rf, n_rf, rf_lb, rf_ub, rf_eval, forest_type);
     if ( l_status < 0 ) { status = -1; continue; }
     // Convert array of npos/nneg to prob
     double sum = 0; 
@@ -61,7 +61,7 @@ eval_mdl(
     int nneg;
     float prob;
     float xgb;
-    for ( int j = 0; j < l_n_rf; j++ ) { 
+    for ( int j = 0; j < l_n_rf; j++ ) {  // for each tree in forest
       switch ( forest_type ) { 
         case RANDOM_FOREST : 
           npos = rf_eval[j].npos;
@@ -75,7 +75,7 @@ eval_mdl(
           break;
       }
     }
-    switch ( forest_type ) { 
+    switch ( forest_type ) {
       case RANDOM_FOREST : 
         predictions[i] = sum / l_n_rf;
         break;

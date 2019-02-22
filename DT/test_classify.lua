@@ -26,7 +26,8 @@ for k, v in pairs(invals) do
   -- print(str)
   local hdrs, body, status = curl.post(url, nil, str)
   assert(status == 200 )
-  -- print(body)
+  print(body)
+  print("===============")
   assert(cmp(body, body))
 end
 
