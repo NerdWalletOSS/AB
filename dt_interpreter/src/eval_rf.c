@@ -13,7 +13,8 @@ eval_rf(
   int rf_lb,
   int rf_ub,
   // rf_eval is results of evaluating random forest
-  RF_EVAL_REC_TYPE *rf_eval /* [n_rf] */ 
+  RF_EVAL_REC_TYPE *rf_eval, /* [n_rf] */ 
+  int forest_type
   )
 {
   int status = 0;
@@ -25,11 +26,15 @@ eval_rf(
   if ( rf_ub > n_rf ) { go_BYE(-1); }
   if ( rf_ub <= rf_lb ) { go_BYE(-1); }
   int idx = 0;
+  // TODO: Need to put an if condition so that we parallelize this
+  // loop if we did NOT parallelize eval_mdl and if enough trees in this
+  // random forest
   for ( int i = rf_lb; i < rf_ub; i++, idx++ ) {
     int dt_lb = rf[i].dt_lb;
     int dt_ub = rf[i].dt_ub;
     status = eval_dt(features, n_features, dt, n_dt, dt_lb, dt_ub,
-        &(rf_eval[idx]).npos, &(rf_eval[idx]).nneg, &(rf_eval[idx].xgb));
+        &(rf_eval[idx]).npos, &(rf_eval[idx]).nneg, &(rf_eval[idx].xgb),
+        forest_type);
     cBYE(status);
   }
 BYE:

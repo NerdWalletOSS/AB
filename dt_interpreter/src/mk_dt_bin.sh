@@ -10,12 +10,14 @@ source ../../src/to_source
 #dt_csv_file=../../DT/spam/dt.csv
 dt_csv_file=$1
 test -f $dt_csv_file
-foresttype=$2
+foresttype="$2"
 ok=0
-if [ $foresttype == "random_forest" ]; then ok=1; fi
-if [ $foresttype == "xgboost" ]; then ok=1; fi
+if [ "$foresttype" == "random_forest" ]; then ok=1; fi
+if [ "$foresttype" == "xgboost" ]; then ok=1; fi
 if [ $ok = 0 ]; then 
-  echo "foresttype must be random_forest or xgboost"; exit 1; 
+  echo "foresttype must be random_forest or xgboost"; 
+  echo "foresttype is [$foresttype]";
+  exit 1; 
 fi
 # This is an optional test file 
 # testfile=cc_member_model_test_file

@@ -8,5 +8,6 @@ eval_rf(
   int n_rf, /* number of decision trees in *ALL* random forests */
   int rf_lb, /* first decision tree for this model */
   int rf_ub, /* last decision tree for this model */
-  RF_EVAL_REC_TYPE *rf_eval /* [n_rf] */
+  RF_EVAL_REC_TYPE *rf_eval, /* [n_rf] */
+  int forest_type
   );

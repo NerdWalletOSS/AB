@@ -616,7 +616,7 @@ isdir (
     return false;
   }
 }
-extern bool 
+bool 
 isfile (
     const char * const filename
     )
