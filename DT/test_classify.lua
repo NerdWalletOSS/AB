@@ -28,7 +28,7 @@ for k, v in pairs(invals) do
   assert(status == 200 )
   print(body)
   print("===============")
-  assert(cmp(body, body))
+  assert(cmp(str, body))
 end
 
 
