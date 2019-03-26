@@ -5,18 +5,21 @@ return
   id =  "1",
   seed =  "1",
   external_id = "1",
+  ramp = "1",
+  has_filters = false,
   BinType =  "anonymous",
+  State =  "started",
   description =  "some bogus description 1",
   is_dev_specific = "0",
-  State = "started",
   Creator =  "joe",
   name =  "Test1",
+  NumVariants = "3",
   Variants =  { {
     name =  "Control",
     id =  "123",
     percentage =  "50",
     url =  "http://www.google.com",
-    is_final = "1"
+    is_final = "0"
   },
   {
     name =  "Variant_A",

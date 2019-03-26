@@ -1,4 +1,4 @@
-<?php 
+<?php
 // -- SET PATH
 require_once "set_path.php";
 
@@ -14,20 +14,44 @@ if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
 		header('Location: error.php?error="TestID is not set"');
 		return false;
 	}
-# -- Check if number of TestID are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
-$T = db_get_test($id);
+else {
+  $id = $_GET['TestID'];
+}
+// -- Get Test Type
+if (isset($_SESSION['TestType']))
+	{
+		$TestType = $_SESSION['TestType'];
+	}
+else
+	{
+		header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
+		return false;
+	}
 
+if (($TestType == "ABTest") && ($id != "") )
+  {
+		header('Location: home.php?TestID='.$id);    
+  }
+elseif (($TestType == "ABTest") && ($id == "") )
+  {
+		header('Location: home.php');  
+  }
+else 
+  {
+  // DO NOTHING
+  }
+$T = db_get_test($id);
 require_once "display_logic_aev_test.php";
 $config = config_html($TestType);
 if (isset($Channel)) {
   $fo_tests =  find_tests_to_follow($Channel);
-  $nF = count($fo_tests);
+if (isset($fo_tests) && ($fo_tests != "")) {$nF = count($fo_tests);} else { $nF = 0;}
 } else {
   $Channel = "";
   $nF = 0;
 }
 $result = db_get_rows("test", "pred_id != ''");
+require_once "html_header.php";
 ?>
 <!-- PAGE SPECIFIC FILE CALLS -->
   <link href="css/dataTables.min.css" rel="stylesheet">
@@ -108,7 +132,7 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 <?php if (($T['State'] == "draft") && ( $nF != 0 ) ) { ?>
 <td><input class="btn btn-lg btn-success btn-block" type="submit" form="follow_on" id='fol_on' value="Save"></td>
 <?php } ?>
-<td >  <button onclick="window.location.href='home.php'" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td >  <button onclick="window.location.href='home.php?TestID=<?php echo $_GET['TestID']; ?>'" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
   </tbody>
   </table>
@@ -129,7 +153,7 @@ for ( $fidx = 0; $fidx < $nF; $fidx++ ) {
 
 <table id="FollowOn" class="display"  style="word-wrap: break-word"><thead> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></thead><tfoot> <tr><th>ID</th><th> Test Name</th><th>Following Test ID</th><th> Following Test Name</th> </tr></tfoot>
   <tbody id="TableData">
-<?php $nR = count($result); for ( $i = 0; $i < $nR; $i++ ) { 
+<?php if (isset($result) && ($result != "")) {$nR = count($result);} else { $nR = 0;} for ( $i = 0; $i < $nR; $i++ ) { 
   echo "<tr>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['id']."</td>";
   echo "<td style='word-wrap: break-word;min-width: 160px;max-width: 160px;'>".$result[$i]['name']."</td>";

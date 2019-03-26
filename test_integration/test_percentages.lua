@@ -1,13 +1,13 @@
-package.path = package.path .. ";./../src/?.lua;./../test_webapp/?.lua;../test_generator/?.lua"
-require 'str'
-local json = require 'json'
-local curl = require 'curl'
+-- TODO automate checking of percentages
+require 'lua/str'
+local JSON = require 'lua/JSON'
+local curl = require 'lua/curl'
 -- local dbg = require 'debugger'
 local file = assert(io.open("../test_webapp/sample1.json"), "File should exist")
-local test = json.decode(file:read("*a"))
+local test = JSON:decode(file:read("*a"))
 file:close()
 local url = "localhost:8000/AddTest"
-curl.post(url, nil, test)
+curl.post(url, nil, JSON:encode(test))
 
 local variants = {}
 for _, var in ipairs(test.Variants) do

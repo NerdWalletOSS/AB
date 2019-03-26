@@ -33,7 +33,7 @@ if (isset($_POST['has_filters'])) {
   }
 }
 //-------------------------------------
-print("<pre>".print_r($T,true)."</pre>");
+//print("<pre>".print_r($T,true)."</pre>");
 // Call to Set Device Specific Variant
 $rslt =  set_filters(json_encode($T));
 header("TestID: ".$rslt["TestID"]);

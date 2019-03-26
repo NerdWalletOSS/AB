@@ -3,22 +3,23 @@
 require_once "set_path.php";
 
 // -- CALL REQUIRED FILES
-require_once "header.php"; ?>
-<script src="js/add_addln_var_info.js"></script>
-<?php 
-require_once "navbar.php";
-require_once "config_html.php";
+require_once "header.php"; 
+require_once "config_html.php"; 
 
 // -- TEST TestID CREDENTIALS
-if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == "")))
-	{
-		header('Location: error.php?error="TestID is not set"');
-		return false;
-	}
-# -- Check if number of TestID are set.
-if (isset($_GET['TestID'])) {$id = $_GET['TestID'];}
+if (((!isset($_GET['TestID'])) || ($_GET['TestID'] == ""))) {
+  header('Location: error.php?error="TestID is not set"');
+  return false;
+}
+$id = $_GET['TestID'];
 require_once "display_logic_aev_test.php";
+require_once "config_html.php";
 $config = config_html($TestType);
+require_once "html_header.php";
+?>
+<script src="js/add_addln_var_info.js"></script>
+<?php
+require_once "navbar.php";
 ?>
 
   <div class="container theme-showcase" role="main">
@@ -31,7 +32,6 @@ $config = config_html($TestType);
   <div class="panel-body">
 
   <!-- ADD/EDIT FORM START  -->
-  <!--<form class="form-signin" id='addTest' method='post'>-->
   <table class="table table-striped table-condensed" style="space=5px">
   <tbody>
 
@@ -60,26 +60,18 @@ $config = config_html($TestType);
 }
 ?>
     <p><strong>Description:</strong> &nbsp;<span id="Vdesc_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]["description"]; ?></span></p>
-
-<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
     <p><strong>Custom Data:</strong> &nbsp;<span id="Vcd_<?php echo $i; ?>"><?php echo $rslt['Variants'][$i]['custom_data']; ?></span></p>
-<?php } ?>
   </td>
 </tr>
 <?php } ?>
  
 <tr>
 <td><button onclick="location.href = 'aev_test_1.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-primary btn-block" >Previous</button></td>
-<?php //if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <td> <button onclick="location.href = 'aev_test_3.php?TestID=<?php echo $id; ?>';"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>
-<?php //} else { ?>
-<!--<td> <button onclick="location.href = 'home.php'"  class="btn btn-lg btn-warning btn-block" >Skip</button></td>-->
-<?php //} ?>
 </tr>
   </tbody>
   </table>
   
-  <!--</form>-->
   <!-- ADD/EDIT FORM END  -->
   </div>
   </div>
@@ -114,10 +106,8 @@ $config = config_html($TestType);
 <p>Variant Name: &nbsp;<span id='VariantName'></span></p>
 <p><strong>Description:</strong> &nbsp;<textarea class='form-control' rows='3' cols='100' maxlength='256' name='Description' id='Description'>
 </textarea></p>
-<?php   if ( isset($TestType) && ($TestType == "XYTest")) { ?>
 <p><strong>Custom Data:</strong> &nbsp;<textarea class='form-control' rows='8' cols='100' maxlength='2048' name='CustomData' id='CustomData' >
 </textarea></p>
-<?php } ?>
 </td>
 </tr>
 

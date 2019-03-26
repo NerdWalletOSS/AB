@@ -4,7 +4,7 @@
 #include "get_test_idx.h"
 #include "add_fake_test.h"
 
-static int 
+int 
 get_empty_spot(
     uint64_t name_hash,
     int *ptr_idx
@@ -181,10 +181,10 @@ add_fake_test(
   // Determine numberof devices, nD
   int nD;
   if ( is_dev_specific ) { 
-    g_tests[idx].num_devices = nD = g_n_justin_cat_lkp;
+    nD = g_n_justin_cat_lkp;
   }
   else {
-    g_tests[idx].num_devices = nD = 1; 
+    nD = 1; 
   }
   if ( nD < 1 ) { go_BYE(-1); }
 

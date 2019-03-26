@@ -6,8 +6,9 @@ require_once 'rs_assert.php';
 require_once 'is_good_percs.php';
 //----------------------------------
 $X = array( 10, 20, 30, 40);
+$names = array( "Control", "V1", "V2", "V3");
 $bin_type == "c_to_v_ok_v_to_c_ok_v_to_v_not_ok";
-$rslt = is_good_percs($X, $bin_type);
+$rslt = is_good_percs($X, $bin_type, $names, "started");
 rs_assert($rslt);
 print("SUCCEEDED\n");
 //----------------------------------

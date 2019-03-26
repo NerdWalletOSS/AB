@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
-if [ $# != 1 ]; then echo "Error. Usage is $0 <dt file>"; exit 1; fi 
+if [ $# != 2 ]; then echo 
+  "Error. Usage is $0 <dt file> <random_forest|xgboost>"; exit 1; 
+fi 
 make clean 1>/dev/null 2>&1
 make       1>/dev/null 2>&1
 source ../../src/to_source
@@ -8,6 +10,15 @@ source ../../src/to_source
 #dt_csv_file=../../DT/spam/dt.csv
 dt_csv_file=$1
 test -f $dt_csv_file
+foresttype="$2"
+ok=0
+if [ "$foresttype" == "random_forest" ]; then ok=1; fi
+if [ "$foresttype" == "xgboost" ]; then ok=1; fi
+if [ $ok = 0 ]; then 
+  echo "foresttype must be random_forest or xgboost"; 
+  echo "foresttype is [$foresttype]";
+  exit 1; 
+fi
 # This is an optional test file 
 # testfile=cc_member_model_test_file
 if [ "$testfile" != "" ]; then 
@@ -19,8 +30,8 @@ rffile=_rf.bin
 mdlfile=_mdl.bin
 VG="valgrind --leak-check=full"
 VG=""
-echo ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 
-$VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $testfile 1>_out 2>&1
+echo ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $foresttype $testfile 
+$VG ./test_dt $dt_csv_file $dtfile $rffile $mdlfile $foresttype $testfile 1>_out 2>&1
 if [ "$VG" != "" ]; then 
   grep "ERROR SUMMARY: 0 errors" _out 1>/dev/null 2>&1
 fi

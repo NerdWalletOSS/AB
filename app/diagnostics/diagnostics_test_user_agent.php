@@ -6,6 +6,11 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/db_helpers/");
 require_once "get_url.php";
 require_once "includes/header_diagnostics.php"; 
+$UserAgent = $_GET['UserAgent'];
+$url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
+$http_code = 0;
+$rslt = "";
+$data = get_url( 'localhost', '8000',$url, $http_code, $rslt, $destination );
 //-----------------------------------------------------------
 ?>
 <div class="container">
@@ -13,26 +18,33 @@ require_once "includes/header_diagnostics.php";
          <!--<div class="col-xs-6">-->
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">TEST USER AGENT
+              <h3 class="panel-title"><strong>USER AGENT:</strong> <?php echo $UserAgent; ?>
 </h3>
 
             </div>
             <div class="panel-body">
 <?php
-$UserAgent = $_GET['UserAgent'];
-$url = 'ClassifyUA?UserAgent='.urlencode($UserAgent);
-$http_code = 0;
-$rslt = "";
-$data = get_url( 'localhost', '8000',$url, $http_code, $rslt );
-var_dump($data);
+
 if (!$data) {
-echo "User Agent unavailable";
+echo "<strong>User Agent unavailable</strong>";
 } else {
-print("<pre>".print_r($rslt,true)."</pre>");
-}
+?>
+			<div class="table-responsive">
+<table class="table table-striped" >
+<tr><td><b>KEY</b></td><td><b>VALUE</b></td></tr>
+<?php 
+$result = json_decode($rslt);
+  foreach ($result as $k => $v) {
+	echo "<tr><td>".$k."</td><td>".$v."</td></tr>";
+    }
 ?>
 </table>
+            </div>
+<?php
+}
+?>
           </div>
         </div></div>
+</div>
 	<!-- FOOTER -->
 <?php require_once "../includes/footer.php"; ?>

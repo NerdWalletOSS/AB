@@ -15,21 +15,20 @@
   <form class="form-signin" id='device_x_variant' method='POST'>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME START -->
 	<tr>
-		<td colspan="2">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
-		<td colspan="3">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
+		<td colspan="1">Test ID: <?php echo $id; ?><input type='hidden' name='TestID' value='<?php echo $id; ?>'></td>
+		<td colspan="2">Test Name: <?php echo $TestName; ?><input type='hidden' name='TestName' value='<?php echo $TestName; ?>'>
     <input type='hidden' name='TestType' value='<?php echo $TestType; ?>'></td>
     <td colspan="2">Is Device Specific: 
-<?php if ( $mode == "View" ) 
+<?php if (( $mode == "View" ) || ($this_state == "started"))  
   { ?>
-<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "<b style='color:blue'>True</b>"; echo "<input type='hidden' name='is_dev_specific' value='1'>";} else { echo "<b style='color:red'>Not Set</b>"; echo "<input type='hidden' name='is_dev_specific' value='0'>"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_dev_specific" value="1"  
-<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked"; } else { // Do Nothing
-} 
-?>
->
+<input type="checkbox" name="is_dev_specific" value="1"  id="is_dev_specific"  <?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { echo "checked";} ?>>
 <?php } ?>
   </td>
+<?php if (isset($T['is_dev_specific']) && ( $T['is_dev_specific'] == "1")) { ?>
+<td colspan="2">Show Variant Stats? : &nbsp; &nbsp;<input type="checkbox" name="is_dcv_stats" value="1"  id="is_dcv_stats" data-id="<?php echo $id; ?>" ></td>
+<?php } else { echo "<td colspan='2'></td>"; } ?>
 	</tr>
 <tr>
 <td>
@@ -50,7 +49,7 @@ for ( $i = 0; $i < $nD; $i++ ) {
         echo "<td>".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."</td>";
       }
       elseif (($mode == "Edit")) {
-        echo "<td><input type='text' maxlength='3' size='3' name='".$all_device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."'></td>";
+        echo "<td><input type='text' class='dev_specific_variant' maxlength='3' size='3' name='".$all_device[$j]['name']."_".$i."' value='".$T['DeviceCrossVariant'][$all_device[$j]['name']][$i]['percentage']."'"; if (!isset($T['is_dev_specific']) || ( $T['is_dev_specific'] != "1")) { echo "readonly"; } echo "></td>";
        } 
         else { // Do Nothing
        }
@@ -81,3 +80,18 @@ else
 </div>
 </div>
 </div>
+
+<!-- VARIANT STATS TABLE -- DATA WILL BE POPULATED ON CHECKING THE SHOW VARIANT STATS CHECKBOX -->
+<div id="dcv_stats" class="show hidden"></div>
+
+<script>
+$("#is_dev_specific").change(function (e) {
+    e.preventDefault();
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+    $('.dev_specific_variant').removeAttr('readonly');
+} else {
+    $('.dev_specific_variant').attr('readonly', true);
+}
+})
+</script>

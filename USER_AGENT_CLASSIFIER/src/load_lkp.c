@@ -113,6 +113,22 @@ load_lkp(
   }
   *ptr_lkp   = lkp;
   *ptr_n_lkp = n_lkp;
+  // Sort on ID: very dumb sort
+  for ( int i = 0; i < n_lkp; i++ ) { 
+    for ( int j = i+1; j < n_lkp; j++ ) { 
+      if ( lkp[i].id > lkp[j].id ) { 
+        LKP_REC_TYPE swap;
+        swap.id   = lkp[j].id; swap.name = strdup(lkp[j].name);
+
+        free_if_non_null(lkp[j].name);
+        lkp[j].id = lkp[i].id; lkp[j].name = strdup(lkp[i].name);
+
+        free_if_non_null(lkp[i].name);
+        lkp[i].id =   swap.id; lkp[i].name = strdup(swap.name);
+        free_if_non_null(swap.name);
+      }
+    }
+  }
 BYE:
   fclose_if_non_null(dfp);
   return status;

@@ -50,13 +50,8 @@ require_once "../utility_functions.php";
     <li ><a href="#" data-toggle="modal" data-target="#TestUrl"><button type="button" class="btn btn-sm btn-primary">Test Url</button></a></li>
     <li ><a href="#" data-toggle="modal" data-target="#TestUserAgent"><button type="button" class="btn btn-sm btn-info">Test User Agent</button></a></li>
     <li ><a href="list_rts.php"><button type="button" class="btn btn-sm btn-primary">List RTS</button></a></li>
+    <li ><a href="query_rts.php"><button type="button" class="btn btn-sm btn-primary">Query RTS</button></a></li>
     <li ><a href="show_config.php"><button type="button" class="btn btn-sm btn-info">Show Config</button></a></li>
-    <!--<li ><a href="call_reload.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-refresh"></span> RTS</button></a></li>
-    <li ><a href="check_rts.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-check"></span> RTS</button></a></li>
-    <li ><a href="chk_scn.php"><button type="button" class="btn btn-sm btn-info"> SCN</button></a></li>	
-    <li ><a href="ui_monitor.php"><button type="button" class="btn btn-sm btn-info">AB Monitor</button></a></li>
-    <li ><a href="ur_ui_monitor.php"><button type="button" class="btn btn-sm btn-info">UR Monitor</button></a></li>
-    <li ><a href="show_dump.php"><button type="button" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-download-alt"></span> Data</button></a></li>-->	
     </ul>
     </div><!--/.nav-collapse -->
     </div>

@@ -10,8 +10,9 @@ local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
 local states = require 'test_webapp/states'
 --==========================
+local server = os.getenv("WEBAPP_SERVER") or "localhost"
 local ssurl =  -- set state URL 
- "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
+ "http://" .. server .. ":8080/AB/php/endpoints/endpoint_set_state.php"
 
 local S = {}
 
@@ -27,6 +28,7 @@ local function change_state(
   if ( optargs ) then assert(type(optargs) == "table") end 
 
   local T = assert(get_test_info(test_id))
+<<<<<<< HEAD
   if ( new_state == "dormant" ) then 
     assert ( (T.State == "dormant") or (T.State == "draft"))
   elseif ( new_state == "started" ) then 
@@ -42,6 +44,8 @@ local function change_state(
   else
     assert(nil, "Invalid new state = " .. new_state)
   end
+=======
+>>>>>>> dev
   if ( optargs and optargs.Creator ) then 
     T.Updater = optargs.Creator
   else
@@ -53,14 +57,18 @@ local function change_state(
       T.Winner = optargs.Winner
     else
       local V = T.Variants
-      local vidx = math.random(#V)
+      local vidx = math.random(1, #V)
       T.Winner = V[vidx].name
     end
   end
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   -- for k, v in pairs(hdrs) do print(k, v) end 
   -- print(outbody)
+<<<<<<< HEAD
   assert(status == 200)
+=======
+  assert(status == 200, "failed to change " .. T.id .. " to " .. new_state)
+>>>>>>> dev
   return true
 end
 

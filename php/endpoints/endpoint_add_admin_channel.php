@@ -9,7 +9,11 @@ require_once 'add_admin_channel.php';
 
 $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "AddAdminChannel" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "AddAdminChannel" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
 }
 $rslts =  add_admin_channel($body);
 if ( is_array($rslts ) ) { 
@@ -17,6 +21,9 @@ if ( is_array($rslts ) ) {
     $val = str_replace("\n", " ", $val);
     header("$key: $val");
   }
+<<<<<<< HEAD
 }
+=======
+>>>>>>> dev
 }
 ?>

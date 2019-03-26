@@ -28,6 +28,7 @@ int n_rf = 0;
 MDL_REC_TYPE *mdl = NULL;
 int n_mdl = 0;
 
+/*
 static int
 is_uq(
     int argc,
@@ -48,6 +49,7 @@ is_uq(
 BYE:
   return status;
 }
+*/
 int
 main(
     int argc,
@@ -64,20 +66,28 @@ main(
   FILE *fp = NULL;
   FILE *ofp = NULL;
   float *predictions = NULL;
+  char *str_forest_type;
+  int forest_type;
   if ( ( argc != 5 )  && ( argc != 6 ) ) { go_BYE(-1); }
   random_forest_file_name = argv[1];
   dt_file_name            = argv[2];
   rf_file_name            = argv[3];
   mdl_file_name           = argv[4];
-  if ( argc == 6 ) { 
-    test_data_file_name     = argv[5];
+  str_forest_type             = argv[5];
+  if ( argc == 7 ) { 
+    test_data_file_name     = argv[6];
+  }
+  if ( strcasecmp(str_forest_type, "random_forest") == 0 ) { 
+    forest_type = RANDOM_FOREST;
+  }
+  else if ( strcasecmp(str_forest_type, "xgboost") == 0 ) { 
+    forest_type = XGBOOST;
+  }
+  else {
+    go_BYE(-1);
   }
 
-  status = is_uq(argc, argv); cBYE(status);
-
-  g_num_compares = 0;
-
-  status = read_random_forest(random_forest_file_name, 
+  status = read_random_forest(random_forest_file_name,  forest_type,
       &dt, &n_dt, &rf, &n_rf, &mdl, &n_mdl); 
   cBYE(status);
   predictions = malloc(n_mdl * sizeof(float));
@@ -144,7 +154,7 @@ main(
       uint64_t t2a = get_time_usec();
       uint64_t t1a = RDTSC(); 
       status = eval_mdl(invals, nF, dt, n_dt, rf, n_rf, mdl, n_mdl,
-          predictions);
+          forest_type, predictions);
       uint64_t t1b = RDTSC(); 
       uint64_t t2b = get_time_usec();
       uint64_t d1 = (t1b - t1a);
@@ -152,7 +162,8 @@ main(
       sum1 += d1;
       sum2 += d2;
       n_trials++;
-      printf("%d, %d, d1 = %llu, d2 = %llu \n", iters, n_trials, d1, d2);
+      printf("%d, %d, d1 = %lf, d2 = %lf \n", iters, n_trials, 
+          (double)d1, (double)d2);
       cBYE(status);
     }
     fclose_if_non_null(fp);
@@ -162,7 +173,7 @@ main(
   }
   lno--; // remove header line 
   printf("Number of trials = %d \n", n_trials);
-  printf("Number of compares = %d \n", g_num_compares);
+  printf("Number of compares = %lf \n", (double)g_num_compares);
   printf("#Test = %d, cycles = %lf\n", lno, sum1 / (double)n_trials);
   printf("#Test = %d, time = %lf\n", lno, sum2 / (double)n_trials);
   printf("COMPLETED\n");

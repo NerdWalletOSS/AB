@@ -88,6 +88,8 @@ dump_log(
   write_log(g_rslt, &ridx, n, "NumProbes",          g_log_num_probes);
   write_log(g_rslt, &ridx, n, "ResponseTime",       g_log_response_time);
 
+  write_log(g_rslt, &ridx, n, "NumBadTests",        g_log_bad_test);
+
 
   double avg_time = (g_log_response_time)/(double)
     ((g_log_get_variant_calls + g_log_get_alt_variant_calls));

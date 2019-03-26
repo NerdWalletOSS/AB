@@ -23,7 +23,7 @@ clean(){
 
 buildall(){
   sudo apt-get update
-  sudo apt-get install gcc cmake g++ -y
+  sudo apt-get install gcc cmake g++ libcurl4-gnutls-dev -y
   sudo pip install pystatsd
   clean
   # install_test_deps

@@ -1,3 +1,20 @@
+  <?php
+
+    switch ( $this_state ) {
+    case "draft" : 
+    case "dormant" : 
+      $mode = "Edit";
+      break;
+    case "started" : 
+    case "terminated" : 
+    case "archived" : 
+      $mode = "View";
+      break;
+    default : 
+      // HANDLE ERROR PROPERLY TODO
+      break;
+    }
+?>
   <div class="row">
   <div class="col-xs-12">
   <div class="panel panel-primary">
@@ -23,7 +40,7 @@
   { ?>
 <?php if (isset($T['has_filters']) && ( $T['has_filters'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="has_filters" value="1"  
+<input type="checkbox" name="has_filters" id="has_filters" value="1"  
 <?php if (isset($T['has_filters']) && ( $T['has_filters'] == "1")) { echo "checked"; } else { // Do Nothing
 } 
 ?>
@@ -52,11 +69,11 @@ if (($cat_attr_val[$i]['name'] == "true") || ($cat_attr_val[$i]['name'] == "fals
   { ?>
 <?php if (isset($T['CategoricalFilters'][$i]['is_on']) && ( $T['CategoricalFilters'][$i]['is_on'] == "1")) { echo "Set True"; } else { echo "Not Set"; } ?>
 <?php } else { ?>
-<input type="checkbox" name="is_on_<?php echo $i; ?>" value="1"  
+<input type="checkbox"  class="set_filter"  name="is_on_<?php echo $i; ?>" value="1"  
 <?php if (isset($T['CategoricalFilters'][$i]['is_on']) && ( $T['CategoricalFilters'][$i]['is_on'] == "1")) { echo "checked "; } else { // Do Nothing
 } 
 ?>
->
+disabled>
 <?php } ?>
 
 </td>
@@ -80,7 +97,7 @@ else
 ?>
 <td><input class="btn btn-lg btn-success btn-block" type="submit" form="set_filters" id="setFilters" value="Save"></td>
 <?php } ?>
-<td> <button onclick="location.href = 'aev_test_4.php?TestID=<?php echo $id; ?>';" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
+<td> <button onclick="window.location.href='home.php?TestID=<?php echo $_GET['TestID']; ?>'" class="btn btn-lg btn-warning btn-block" >Skip</button></td>
 </tr>
 </tbody>
   <!-- DISPLAY LOGIC FOR TEST ID & TEST NAME END -->
@@ -90,3 +107,14 @@ else
 </div>
 </div>
 </div>
+
+<script>
+$("#has_filters").change(function (e) {
+    var ischecked= $(this).is(':checked');
+    if(ischecked) {
+    $('.set_filter').removeAttr('disabled');
+} else {
+    $('.set_filter').attr('disabled', true);
+}
+})
+</script>

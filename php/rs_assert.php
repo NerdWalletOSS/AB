@@ -27,6 +27,7 @@ function rs_assert(
     else {
       $x = json_encode(debug_backtrace());
       header("Error-BackTrace: " . nl2br($x));
+      $err = str_replace("\n", "__", $err);
       header("Error-Message: " . nl2br($err));
       header("Error-Code: " . $code);
       http_response_code($code);

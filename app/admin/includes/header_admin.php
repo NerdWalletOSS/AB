@@ -21,10 +21,12 @@ require_once "../utility_functions.php";
     <link href="../bootstrap-3.3.5-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/error.css" rel="stylesheet">
 
     <!-- jQuery  -->
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
+		<script src="js/check_tests.js"></script>
 	
   </head>
 
@@ -44,6 +46,7 @@ require_once "../utility_functions.php";
     </div>
     <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
+    <li ><a href="../home.php"><button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-home"></span> Main App</button></a></li>
     <li ><a href="list_admin.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Admin(s)</button></a></li>
     <li><a href="list_channel.php"><button type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-list-alt"></span> Channel(s)</button></a></li>
     <li><a href="check_tests.php"><button type="button" class="btn btn-sm btn-primary"> Check Tests</button></a></li>

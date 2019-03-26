@@ -11,7 +11,9 @@ eval_dt(
   int dt_lb,
   int dt_ub,
   int *ptr_npos, // return values
-  int *ptr_nneg // return values
+  int *ptr_nneg, // return values
+  float *ptr_xgb,// return values
+  int forest_type
   )
 {
   int status = 0;
@@ -24,33 +26,42 @@ eval_dt(
   *ptr_npos = *ptr_nneg = -1; // some clearly bad value
   for ( ; ; ) { /* infinite loop */
     // g_num_compares++;
-#ifdef DEBUG
-    if ( ( tidx < dt_lb ) || ( tidx >= dt_ub ) ) { 
-      go_BYE(-1); }
-#endif
+    // debugging
+    if ( ( tidx < dt_lb ) || ( tidx >= dt_ub ) ) { go_BYE(-1); }
     if ( ( dt[tidx].lchild_idx < 0 ) && ( dt[tidx].rchild_idx < 0 ) ) {
-      goto DONE;
+      break;
     }
     bool is_left;
     int fidx = dt[tidx].feature_idx;
-#ifdef DEBUG
-    if ( ( fidx < 0 ) || ( fidx >= n_features ) ) { 
-      go_BYE(-1); }
-#endif
+    // debugging
+    if ( ( fidx < 0 ) || ( fidx >= n_features ) ) { go_BYE(-1); }
     float val       = features[fidx];
     float threshold = dt[tidx].threshold;
 
-    if ( val <= threshold ) { 
-      is_left = true; 
+    if ( forest_type == XGBOOST ) {
+      if ( val < threshold ) {  // NOTE comparison is < 
+        is_left = true; 
+      }
+      else {
+        is_left = false;
+      }
+    }
+    else if ( forest_type == RANDOM_FOREST ) {
+      if ( val <= threshold ) { // NOTE comparison is <= 
+        is_left = true; 
+      }
+      else {
+        is_left = false;
+      }
     }
     else {
-      is_left = false;
+      WHEREAMI;
     }
     if ( ( is_left )  && ( dt[tidx].lchild_idx < 0 ) ) {
-      goto DONE;
+      break;
     }
     if ( ( !is_left )  && ( dt[tidx].rchild_idx < 0 ) ) {
-      goto DONE;
+      break;
     }
     if ( is_left ) { 
       tidx = dt[tidx].lchild_idx;
@@ -59,9 +70,11 @@ eval_dt(
       tidx = dt[tidx].rchild_idx;
     }
   }
-DONE:
   *ptr_npos = dt[tidx].npos;
   *ptr_nneg = dt[tidx].nneg;
+  // fprintf(stderr,"XXXX %6d \n", tidx);
+  // TODO: Any restrictions on xgb val?
+  *ptr_xgb  = dt[tidx].xgb;
   if ( ( *ptr_npos < 0 ) || ( *ptr_nneg < 0 ) ) { go_BYE(-1); }
 BYE:
   return status;

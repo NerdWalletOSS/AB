@@ -9,7 +9,11 @@ require_once 'set_filters.php';
 
 $body = file_get_contents('php://input');
 if ( ( empty($body) ) || ( trim($body) == "" ) ) {
-  echo '{ "SetFilters" : "ERROR", "Message" : "No payload" }'; exit;
+  $err = '{ "SetFilters" : "ERROR", "Message" : "No payload" }'; 
+  header("Error-Message: " . nl2br($err));
+  header("Error-Code: 400");
+  http_response_code(400);
+  exit;
 }
 $rslts =  set_filters($body);
 if ( is_array($rslts ) ) { 

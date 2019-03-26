@@ -16,6 +16,7 @@ zero_test(
 
   memset(ptr_test->name, '\0', AB_MAX_LEN_TEST_NAME+1);
   ptr_test->test_type = 0;
+  ptr_test->test_as_str = NULL;
   ptr_test->id = 0;
   ptr_test->name_hash = 0;
   ptr_test-> external_id = 0;
@@ -23,7 +24,6 @@ zero_test(
   ptr_test-> is_dev_specific = false;
   ptr_test->state = 0;
   ptr_test->seed = 0;
-  ptr_test->num_devices = 0;
 
   ptr_test->num_variants = 0;
   ptr_test->variants = NULL;
@@ -31,6 +31,7 @@ zero_test(
   ptr_test->final_variant_id = NULL;
   ptr_test->final_variant_idx = NULL;
   ptr_test->variant_per_bin = NULL;
+  ptr_test->count_device_x_variant = NULL;
 BYE:
   return status;
 }
@@ -51,17 +52,27 @@ free_test(
     }
   }
   free_if_non_null(ptr_test->variants);
+  free_if_non_null(ptr_test->test_as_str);
 
   free_if_non_null(ptr_test->final_variant_id);
   free_if_non_null(ptr_test->final_variant_idx);
-  uint32_t num_devices = ptr_test->num_devices;
+  uint32_t num_devices = 1;
+  if ( ptr_test->is_dev_specific ) { 
+    num_devices = g_n_justin_cat_lkp;
+  }
   if ( ptr_test->variant_per_bin != NULL ) { 
     for ( uint32_t i = 0; i < num_devices; i++ ) { 
       free_if_non_null(ptr_test->variant_per_bin[i]);
     }
   }
   free_if_non_null(ptr_test->variant_per_bin);
-  ptr_test->num_devices = 0;
+
+  if ( ptr_test->count_device_x_variant != NULL ) { 
+    for ( uint32_t i = 0; i < num_devices; i++ ) { 
+      free_if_non_null(ptr_test->count_device_x_variant[i]);
+    }
+  }
+  free_if_non_null(ptr_test->count_device_x_variant);
   memset(ptr_test, '\0', sizeof(TEST_META_TYPE));
 BYE:
   return status;
@@ -133,6 +144,7 @@ malloc_test(
     variants[v].id = 0;
     variants[v].percentage = 0;
     variants[v].separator = '\0';
+    variants[v].count = 0; 
     memset(variants[v].name, '\0', AB_MAX_LEN_VARIANT_NAME+1);
   }
   for ( uint32_t v = 0; v < p->num_variants; v++ ) { 
@@ -153,7 +165,26 @@ malloc_test(
     num_devices = 1;  
   }
   if ( num_devices < 1 ) { go_BYE(-1); }
+<<<<<<< HEAD
   p->num_devices     = num_devices;
+=======
+  if ( num_devices > 1 ) {  // is device specific 
+    p->count_device_x_variant = malloc(num_devices * sizeof(int *));
+    return_if_malloc_failed(p->count_device_x_variant);
+    memset(p->count_device_x_variant, '\0', num_devices * sizeof(int *));
+    for ( int i = 0; i < num_devices; i++ ) { 
+      p->count_device_x_variant[i] = malloc(num_variants * sizeof(int));
+      return_if_malloc_failed(p->count_device_x_variant[i]);
+      memset(p->count_device_x_variant[i], '\0',  
+          (num_variants * sizeof(int)));
+    }
+  }
+  else { // not device specific 
+    for ( int i = 0; i < num_variants; i++ ) { 
+      p->variants[i].count = 0;
+    }
+  }
+>>>>>>> dev
   //------------------------------------------
   if ( state == TEST_STATE_TERMINATED ) {
     p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
@@ -167,6 +198,7 @@ malloc_test(
   else if ( state == TEST_STATE_STARTED ) { 
     p->variant_per_bin = malloc(num_devices * sizeof(uint8_t *));
     return_if_malloc_failed(p->variant_per_bin);
+    memset(p->variant_per_bin, '\0', num_devices * sizeof(uint8_t *));
     for ( int i = 0; i < num_devices; i++ ) { 
       p->variant_per_bin[i] = malloc(AB_NUM_BINS * sizeof(uint8_t));
       return_if_malloc_failed(p->variant_per_bin[i]);
@@ -208,12 +240,12 @@ BYE:
 
 int
 malloc_final_variant(
-    uint32_t test_idx
+    uint32_t test_idx,
+    int num_devices
     )
 {
   int status = 0;
   TEST_META_TYPE *p = &(g_tests[test_idx]);
-  int num_devices = p->num_devices;
 
   p->final_variant_idx = malloc(num_devices * sizeof(uint32_t));
   return_if_malloc_failed(p->final_variant_idx);

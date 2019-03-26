@@ -19,13 +19,15 @@ local function rand_test (
     optargs = {}
   end
   local T = {}
+  T.ramp = 1
+  T.has_filters = false -- TODO P2
   T.name = optargs.name or rand_name()
   T.State = optargs.State or rand_set("states")
   T.Channel = optargs.Channel or rand_set("channels")
   T.TestType = optargs.TestType or rand_set("test_types")
   T.is_dev_specific = optargs.is_dev_specific or rand_set("is_dev_specific")
-  T.seed  = optargs.seed or rnum()
-  T.external_id  = optargs.external_id or rnum()
+  T.seed  = tostring(optargs.seed or rnum())
+  T.external_id  = tostring(optargs.external_id or rnum())
   if ( T.TestType == "ABTest" ) then 
     T.BinType = 'c_to_v_ok_v_to_c_ok_v_to_v_not_ok'
   elseif ( T.TestType == "XYTest" ) then 
@@ -36,15 +38,18 @@ local function rand_test (
   T.id  = optargs.id or rnum()
   local Variants =  { {
     percentage =  "50",
-    url =  "http://www.google.com"
+    url =  "http://www.google.com",
+    is_final = "0",
   },
   {
     percentage =  "30",
-    url =  "http://www.yahoo.com"
+    url =  "http://www.yahoo.com",
+    is_final = "0",
   },
   {
     percentage =  "20",
-    url =  "http://www.cnn.com"
+    url =  "http://www.cnn.com",
+    is_final = "0",
   }, }
   for k, v in ipairs(Variants) do
     if ( k == 1 ) and ( T.TestType == "ABTest" ) then 
@@ -56,6 +61,7 @@ local function rand_test (
     v.url = "http://localhost:8080/AB/php/lp" .. k .. ".html"
   end
   T.Variants = Variants
+  T.NumVariants = tostring(#Variants)
   if ( T.TestType == "ABTest" ) then
     assert(Variants[1].name:lower() == "control")
   end
@@ -64,7 +70,7 @@ local function rand_test (
     local winner_idx = math.random(#Variants)
     for k, v in pairs(Variants) do 
       if ( k == winner_idx ) then 
-        v.is_final = 1
+        v.is_final = "1"
       end
     end
   end

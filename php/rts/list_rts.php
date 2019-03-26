@@ -13,6 +13,7 @@ use Aws\Ecs\EcsClient;
 
 function list_rts()
 {
+<<<<<<< HEAD
   $config = read_config_file();
 
   switch ($config->{'AB'}->{'RTS_FINDER'}->{'METHOD'}->{'VALUE'}) {
@@ -39,6 +40,25 @@ function list_rts()
       'cluster' => $config->{'AB'}->{'RTS_FINDER'}->{'ECS_CLUSTER'}->{'VALUE'},
       'tasks' => $result['taskArns'],
     ]);
+=======
+  $servers = null;
+  $ports   = null;
+  // Load configs 
+  rs_assert(load_configs());
+  $conf_file = "/opt/abadmin/db2.json";
+  rs_assert(is_file($conf_file), "File not found $conf_file");
+  $configs = json_decode(file_get_contents($conf_file));
+  rs_assert($configs, "unable to JSON decode $conf_file");
+  //-----------------------------------------------------------
+  //--- Original case: just one server
+  if ( $configs->{'rts_finder_server'} == "" ) {
+    $server = $configs->{'ab_rts_server'};
+    $port   =  $configs->{'ab_rts_port'};
+    if ( ( $server == "" ) || ($port == "" ) )  {
+      // echo("NO RTS found\n");
+      return null;
+    }
+>>>>>>> dev
 
     // Extract each container as an instance of our RTS
     $ret = array();
@@ -72,6 +92,7 @@ function list_rts()
     foreach ($config->{'AB'}->{'RTS_FINDER'}->{'SERVERS'}->{'VALUE'} as $server) {
       $ret[] = (array) $server;
     }
+<<<<<<< HEAD
     return $ret;
 
   default:
@@ -79,3 +100,26 @@ function list_rts()
     die;
   }
 }
+=======
+    return $SP;
+  }
+  else {
+    // echo("NO RTS found\n");
+
+    return null;
+  }
+}
+/*
+$SP = list_rts();
+if ( $SP ) { 
+   foreach ( $SP as $sp ) { 
+     $server = $sp['server']; $port = $sp['port'];
+     echo "server = $server, port = $port \n";
+  }
+}
+else {
+  echo "Not using RTS\n";
+}
+*/
+?>
+>>>>>>> dev

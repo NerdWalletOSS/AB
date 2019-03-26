@@ -6,24 +6,33 @@
 #include "init.h"
 #include "post_from_log_q.h"
 
+<<<<<<< HEAD
 #include "l_add_test.h"
 #include "num_tests.h"
+=======
+>>>>>>> dev
 #include "l_mdl_meta.h"
-#include "l_reload_tests.h"
+#include "l_get_num_features.h"
+#include "l_make_feature_vector.h"
+#include "l_post_proc_preds.h"
+
+#include "add_test.h"
+#include "chk_db_conn.h"
+#include "reload.h"
+#include "test_info.h"
+#include "list_tests.h"
+#include "get_config.h"
+
+#include "num_tests.h"
 #include "chk_logger_conn.h"
 #include "kafka_check_conn.h"
-#include "l_chk_db_conn.h"
-#include "l_diagnostics.h"
+#include "diagnostics.h"
 #include "to_kafka.h"
 #include "dump_log.h"
 #include "add_fake_test.h"
 #include "route_get_variant.h"
-#include "l_list_tests.h"
-#include "l_get_num_features.h"
 #include "ping_server.h"
 #include "router.h"
-#include "l_test_info.h"
-#include "l_get_config.h"
 #include "update_config.h"
 #include "zero_globals.h"
 #include "classify.h"
@@ -32,9 +41,6 @@
 #include "ext_classify_ua.h"
 #include "setup.h"
 
-#include "l_load_config.h"
-#include "l_make_feature_vector.h"
-#include "l_post_proc_preds.h"
 
 #include "delete_test.h"
 #include "stop_test.h"
@@ -74,7 +80,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case AddTest : /* done by Lua */
-      status = l_add_test(body); cBYE(status);
+      status = add_test(body); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -104,12 +110,9 @@ ab_process_req(
       status = ext_classify_ua(args, g_rslt,AB_MAX_LEN_RESULT); cBYE(status);
       break;
       //--------------------------------------------------------
-    case DeleteTest : /* done by C */
-      status = delete_test(args); cBYE(status);
-      sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
-      break;
+      /* DeleteTest uses AddTest where state == archived */
     case Diagnostics : /* done by C and Lua */
-      status = l_diagnostics(args); cBYE(status);
+      status = diagnostics(args); cBYE(status);
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
       //--------------------------------------------------------
@@ -118,7 +121,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case GetConfig : /* done by Lua */
-      status = l_get_config(); cBYE(status);
+      status = get_config(); cBYE(status);
       break;
       //--------------------------------------------------------
     case GetNumFeatures : /* done by Lua */
@@ -162,11 +165,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case ListTests : /* done by Lua */
-      status = l_list_tests(args); cBYE(status);
-      break;
-      //--------------------------------------------------------
-    case LoadConfig : /* done by Lua */
-      status = l_load_config(body); cBYE(status);
+      status = list_tests(args); cBYE(status);
       break;
       //--------------------------------------------------------
     case MakeFeatureVector : /* done by Lua */
@@ -238,7 +237,7 @@ ab_process_req(
       cBYE(status);
 
       if ( req_type == Reload ) { 
-        status = l_reload_tests();  cBYE(status); 
+        status = reload();  cBYE(status); 
       }
       sprintf(g_rslt, "{ \"%s\" : \"OK\" }", api);
       break;
@@ -253,7 +252,7 @@ ab_process_req(
       break;
       //--------------------------------------------------------
     case TestInfo : /* done by Lua and C */
-      status = l_test_info(args); cBYE(status);
+      status = test_info(args); cBYE(status);
       break;
       //--------------------------------------------------------
     case UTMKV : /* done by C */

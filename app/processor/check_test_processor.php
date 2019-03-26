@@ -9,15 +9,13 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../../php/rts/");
 require_once 'chk_test.php';
 //-----------------------------------------------------------
 //-------- ACCESS SESSION VARIABLE
-if (isset($_SESSION['TestType']))
-	{
-		$TestType = $_SESSION['TestType'];
-	}
-else
-	{
-		header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
-		return false;
-	}
+if (isset($_SESSION['TestType'])) {
+  $TestType = $_SESSION['TestType'];
+}
+else {
+  header('Location: index.php?error=Test Type not set FILE: ' . __FILE__ . ' :LINE: ' . __LINE__ . '');
+  return false;
+}
 // Call to check test
 $TestName = $_GET['TestName'];
 $X = array();

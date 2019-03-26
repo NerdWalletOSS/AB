@@ -6,9 +6,16 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "../php/db_helpers/");
 require_once 'make_pos_int.php';
 require_once 'make_boolean.php';
 require_once 'db_get_rows.php';
+<<<<<<< HEAD
 require_once 'extract_sql_params.php';
 
 function read_config_file()
+=======
+function load_configs(
+  $conf_file = "/opt/abadmin/db2.json",
+  $reload=false
+)
+>>>>>>> dev
 {
   if ( isset($GLOBALS['config_file_contents']) ) {
     return $GLOBALS['config_file_contents'];

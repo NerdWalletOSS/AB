@@ -13,8 +13,15 @@ make
 curl --url "$S:$P/Ignore"
 curl --url "$S:$P/Restart"
 ./add_tests $S $P $num_tests _test_file
+<<<<<<< HEAD
 ./sblaster $S $P _test_file $num_iters $num_users 1
 # echo PREMATURE; exit
 # ./pblaster $S $P _test_file $num_iters $num_users $num_threads
 # curl --url "$S:$P/Halt"
+=======
+# ./sblaster $S $P _test_file $num_iters $num_users 1
+# echo PREMATURE; exit
+./pblaster $S $P _test_file $num_iters $num_users $num_threads
+curl --url "$S:$P/Halt"
+>>>>>>> dev
 echo ALL DONE

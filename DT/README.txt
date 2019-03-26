@@ -431,3 +431,70 @@ Run
 
 6. Make sure that in the directory you set your Lua scripts
 to (in load_config), you run all tests in there.
+
+
+---- NEW ADDITIONS ----
+
+This chunk was added on 20 Feb 2019.
+
+A new file has been added, `tree.py`, which is a library utility for any user trying to create Decision Trees in CSV from a dataset.
+
+Here is how you use it:
+
+# Creating your model and saving it
+
+Before creating your model you need the following done:
+
+```
+pip install --upgrade pip
+pip install numpy pandas scikit-learn xgboost
+```
+
+These are the bare minimum libraries required for your library.
+
+Following which, here is how you quickly train your model AND save it as CSV in Python:
+
+(sample Python script below, stored in the same folder as tree.py)
+```
+import pandas as pd
+import numpy as np
+import joblib
+from tree import XGBoostEnsemble, RandomForestEnsemble
+from sklearn.ensemble import RandomForestClassifier
+import xgboost as xgb
+
+
+data_file_name = 'XXX.csv' ## name of file
+
+df = pd.read_csv(data_file_name)  # Read csv file
+
+y = df['y']  # Assumption is that there is a y-variable in the data
+
+X = df[c for c in df.columns if c != 'y']  # Assumption is that all other columns are part of the predictor
+
+rf_mdl = RandomForestClassifier()
+rf_mdl.train(X, y)
+
+xgb_mdl = xgb.XGBClassifier()
+xgb_mdl.train(X, y)
+
+#  At this point you can save the models as the followwing:
+
+joblib.dump(rf_mdl, 'random_forest_model.pkl')
+joblib.dump(xgb_mdl, 'xgboost_model.pkl')
+
+#  At this point you can convert them to CSV:
+
+xgb_ensemble = XGBoostEnsemble(xgb_mdl)
+xgb_ensemble.save('xgboost_dt.csv')
+
+rf_ensemble = RandomForestEnsemble(rf_mdl, X.columns)  # This one requires an extra argument, X.columns, because XGBoost objects stores column names but RandomForests do not
+rf_ensemble.save('rf_dt.csv')
+
+# Now you can also save dt_features.lua as follows:
+
+# xgb_ensemble.save_dt_features('dt_features.lua')
+# rf_ensemble.save_dt_features('dt_features.lua')
+
+
+```

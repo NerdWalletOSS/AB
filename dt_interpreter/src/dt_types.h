@@ -1,3 +1,4 @@
+#include "dt_consts.h"
 #ifndef __DT_TYPES_H
 #define __DT_TYPES_H
 
@@ -11,7 +12,14 @@ typedef struct _dt_rec_type {
   float threshold;
   int nneg;
   int npos;
+  float xgb; // value for XGBoost
 } DT_REC_TYPE;
+
+typedef struct _rf_val_rec_type { 
+  int npos;
+  int nneg;
+  float xgb;
+} RF_EVAL_REC_TYPE;
 
 typedef struct _rf_rec_type { 
   int tree_idx;
@@ -29,4 +37,21 @@ typedef struct _mdl_rec_type {
   float prob; // will get set at run time 
 } MDL_REC_TYPE;
 
+typedef struct _dt_interpreter_type {
+  DT_REC_TYPE *dt; /* decision tree [n_dt]  */
+  uint32_t n_dt;
+  size_t len_dt_file; 
+  RF_REC_TYPE *rf; /* random forest * [n_rf] */
+  uint32_t n_rf;
+  size_t len_rf_file; 
+  MDL_REC_TYPE *mdl; /* models [n_mdl] */
+  uint32_t n_mdl;
+  size_t len_mdl_file; 
+
+  float *predictions;  /* [n_mdl] */
+  float *dt_feature_vector; 
+  int n_dt_feature_vector  ;  // Set by Lua after reading configs
+
+  int forest_type; 
+} DT_INTERPRETER_TYPE;
 #endif

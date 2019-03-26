@@ -27,7 +27,8 @@ l_update_config(
       lua_pop(L, 1);
       go_BYE(-1);
     }
-    status = lua_pcall(L, 0, 0, 0);
+    lua_pushlightuserdata(L, &g_cfg);
+    status = lua_pcall(L, 1, 0, 0);
     if ( status != 0 ) {
       fprintf(stderr, "calling update_config() for %s failed: %s\n", 
           state, lua_tostring(L, -1));

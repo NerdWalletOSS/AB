@@ -6,10 +6,18 @@ local reset_db = require 'test_webapp/reset_db'
 local get_test_id = require 'test_webapp/get_test_id'
 local get_test_info = require 'test_webapp/get_test_info'
 local get_error_code = require 'test_webapp/get_error_code'
-local states = require 'test_webapp/states'
+local states       = require 'test_webapp/states'
+local S            = require 'test_webapp/state_change'
+local mk_rand_test = require 'test_webapp/mk_rand_test'
+local get_db_config = require 'test_webapp/get_db_config'
+
+require 'RTS/ab'
+local get_test      = require 'RTS/get_test'
+local load_aux      = require 'RTS/load_aux'
 --==========================
 local ssurl =  -- set state URL 
  "http://localhost:8080/AB/php/endpoints/endpoint_set_state.php"
+
 
 local tests = {}
 tests.t1 = function (
@@ -18,15 +26,17 @@ tests.t1 = function (
   local description = "Testing set_state when draft"
   if ( just_pr ) then print(description) return end
 
+  local db, host, user, pass, port = get_db_config()
+  load_aux(db, host, user, pass, port)
+
   -- START: Make some test 
   reset_db()
-  local hdrs, outbody, status = mk_test("good_basic1.lua")
-  assert(status == 200)
-  local test_id = get_test_id(hdrs)
-  local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
-  local state_id = tonumber(T.state_id)
-  assert(state_id == states.draft)
+  local tid = assert(mk_rand_test())
+  local T = get_test_info(tid)
+  assert(T.State == "draft")
+  local tid2, T2 = get_test(db, host, user, pass, port, tid, true)
+  T2 = JSON:decode(T2)
+  assert(T2.State == "draft")
   --======== now do the bad things, in any order
   local bad_states = { "started", "terminated" }
   for k, bad_state in pairs(bad_states) do 
@@ -45,7 +55,7 @@ tests.t1 = function (
   T.Updater =  "joe" -- TODO Improve this hard coding
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   assert(status == 200)
-  local Tchk = get_test_info(test_id)
+  local Tchk = get_test_info(tid)
   --====================================
   print("Test t1 succeeded")
   return true
@@ -60,9 +70,9 @@ tests.t2 = function (
   reset_db()
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
-  local test_id = get_test_id(hdrs)
-  local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
+  local tid = get_test_id(hdrs)
+  local T = get_test_info(tid)
+  local tid = tonumber(T.id)
   -- Move state to dormant 
   T.NewState = "dormant"
   T.Updater =  "joe" -- TODO Improve this hard coding
@@ -86,7 +96,7 @@ tests.t2 = function (
   T.Updater =  "joe" -- TODO Improve this hard coding
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   assert(status == 200)
-  local Tchk = get_test_info(test_id)
+  local Tchk = get_test_info(tid)
   --====================================
   print("Test t2 succeeded")
   return true
@@ -101,9 +111,9 @@ tests.t3 = function (
   reset_db()
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
-  local test_id = get_test_id(hdrs)
-  local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
+  local tid = get_test_id(hdrs)
+  local T = get_test_info(tid)
+  local tid = tonumber(T.id)
   -- Move state to dormant 
   T.NewState = "dormant"
   T.Updater =  "joe" -- TODO Improve this hard coding
@@ -138,7 +148,7 @@ tests.t3 = function (
   T.Updater =  "joe" -- TODO Improve this hard coding
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   assert(status == 200)
-  local Tchk = get_test_info(test_id)
+  local Tchk = get_test_info(tid)
   --====================================
   print("Test t3 succeeded")
   return true
@@ -154,9 +164,9 @@ tests.t4 = function (
   reset_db()
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
-  local test_id = get_test_id(hdrs)
-  local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
+  local tid = get_test_id(hdrs)
+  local T = get_test_info(tid)
+  local tid = tonumber(T.id)
 
   T.Updater =  "joe" -- TODO Improve this hard coding
   -- Move state to dormant 
@@ -190,7 +200,7 @@ tests.t4 = function (
   print("moving from " .. old_state .. " to " .. good_state)
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   assert(status == 200)
-  local Tchk = get_test_info(test_id)
+  local Tchk = get_test_info(tid)
   --====================================
   print("Test t4 succeeded")
   return true
@@ -206,9 +216,9 @@ tests.t5 = function (
   reset_db()
   local hdrs, outbody, status = mk_test("good_basic1.lua")
   assert(status == 200)
-  local test_id = get_test_id(hdrs)
-  local T = get_test_info(test_id)
-  local test_id = tonumber(T.id)
+  local tid = get_test_id(hdrs)
+  local T = get_test_info(tid)
+  local tid = tonumber(T.id)
 
   T.Updater =  "joe" -- TODO Improve this hard coding
   -- Move state to dormant 
@@ -243,7 +253,7 @@ tests.t5 = function (
   T.NewState = good_state
   local hdrs, outbody, status = curl.post(ssurl, nil, JSON:encode(T))
   assert(status == 200)
-  local Tchk = get_test_info(test_id)
+  local Tchk = get_test_info(tid)
   --====================================
   print("Test t5 succeeded")
   return true
