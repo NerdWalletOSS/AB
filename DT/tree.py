@@ -46,7 +46,7 @@ class Tree(object):
                           '\n'.join([
                               "T[{}]\t= '{}'".format(idx + 1, feat_nm)
                               for idx, feat_nm in enumerate(self.feature_names)]) + \
-                          '\n\nreturn T\n'
+                          '\nreturn T\n'
         with open(fname, 'w+') as f:
             f.write(dt_features_str)
 
